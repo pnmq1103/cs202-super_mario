@@ -43,14 +43,17 @@ class MyClass {
 
 # Files and Folders 
 Below are the main folders
+
+```
 ├───docs
 ├───res
 │   ├───music
 │   └───sprites
 ├───src
+```
 
 The purpose of each folder:
-- docs: contains latex, markdown file to document to project.
+- docs: contains latex, markdown files for documenting the project.
 - res: contains project resources such as sprites, music, image, etc.
 - src: contains source files and header files.
 
@@ -58,4 +61,7 @@ The main folders can include other sub-folders.
 
 ## Naming 
 - The name should be meaningful, descriptive and concise.
-- Use `camel_case` for naming, e.g. `character_state.cpp`, `background_music.mp3`.
+- Use `snake_case` for naming, e.g. `character_state.cpp`, `background_music.mp3`.
+
+# Source files
+- Use `.cpp` for implementation and `.hpp` for headers.
