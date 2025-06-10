@@ -1,15 +1,21 @@
 #include <raylib.h>
 
+#include "src/Application.hpp"
+
 int main() {
-  SetTargetFPS(60);
-  SetConfigFlags(FLAG_MSAA_4X_HINT);
-  InitWindow(700, 500, "Super Mario");
+  Application &app = Application::GetInstance();
+  app.Init();
 
   while (!WindowShouldClose()) {
+    app.Update();
+
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    DrawCircle(50, 50, 5, RED);
+
+    app.Draw();
+
     EndDrawing();
   }
+  CloseWindow();
   return 0;
 }

@@ -124,6 +124,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\application.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\application.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\menu.jpg" />
+    <Image Include="res\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
