@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include <vector>
 enum CharacterType{
     MARIO,
     LUIGI
@@ -10,36 +11,17 @@ class Character{
         CharacterState *pState;
         CharacterType type;
         int state;
+        float scale;
     public:
-        Character();
+        Character(float Nscale);
         ~Character();
-        void setCharacter(CharacterType type,Vector2 pos,Vector2 size);
+        void setCharacter(CharacterType type,Vector2 pos);
         void setState(int state);
         void draw();
         void run(bool left);
         void jump();
-        void updateJump();
+        void update();
+        void setFrameCount();
 };
-class CharacterState{
-    private:
-        double y;
-        double t;
-    protected:
-        Character *context;
-        Vector2 pos,size;
-        Image image;
-        const double speed, jT,jH;
-    public:
-        CharacterState(double Nspeed,double NjT,double NjH);
-        ~CharacterState();
 
-        Vector2 getPosition();
-        Vector2 getSize(); 
-        void setPosition(Vector2 Npos);
-        void setSize(Vector2 Nsize);
-        
-        virtual void draw();
-        void run(bool left);
-        void jump();
-        void updateJump();
-};
+
