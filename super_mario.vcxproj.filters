@@ -24,10 +24,10 @@
     <ClCompile Include="src\normal_mario.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\character.cpp">
+    <ClCompile Include="src\character_state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\character_state.cpp">
+    <ClCompile Include="src\character.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
