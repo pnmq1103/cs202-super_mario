@@ -1,6 +1,6 @@
 #include <raylib.h>
 
-#include "src/Application.hpp"
+#include "src/include/application.hpp"
 
 int main() {
   Application &app = Application::GetInstance();

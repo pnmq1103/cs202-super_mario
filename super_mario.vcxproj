@@ -125,17 +125,71 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\character.cpp" />
+    <ClCompile Include="src\character_state.cpp" />
+    <ClCompile Include="src\normal_mario.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\application.hpp" />
+    <ClInclude Include="src\include\application.hpp" />
+    <ClInclude Include="src\include\character.hpp" />
+    <ClInclude Include="src\include\character_state.hpp" />
+    <ClInclude Include="src\include\normal_mario.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\app_icon.png" />
     <Image Include="res\menu.jpg" />
-    <Image Include="res\icon.png" />
+    <Image Include="res\menu_background.png" />
+    <Image Include="res\sprites\background\background_spritesheet.png" />
+    <Image Include="res\sprites\characters\bowser.png" />
+    <Image Include="res\sprites\characters\enemies.png" />
+    <Image Include="res\sprites\characters\luigi_normal.png" />
+    <Image Include="res\sprites\characters\luigi_normal_carry_shoe_shell.png" />
+    <Image Include="res\sprites\characters\luigi_starup.png" />
+    <Image Include="res\sprites\characters\luigi_starup_carry_shoe_shell.png" />
+    <Image Include="res\sprites\characters\luigi_starup_carry_shoe_shell_fire.png" />
+    <Image Include="res\sprites\characters\luigi_starup_fire.png" />
+    <Image Include="res\sprites\characters\mario_normal.png" />
+    <Image Include="res\sprites\characters\mario_normal_carry_shoe_shell.png" />
+    <Image Include="res\sprites\characters\mario_starup.png" />
+    <Image Include="res\sprites\characters\mario_starup_carry_shoe_shell.png" />
+    <Image Include="res\sprites\characters\mario_starup_carry_shoe_shell_fire.png" />
+    <Image Include="res\sprites\characters\mario_starup_fire.png" />
+    <Image Include="res\sprites\icons\icon_day.png" />
+    <Image Include="res\sprites\icons\icon_sky.png" />
+    <Image Include="res\sprites\icons\icon_underground.png" />
+    <Image Include="res\sprites\icons\icon_underwater.png" />
+    <Image Include="res\sprites\icons\objects.png" />
+    <Image Include="res\sprites\tilesets\tileset_ground.png" />
+    <Image Include="res\sprites\tilesets\tileset_sky.png" />
+    <Image Include="res\sprites\tilesets\tileset_underground.png" />
+    <Image Include="res\sprites\tilesets\tileset_underwater.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\sprites\background\background.txt" />
+    <Text Include="res\sprites\characters\bowser.txt" />
+    <Text Include="res\sprites\characters\enemies.txt" />
+    <Text Include="res\sprites\characters\normal.txt" />
+    <Text Include="res\sprites\characters\normal_carry_shoe_shell.txt" />
+    <Text Include="res\sprites\characters\starup.txt" />
+    <Text Include="res\sprites\characters\starup_carry_shoe_shell.txt" />
+    <Text Include="res\sprites\icons\icon_day.txt" />
+    <Text Include="res\sprites\icons\icon_sky.txt" />
+    <Text Include="res\sprites\icons\icon_underground.txt" />
+    <Text Include="res\sprites\icons\icon_underwater.txt" />
+    <Text Include="res\sprites\icons\objects.txt" />
+    <Text Include="res\sprites\tilesets\tileset_ground.txt" />
+    <Text Include="res\sprites\tilesets\tileset_sky.txt" />
+    <Text Include="res\sprites\tilesets\tileset_underground.txt" />
+    <Text Include="res\sprites\tilesets\tileset_underwater.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\music\boss_music.mp3" />
+    <Media Include="res\music\theme_music.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,20 +21,140 @@
     <ClCompile Include="src\application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\normal_mario.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\character_state.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\application.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\include\application.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\character.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\normal_mario.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\character_state.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\icon.png">
+    <Image Include="res\menu.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\app_icon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\menu_background.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\tilesets\tileset_ground.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\tilesets\tileset_sky.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\tilesets\tileset_underground.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\tilesets\tileset_underwater.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\icons\icon_day.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\icons\icon_sky.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\icons\icon_underground.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\icons\icon_underwater.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\icons\objects.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\bowser.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\enemies.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_normal_carry_shoe_shell.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_starup.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_starup_carry_shoe_shell.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_starup_carry_shoe_shell_fire.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_starup_fire.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\mario_normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\mario_normal_carry_shoe_shell.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\mario_starup.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\mario_starup_carry_shoe_shell.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\mario_starup_carry_shoe_shell_fire.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\mario_starup_fire.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sprites\background\background_spritesheet.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="naming_conventions.md" />
     <None Include=".gitignore" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\sprites\tilesets\tileset_ground.txt" />
+    <Text Include="res\sprites\tilesets\tileset_sky.txt" />
+    <Text Include="res\sprites\tilesets\tileset_underground.txt" />
+    <Text Include="res\sprites\tilesets\tileset_underwater.txt" />
+    <Text Include="res\sprites\icons\icon_day.txt" />
+    <Text Include="res\sprites\icons\icon_sky.txt" />
+    <Text Include="res\sprites\icons\icon_underground.txt" />
+    <Text Include="res\sprites\icons\icon_underwater.txt" />
+    <Text Include="res\sprites\icons\objects.txt" />
+    <Text Include="res\sprites\characters\bowser.txt" />
+    <Text Include="res\sprites\characters\enemies.txt" />
+    <Text Include="res\sprites\characters\normal.txt" />
+    <Text Include="res\sprites\characters\normal_carry_shoe_shell.txt" />
+    <Text Include="res\sprites\characters\starup.txt" />
+    <Text Include="res\sprites\characters\starup_carry_shoe_shell.txt" />
+    <Text Include="res\sprites\background\background.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\music\boss_music.mp3" />
+    <Media Include="res\music\theme_music.mp3" />
   </ItemGroup>
 </Project>

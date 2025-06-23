@@ -1,9 +1,9 @@
-#include "application.hpp"
+#include "include/application.hpp"
 
 Application::Application() {
   SetTargetFPS(60);
   SetConfigFlags(FLAG_MSAA_4X_HINT);
-  icon_ = LoadImage("res/icon.png");
+  icon_ = LoadImage("res/app_icon.png");
 }
 
 Application::~Application() { UnloadImage(icon_); }
