@@ -409,3 +409,4 @@ FodyWeavers.xsd
 #CMake
 CMakeLists.txt
 /build/
+/.vscode/
