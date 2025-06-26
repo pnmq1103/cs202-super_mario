@@ -2,7 +2,7 @@
 
 MenuScene::MenuScene() : background_{} {}
 
-MenuScene::~MenuScene() {}
+MenuScene::~MenuScene() { UnloadTexture(background_); }
 
 void MenuScene::Init() { background_ = LoadTexture("res/menu_background.png"); }
 

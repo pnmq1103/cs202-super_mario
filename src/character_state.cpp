@@ -1,4 +1,4 @@
-#include "src/include/character_state.hpp"
+#include "include/character_state.hpp"
 #include <iostream>
 CharacterState::CharacterState(float Nspeed,int NjT,float NjH,float Nscale): speed(Nspeed),jT(NjT),jH(NjH),scale(Nscale){
     tX=-1;

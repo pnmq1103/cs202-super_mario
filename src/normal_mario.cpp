@@ -1,4 +1,4 @@
-#include "src/include/normal_mario.hpp"
+#include "include/normal_mario.hpp"
 #include <iostream>
 #include <math.h>
 NormalMario::NormalMario(Character *Ncontext,float Nscale):CharacterState(10,100,300,Nscale){

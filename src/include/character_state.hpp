@@ -1,5 +1,5 @@
 #pragma once
-#include "src/include/character.hpp"
+#include "include/character.hpp"
 class CharacterState{
     protected:
         float y,v,stopX;

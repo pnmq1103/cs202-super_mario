@@ -1,5 +1,5 @@
-#include "src/include/character.hpp"
-#include "src/include/normal_mario.hpp"
+#include "include/character.hpp"
+#include "include/normal_mario.hpp"
 #include <iostream>
 Character::Character(float Nscale){
     pState=nullptr;
