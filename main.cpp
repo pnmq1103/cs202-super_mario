@@ -8,12 +8,9 @@ int main() {
 
   while (!WindowShouldClose()) {
     app.Update();
-
     BeginDrawing();
     ClearBackground(RAYWHITE);
-
     app.Draw();
-
     EndDrawing();
   }
   CloseWindow();
