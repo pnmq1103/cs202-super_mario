@@ -1,0 +1,38 @@
+# To use this include the file in parent directory
+
+AccessModifierOffset: -2 
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments:
+    AlignCompound: true
+    Enabled: true
+    PadOperators: false
+AlignConsecutiveMacros: true
+AlignOperands: true
+AllowAllArgumentsOnNextLine: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: false
+
+BreakBeforeBraces: Attach
+BreakBeforeBinaryOperators: All
+BreakAfterReturnType: Automatic
+BreakTemplateDeclarations: Leave
+BinPackArguments: true
+
+ColumnLimit: 80
+CompactNamespaces: false
+ContinuationIndentWidth: 2
+Cpp11BracedListStyle: true
+
+DerivePointerAlignment: false
+IndentWidth: 2
+IndentCaseLabels: true
+NamespaceIndentation: All
+PenaltyReturnTypeOnItsOwnLine: 0
+PointerAlignment: Right
+Standard: c++20
+TabWidth: 2 
+UseTab: Never

@@ -10,20 +10,19 @@ NormalMario::NormalMario(Character *Ncontext, float Nscale)
   texture = LoadTextureFromImage(image);
   UnloadImage(image);
   context = Ncontext;
-  frame = {254 * scale, 0, 14 * scale, 27 * scale};
+  frame   = {254 * scale, 0, 14 * scale, 27 * scale};
 };
 
 void NormalMario::update() {
   std::vector<Rectangle> runFrame = {
-
-      {254 * scale, 47 * scale, 16 * scale, 27 * scale},
-      {271 * scale, 48 * scale, 16 * scale, 26 * scale},
-      {288 * scale, 47 * scale, 14 * scale, 27 * scale},
+    {254 * scale, 47 * scale, 16 * scale, 27 * scale},
+    {271 * scale, 48 * scale, 16 * scale, 26 * scale},
+    {288 * scale, 47 * scale, 14 * scale, 27 * scale},
   };
   std::vector<Rectangle> jumpFrame = {
-      {254 * scale, 75 * scale, 20 * scale, 27 * scale},
-      {275 * scale, 76 * scale, 19 * scale, 26 * scale},
-      {295 * scale, 75 * scale, 19 * scale, 27 * scale},
+    {254 * scale, 75 * scale, 20 * scale, 27 * scale},
+    {275 * scale, 76 * scale, 19 * scale, 26 * scale},
+    {295 * scale, 75 * scale, 19 * scale, 27 * scale},
   };
 
   if (stopLeft == 1) {
@@ -35,8 +34,8 @@ void NormalMario::update() {
   }
 
   float a = 8.0 * jH / (jT * jT);
-  v += a;
-  pos.y += v;
+  v      += a;
+  pos.y  += v;
 
   float v0 = 4.0 * jH / jT;
 

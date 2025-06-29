@@ -129,19 +129,24 @@
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\character.cpp" />
     <ClCompile Include="src\character_state.cpp" />
-    <ClCompile Include="src\design.cpp" />
+    <ClCompile Include="src\editor.cpp" />
+    <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\normal_mario.cpp" />
+    <ClCompile Include="src\scene_stack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\application.hpp" />
     <ClInclude Include="src\include\application.hpp" />
     <ClInclude Include="src\include\character.hpp" />
     <ClInclude Include="src\include\character_state.hpp" />
-    <ClInclude Include="src\include\design.hpp" />
+    <ClInclude Include="src\include\editor.hpp" />
+    <ClInclude Include="src\include\game.hpp" />
     <ClInclude Include="src\include\menu.hpp" />
     <ClInclude Include="src\include\normal_mario.hpp" />
     <ClInclude Include="src\include\scene.hpp" />
+    <ClInclude Include="src\include\scene_stack.hpp" />
+    <ClInclude Include="src\include\setting.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\app_icon.png" />
