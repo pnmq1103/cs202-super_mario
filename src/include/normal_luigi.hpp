@@ -1,12 +1,12 @@
 #pragma once
 #include "include/character_state.hpp"
-class NormalMario: public CharacterState{
+class NormalLuigi: public CharacterState{
     private:
         Texture pre_texture_;
         Rectangle pre_frame_;
     public:
-        NormalMario(Character *Ncontext,float Nscale,bool Nleft, bool tran);
-        ~NormalMario();
+        NormalLuigi(Character *Ncontext,float Nscale,bool Nleft, bool tran);
+        ~NormalLuigi();
         void Die();
         void Update();
         void Evolve();

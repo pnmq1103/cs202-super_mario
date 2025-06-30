@@ -1,50 +1,51 @@
-#include "include/normal_mario.hpp"
-#include <iostream>
-#include <math.h>
-NormalMario::NormalMario(Character *Ncontext,float Nscale,bool Nleft,bool tran):CharacterState(16,10,50,300,Nscale,Nleft){
-    if (!tran){
+#include "include/fire_luigi.hpp"
+FireLuigi::FireLuigi(Character *Ncontext,float Nscale,bool Nleft,bool tran):CharacterState(18,5,50,500,Nscale,Nleft){
+    LoadFrameList("res/sprites/characters/starup.txt");
+    if (tran){
         disabled=true;
-        Image image=LoadImage("res/sprites/characters/mario_starup.png");
+        Image image=LoadImage("res/sprites/characters/luigi_starup.png");
         ImageResize(&image,image.width*scale,image.height*scale);
         pre_texture_=LoadTextureFromImage(image);
         UnloadImage(image);
-        pre_frame_={254*scale, 0, 14*scale, 27*scale};
+        pre_frame_=frame_list[0];
     }
-    Image image=LoadImage("res/sprites/characters/mario_normal.png");
+    Image image=LoadImage("res/sprites/characters/luigi_starup_fire.png");
     ImageResize(&image,image.width*scale,image.height*scale);
     texture=LoadTextureFromImage(image);
     UnloadImage(image);
     context=Ncontext;
-    LoadFrameList("res/sprites/characters/normal.txt");
     frame=frame_list[0];
 };
-NormalMario::~NormalMario(){}
-void NormalMario::Die(){
+FireLuigi::~FireLuigi(){}
+void FireLuigi::Die(){
     if (disabled) return;
-    CharacterState::Jump();
-    is_die=true;
+    context->SetState(1,false);
 }
-void NormalMario::Evolve(){
-    if (disabled) return;
-    context->SetState(1,true);
-}
-void NormalMario::Update(){
+void FireLuigi::Evolve(){}
+void FireLuigi::Update(){
     if (disabled) return;
     CharacterState::Update();
+    float v0=4.0*jH/jT;
     if (v!=0){
-        frame=frame_list[8];        
+        if (v<-v0*1/3){
+            frame=frame_list[6];
+        }  else if (v>v0*1/3){
+            frame=frame_list[8];
+        }  else {
+            frame=frame_list[7];
+        } 
     }
 
     if (t_x!=-1 && t-t_x!=rT && v==0){
-        frame=frame_list[(t-t_x)/(rT/2)+3]; 
+        frame=frame_list[(t-t_x)/(rT/3)+3]; 
     } 
 
     if (left) {
         frame.width=-abs(frame.width);
     } else frame.width=abs(frame.width);
 }
-void NormalMario::Draw(){
-    if (disabled){ 
+void FireLuigi::Draw(){
+    if (disabled){
         if (t/5%2==0){
             if (left) {
                 frame.width=-abs(frame.width);

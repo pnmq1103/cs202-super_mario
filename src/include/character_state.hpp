@@ -1,35 +1,42 @@
 #pragma once
-
 #include "include/character.hpp"
+class CharacterState{
+    protected:
+        float y,v,stop_x;
+        int t_x,t,stop_left,t_star;
+        bool left,is_jump,is_fall,is_die,disabled;
+        
+        Character *context;
+        Vector2 pos;
+        Texture2D texture;
+        const float speed,jH,scale;
+        const int jT,rT;
+        Rectangle frame;
 
-class CharacterState {
-protected:
-  float y, v, stopX;
-  int tX, t, stopLeft;
-  bool left, isJump, isFall;
+        std::vector<Rectangle> frame_list;
+        void LoadFrameList(std::string at);
+        void SetPosition(Vector2 Npos);
+    public:
+        CharacterState(int NrT,float Nspeed,int NjT,float NjH,float Nscale,bool Nleft);
+        virtual ~CharacterState();
 
-  Character *context;
-  Vector2 pos;
-  Texture2D texture;
-  const float speed, jH, scale;
-  const int jT;
-  Rectangle frame;
+        Rectangle GetRectangle();
+        
+        void SetFrameCount();
+        float GetSpeed();
+        
+        virtual void Draw();
+        void Run(bool left);
+        void Jump();
+        virtual void Update();
+        void StopX();
+        void StopY(float Ny);
+        void StopY();
+        bool IsFalling();
+        virtual void Die()=0;
+        virtual void Evolve()=0;
+        void ToStarman();
+        bool IsStarman();
 
-public:
-  CharacterState(float Nspeed, int NjT, float NjH, float Nscale);
-  virtual ~CharacterState();
-
-  Rectangle getRectangle();
-  void setPosition(Vector2 Npos);
-  void setFrameCount();
-  float getSpeed();
-
-  virtual void draw();
-  void run(bool left);
-  void jump();
-  virtual void update() = 0;
-  void StopX();
-  void StopY(float Ny);
-  void StopY();
-  bool isFalling();
+        friend class Character;
 };

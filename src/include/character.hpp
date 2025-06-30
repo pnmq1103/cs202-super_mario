@@ -1,31 +1,41 @@
 #pragma once
-
 #include <raylib.h>
 #include <vector>
+#include <iostream>
+#include <fstream>
+enum CharacterType{
+    MARIO,
+    LUIGI
+};
 
-enum CharacterType { MARIO, LUIGI };
 class CharacterState;
-class Character {
-private:
-  CharacterState *pState;
-  CharacterType type;
-  int state;
-  float scale;
+class Character{
+    private:
+        CharacterState *pState_;
+        CharacterType type_;
+        int state_;
+        float scale_;
+    public:
+        Character(float Nscale);
+        ~Character();
+        void SetCharacter(CharacterType type,Vector2 pos);
+        void SetState(int state,bool tran);
+        CharacterType GetCharacter();
+        int GetState();
 
-public:
-  Character(float Nscale);
-  ~Character();
-  void setCharacter(CharacterType type, Vector2 pos);
-  void setState(int state);
-  void draw();
-  void run(bool left);
-  void jump();
-  void update();
-  void setFrameCount();
-  void stopX();
-  void stopY(float Ny);
-  void stopY();
-  float getSpeed();
-  bool isFalling();
-  Rectangle getRectangle();
+        void Draw();
+        void Run(bool left);
+        void Jump();
+        void Update();
+        void SetFrameCount();
+        void StopX();
+        void StopY(float Ny);
+        void StopY();
+        float GetSpeed();
+        bool IsFalling();
+        void Die();
+        void Evolve();
+        void ToStarman();
+        bool IsStarman();
+        Rectangle GetRectangle();
 };

@@ -1,16 +1,16 @@
-#include "include/normal_mario.hpp"
+#include "include/normal_luigi.hpp"
 #include <iostream>
 #include <math.h>
-NormalMario::NormalMario(Character *Ncontext,float Nscale,bool Nleft,bool tran):CharacterState(16,10,50,300,Nscale,Nleft){
+NormalLuigi::NormalLuigi(Character *Ncontext,float Nscale,bool Nleft,bool tran):CharacterState(18,5,50,500,Nscale,Nleft){
     if (!tran){
         disabled=true;
-        Image image=LoadImage("res/sprites/characters/mario_starup.png");
+        Image image=LoadImage("res/sprites/characters/luigi_starup.png");
         ImageResize(&image,image.width*scale,image.height*scale);
         pre_texture_=LoadTextureFromImage(image);
         UnloadImage(image);
         pre_frame_={254*scale, 0, 14*scale, 27*scale};
     }
-    Image image=LoadImage("res/sprites/characters/mario_normal.png");
+    Image image=LoadImage("res/sprites/characters/luigi_normal.png");
     ImageResize(&image,image.width*scale,image.height*scale);
     texture=LoadTextureFromImage(image);
     UnloadImage(image);
@@ -18,17 +18,17 @@ NormalMario::NormalMario(Character *Ncontext,float Nscale,bool Nleft,bool tran):
     LoadFrameList("res/sprites/characters/normal.txt");
     frame=frame_list[0];
 };
-NormalMario::~NormalMario(){}
-void NormalMario::Die(){
+NormalLuigi::~NormalLuigi(){}
+void NormalLuigi::Die(){
     if (disabled) return;
     CharacterState::Jump();
     is_die=true;
 }
-void NormalMario::Evolve(){
+void NormalLuigi::Evolve(){
     if (disabled) return;
     context->SetState(1,true);
 }
-void NormalMario::Update(){
+void NormalLuigi::Update(){
     if (disabled) return;
     CharacterState::Update();
     if (v!=0){
@@ -43,8 +43,8 @@ void NormalMario::Update(){
         frame.width=-abs(frame.width);
     } else frame.width=abs(frame.width);
 }
-void NormalMario::Draw(){
-    if (disabled){ 
+void NormalLuigi::Draw(){
+    if (disabled){
         if (t/5%2==0){
             if (left) {
                 frame.width=-abs(frame.width);

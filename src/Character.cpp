@@ -1,62 +1,119 @@
-#include <iostream>
-
 #include "include/character.hpp"
 #include "include/normal_mario.hpp"
-
-Character::Character(float Nscale) {
-  pState = nullptr;
-  state  = 0;
-  scale  = Nscale;
+#include "include/big_mario.hpp"
+#include "include/fire_mario.hpp"
+#include "include/normal_luigi.hpp"
+#include "include/big_luigi.hpp"
+#include "include/fire_luigi.hpp"
+#include <iostream>
+Character::Character(float Nscale){
+    pState_=nullptr;
+    state_=0;
+    scale_=Nscale;
 }
-Character::~Character() {
-  if (pState)
-    delete pState;
+Character::~Character(){
+    if (pState_) delete pState_;
 }
-void Character::setCharacter(CharacterType Ntype, Vector2 pos) {
-  type = Ntype;
-  setState(0);
-  pState->setPosition(pos);
+void Character::SetCharacter(CharacterType Ntype,Vector2 pos){
+    type_=Ntype;
+    SetState(0,true);
+    pState_->SetPosition(pos);
 }
-void Character::setState(int state) {
-  if (type == MARIO) {
-    switch (state) {
-      case 0:
-        pState = new NormalMario(this, scale);
-        break;
+void Character::SetState(int state,bool tran){
+    Vector2 pos={INT_MIN,INT_MIN};
+    Rectangle rect;
+    bool left;
+    if (pState_) {
+        rect=pState_->GetRectangle();
+        pos.x=rect.x;
+        pos.y=rect.y;
+        left=pState_->left;
+        delete pState_;
+    } 
+    if (type_==MARIO){
+        switch(state){
+            case 0:
+                pState_=new NormalMario(this,scale_,left,tran);
+                break;
+            case 1:
+                pState_=new BigMario(this,scale_,left,tran);
+                break;
+            case 2:
+                pState_=new FireMario(this,scale_,left,tran);
+                break;
+            default:
+                throw std::runtime_error("invalid state");
+                break;
+        }
+    } else if (type_==LUIGI){
+        switch(state){
+            case 0:
+                pState_=new NormalLuigi(this,scale_,left,tran);
+                break;
+            case 1:
+                pState_=new BigLuigi(this,scale_,left,tran);
+                break;
+            case 2:
+                pState_=new FireLuigi(this,scale_,left,tran);
+                break;
+            default:
+                throw std::runtime_error("invalid state");
+                break;
+        }
     }
-  } else if (type == LUIGI) {
-  }
+    if (pos.x>INT_MIN && pos.y>INT_MIN) pState_->SetPosition(pos);
 }
-void Character::draw() {
-  pState->draw();
+CharacterType Character::GetCharacter(){
+    return type_;
 }
-void Character::run(bool left) {
-  pState->run(left);
+int Character::GetState(){
+    return state_;
 }
-void Character::jump() {
-  pState->jump();
+
+
+
+void Character::Draw(){
+    pState_->Draw();
 }
-void Character::update() {
-  pState->update();
+void Character::Run(bool left){
+    pState_->Run(left);
 }
-void Character::setFrameCount() {
-  pState->setFrameCount();
+void Character::Jump(){
+    pState_->Jump();
 }
-void Character::stopX() {
-  pState->StopX();
+void Character::Update(){
+    pState_->Update();
 }
-void Character::stopY(float Ny) {
-  pState->StopY(Ny);
+void Character::SetFrameCount(){
+    pState_->SetFrameCount();
 }
-void Character::stopY() {
-  pState->StopY();
+void Character::StopX(){
+    pState_->StopX();
 }
-Rectangle Character::getRectangle() {
-  return pState->getRectangle();
+void Character::StopY(float Ny){
+    pState_->StopY(Ny);
 }
-float Character::getSpeed() {
-  return pState->getSpeed();
+void Character::StopY(){
+    pState_->StopY();
 }
-bool Character::isFalling() {
-  return pState->isFalling();
+Rectangle Character::GetRectangle(){
+    return pState_->GetRectangle();
+}
+float Character::GetSpeed(){
+    return pState_->GetSpeed();
+}
+bool Character::IsFalling(){
+    return pState_->IsFalling();
+}
+void Character::Die(){
+    pState_->Die();
+}
+void Character::Evolve(){
+    if (state_<4) pState_->Evolve();
+}
+void Character::ToStarman(){
+    pState_->ToStarman();
+}
+bool Character::IsStarman(){
+    return pState_->IsStarman();
 }
