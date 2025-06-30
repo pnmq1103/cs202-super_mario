@@ -15,7 +15,7 @@ private:
   const double cooldown_ = {0.2};
 
 public:
-  enum MenuOption { Game, Character, Editor, Setting };
+  enum MenuOption { Game, Load, Character, Editor, Setting };
 
 public:
   MenuScene();

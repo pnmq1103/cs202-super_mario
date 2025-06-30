@@ -125,15 +125,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileHandler.cpp" />
+    <ClCompile Include="load.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\button.cpp" />
+    <ClCompile Include="src\big_luigi.cpp" />
+    <ClCompile Include="src\big_mario.cpp" />
     <ClCompile Include="src\character.cpp" />
     <ClCompile Include="src\character_state.cpp" />
     <ClCompile Include="src\editor.cpp" />
+    <ClCompile Include="src\fire_luigi.cpp" />
+    <ClCompile Include="src\fire_mario.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\media.cpp" />
     <ClCompile Include="src\menu.cpp" />
+    <ClCompile Include="src\normal_luigi.cpp" />
+    <ClCompile Include="src\normal_mario.cpp" />
     <ClCompile Include="src\luigi.cpp" />
     <ClCompile Include="src\mario.cpp" />
     <ClCompile Include="src\scene_stack.cpp" />
@@ -141,12 +149,17 @@
     <ClCompile Include="tinyfiledialogs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileHandler.hpp" />
+    <ClInclude Include="load.hpp" />
     <ClInclude Include="src\application.hpp" />
     <ClInclude Include="src\include\application.hpp" />
-    <ClInclude Include="src\include\button.hpp" />
+    <ClInclude Include="src\include\big_luigi.hpp" />
+    <ClInclude Include="src\include\big_mario.hpp" />
     <ClInclude Include="src\include\character.hpp" />
     <ClInclude Include="src\include\character_state.hpp" />
     <ClInclude Include="src\include\editor.hpp" />
+    <ClInclude Include="src\include\fire_luigi.hpp" />
+    <ClInclude Include="src\include\fire_mario.hpp" />
     <ClInclude Include="src\include\game.hpp" />
     <ClInclude Include="src\include\luigi.hpp" />
     <ClInclude Include="src\include\media.hpp" />
