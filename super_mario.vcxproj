@@ -130,6 +130,7 @@
     <ClCompile Include="src\button.cpp" />
     <ClCompile Include="src\character.cpp" />
     <ClCompile Include="src\character_state.cpp" />
+    <ClCompile Include="src\command.cpp" />
     <ClCompile Include="src\editor.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\media.cpp" />
@@ -141,11 +142,11 @@
     <ClCompile Include="tinyfiledialogs.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\application.hpp" />
     <ClInclude Include="src\include\application.hpp" />
     <ClInclude Include="src\include\button.hpp" />
     <ClInclude Include="src\include\character.hpp" />
     <ClInclude Include="src\include\character_state.hpp" />
+    <ClInclude Include="src\include\command.hpp" />
     <ClInclude Include="src\include\editor.hpp" />
     <ClInclude Include="src\include\game.hpp" />
     <ClInclude Include="src\include\luigi.hpp" />

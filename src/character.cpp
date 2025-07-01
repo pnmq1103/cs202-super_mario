@@ -23,7 +23,7 @@ void Character::SetCharacter(CharacterType Ntype, Vector2 pos) {
 void Character::SetState(int state, bool tran) {
   Vector2 pos = {INT_MIN, INT_MIN};
   Rectangle rect;
-  bool left;
+  bool left = false;
   if (pState_) {
     rect  = pState_->GetRectangle();
     pos.x = rect.x;
