@@ -1,32 +1,36 @@
+#include <memory>
+#include <utility>
+
+#include "include/scene.hpp"
 #include "include/scene_stack.hpp"
 
 bool SceneStack::Push(std::unique_ptr<Scene> scene) {
   if (scene == nullptr)
     return false;
 
-  stack_.push(std::move(scene));
+  scenes_.push(std::move(scene));
   return true;
 }
 
 bool SceneStack::Pop() {
-  if (stack_.empty())
+  if (scenes_.empty())
     return false;
 
-  stack_.pop();
+  scenes_.pop();
   return true;
 }
 
 void SceneStack::Init() {
-  if (!stack_.empty())
-    stack_.top()->Init();
+  if (!scenes_.empty())
+    scenes_.top()->Init();
 }
 
 void SceneStack::Update() {
-  if (!stack_.empty())
-    stack_.top()->Update();
+  if (!scenes_.empty())
+    scenes_.top()->Update();
 }
 
 void SceneStack::Draw() {
-  if (!stack_.empty())
-    stack_.top()->Draw();
+  if (!scenes_.empty())
+    scenes_.top()->Draw();
 }

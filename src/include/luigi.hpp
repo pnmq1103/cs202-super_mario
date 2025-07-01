@@ -1,4 +1,7 @@
 #pragma once
+#include <raylib.h>
+
+#include "character.hpp"
 #include "include/character_state.hpp"
 
 class NormalLuigi : public CharacterState {

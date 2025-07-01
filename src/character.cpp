@@ -1,7 +1,10 @@
+#include <climits>
+#include <raylib.h>
+#include <stdexcept>
+
 #include "include/character.hpp"
 #include "include/luigi.hpp"
 #include "include/mario.hpp"
-#include <iostream>
 
 Character::Character(float Nscale) {
   pState_ = nullptr;

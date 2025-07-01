@@ -54,6 +54,9 @@
     <ClCompile Include="src\mario.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\media.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\application.hpp">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\include\luigi.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\media.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -186,6 +192,9 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include=".clang-format" />
+    <None Include="res\musics\title.ogg" />
+    <None Include="res\musics\castle_theme.ogg" />
+    <None Include="res\musics\ground_theme.ogg" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\sprites\tilesets\tileset_ground.txt" />
@@ -206,7 +215,8 @@
     <Text Include="res\sprites\background\background.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="res\music\boss_music.mp3" />
-    <Media Include="res\music\theme_music.mp3" />
+    <Media Include="res\sounds\beep.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

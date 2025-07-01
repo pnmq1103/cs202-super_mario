@@ -1,4 +1,6 @@
+#include <cmath>
 #include <memory>
+#include <raylib.h>
 #include <stdexcept>
 
 #include "include/application.hpp"
@@ -18,6 +20,7 @@ MenuScene::~MenuScene() {
 
 void MenuScene::Init() {
   background_ = LoadTexture("res/menu_background.png");
+  Application::GetInstance().GetMedia().PlayMusic("castle_theme");
 }
 
 void MenuScene::Update() {
@@ -102,7 +105,8 @@ void MenuScene::Draw() {
       DrawTriangle(a, b, c, color);
     }
 
-    DrawTextEx(GetFontDefault(), option, {x, y},
-               font_size * static_cast<float>(scale), 3.0f, color);
+    DrawTextEx(
+      GetFontDefault(), option, {x, y}, font_size * static_cast<float>(scale),
+      3.0f, color);
   }
 }

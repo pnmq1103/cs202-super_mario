@@ -1,0 +1,1 @@
+for %%i in (*.ogg *.mp3) do ffmpeg -i "%%i" "%%~ni.wav"

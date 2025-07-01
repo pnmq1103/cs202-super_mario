@@ -3,8 +3,8 @@
 
 class Scene {
 protected:
-  static constexpr int screenWidth  = 256 * 4;
-  static constexpr int screenHeight = 240 * 4;
+  static constexpr int screenWidth  = {256 * 4};
+  static constexpr int screenHeight = {240 * 4};
   Camera2D camera                   = {0};
 
 public:
@@ -13,3 +13,6 @@ public:
   virtual void Update() = 0;
   virtual void Draw()   = 0;
 };
+
+// Constructor should be used to initialize members only
+// Resources such as textures, musics, etc should be loaded in Init()

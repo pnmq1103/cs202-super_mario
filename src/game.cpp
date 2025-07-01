@@ -7,7 +7,9 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {}
 
-void GameScene::Init() {}
+void GameScene::Init() {
+  Application::GetInstance().GetMedia().PlayMusic("ground_theme");
+}
 
 void GameScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE))

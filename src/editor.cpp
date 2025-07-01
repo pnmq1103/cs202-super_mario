@@ -1,4 +1,5 @@
 #include "../tinyfiledialogs.h"
+#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -26,11 +27,6 @@ void EditorScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE))
     Application::ChangeScene(nullptr);
 
-  if (IsKeyDown(KEY_LEFT))
-    player.x -= 5.0f;
-  else if (IsKeyDown(KEY_RIGHT))
-    player.x += 5.0f;
-
   if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     Vector2 delta = GetMouseDelta();
     delta         = Vector2Scale(delta, -1.0f / camera.zoom);
@@ -39,6 +35,8 @@ void EditorScene::Update() {
 
   if (IsKeyDown(KEY_O))
     LoadFile();
+  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    Application::GetInstance().GetMedia().PlaySound("beep");
 }
 
 void EditorScene::Draw() {
@@ -62,29 +60,24 @@ void EditorScene::Draw() {
   for (int i = 0; i <= screenHeight / blockSize; ++i)
     DrawLineV({start_x * bl_sz, i * bl_sz}, {end_x * bl_sz, i * bl_sz}, GRAY);
 
-  DrawRectangleRec(player, RED);
-
   DrawRectangleRec({snapped_x, snapped_y, bl_sz, bl_sz}, GRAY);
   EndMode2D();
-  DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
-             Vector2Add(GetMousePosition(), {-44, -24}), 20, 2, BLACK);
+  DrawTextEx(
+    GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
+    Vector2Add(GetMousePosition(), {-44, -24}), 20, 2, BLACK);
 }
 
 void EditorScene::LoadFile() {
-  const char *filter[] = {"*.txt"};
-  const char *file_path
-    = tinyfd_openFileDialog("Select map",
-                            "", // (last used folder)
-                            1, filter, "Text file (*.txt)", 0);
+  const char *filter[]  = {"*.txt"};
+  const char *file_path = tinyfd_openFileDialog(
+    "Select map",
+    "", // (last used folder)
+    1, filter, "Text file (*.txt)", 0);
 
   if (file_path) {
     std::cout << "Trying to open " << file_path << '\n';
     std::ifstream fin(file_path);
     if (fin.is_open()) {
-      int n; 
-      fin >> n;
-      for (int i = 0; i < n; ++i)
-        std::cout << i << ' ';
     } else {
     }
     fin.close();

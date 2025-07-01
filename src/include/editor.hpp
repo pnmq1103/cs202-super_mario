@@ -1,13 +1,9 @@
 #pragma once
-
 #include "scene.hpp"
 
 class EditorScene : public Scene {
 private:
-  static constexpr int blockSize = 16 * 4;
-
-  Rectangle player
-    = {screenWidth / 2.0f, screenHeight / 2.0f, blockSize, blockSize};
+  static constexpr int blockSize = {16 * 4};
 
 public:
   EditorScene();

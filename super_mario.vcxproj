@@ -132,6 +132,7 @@
     <ClCompile Include="src\character_state.cpp" />
     <ClCompile Include="src\editor.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\media.cpp" />
     <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\luigi.cpp" />
     <ClCompile Include="src\mario.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="src\include\editor.hpp" />
     <ClInclude Include="src\include\game.hpp" />
     <ClInclude Include="src\include\luigi.hpp" />
+    <ClInclude Include="src\include\media.hpp" />
     <ClInclude Include="src\include\menu.hpp" />
     <ClInclude Include="src\include\mario.hpp" />
     <ClInclude Include="src\include\scene.hpp" />
@@ -188,6 +190,9 @@
     <None Include=".clang-format" />
     <None Include=".gitignore" />
     <None Include="README.md" />
+    <None Include="res\musics\castle_theme.ogg" />
+    <None Include="res\musics\ground_theme.ogg" />
+    <None Include="res\musics\title.ogg" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\sprites\background\background.txt" />
@@ -208,8 +213,7 @@
     <Text Include="res\sprites\tilesets\tileset_underwater.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="res\music\boss_music.mp3" />
-    <Media Include="res\music\theme_music.mp3" />
+    <Media Include="res\sounds\beep.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

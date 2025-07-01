@@ -13,6 +13,6 @@ int main() {
     app.Draw();
     EndDrawing();
   }
-  CloseWindow();
+
   return 0;
 }

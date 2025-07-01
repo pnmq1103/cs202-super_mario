@@ -1,15 +1,19 @@
+#include <functional>
+#include <raylib.h>
+#include <string>
+#include <utility>
+
 #include "include/button.hpp"
 
 Button::~Button() {
   UnloadTexture(icon_);
 }
 
-void Button::Update() {
-  DrawTexture(icon_, 50, 50, RAYWHITE);
-}
+void Button::Update() {}
 
 void Button::Draw() {
   DrawRectangleRec(bounds_, BLACK);
+  DrawTexture(icon_, 50, 50, RAYWHITE);
 }
 
 ButtonBuild &ButtonBuild::SetAction(std::function<void()> action) {
