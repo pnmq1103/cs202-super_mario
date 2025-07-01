@@ -33,23 +33,29 @@ void GameScene::Init() {
 }
 
 void GameScene::Update() {
-  if (IsKeyPressed(KEY_ESCAPE))
+  if (IsKeyPressed(KEY_ESCAPE)) {
     Application::ChangeScene(nullptr);
-    
+    return; // Early return to prevent use-after-free
+  }
+
   // Switch between Mario and Luigi with TAB key
   if (IsKeyPressed(KEY_TAB) && player_character_) {
     if (player_character_->GetCharacter() == CharacterType::MARIO) {
-      player_character_->SetCharacter(CharacterType::LUIGI, {player_character_->GetRectangle().x, player_character_->GetRectangle().y});
+      player_character_->SetCharacter(
+        CharacterType::LUIGI, {player_character_->GetRectangle().x,
+                               player_character_->GetRectangle().y});
     } else {
-      player_character_->SetCharacter(CharacterType::MARIO, {player_character_->GetRectangle().x, player_character_->GetRectangle().y});
+      player_character_->SetCharacter(
+        CharacterType::MARIO, {player_character_->GetRectangle().x,
+                               player_character_->GetRectangle().y});
     }
   }
-    
+
   // Handle character input through command system
   if (input_command_) {
     input_command_->HandleInput();
   }
-  
+
   // Update character
   if (player_character_) {
     player_character_->Update();
