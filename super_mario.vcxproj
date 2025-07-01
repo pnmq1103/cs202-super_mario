@@ -127,26 +127,33 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\button.cpp" />
     <ClCompile Include="src\character.cpp" />
     <ClCompile Include="src\character_state.cpp" />
     <ClCompile Include="src\editor.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\menu.cpp" />
-    <ClCompile Include="src\normal_mario.cpp" />
+    <ClCompile Include="src\luigi.cpp" />
+    <ClCompile Include="src\mario.cpp" />
     <ClCompile Include="src\scene_stack.cpp" />
+    <ClCompile Include="src\setting.cpp" />
+    <ClCompile Include="tinyfiledialogs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\application.hpp" />
     <ClInclude Include="src\include\application.hpp" />
+    <ClInclude Include="src\include\button.hpp" />
     <ClInclude Include="src\include\character.hpp" />
     <ClInclude Include="src\include\character_state.hpp" />
     <ClInclude Include="src\include\editor.hpp" />
     <ClInclude Include="src\include\game.hpp" />
+    <ClInclude Include="src\include\luigi.hpp" />
     <ClInclude Include="src\include\menu.hpp" />
-    <ClInclude Include="src\include\normal_mario.hpp" />
+    <ClInclude Include="src\include\mario.hpp" />
     <ClInclude Include="src\include\scene.hpp" />
     <ClInclude Include="src\include\scene_stack.hpp" />
     <ClInclude Include="src\include\setting.hpp" />
+    <ClInclude Include="tinyfiledialogs.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\app_icon.png" />
@@ -178,6 +185,7 @@
     <Image Include="res\sprites\tilesets\tileset_underwater.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".clang-format" />
     <None Include=".gitignore" />
     <None Include="README.md" />
   </ItemGroup>

@@ -1,7 +1,7 @@
 # To use this include the file in parent directory
 
 AccessModifierOffset: -2 
-AlignAfterOpenBracket: Align
+AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveAssignments:
     AlignCompound: true
     Enabled: true

@@ -16,6 +16,8 @@ public:
   void Init() override;
   void Update() override;
   void Draw() override;
+
+  void LoadFile();
 };
 
 // Since the original game's resolution is 256x240 pixels

@@ -11,8 +11,10 @@ private:
   Image icon_;
   SceneStack scene_manager_;
 
+private:
+  Application(); // Singleton constructor should be private
+
 public:
-  Application();
   ~Application();
 
   void Init();

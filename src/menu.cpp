@@ -5,6 +5,7 @@
 #include "include/editor.hpp"
 #include "include/game.hpp"
 #include "include/menu.hpp"
+#include "include/setting.hpp"
 
 MenuScene::MenuScene() {
   menu_items_.resize(4);
@@ -44,6 +45,8 @@ void MenuScene::Update() {
             std::make_unique<EditorScene>());
           break;
         case MenuOption::Setting:
+          Application::GetInstance().ChangeScene(
+            std::make_unique<SettingScene>());
           break;
 
         default:
