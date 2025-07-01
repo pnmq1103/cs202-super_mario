@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <string>  
 #include <vector>  
-#include <stack>
 
 //stuff to deal with endianness
 #pragma pack(push, 1)

@@ -135,10 +135,12 @@
     <ClCompile Include="src\character.cpp" />
     <ClCompile Include="src\character_state.cpp" />
     <ClCompile Include="src\editor.cpp" />
+    <ClCompile Include="src\FileHandler.cpp" />
     <ClCompile Include="src\fire_luigi.cpp" />
     <ClCompile Include="src\fire_mario.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\media.cpp" />
+    <ClCompile Include="src\load.cpp" />
     <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\normal_luigi.cpp" />
     <ClCompile Include="src\normal_mario.cpp" />
@@ -158,11 +160,13 @@
     <ClInclude Include="src\include\character.hpp" />
     <ClInclude Include="src\include\character_state.hpp" />
     <ClInclude Include="src\include\editor.hpp" />
+    <ClInclude Include="src\include\FileHandler.hpp" />
     <ClInclude Include="src\include\fire_luigi.hpp" />
     <ClInclude Include="src\include\fire_mario.hpp" />
     <ClInclude Include="src\include\game.hpp" />
     <ClInclude Include="src\include\luigi.hpp" />
     <ClInclude Include="src\include\media.hpp" />
+    <ClInclude Include="src\include\load.hpp" />
     <ClInclude Include="src\include\menu.hpp" />
     <ClInclude Include="src\include\mario.hpp" />
     <ClInclude Include="src\include\scene.hpp" />

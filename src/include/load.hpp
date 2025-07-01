@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 
-//intended for a scene where you can load saved game to continue playing; will also look at later
 class LoadScene : public Scene {
 public:
   LoadScene();
