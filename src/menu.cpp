@@ -21,7 +21,7 @@ MenuScene::~MenuScene() {
 
 void MenuScene::Init() {
   background_ = LoadTexture("res/menu_background.png");
-  Application::GetInstance().GetMedia().PlayMusic("castle_theme");
+  Application::GetInstance().GetMedia().PlayMusic("title");
 }
 
 void MenuScene::Update() {

@@ -1,4 +1,3 @@
-#include "../tinyfiledialogs.h"
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -6,65 +5,104 @@
 #include <raylib.h>
 #include <raymath.h>
 
+#include "../tinyfiledialogs.h"
 #include "include/application.hpp"
 #include "include/editor.hpp"
 
 EditorScene::EditorScene() {
-  // The world position the camera is looking at (center of the view).
-  camera.target = {0.0f, 0.0f};
+  // The world position the camera_ is looking at (center of the view).
+  camera_.target = {0.0f, 0.0f};
 
   // The screen position where the target will appear.
-  camera.offset   = {0.0f, 0.0f};
-  camera.rotation = 0.0f;
-  camera.zoom     = 1.0f;
+  camera_.offset   = {0.0f, 0.0f};
+  camera_.rotation = 0.0f;
+  camera_.zoom     = 1.0f;
 }
 
-EditorScene::~EditorScene() {}
+EditorScene::~EditorScene() {
+  UnloadTexture(ground_tiles_);
+}
 
-void EditorScene::Init() {}
+void EditorScene::Init() {
+  ground_tiles_ = LoadTexture("res/sprites/tilesets/tileset_ground.png");
+
+  std::ifstream fin;
+  fin.open("res/sprites/tilesets/tileset_ground.txt");
+  if (fin.is_open()) {
+    int id;
+    float x, y, w, h;
+    while (fin >> id) {
+      fin >> x >> y >> w >> h;
+      ground_tiles_info_[id] = {x, y, w, h};
+    }
+  }
+}
 
 void EditorScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE))
     Application::ChangeScene(nullptr);
 
   if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-    Vector2 delta = GetMouseDelta();
-    delta         = Vector2Scale(delta, -1.0f / camera.zoom);
-    camera.target = Vector2Add(camera.target, delta);
+    Vector2 delta  = GetMouseDelta();
+    delta          = Vector2Scale(delta, -1.0f / camera_.zoom);
+    camera_.target = Vector2Add(camera_.target, delta);
   }
 
   if (IsKeyDown(KEY_O))
     LoadFile();
-  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
     Application::GetInstance().GetMedia().PlaySound("beep");
+  }
 }
 
 void EditorScene::Draw() {
+  DrawGrid();
+  DrawCursor();
+}
+
+void EditorScene::DrawGrid() {
   float bl_sz = static_cast<float>(blockSize);
 
-  Vector2 camera_topleft = {camera.target.x - camera.offset.x, 0.0f};
+  Vector2 camera_topleft = {camera_.target.x - camera_.offset.x, 0.0f};
   int start_x = std::max(0, static_cast<int>(camera_topleft.x / bl_sz));
-  int end_x   = static_cast<int>(
-    Clamp(std::ceil((camera_topleft.x + screenWidth) / bl_sz), 0.0f, 50.0f));
+  int end_x   = static_cast<int>(Clamp(
+    std::ceil((camera_topleft.x + screenWidth) / bl_sz), 0.0f,
+    static_cast<float>(block_width_)));
 
-  // Snapping grid
-  Vector2 mouse_world_pos = GetScreenToWorld2D(GetMousePosition(), camera);
-
-  float snapped_x = std::floor(mouse_world_pos.x / bl_sz) * bl_sz;
-  float snapped_y = std::floor(mouse_world_pos.y / bl_sz) * bl_sz;
-
-  BeginMode2D(camera);
+  BeginMode2D(camera_);
   for (int i = start_x; i <= end_x; ++i)
     DrawLineV({i * bl_sz, 0.0f}, {i * bl_sz, screenHeight}, LIGHTGRAY);
 
   for (int i = 0; i <= screenHeight / blockSize; ++i)
-    DrawLineV({start_x * bl_sz, i * bl_sz}, {end_x * bl_sz, i * bl_sz}, GRAY);
-
-  DrawRectangleRec({snapped_x, snapped_y, bl_sz, bl_sz}, GRAY);
+    DrawLineV(
+      {start_x * bl_sz, i * bl_sz}, {end_x * bl_sz, i * bl_sz}, LIGHTGRAY);
   EndMode2D();
-  DrawTextEx(
-    GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
-    Vector2Add(GetMousePosition(), {-44, -24}), 20, 2, BLACK);
+}
+
+void EditorScene::DrawCursor() {
+  // Snapping grid
+  Vector2 mouse_world_pos = GetScreenToWorld2D(GetMousePosition(), camera_);
+
+  float bl_sz = static_cast<float>(blockSize);
+  // Border + buffer to prevent flickering
+  float buffer       = bl_sz / 4.0f;
+  Rectangle boundary = {
+    0.0f + buffer, 0.0f + buffer, bl_sz * block_width_ - 2 * buffer,
+    bl_sz * block_height_ - 2 * buffer};
+
+  // Update only if mouse is in the boundary
+  if (CheckCollisionPointRec(mouse_world_pos, boundary)) {
+    snapped_.x = std::floor(mouse_world_pos.x / bl_sz) * bl_sz;
+    snapped_.y = std::floor(mouse_world_pos.y / bl_sz) * bl_sz;
+  }
+
+  Color transparent = {128, 128, 128, 128};
+
+  BeginMode2D(camera_);
+  DrawTexturePro(
+    ground_tiles_, ground_tiles_info_[59],
+    {snapped_.x, snapped_.y, bl_sz, bl_sz}, {0, 0}, 0, transparent);
+  EndMode2D();
 }
 
 void EditorScene::LoadFile() {

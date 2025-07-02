@@ -1,9 +1,11 @@
-﻿#include "../src/include/FileHandler.hpp"
+﻿#include <cstdint>
 #include <fstream>
 #include <string>
 
-//helper functions for endianness handling
-//  Helpers: convert to/from little endian
+#include "include/file_handler.hpp"
+
+// helper functions for endianness handling
+//   Helpers: convert to/from little endian
 uint32_t toLE(uint32_t v) {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
   return v;
@@ -16,18 +18,14 @@ uint32_t fromLE(uint32_t v) {
   return toLE(v); // same op
 }
 
-std::string FileHandler::openFilePath() { 
-    const char * filter[] ={ "*.bin" };
-  if (const char *fn = tinyfd_openFileDialog(
-      "Select data file", 
-      "", 
-      1, 
-      filter,
-      "Binary Files (*.bin)", 0)) {
+std::string FileHandler::openFilePath() {
+  const char *filter[] = {"*.bin"};
+  if (
+    const char *fn = tinyfd_openFileDialog(
+      "Select data file", "", 1, filter, "Binary Files (*.bin)", 0)) {
     return fn;
   }
   return {};
-
 }
 
 bool FileHandler::saveFile(const std::string &path, const SaveDatawMap &sd) {
@@ -52,8 +50,9 @@ bool FileHandler::saveFile(const std::string &path, const SaveDatawMap &sd) {
   uint32_t count = static_cast<uint32_t>(sd.mapTiles.size());
   w32(count);
   if (count > 0) {
-    out.write(reinterpret_cast<const char *>(sd.mapTiles.data()),
-              count * sizeof(tileData));
+    out.write(
+      reinterpret_cast<const char *>(sd.mapTiles.data()),
+      count * sizeof(tileData));
   }
 
   return out.good();
@@ -71,19 +70,19 @@ bool FileHandler::loadFile(const std::string &path, SaveDatawMap &sd) const {
   };
 
   // the rest of the stuff
-  sd.header.highScore = static_cast<int32_t>(r32());
+  sd.header.highScore    = static_cast<int32_t>(r32());
   sd.header.backgroundID = static_cast<int32_t>(r32());
   sd.header.xPos         = static_cast<int32_t>(r32());
   sd.header.yPos         = static_cast<int32_t>(r32());
-  sd.header.mapCols = static_cast<int32_t>(r32());
-  sd.header.mapRows = static_cast<int32_t>(r32());
+  sd.header.mapCols      = static_cast<int32_t>(r32());
+  sd.header.mapRows      = static_cast<int32_t>(r32());
 
   // map tiles
   uint32_t count = r32();
   sd.mapTiles.resize(count);
   if (count > 0) {
-    in.read(reinterpret_cast<char *>(sd.mapTiles.data()),
-            count * sizeof(tileData));
+    in.read(
+      reinterpret_cast<char *>(sd.mapTiles.data()), count * sizeof(tileData));
   }
 
   return in.good();

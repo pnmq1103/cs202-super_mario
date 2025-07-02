@@ -1,9 +1,9 @@
 #pragma once
-
-#include "FileHandler.hpp"
-#include "scene.hpp"
-#include <vector>
 #include <string>
+#include <vector>
+
+#include "file_handler.hpp"
+#include "scene.hpp"
 
 class LoadScene : public Scene {
 public:
@@ -15,7 +15,7 @@ public:
 
 private:
   Rectangle rects[3];
-  SaveData saveData[3];
-  const int buttonWidth          = 256;
-  const int buttonHeight         = 128;
+  SaveDatawMap saveData[3];
+  const int buttonWidth  = 256;
+  const int buttonHeight = 128;
 };
