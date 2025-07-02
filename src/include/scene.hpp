@@ -5,7 +5,7 @@ class Scene {
 protected:
   static constexpr int screenWidth  = {256 * 4};
   static constexpr int screenHeight = {240 * 4};
-  Camera2D camera                   = {0};
+  Camera2D camera_                  = {0};
 
 public:
   virtual ~Scene()      = default;

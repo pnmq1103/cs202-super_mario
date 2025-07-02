@@ -132,8 +132,10 @@
     <ClCompile Include="src\character_state.cpp" />
     <ClCompile Include="src\command.cpp" />
     <ClCompile Include="src\editor.cpp" />
+    <ClCompile Include="src\file_handler.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\media.cpp" />
+    <ClCompile Include="src\load.cpp" />
     <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\luigi.cpp" />
     <ClCompile Include="src\mario.cpp" />
@@ -143,14 +145,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\application.hpp" />
-    <ClInclude Include="src\include\button.hpp" />
     <ClInclude Include="src\include\character.hpp" />
     <ClInclude Include="src\include\character_state.hpp" />
     <ClInclude Include="src\include\command.hpp" />
     <ClInclude Include="src\include\editor.hpp" />
+    <ClInclude Include="src\include\file_handler.hpp" />
     <ClInclude Include="src\include\game.hpp" />
     <ClInclude Include="src\include\luigi.hpp" />
     <ClInclude Include="src\include\media.hpp" />
+    <ClInclude Include="src\include\load.hpp" />
     <ClInclude Include="src\include\menu.hpp" />
     <ClInclude Include="src\include\mario.hpp" />
     <ClInclude Include="src\include\scene.hpp" />
