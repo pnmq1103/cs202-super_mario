@@ -1,4 +1,4 @@
-#include "include/load.hpp"
+#include "../src/include/load.hpp"
 
 LoadScene::LoadScene() = default;
 
@@ -7,22 +7,31 @@ LoadScene::~LoadScene() = default;
 void LoadScene::Init() {
   for (int i = 0; i < 3; ++i) {
     rects[i].x      = 1024 / 2 - 256 / 2;
-    rects[i].y      = 50 + i * (buttonHeight + 50);
+    rects[i].y      = 150 + i * (buttonHeight + 50);
     rects[i].width  = buttonWidth;
     rects[i].height = buttonHeight;
   }
 }
 
 void LoadScene::Update() {
-  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-    Vector2 mousePos = GetMousePosition();
+  int selectedSlot    = 0;
+  bool waitingForPath = false;
+  path;
+  if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    Vector2 m = GetMousePosition();
     for (int i = 0; i < 3; ++i) {
-      if (CheckCollisionPointRec(mousePos, rects[i])) {
-        if (saveData[i].mapTiles.size() > 0) { // check if save data exists
-          // load game data and switch to game scene
-        }
+      if (CheckCollisionPointRec(m, rects[i])) {
+        // fix bug by moving file opening from draw to update
+        selectedSlot   = i;
+        waitingForPath = true;
       }
     }
+  }
+  if (waitingForPath) {
+    FileHandler handler(selectedSlot + 1);
+    path = handler.openFilePath();
+    handler.loadFile(path, saveData[selectedSlot]);
+    waitingForPath = false;
   }
 }
 
@@ -34,7 +43,6 @@ void LoadScene::Draw() {
     // check for existing saved game
     std::string slotText;
     FileHandler handler(i + 1);
-    std::string path = handler.openFilePath();
     if (handler.loadFile(path, saveData[i])) {
       slotText = "Save game no." + std::to_string(i + 1) + " - "
                  + std::to_string(saveData[i].header.highScore);
