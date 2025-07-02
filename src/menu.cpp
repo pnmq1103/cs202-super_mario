@@ -7,7 +7,8 @@
 #include "include/editor.hpp"
 #include "include/game.hpp"
 #include "include/menu.hpp"
-#include "../load.hpp"
+#include "include/setting.hpp"
+#include "include/load.hpp"
 
 MenuScene::MenuScene() {
   menu_items_.resize(4);

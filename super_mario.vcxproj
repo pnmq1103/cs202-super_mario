@@ -125,8 +125,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FileHandler.cpp" />
-    <ClCompile Include="load.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\button.cpp" />
@@ -151,8 +149,6 @@
     <ClCompile Include="tinyfiledialogs.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FileHandler.hpp" />
-    <ClInclude Include="load.hpp" />
     <ClInclude Include="src\application.hpp" />
     <ClInclude Include="src\include\application.hpp" />
     <ClInclude Include="src\include\big_luigi.hpp" />
