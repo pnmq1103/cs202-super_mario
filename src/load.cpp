@@ -1,19 +1,27 @@
-#include "../src/include/load.hpp"
+#include <raylib.h>
+#include <string>
 
-LoadScene::LoadScene() = default;
+#include "include/application.hpp"
+#include "include/load.hpp"
 
-LoadScene::~LoadScene() = default;
-
-void LoadScene::Init() {
+LoadScene::LoadScene() {
   for (int i = 0; i < 3; ++i) {
     rects[i].x      = 1024 / 2 - 256 / 2;
-    rects[i].y      = 150 + i * (buttonHeight + 50);
-    rects[i].width  = buttonWidth;
-    rects[i].height = buttonHeight;
+    rects[i].y      = static_cast<float>(150 + i * (buttonHeight + 50));
+    rects[i].width  = static_cast<float>(buttonWidth);
+    rects[i].height = static_cast<float>(buttonHeight);
   }
 }
 
+LoadScene::~LoadScene() = default;
+
+void LoadScene::Init() {}
+
 void LoadScene::Update() {
+  if (IsKeyPressed(KEY_ESCAPE)) {
+    Application::GetInstance().ChangeScene(nullptr);
+    return;
+  }
   int selectedSlot    = 0;
   bool waitingForPath = false;
   path;

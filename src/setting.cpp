@@ -9,8 +9,10 @@ SettingScene::~SettingScene() {}
 void SettingScene::Init() {}
 
 void SettingScene::Update() {
-  if (IsKeyPressed(KEY_ESCAPE))
+  if (IsKeyPressed(KEY_ESCAPE)) {
     Application::ChangeScene(nullptr);
+    return;
+  }
 }
 
 void SettingScene::Draw() {}

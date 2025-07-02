@@ -12,6 +12,7 @@ struct tileData {
   int x;         // x position of the tile in the map
   int y;         // y position of the tile in the map
 };
+
 struct SaveData {
   int32_t highScore;
   int32_t backgroundID;
@@ -21,16 +22,20 @@ struct SaveData {
   int32_t mapRows;
   int32_t mapCols;
 };
+
 #pragma pack(pop)
 static_assert(
   sizeof(SaveData) == sizeof(int32_t) * 6, "SaveData has unexpected padding");
 struct SaveDatawMap {
-  SaveData header;
+  SaveData header = {};
   // Store each tile x and y positions; must be handled separately
-  std::vector<tileData> mapTiles;
+  std::vector<tileData> mapTiles = {};
 };
 
 class FileHandler {
+private:
+  std::string filename = {"saved_game_slot_"}; // intended for saving game into
+                                               // slots; will look at later
 public:
   explicit FileHandler(int i) {
     filename += std::to_string(i);
@@ -45,10 +50,6 @@ public:
 
   bool saveFile(const std::string &path, const SaveDatawMap &sd);
 
-  std::vector<tileData> parseMapTiles(); // parse all tiles in map into a vector
-                                         // to save/load;  will look at later
-
-private:
-  std::string filename = "saved_game_slot_"; // intended for saving game into
-                                             // slots; will look at later
+  // std::vector<tileData> parseMapTiles();
+  // parse all tiles in map into a vector to save/load;  will look at later
 };

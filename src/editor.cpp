@@ -17,6 +17,14 @@ EditorScene::EditorScene() {
   camera_.offset   = {0.0f, 0.0f};
   camera_.rotation = 0.0f;
   camera_.zoom     = 1.0f;
+
+  // Border + buffer to prevent flickering
+  float bl_sz  = static_cast<float>(blockSize);
+  float buffer = bl_sz / 4.0f;
+
+  boundary_ = {
+    0.0f + buffer, 0.0f + buffer, bl_sz * block_width_ - 2 * buffer,
+    bl_sz * block_height_ - 2 * buffer};
 }
 
 EditorScene::~EditorScene() {
@@ -39,8 +47,10 @@ void EditorScene::Init() {
 }
 
 void EditorScene::Update() {
-  if (IsKeyPressed(KEY_ESCAPE))
+  if (IsKeyPressed(KEY_ESCAPE)) {
     Application::ChangeScene(nullptr);
+    return;
+  }
 
   if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     Vector2 delta  = GetMouseDelta();
@@ -84,14 +94,8 @@ void EditorScene::DrawCursor() {
   Vector2 mouse_world_pos = GetScreenToWorld2D(GetMousePosition(), camera_);
 
   float bl_sz = static_cast<float>(blockSize);
-  // Border + buffer to prevent flickering
-  float buffer       = bl_sz / 4.0f;
-  Rectangle boundary = {
-    0.0f + buffer, 0.0f + buffer, bl_sz * block_width_ - 2 * buffer,
-    bl_sz * block_height_ - 2 * buffer};
-
   // Update only if mouse is in the boundary
-  if (CheckCollisionPointRec(mouse_world_pos, boundary)) {
+  if (CheckCollisionPointRec(mouse_world_pos, boundary_)) {
     snapped_.x = std::floor(mouse_world_pos.x / bl_sz) * bl_sz;
     snapped_.y = std::floor(mouse_world_pos.y / bl_sz) * bl_sz;
   }

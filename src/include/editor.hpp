@@ -13,7 +13,8 @@ private:
   Texture ground_tiles_ = {};
   std::unordered_map<int, Rectangle> ground_tiles_info_;
 
-  Vector2 snapped_ = {0.0f, 0.0f};
+  Vector2 snapped_    = {0.0f, 0.0f};
+  Rectangle boundary_ = {};
 
 public:
   EditorScene();

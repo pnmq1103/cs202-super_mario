@@ -1,14 +1,14 @@
 #pragma once
 
-#include "scene.hpp"
 #include "character.hpp"
 #include "command.hpp"
+#include "scene.hpp"
 
 class GameScene : public Scene {
 private:
-  Character* player_character_;
-  Command* input_command_;
-  
+  Character *player_character_ = {nullptr};
+  Command *input_command_      = {nullptr};
+
 public:
   GameScene();
   ~GameScene();

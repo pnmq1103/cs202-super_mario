@@ -1,11 +1,11 @@
 #include <raylib.h>
 
 #include "include/application.hpp"
-#include "include/game.hpp"
 #include "include/character.hpp"
 #include "include/command.hpp"
+#include "include/game.hpp"
 
-GameScene::GameScene() : player_character_(nullptr), input_command_(nullptr) {}
+GameScene::GameScene() {}
 
 GameScene::~GameScene() {
   // Set pointers to nullptr first to prevent further use
@@ -23,11 +23,12 @@ GameScene::~GameScene() {
 
 void GameScene::Init() {
   Application::GetInstance().GetMedia().PlayMusic("ground_theme");
-  
+
   // Create player character (Mario by default)
   player_character_ = new Character(4.0f); // Scale factor
-  player_character_->SetCharacter(CharacterType::MARIO, {100.0f, 500.0f}); // Starting position
-  
+  player_character_->SetCharacter(
+    CharacterType::MARIO, {100.0f, 500.0f}); // Starting position
+
   // Create command handler and link it to the character
   input_command_ = new Command(player_character_);
 }
@@ -68,7 +69,7 @@ void GameScene::Draw() {
   if (player_character_) {
     player_character_->Draw();
   }
-  
+
   // Draw instructions
   DrawText("Controls:", 10, 30, 20, DARKBLUE);
   DrawText("Arrow Keys/WASD: Move", 10, 55, 20, DARKBLUE);
