@@ -8,10 +8,11 @@
 #include "include/game.hpp"
 #include "include/menu.hpp"
 #include "include/setting.hpp"
+#include "include/load.hpp"
 
 MenuScene::MenuScene() {
   menu_items_.resize(4);
-  menu_items_ = {"Play", "Character", "Editor", "Setting"};
+  menu_items_ = {"Play", "Load", "Character", "Editor", "Setting"};
 }
 
 MenuScene::~MenuScene() {
@@ -40,6 +41,9 @@ void MenuScene::Update() {
       switch (selected_idx_) {
         case MenuOption::Game:
           Application::GetInstance().ChangeScene(std::make_unique<GameScene>());
+          break;
+        case MenuOption::Load:
+            Application::GetInstance().ChangeScene(std::make_unique<LoadScene>());
           break;
         case MenuOption::Character:
           break;
