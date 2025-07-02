@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FileHandler.hpp"
-#include "src/include/scene.hpp"
+#include "scene.hpp"
 #include <vector>
 #include <string>
 

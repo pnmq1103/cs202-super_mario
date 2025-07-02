@@ -1,4 +1,4 @@
-﻿#include "FileHandler.hpp"
+﻿#include "../src/include/FileHandler.hpp"
 #include <fstream>
 #include <string>
 
@@ -42,10 +42,9 @@ bool FileHandler::saveFile(const std::string &path, const SaveDatawMap &sd) {
 
   // write the rest
   w32(static_cast<uint32_t>(sd.header.highScore));
-  out.write(reinterpret_cast<const char *>(&sd.header.xPos),
-            sizeof(sd.header.xPos));
-  out.write(reinterpret_cast<const char *>(&sd.header.yPos),
-            sizeof(sd.header.yPos));
+  w32(static_cast<uint32_t>(sd.header.backgroundID));
+  w32(static_cast<uint32_t>(sd.header.xPos));
+  w32(static_cast<uint32_t>(sd.header.yPos));
   w32(static_cast<uint32_t>(sd.header.mapCols));
   w32(static_cast<uint32_t>(sd.header.mapRows));
 
@@ -73,8 +72,9 @@ bool FileHandler::loadFile(const std::string &path, SaveDatawMap &sd) const {
 
   // the rest of the stuff
   sd.header.highScore = static_cast<int32_t>(r32());
-  in.read(reinterpret_cast<char *>(&sd.header.xPos), sizeof(sd.header.xPos));
-  in.read(reinterpret_cast<char *>(&sd.header.yPos), sizeof(sd.header.yPos));
+  sd.header.backgroundID = static_cast<int32_t>(r32());
+  sd.header.xPos         = static_cast<int32_t>(r32());
+  sd.header.yPos         = static_cast<int32_t>(r32());
   sd.header.mapCols = static_cast<int32_t>(r32());
   sd.header.mapRows = static_cast<int32_t>(r32());
 
