@@ -39,21 +39,6 @@
     <ClCompile Include="src\scene_stack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\big_luigi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\big_mario.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fire_luigi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fire_mario.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\normal_luigi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\setting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -73,6 +58,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\file_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\load.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,84 +110,18 @@
     <ClInclude Include="src\include\command.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\include\button.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\file_handler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\load.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\menu.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\app_icon.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\menu_background.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\tilesets\tileset_ground.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\tilesets\tileset_sky.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\tilesets\tileset_underground.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\tilesets\tileset_underwater.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\icons\icon_day.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\icons\icon_sky.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\icons\icon_underground.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\icons\icon_underwater.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\icons\objects.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\bowser.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\enemies.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\luigi_normal.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\luigi_normal_carry_shoe_shell.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\luigi_starup.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\luigi_starup_carry_shoe_shell.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\luigi_starup_carry_shoe_shell_fire.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\luigi_starup_fire.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\mario_normal.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\mario_normal_carry_shoe_shell.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\mario_starup.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\mario_starup_carry_shoe_shell.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\mario_starup_carry_shoe_shell_fire.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\sprites\characters\mario_starup_fire.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\sprites\background\background_spritesheet.png">
@@ -207,31 +132,8 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include=".clang-format" />
-    <None Include="res\musics\title.ogg" />
-    <None Include="res\musics\castle_theme.ogg" />
-    <None Include="res\musics\ground_theme.ogg" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="res\sprites\tilesets\tileset_ground.txt" />
-    <Text Include="res\sprites\tilesets\tileset_sky.txt" />
-    <Text Include="res\sprites\tilesets\tileset_underground.txt" />
-    <Text Include="res\sprites\tilesets\tileset_underwater.txt" />
-    <Text Include="res\sprites\icons\icon_day.txt" />
-    <Text Include="res\sprites\icons\icon_sky.txt" />
-    <Text Include="res\sprites\icons\icon_underground.txt" />
-    <Text Include="res\sprites\icons\icon_underwater.txt" />
-    <Text Include="res\sprites\icons\objects.txt" />
-    <Text Include="res\sprites\characters\bowser.txt" />
-    <Text Include="res\sprites\characters\enemies.txt" />
-    <Text Include="res\sprites\characters\normal.txt" />
-    <Text Include="res\sprites\characters\normal_carry_shoe_shell.txt" />
-    <Text Include="res\sprites\characters\starup.txt" />
-    <Text Include="res\sprites\characters\starup_carry_shoe_shell.txt" />
     <Text Include="res\sprites\background\background.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="res\sounds\beep.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
   </ItemGroup>
 </Project>

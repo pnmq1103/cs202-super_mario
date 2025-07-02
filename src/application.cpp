@@ -10,11 +10,11 @@
 Application::Application() {
   SetTargetFPS(120);
   SetConfigFlags(FLAG_MSAA_4X_HINT);
-  icon_ = LoadImage("res/app_icon.png");
   scene_manager_.Push(std::make_unique<MenuScene>());
 }
 
 Application::~Application() {
+  UnloadTexture(cursor_);
   UnloadImage(icon_);
   CloseAudioDevice();
   CloseWindow();
@@ -23,8 +23,11 @@ Application::~Application() {
 void Application::Init() {
   InitWindow(screenWidth, screenHeight, "Mario");
   InitAudioDevice();
-  SetWindowIcon(icon_);
   SetExitKey(KEY_ZERO);
+  icon_ = LoadImage("res/app_icon.png");
+  SetWindowIcon(icon_);
+  cursor_ = LoadTexture("res/sprites/cursors/hand_point.png");
+  HideCursor();
   media_.Init();
   scene_manager_.Init();
 }
@@ -37,6 +40,7 @@ void Application::Update() {
 void Application::Draw() {
   scene_manager_.Draw();
   DrawFPS(15, 15);
+  DrawTextureRec(cursor_, {0, 0, 64, 64}, GetMousePosition(), WHITE);
 }
 
 Application &Application::GetInstance() {

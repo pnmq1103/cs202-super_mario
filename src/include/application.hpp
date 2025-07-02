@@ -14,6 +14,7 @@ private:
   Image icon_ = {};
   SceneStack scene_manager_;
   Media media_;
+  Texture cursor_ = {};
 
 private:
   Application(); // Singleton constructor should be private
