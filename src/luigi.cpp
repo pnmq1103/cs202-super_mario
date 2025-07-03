@@ -29,7 +29,9 @@ NormalLuigi::NormalLuigi(
   frame = frame_list[0];
 };
 
-NormalLuigi::~NormalLuigi() {}
+NormalLuigi::~NormalLuigi() {
+  UnloadTexture(pre_texture_);
+}
 
 void NormalLuigi::Die() {
   if (disabled)
@@ -113,7 +115,9 @@ BigLuigi::BigLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran)
   UnloadImage(image);
 }
 
-BigLuigi::~BigLuigi() {}
+BigLuigi::~BigLuigi() {
+  UnloadTexture(pre_texture_);
+}
 
 void BigLuigi::Die() {
   if (disabled)
@@ -196,7 +200,9 @@ FireLuigi::FireLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran)
   frame   = frame_list[0];
 };
 
-FireLuigi::~FireLuigi() {}
+FireLuigi::~FireLuigi() {
+  UnloadTexture(pre_texture_);
+}
 
 void FireLuigi::Die() {
   if (disabled)

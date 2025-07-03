@@ -29,7 +29,9 @@ NormalMario::NormalMario(
   frame = frame_list[0];
 };
 
-NormalMario::~NormalMario() {}
+NormalMario::~NormalMario() {
+  UnloadTexture(pre_texture_);
+}
 
 void NormalMario::Die() {
   if (disabled)
@@ -113,7 +115,9 @@ BigMario::BigMario(Character *Ncontext, float Nscale, bool Nleft, bool tran)
   UnloadImage(image);
 }
 
-BigMario::~BigMario() {}
+BigMario::~BigMario() {
+  UnloadTexture(pre_texture_);
+}
 
 void BigMario::Die() {
   if (disabled)
@@ -198,7 +202,9 @@ FireMario::FireMario(Character *Ncontext, float Nscale, bool Nleft, bool tran)
   frame   = frame_list[0];
 };
 
-FireMario::~FireMario() {}
+FireMario::~FireMario() {
+  UnloadTexture(pre_texture_);
+}
 
 void FireMario::Die() {
   if (disabled)
