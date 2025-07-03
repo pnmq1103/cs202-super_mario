@@ -4,6 +4,7 @@
 #include "include/character.hpp"
 #include "include/command.hpp"
 #include "include/game.hpp"
+#include "include/gamemanaging.hpp"
 
 GameScene::GameScene() {}
 
@@ -31,6 +32,9 @@ void GameScene::Init() {
 
   // Create command handler and link it to the character
   input_command_ = new Command(player_character_);
+
+  // Load level (stub: replace with actual file path)
+  game_manager_.LoadLevel("res/levels/level1.dat");
 }
 
 void GameScene::Update() {
@@ -62,13 +66,22 @@ void GameScene::Update() {
     player_character_->Update();
     player_character_->SetFrameCount();
   }
+
+  // Update game manager (time, lives, etc)
+  game_manager_.UpdateTime();
 }
 
 void GameScene::Draw() {
+  // Draw level (background, blocks, enemies)
+  game_manager_.DrawLevel();
+
   // Draw character
   if (player_character_) {
     player_character_->Draw();
   }
+
+  // Draw stats (lives, points, time)
+  game_manager_.DrawStats();
 
   // Draw instructions
   DrawText("Controls:", 10, 30, 20, DARKBLUE);

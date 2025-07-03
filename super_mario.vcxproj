@@ -136,6 +136,7 @@
     <ClCompile Include="src\file_handler.cpp" />
     <ClCompile Include="src\fireball.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\gamemanaging.cpp" />
     <ClCompile Include="src\media.cpp" />
     <ClCompile Include="src\load.cpp" />
     <ClCompile Include="src\menu.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="src\include\file_handler.hpp" />
     <ClInclude Include="src\include\fireball.hpp" />
     <ClInclude Include="src\include\game.hpp" />
+    <ClInclude Include="src\include\gamemanaging.hpp" />
     <ClInclude Include="src\include\luigi.hpp" />
     <ClInclude Include="src\include\media.hpp" />
     <ClInclude Include="src\include\load.hpp" />
