@@ -1,4 +1,4 @@
-#include <raylib.h>
+﻿#include <raylib.h>
 
 #include "include/application.hpp"
 #include "include/character.hpp"
@@ -83,11 +83,14 @@ void GameScene::Draw() {
   // Draw stats (lives, points, time)
   game_manager_.DrawStats();
 
-  // Draw instructions
-  DrawText("Controls:", 10, 30, 20, DARKBLUE);
-  DrawText("Arrow Keys/WASD: Move", 10, 55, 20, DARKBLUE);
-  DrawText("Space/Up/W: Jump", 10, 80, 20, DARKBLUE);
-  DrawText("X/Ctrl: Fireball (Fire mode only)", 10, 105, 20, DARKBLUE);
-  DrawText("TAB: Switch Mario/Luigi", 10, 130, 20, DARKBLUE);
-  DrawText("ESC: Back to menu", 10, 155, 20, DARKBLUE);
+  
+  int controlsStartY = 110;
+  int lineSpacing    = 25; 
+
+  DrawText("Controls:", 10, controlsStartY + lineSpacing * 0, 20, DARKBLUE);
+  DrawText("Arrow Keys/WASD: Move", 10, controlsStartY + lineSpacing * 1, 20,DARKBLUE);
+  DrawText("Space/Up/W: Jump", 10, controlsStartY + lineSpacing * 2, 20, DARKBLUE);
+  DrawText("X/Ctrl: Fireball (Fire mode only)", 10, controlsStartY + lineSpacing * 3,20, DARKBLUE);
+  DrawText("TAB: Switch Mario/Luigi", 10, controlsStartY + lineSpacing * 4, 20,DARKBLUE);
+  DrawText("ESC: Back to menu", 10, controlsStartY + lineSpacing * 5, 20, DARKBLUE);
 }

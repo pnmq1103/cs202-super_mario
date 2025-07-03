@@ -48,9 +48,9 @@ void GameManaging::DrawLevel() {
 
 void GameManaging::DrawStats() {
     // Display lives, points, and time using Raylib's DrawText
-    DrawText(TextFormat("Lives: %d", lives_), 10, 10, 24, WHITE);
-    DrawText(TextFormat("Points: %d", points_), 10, 40, 24, YELLOW);
-    DrawText(TextFormat("Time: %d", countdownSeconds_ - (int)gameTime_), 10, 70, 24, GREEN);
+    DrawText(TextFormat("Lives: %d", lives_), 10, 10, 24, RED);
+    DrawText(TextFormat("Points: %d", points_), 10, 40, 24, RED);
+    DrawText(TextFormat("Time: %d", countdownSeconds_ - (int)gameTime_), 10, 70, 24, RED);
 }
 
 void GameManaging::UpdateTime() {
