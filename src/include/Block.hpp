@@ -26,6 +26,8 @@ public:
     Block(Vector2 pos, int w, int h, BlockType type, bool solid = true, int spriteId = 0);
     virtual ~Block() = default;
 
+    virtual Block* clone() const = 0;
+    
     virtual void update(float dt) {}       
     virtual void onHit();              
 

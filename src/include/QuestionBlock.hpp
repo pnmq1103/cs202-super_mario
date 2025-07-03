@@ -24,4 +24,6 @@ public:
 
     bool isUsed() const;
     PowerUpType getItem() const;
+
+    Block* clone() const override;
 };

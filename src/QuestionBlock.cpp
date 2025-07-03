@@ -30,3 +30,7 @@ bool QuestionBlock::isUsed() const {
 PowerUpType QuestionBlock::getItem() const {
     return item;
 }
+
+Block* QuestionBlock::clone() const {
+    return new QuestionBlock(*this);
+}
