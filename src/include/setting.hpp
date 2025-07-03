@@ -1,5 +1,6 @@
 #pragma once
 
+#include "button.hpp"
 #include "scene.hpp"
 
 class SettingScene : public Scene {

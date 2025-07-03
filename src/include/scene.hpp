@@ -1,5 +1,7 @@
 #pragma once
 #include <raylib.h>
+#include <string>
+#include <unordered_map>
 
 class Scene {
 protected:
@@ -8,10 +10,14 @@ protected:
   Camera2D camera_                  = {0};
 
 public:
-  virtual ~Scene()      = default;
+  virtual ~Scene() = default;
+
   virtual void Init()   = 0;
   virtual void Update() = 0;
   virtual void Draw()   = 0;
+
+  void ReadSpriteInfo(
+    const std::string &path, std::unordered_map<int, Rectangle> &sprites);
 };
 
 // Constructor should be used to initialize members only

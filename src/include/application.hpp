@@ -16,6 +16,8 @@ private:
   Media media_;
   Texture cursor_ = {};
 
+  bool exit_window_ = {false};
+
 private:
   Application(); // Singleton constructor should be private
 
@@ -28,5 +30,8 @@ public:
 
   static Application &GetInstance();
   static void ChangeScene(std::unique_ptr<Scene> new_scene);
+  static void Close();
+
+  bool ShouldClose();
   Media &GetMedia();
 };

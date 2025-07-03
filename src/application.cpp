@@ -62,6 +62,14 @@ void Application::ChangeScene(std::unique_ptr<Scene> new_scene) {
   }
 }
 
+void Application::Close() {
+  Application::GetInstance().exit_window_ = true;
+}
+
+bool Application::ShouldClose() {
+  return exit_window_;
+}
+
 Media &Application::GetMedia() {
   return media_;
 }

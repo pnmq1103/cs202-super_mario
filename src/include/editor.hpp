@@ -11,8 +11,8 @@ private:
   int block_width_  = {50};
   int block_height_ = {15};
 
-  Vector2 mouse_world_pos_ = {0.0f, 0.0f};
-  Vector2 snapped_         = {0.0f, 0.0f};
+  Vector2 mouse_world_pos_ = {0, 0};
+  Vector2 snapped_         = {0, 0};
   Rectangle boundary_      = {};
 
   Texture crosshair_    = {};
@@ -27,6 +27,8 @@ public:
   void Init() override;
   void Update() override;
   void Draw() override;
+
+  void PlaceBlock();
 
   void DrawGrid();
   void DrawCursor();

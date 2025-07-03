@@ -1,4 +1,5 @@
 #include <functional>
+#include <iostream>
 #include <raylib.h>
 #include <string>
 #include <utility>
@@ -6,36 +7,28 @@
 #include "include/button.hpp"
 
 Button::~Button() {
-  UnloadTexture(icon_);
+  if (IsTextureValid(icon_))
+    UnloadTexture(icon_);
 }
 
-void Button::Update() {}
+Button::Button(
+  std::function<void()> action, Rectangle source, Rectangle bounds,
+  const std::string &path)
+    : action_(action), source_(source), bounds_(bounds) {
+  icon_ = LoadTexture(path.c_str());
+}
+
+void Button::Update() {
+  if (
+    IsMouseButtonDown(MOUSE_BUTTON_LEFT)
+    && CheckCollisionPointRec(GetMousePosition(), bounds_)) {
+    if (action_ != nullptr)
+      action_();
+    else
+      throw std::invalid_argument("nullptr");
+  }
+}
 
 void Button::Draw() {
-  DrawRectangleRec(bounds_, BLACK);
-  DrawTexture(icon_, 50, 50, RAYWHITE);
-}
-
-ButtonBuild &ButtonBuild::SetAction(std::function<void()> action) {
-  button_.action_ = std::move(action);
-  return *this;
-}
-
-ButtonBuild &ButtonBuild::SetBounds(Rectangle bounds) {
-  button_.bounds_ = bounds;
-  return *this;
-}
-
-ButtonBuild &ButtonBuild::SetLabel(const std::string &label) {
-  button_.label_ = label;
-  return *this;
-}
-
-ButtonBuild &ButtonBuild::SetIcon(const std::string &path) {
-  button_.icon_ = LoadTexture(path.c_str());
-  return *this;
-}
-
-Button ButtonBuild::Build() {
-  return std::move(button_);
+  DrawTexturePro(icon_, source_, bounds_, {0, 0}, 0.0f, WHITE);
 }

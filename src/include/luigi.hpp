@@ -6,8 +6,8 @@
 
 class NormalLuigi : public CharacterState {
 private:
-  Texture pre_texture_;
-  Rectangle pre_frame_;
+  Texture pre_texture_ = {};
+  Rectangle pre_frame_ = {};
 
 public:
   NormalLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran);
@@ -21,8 +21,8 @@ public:
 
 class BigLuigi : public CharacterState {
 private:
-  Texture pre_texture_;
-  Rectangle pre_frame_;
+  Texture pre_texture_ = {};
+  Rectangle pre_frame_ = {};
 
 public:
   BigLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran);
@@ -36,8 +36,8 @@ public:
 
 class FireLuigi : public CharacterState {
 private:
-  Texture pre_texture_;
-  Rectangle pre_frame_;
+  Texture pre_texture_ = {};
+  Rectangle pre_frame_ = {};
 
 public:
   FireLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran);

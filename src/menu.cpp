@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 #include <memory>
 #include <raylib.h>
 #include <stdexcept>
@@ -12,7 +13,8 @@
 
 MenuScene::MenuScene() {
   menu_items_.resize(4);
-  menu_items_ = {"Play", "Load", "Editor", "Setting"};
+  menu_items_ = {"Play", "Load", "Editor", "Exit"};
+  buttons_.reserve(1);
 }
 
 MenuScene::~MenuScene() {
@@ -22,6 +24,11 @@ MenuScene::~MenuScene() {
 void MenuScene::Init() {
   background_ = LoadTexture("res/menu_background.png");
   Application::GetInstance().GetMedia().PlayMusic("title");
+
+  Scene::ReadSpriteInfo(
+    "res/sprites/user_interface/buttons.txt", buttons_info_);
+  std::cout << buttons_info_[15].x << ' ' << buttons_info_[15].y << '\n';
+  CreateButtons();
 }
 
 void MenuScene::Update() {
@@ -49,9 +56,8 @@ void MenuScene::Update() {
           Application::GetInstance().ChangeScene(
             std::make_unique<EditorScene>());
           break;
-        case MenuOption::Setting:
-          Application::GetInstance().ChangeScene(
-            std::make_unique<SettingScene>());
+        case MenuOption::Exit:
+          Application::GetInstance().Close();
           break;
 
         default:
@@ -60,6 +66,10 @@ void MenuScene::Update() {
       }
     }
   }
+
+  // Update buttons
+  for (size_t i = 0; i < buttons_.size(); ++i)
+    buttons_[i].Update();
 }
 
 void MenuScene::Draw() {
@@ -111,4 +121,18 @@ void MenuScene::Draw() {
       GetFontDefault(), option, {x, y}, font_size * static_cast<float>(scale),
       3.0f, color);
   }
+
+  // Draw buttons
+  for (size_t i = 0; i < buttons_.size(); ++i)
+    buttons_[i].Draw();
+}
+
+void MenuScene::CreateButtons() {
+  Rectangle dest = {screenWidth - 100, screenHeight - 100, 48, 48};
+  Rectangle src  = {32, 48, 16, 16};
+  buttons_.emplace_back(
+    []() {
+      Application::GetInstance().ChangeScene(std::make_unique<SettingScene>());
+    },
+    src, dest, "res/sprites/user_interface/buttons.png");
 }
