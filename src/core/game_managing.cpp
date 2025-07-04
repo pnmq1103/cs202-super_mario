@@ -1,7 +1,7 @@
-#include "include/game_managing.hpp"
-#include "include/file_handler.hpp"
-#include <cstring>
+#include "../include/core/game_managing.hpp"
+#include "../include/core/file_handler.hpp"
 #include <raylib.h>
+#include <cstring>
 
 GameManaging::GameManaging() {
   lives_            = 3;
@@ -48,11 +48,11 @@ void GameManaging::DrawLevel() {
 
 void GameManaging::DrawStats() {
   // Display lives, points, and time using Raylib's DrawText
-  DrawText(TextFormat("Lives: %d", lives_), 10, 10, 24, RED);
-  DrawText(TextFormat("Points: %d", points_), 10, 40, 24, RED);
+  DrawText(TextFormat("Lives: %d", lives_), 10, 10, 24, WHITE);
+  DrawText(TextFormat("Points: %d", points_), 10, 40, 24, YELLOW);
   DrawText(
     TextFormat("Time: %d", countdownSeconds_ - (int)gameTime_), 10, 70, 24,
-    RED);
+    GREEN);
 }
 
 void GameManaging::UpdateTime() {
