@@ -18,144 +18,180 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\application.cpp">
+    <ClCompile Include="src\core\application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\character_state.cpp">
+    <ClCompile Include="src\characters\character_state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\character.cpp">
+    <ClCompile Include="src\characters\character.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\editor.cpp">
+    <ClCompile Include="src\core\editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\menu.cpp">
+    <ClCompile Include="src\core\menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\game.cpp">
+    <ClCompile Include="src\core\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene_stack.cpp">
+    <ClCompile Include="src\core\scene_stack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\setting.cpp">
+    <ClCompile Include="src\core\setting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\button.cpp">
+    <ClCompile Include="src\core\button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tinyfiledialogs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\luigi.cpp">
+    <ClCompile Include="src\characters\luigi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mario.cpp">
+    <ClCompile Include="src\characters\mario.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\media.cpp">
+    <ClCompile Include="src\core\media.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\command.cpp">
+    <ClCompile Include="src\core\command.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\file_handler.cpp">
+    <ClCompile Include="src\core\file_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\load.cpp">
+    <ClCompile Include="src\core\load.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\block.cpp">
+    <ClCompile Include="src\blocks\block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\question_block.cpp">
+    <ClCompile Include="src\blocks\question_block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\static_block.cpp">
+    <ClCompile Include="src\blocks\static_block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene.cpp">
+    <ClCompile Include="src\core\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\fireball.cpp">
+    <ClCompile Include="src\characters\fireball.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\projectile.cpp">
+    <ClCompile Include="src\characters\projectile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gamemanaging.cpp">
+    <ClCompile Include="src\enemies\bowser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enemies\enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\game_managing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enemies\goomba.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enemies\koopa_troopa.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enemies\piranha_plant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\credit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\include\application.hpp">
+    <ClInclude Include="src\include\core\application.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\character.hpp">
+    <ClInclude Include="src\include\characters\character.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\character_state.hpp">
+    <ClInclude Include="src\include\characters\character_state.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\scene.hpp">
+    <ClInclude Include="src\include\core\scene.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\editor.hpp">
+    <ClInclude Include="src\include\core\editor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\menu.hpp">
+    <ClInclude Include="src\include\core\menu.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\game.hpp">
+    <ClInclude Include="src\include\core\game.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\setting.hpp">
+    <ClInclude Include="src\include\core\setting.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\scene_stack.hpp">
+    <ClInclude Include="src\include\core\scene_stack.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tinyfiledialogs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\mario.hpp">
+    <ClInclude Include="src\include\characters\mario.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\luigi.hpp">
+    <ClInclude Include="src\include\characters\luigi.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\media.hpp">
+    <ClInclude Include="src\include\core\media.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\command.hpp">
+    <ClInclude Include="src\include\core\command.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\button.hpp">
+    <ClInclude Include="src\include\core\button.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\file_handler.hpp">
+    <ClInclude Include="src\include\core\file_handler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\load.hpp">
+    <ClInclude Include="src\include\core\load.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\block.hpp">
+    <ClInclude Include="src\include\blocks\block.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\question_block.hpp">
+    <ClInclude Include="src\include\blocks\question_block.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\static_block.hpp">
+    <ClInclude Include="src\include\blocks\static_block.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\fireball.hpp">
+    <ClInclude Include="src\include\characters\fireball.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\projectile.hpp">
+    <ClInclude Include="src\include\characters\projectile.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\gamemanaging.hpp">
+    <ClInclude Include="src\include\enemies\bowser.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\enemies\enemy.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\core\game_managing.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\enemies\goomba.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\enemies\koopa_troopa.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\enemies\piranha_plant.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\core\credit.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

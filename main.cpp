@@ -1,4 +1,4 @@
-#include "src/include/application.hpp"
+#include "src/include/core/application.hpp"
 #include <raylib.h>
 
 int main() {
