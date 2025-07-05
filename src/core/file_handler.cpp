@@ -28,7 +28,7 @@ std::string FileHandler::openFilePath() {
   return {};
 }
 
-std::string FileHandler::openSavePath(const std::string &defaultName = "untitled.bin") {
+std::string FileHandler::openSavePath(const std::string& defaultName) {
   const char *filter[] = {"*.bin"};
   const char *fn       = tinyfd_saveFileDialog(
     "Save data file as…",

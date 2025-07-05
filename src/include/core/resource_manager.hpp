@@ -1,6 +1,6 @@
 #pragma once
 #include "raylib.h"
-#include "src\include\core\file_handler.hpp"
+#include "..\include\core\file_handler.hpp"
 #include <map>
 #include <string>
 #include <fstream>
@@ -41,7 +41,7 @@ class ResManager {
 
     SaveDatawMap loadResourcesFromFile();
 
-    static void saveResourcesToFile(const SaveDatawMap& data);
+    static bool saveResourcesToFile(const SaveDatawMap& data);
 
     static Texture2D getCharacter(std::string key);
 

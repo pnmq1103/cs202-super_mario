@@ -46,6 +46,8 @@ public:
 
   static std::string openFilePath();
 
+  std::string openSavePath(const std::string &defaultName = "untitled.bin");
+
   bool loadFile(const std::string &path, SaveDatawMap &sd) const;
 
   bool saveFile(const std::string &path, const SaveDatawMap &sd);

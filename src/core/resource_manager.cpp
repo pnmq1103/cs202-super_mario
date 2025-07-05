@@ -1,4 +1,9 @@
-#include "resource_manager.hpp"
+#include "..\include\core\resource_manager.hpp"
+
+std::map<std::string, Texture2D> ResManager::characters;
+std::map<std::string, Texture2D> ResManager::blocks;
+std::map<std::string, Music> ResManager::musics;
+std::map<std::string, Sound> ResManager::sounds;
 
 ResManager::ResManager() {
   loadCharacters();
@@ -16,7 +21,7 @@ void ResManager::loadTexture(
   std::ifstream in(coorPath);
 
   if (!in.is_open())
-    std::cerr << "File cannot be opened." << std::endl;
+    throw std::runtime_error("Could not open " + coorPath);
 
   std::string line;
   while (std::getline(in, line)) {
@@ -136,8 +141,8 @@ void ResManager::loadBlocks() {
   loadTexture(
     tmpImgPath + "objects.png", tmpCoorPath + "objects.txt", "objects");
 
-  std::string tmpImgPath  = imgPath + "\\tileset\\";
-  std::string tmpCoorPath = coorPath + "\\tileset\\";
+  tmpImgPath  = imgPath + "\\tileset\\";
+  tmpCoorPath = coorPath + "\\tileset\\";
 
   loadTexture(
     tmpImgPath + "tileset_ground.png", tmpCoorPath + "tileset_ground.txt",
@@ -155,12 +160,12 @@ void ResManager::loadBlocks() {
     tmpImgPath + "tileset_underwater.png",
     tmpCoorPath + "tileset_underwater.txt", "tileset_underwater");
 
-  std::string tmpImgPath  = imgPath + "\\user_interface\\";
-  std::string tmpCoorPath = coorPath + "\\user_interface\\";
+  tmpImgPath  = imgPath + "\\user_interface\\";
+  tmpCoorPath = coorPath + "\\user_interface\\";
 
   loadTexture(tmpImgPath + "buttons.png", tmpCoorPath + "buttons.txt", "UI");
 
-  characters.merge(tempText);
+  blocks.merge(tempText);
   tempText.clear();
 }
 
