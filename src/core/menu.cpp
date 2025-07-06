@@ -29,6 +29,7 @@ void MenuScene::Init() {
 
   Scene::ReadSpriteInfo(
     "res/sprites/user_interface/buttons.txt", buttons_info_);
+
   CreateButtons();
 }
 
@@ -68,9 +69,7 @@ void MenuScene::Update() {
     }
   }
 
-  // Update buttons
-  for (size_t i = 0; i < buttons_.size(); ++i)
-    buttons_[i].Update();
+  UpdateButtons();
 }
 
 void MenuScene::Draw() {
@@ -87,14 +86,18 @@ void MenuScene::Draw() {
   y                  = (screenHeight - title_size.y) / 6.0f;
   DrawTextEx(GetFontDefault(), title, {x, y}, font_size, 1.0f, RAYWHITE);
 
-  // Draw options
-  font_size = 40;
+  DrawOptions();
+  DrawButtons();
+}
+
+void MenuScene::DrawOptions() {
+  float font_size = 40;
   for (size_t i = 0; i < menu_items_.size(); ++i) {
     const char *option = menu_items_[i].c_str();
     Vector2 option_size
       = MeasureTextEx(GetFontDefault(), option, font_size, 1.0f);
-    x = (screenWidth - option_size.x) / 2.0f;
-    y = (screenHeight - option_size.y) * (i + 12) / 16.0f;
+    float x = (screenWidth - option_size.x) / 2.0f;
+    float y = (screenHeight - option_size.y) * (i + 12) / 16.0f;
 
     double time   = GetTime();
     float wave    = static_cast<float>((sin(time * 3.0) + 1.0) * 0.5); // [0, 1]
@@ -122,14 +125,11 @@ void MenuScene::Draw() {
       GetFontDefault(), option, {x, y}, font_size * static_cast<float>(scale),
       3.0f, color);
   }
-
-  // Draw buttons
-  for (size_t i = 0; i < buttons_.size(); ++i)
-    buttons_[i].Draw();
 }
 
 void MenuScene::CreateButtons() {
-  // Setting button
+  // Need to optimize texture here
+  // Setting
   buttons_.emplace_back(
     []() {
       Application::GetInstance().ChangeScene(std::make_unique<SettingScene>());
@@ -138,12 +138,22 @@ void MenuScene::CreateButtons() {
     Rectangle{screenWidth - 48 * 2, screenHeight - 48 * 2, 48, 48},
     "res/sprites/user_interface/buttons.png");
 
-  // Credit button
+  // Credit
   buttons_.emplace_back(
     []() {
       Application::GetInstance().ChangeScene(std::make_unique<CreditScene>());
     },
-    buttons_info_[ButtonSpriteIndex::CREDIT],
+    buttons_info_.at(ButtonSpriteIndex::CREDIT),
     Rectangle{48, screenHeight - 48 * 2, 48, 48},
     "res/sprites/user_interface/buttons.png");
+}
+
+void MenuScene::UpdateButtons() {
+  for (size_t i = 0; i < buttons_.size(); ++i)
+    buttons_[i].Update();
+}
+
+void MenuScene::DrawButtons() {
+  for (size_t i = 0; i < buttons_.size(); ++i)
+    buttons_[i].Draw();
 }

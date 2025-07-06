@@ -2,11 +2,17 @@
 #include "../include/core/application.hpp"
 #include "../include/core/button.hpp"
 
-SettingScene::SettingScene() {}
+SettingScene::SettingScene() {
+  buttons_.reserve(3);
+}
 
-SettingScene::~SettingScene() {}
+SettingScene::~SettingScene() {
+  Application::GetInstance().ToggleCustomCursor();
+}
 
-void SettingScene::Init() {}
+void SettingScene::Init() {
+  Application::GetInstance().ToggleCustomCursor();
+}
 
 void SettingScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {

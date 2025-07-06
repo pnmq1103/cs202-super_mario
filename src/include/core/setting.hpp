@@ -5,6 +5,8 @@
 
 class SettingScene : public Scene {
 private:
+  std::vector<Button> buttons_;
+
 public:
   SettingScene();
   ~SettingScene();
