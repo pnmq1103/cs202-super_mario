@@ -28,6 +28,15 @@ std::string FileHandler::openFilePath() {
   return {};
 }
 
+std::string FileHandler::openSavePath(const std::string& defaultName) {
+  const char *filter[] = {"*.bin"};
+  const char *fn       = tinyfd_saveFileDialog(
+    "Save data file as…",
+    defaultName.c_str(),
+    1, filter, "Binary Files (*.bin)");
+  return fn ? std::string(fn) : std::string{};
+}
+
 bool FileHandler::saveFile(const std::string &path, const SaveDatawMap &sd) {
   std::ofstream out(path, std::ios::binary);
   if (!out)

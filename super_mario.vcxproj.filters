@@ -105,6 +105,7 @@
     <ClCompile Include="src\core\credit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\resource_manager.cpp">
     <ClCompile Include="src\core\tile_selector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -197,6 +198,7 @@
     <ClInclude Include="src\include\core\credit.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\include\core\resource_manager.hpp">
     <ClInclude Include="src\include\core\tile_selector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

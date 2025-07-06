@@ -129,6 +129,7 @@
     <ClCompile Include="src\core\application.cpp" />
     <ClCompile Include="src\blocks\block.cpp" />
     <ClCompile Include="src\core\credit.cpp" />
+    <ClCompile Include="src\core\resource_manager.cpp" />
     <ClCompile Include="src\core\tile_selector.cpp" />
     <ClCompile Include="src\enemies\bowser.cpp" />
     <ClCompile Include="src\core\button.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="src\include\core\application.hpp" />
     <ClInclude Include="src\include\blocks\block.hpp" />
     <ClInclude Include="src\include\core\credit.hpp" />
+    <ClInclude Include="src\include\core\resource_manager.hpp" />
     <ClInclude Include="src\include\core\tile_selector.hpp" />
     <ClInclude Include="src\include\enemies\bowser.hpp" />
     <ClInclude Include="src\include\core\button.hpp" />
