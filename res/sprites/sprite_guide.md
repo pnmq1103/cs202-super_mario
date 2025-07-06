@@ -11,6 +11,16 @@ Sprite ID - X Position - Y Position - Width - Height
 
 - You can use the ID to keep track of the sprite you want to use, then target its position by letting `std::cin` read the anchor positions and adding to it the width and height to get the size of the rectangle bounding the sprite.
 
+# Update 6/7
+- I have reorganized a few spritesheets (sorry for the inconvenience) to remove duplicates and better align with the game's design:
+    + Merge four icons sheets into one (remove all duplicates)
+    + Merge two enemies sheets into one (bowser and small enemies)
+    + Reorganize characters: merge luigi and mario sheets into 3 states: normal, star, fire. Position remains the same, only the index has changed.
+        + The second column of normal mario/luigi sheets starts at line 22
+        + The second column of star/fire mario/luigi sheets starts at line 36
+
+- You can now load the Texture2D for the sprite you need by specifying the line where the sprite's position is (Example: getCharacter(22)). For music and sound, specify the exact file name as it appears in the directory (Example: getMusic("boss")) This hasn't been tested extensively, so let me know if anything happens. Thanks a lot.
+
 # How I think map data can be saved
 ## Reorganizing sprite sheets
 - I intend to keep only the portions of the icon and tile sets that are relevant to the scope of the game.

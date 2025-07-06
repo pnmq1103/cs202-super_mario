@@ -18,7 +18,7 @@ uint32_t fromLE(uint32_t v) {
   return toLE(v); // same op
 }
 
-std::string FileHandler::openFilePath() {
+std::string FileHandler::OpenFilePath() {
   const char *filter[] = {"*.bin"};
   if (
     const char *fn = tinyfd_openFileDialog(
@@ -28,7 +28,7 @@ std::string FileHandler::openFilePath() {
   return {};
 }
 
-std::string FileHandler::openSavePath(const std::string& defaultName) {
+std::string FileHandler::OpenSavePath(const std::string& defaultName) {
   const char *filter[] = {"*.bin"};
   const char *fn       = tinyfd_saveFileDialog(
     "Save data file as…",
@@ -37,7 +37,7 @@ std::string FileHandler::openSavePath(const std::string& defaultName) {
   return fn ? std::string(fn) : std::string{};
 }
 
-bool FileHandler::saveFile(const std::string &path, const SaveDatawMap &sd) {
+bool FileHandler::SaveFile(const std::string &path, const SaveDatawMap &sd) {
   std::ofstream out(path, std::ios::binary);
   if (!out)
     return false;
@@ -67,7 +67,7 @@ bool FileHandler::saveFile(const std::string &path, const SaveDatawMap &sd) {
   return out.good();
 }
 
-bool FileHandler::loadFile(const std::string &path, SaveDatawMap &sd) const {
+bool FileHandler::LoadFile(const std::string &path, SaveDatawMap &sd) const {
   std::ifstream in(path, std::ios::binary);
   if (!in)
     return false;

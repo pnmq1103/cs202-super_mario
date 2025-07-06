@@ -16,7 +16,7 @@ void GameManaging::LoadLevel(const std::string &filename) {
   // Use FileHandler to load binary level data
   FileHandler fh;
   SaveDatawMap sd;
-  if (fh.loadFile(filename, sd)) {
+  if (fh.LoadFile(filename, sd)) {
     // Set background type
     backgroundType_ = sd.header.backgroundID;
     // Clear previous blocks

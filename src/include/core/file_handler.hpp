@@ -44,13 +44,13 @@ public:
 
   ~FileHandler() = default;
 
-  static std::string openFilePath();
+  static std::string OpenFilePath();
 
-  std::string openSavePath(const std::string &defaultName = "untitled.bin");
+  std::string OpenSavePath(const std::string &defaultName = "untitled.bin");
 
-  bool loadFile(const std::string &path, SaveDatawMap &sd) const;
+  bool LoadFile(const std::string &path, SaveDatawMap &sd) const;
 
-  bool saveFile(const std::string &path, const SaveDatawMap &sd);
+  bool SaveFile(const std::string &path, const SaveDatawMap &sd);
 
   // std::vector<tileData> parseMapTiles();
   // parse all tiles in map into a vector to save/load;  will look at later
