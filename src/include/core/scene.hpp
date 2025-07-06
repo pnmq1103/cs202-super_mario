@@ -5,10 +5,10 @@
 
 class Scene {
 protected:
-  static constexpr int screenWidth  = {256 * 4};
-  static constexpr int screenHeight = {240 * 4};
+  static constexpr float screenWidth  = {256 * 4};
+  static constexpr float screenHeight = {240 * 4};
 
-  Camera2D camera_ = {0};
+  Camera2D camera_ = {};
 
   Vector2 mouse_world_pos_ = {0, 0};
 
@@ -21,12 +21,6 @@ public:
 
   void ReadSpriteInfo(
     const std::string &path, std::unordered_map<int, Rectangle> &sprites);
-};
-
-// Create separate texture for buttons
-enum ButtonSpriteIndex {
-  SETTING = 39,
-  CREDIT  = 41,
 };
 
 // Constructor should be used to initialize members only

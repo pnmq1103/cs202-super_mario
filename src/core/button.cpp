@@ -30,5 +30,5 @@ void Button::Update() {
 }
 
 void Button::Draw() {
-  DrawTexturePro(icon_, source_, bounds_, {0, 0}, 0.0f, WHITE);
+  DrawTexturePro(icon_, source_, bounds_, {0, 0}, 0, WHITE);
 }

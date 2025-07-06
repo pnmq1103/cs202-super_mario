@@ -7,6 +7,8 @@
 #include "../include/core/menu.hpp"
 #include "../include/core/scene.hpp"
 
+Application &App = Application::GetInstance();
+
 Application::Application() {
   SetTargetFPS(120);
   SetConfigFlags(FLAG_MSAA_4X_HINT);

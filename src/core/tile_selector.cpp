@@ -10,7 +10,7 @@ TileSelectorScene::TileSelectorScene(int &selected_tile_id)
   camera_.target   = {0, 0};
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
-  camera_.zoom     = 1.0f;
+  camera_.zoom     = 1; // Important
 }
 
 TileSelectorScene::~TileSelectorScene() {
@@ -31,11 +31,11 @@ void TileSelectorScene::Init() {
 
 void TileSelectorScene::Update() {
   if (IsKeyDown(KEY_ESCAPE)) {
-    Application::ChangeScene(nullptr);
+    App.ChangeScene(nullptr);
     return;
   }
 
-  CameraUpdate();
+  UpdateCamera();
   mouse_world_pos_ = GetScreenToWorld2D(GetMousePosition(), camera_);
 
   ChooseTile();
@@ -51,16 +51,16 @@ void TileSelectorScene::Draw() {
   EndMode2D();
 }
 
-void TileSelectorScene::CameraUpdate() {
+void TileSelectorScene::UpdateCamera() {
   // Drag
   if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
-    Vector2 delta  = Vector2Scale(GetMouseDelta(), -1.0f / camera_.zoom);
+    Vector2 delta  = Vector2Scale(GetMouseDelta(), -1 / camera_.zoom);
     camera_.target = Vector2Add(camera_.target, delta);
   }
 
   // Scroll
   Vector2 scroll_offset_
-    = Vector2Scale(GetMouseWheelMoveV(), -1.0f * scroll_speed_);
+    = Vector2Scale(GetMouseWheelMoveV(), -1 * scroll_speed_);
   camera_.target = Vector2Add(camera_.target, scroll_offset_);
 }
 
@@ -89,7 +89,7 @@ void TileSelectorScene::ChooseTile() {
     IsMouseButtonDown(MOUSE_BUTTON_LEFT)
     && CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
 
-    Application::GetInstance().GetMedia().PlaySound("beep");
+    App.GetMedia().PlaySound("beep");
     // Because the display is scaled up 4 times
     mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
 

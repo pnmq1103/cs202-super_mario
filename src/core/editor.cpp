@@ -12,17 +12,15 @@
 #include "../include/core/tile_selector.hpp"
 
 EditorScene::EditorScene() {
-  // The world position the camera_ is looking at (center of the view)
-  camera_.target = {0, 0};
-  // The screen position where the target will appear
+  camera_.target   = {0, 0};
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
-  camera_.zoom     = 1.0f;
+  camera_.zoom     = 1; // Important
 
   // Border + buffer to prevent flickering
-  float buffer = blockSize / 4.0f;
+  float buffer = blockSize / 4;
   boundary_    = {
-    0.0f + buffer, 0.0f + buffer, blockSize * block_width_ - 2 * buffer,
+    0 + buffer, 0 + buffer, blockSize * block_width_ - 2 * buffer,
     blockSize * block_height_ - 2 * buffer};
 
   tilemap_.resize(block_width_ * block_height_, 0);
@@ -47,13 +45,13 @@ void EditorScene::Init() {
 
 void EditorScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    Application::ChangeScene(nullptr);
+    App.ChangeScene(nullptr);
     return;
   }
 
   // Drag
   if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
-    Vector2 delta  = Vector2Scale(GetMouseDelta(), -1.0f / camera_.zoom);
+    Vector2 delta  = Vector2Scale(GetMouseDelta(), -1 / camera_.zoom);
     camera_.target = Vector2Add(camera_.target, delta);
   }
 
@@ -82,9 +80,10 @@ void EditorScene::PlaceBlock() {
   int idx      = static_cast<int>(tile_y * block_width_ + tile_x);
 
   if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-    Application::GetInstance().GetMedia().PlaySound("beep");
+    App.GetMedia().PlaySound("beep");
+
     if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
-      tilemap_[idx] = selected_tile_id_; // Change here for other sprites
+      tilemap_[idx] = selected_tile_id_;
   } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
       tilemap_[idx] = 0;
@@ -92,17 +91,17 @@ void EditorScene::PlaceBlock() {
 }
 
 void EditorScene::DrawGrid() {
-  Vector2 camera_topleft = {camera_.target.x - camera_.offset.x, 0.0f};
+  Vector2 camera_topleft = {camera_.target.x - camera_.offset.x, 0};
 
   int start_x = static_cast<int>(std::max(0.0f, camera_topleft.x / blockSize));
   int end_x   = static_cast<int>(Clamp(
-    std::ceil((camera_topleft.x + screenWidth) / blockSize), 0.0f,
+    std::ceil((camera_topleft.x + screenWidth) / blockSize), 0,
     static_cast<float>(block_width_)));
 
   BeginMode2D(camera_);
-  // Draw verticle
+  // Draw vertical
   for (int i = start_x; i <= end_x; ++i)
-    DrawLineV({i * blockSize, 0.0f}, {i * blockSize, screenHeight}, LIGHTGRAY);
+    DrawLineV({i * blockSize, 0}, {i * blockSize, screenHeight}, LIGHTGRAY);
   // Draw horizontal
   for (int i = 0; i <= screenHeight / blockSize; ++i)
     DrawLineV(
@@ -143,15 +142,13 @@ void EditorScene::DrawMap() {
 }
 
 void EditorScene::CreateButtons() {
-  // Need to optimize texture here
   // Choose tile
   buttons_.emplace_back(
     [&]() {
-      Application::GetInstance().ChangeScene(
-        std::make_unique<TileSelectorScene>(selected_tile_id_));
+      App.ChangeScene(std::make_unique<TileSelectorScene>(selected_tile_id_));
     },
-    ground_tiles_info_.at(1), Rectangle{100, 100, 64, 64},
-    "res/sprites/tilesets/tileset_ground.png");
+    Rectangle{0, 0, 16, 16}, Rectangle{100, 100, 64, 64},
+    "res/sprites/buttons/choose_ground_tile.png");
 
   // Choose enemy
   // Implement EnemySelectorScene

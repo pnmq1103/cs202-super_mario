@@ -7,16 +7,16 @@ SettingScene::SettingScene() {
 }
 
 SettingScene::~SettingScene() {
-  Application::GetInstance().ToggleCustomCursor();
+  App.ToggleCustomCursor();
 }
 
 void SettingScene::Init() {
-  Application::GetInstance().ToggleCustomCursor();
+  App.ToggleCustomCursor();
 }
 
 void SettingScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    Application::ChangeScene(nullptr);
+    App.ChangeScene(nullptr);
     return;
   }
 }

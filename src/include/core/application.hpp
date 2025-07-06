@@ -37,3 +37,5 @@ public:
   Media &GetMedia();
   bool ShouldClose();
 };
+
+extern Application &App;
