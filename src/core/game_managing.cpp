@@ -1,7 +1,8 @@
 #include "../include/core/game_managing.hpp"
 #include "../include/core/file_handler.hpp"
-#include <raylib.h>
+
 #include <cstring>
+#include <raylib.h>
 
 GameManaging::GameManaging() {
   lives_            = 3;

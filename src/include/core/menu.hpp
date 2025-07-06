@@ -21,7 +21,6 @@ private:
   std::unordered_map<int, Rectangle> buttons_info_;
 
 public:
-public:
   MenuScene();
   ~MenuScene();
 
@@ -29,7 +28,11 @@ public:
   void Update() override;
   void Draw() override;
 
+  void DrawOptions();
+
   void CreateButtons();
+  void UpdateButtons();
+  void DrawButtons();
 };
 
 enum MenuOption {

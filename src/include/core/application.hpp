@@ -11,12 +11,13 @@ private:
   static constexpr int screenWidth  = {256 * 4};
   static constexpr int screenHeight = {240 * 4};
 
-  Image icon_ = {};
+  Image icon_image_ = {};
   SceneStack scene_manager_;
   Media media_;
-  Texture cursor_ = {};
+  Texture cursor_texture_ = {};
 
-  bool exit_window_ = {false};
+  bool exit_window_   = {false};
+  bool cursor_hidden_ = {false}; // Custom cursor
 
 private:
   Application(); // Singleton constructor should be private
@@ -31,7 +32,8 @@ public:
   static Application &GetInstance();
   static void ChangeScene(std::unique_ptr<Scene> new_scene);
   static void Close();
+  static void ToggleCustomCursor();
 
-  bool ShouldClose();
   Media &GetMedia();
+  bool ShouldClose();
 };

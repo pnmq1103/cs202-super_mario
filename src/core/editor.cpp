@@ -9,6 +9,7 @@
 #include "../../tinyfiledialogs.h"
 #include "../include/core/application.hpp"
 #include "../include/core/editor.hpp"
+#include "../include/core/tile_selector.hpp"
 
 EditorScene::EditorScene() {
   // The world position the camera_ is looking at (center of the view)
@@ -25,6 +26,8 @@ EditorScene::EditorScene() {
     blockSize * block_height_ - 2 * buffer};
 
   tilemap_.resize(block_width_ * block_height_, 0);
+
+  buttons_.reserve(1);
 }
 
 EditorScene::~EditorScene() {
@@ -33,11 +36,13 @@ EditorScene::~EditorScene() {
 }
 
 void EditorScene::Init() {
-  crosshair_    = LoadTexture("res/sprites/crosshairs/crosshair028.png");
-  ground_tiles_ = LoadTexture("res/sprites/tilesets/tileset_ground.png");
+  crosshair_ = LoadTexture("res/sprites/crosshairs/crosshair028.png");
 
+  ground_tiles_ = LoadTexture("res/sprites/tilesets/tileset_ground.png");
   Scene::ReadSpriteInfo(
     "res/sprites/tilesets/tileset_ground.txt", ground_tiles_info_);
+
+  CreateButtons();
 }
 
 void EditorScene::Update() {
@@ -48,19 +53,19 @@ void EditorScene::Update() {
 
   // Drag
   if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
-    Vector2 delta  = GetMouseDelta();
-    delta          = Vector2Scale(delta, -1.0f / camera_.zoom);
+    Vector2 delta  = Vector2Scale(GetMouseDelta(), -1.0f / camera_.zoom);
     camera_.target = Vector2Add(camera_.target, delta);
   }
 
   mouse_world_pos_ = GetScreenToWorld2D(GetMousePosition(), camera_);
 
-  // Snapping grid, update only if mouse is in the boundary
+  // Snapping grid, check only if mouse is in the boundary
   if (CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
     snapped_.x = std::floor(mouse_world_pos_.x / blockSize) * blockSize;
     snapped_.y = std::floor(mouse_world_pos_.y / blockSize) * blockSize;
   }
 
+  UpdateButtons();
   PlaceBlock();
 }
 
@@ -68,27 +73,21 @@ void EditorScene::Draw() {
   DrawGrid();
   DrawMap();
   DrawCursor();
+  DrawButtons();
 }
 
 void EditorScene::PlaceBlock() {
+  float tile_x = std::floor(mouse_world_pos_.x / blockSize);
+  float tile_y = std::floor(mouse_world_pos_.y / blockSize);
+  int idx      = static_cast<int>(tile_y * block_width_ + tile_x);
+
   if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
     Application::GetInstance().GetMedia().PlaySound("beep");
-
-    float tile_x = std::floor(mouse_world_pos_.x / blockSize);
-    float tile_y = std::floor(mouse_world_pos_.y / blockSize);
-    if (CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
-      int idx = static_cast<int>(tile_y * block_width_ + tile_x);
-
-      tilemap_[idx] = 1; // Change here for other sprites
-    }
+    if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
+      tilemap_[idx] = selected_tile_id_; // Change here for other sprites
   } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-    float tile_x = std::floor(mouse_world_pos_.x / blockSize);
-    float tile_y = std::floor(mouse_world_pos_.y / blockSize);
-    if (CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
-      int idx = static_cast<int>(tile_y * block_width_ + tile_x);
-
+    if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
       tilemap_[idx] = 0;
-    }
   }
 }
 
@@ -101,9 +100,10 @@ void EditorScene::DrawGrid() {
     static_cast<float>(block_width_)));
 
   BeginMode2D(camera_);
+  // Draw verticle
   for (int i = start_x; i <= end_x; ++i)
     DrawLineV({i * blockSize, 0.0f}, {i * blockSize, screenHeight}, LIGHTGRAY);
-
+  // Draw horizontal
   for (int i = 0; i <= screenHeight / blockSize; ++i)
     DrawLineV(
       {start_x * blockSize, i * blockSize}, {end_x * blockSize, i * blockSize},
@@ -115,9 +115,9 @@ void EditorScene::DrawCursor() {
   Color transparent = {128, 128, 128, 128};
 
   BeginMode2D(camera_);
-  // Draw tile
+  //  Draw tile
   DrawTexturePro(
-    ground_tiles_, ground_tiles_info_[59],
+    ground_tiles_, ground_tiles_info_[selected_tile_id_],
     {snapped_.x, snapped_.y, blockSize, blockSize}, {0, 0}, 0, transparent);
   // Draw crosshair
   DrawTexturePro(
@@ -131,15 +131,43 @@ void EditorScene::DrawMap() {
   for (int y = 0; y < block_height_; ++y) {
     for (int x = 0; x < block_width_; ++x) {
       int idx = y * block_width_ + x;
-      if (tilemap_[idx] == 1) {
+      if (tilemap_[idx] != 0) {
         DrawTexturePro(
-          ground_tiles_, ground_tiles_info_[59],
+          ground_tiles_, ground_tiles_info_[tilemap_[idx]],
           {x * blockSize, y * blockSize, blockSize, blockSize}, {0, 0}, 0,
           WHITE);
       }
     }
   }
   EndMode2D();
+}
+
+void EditorScene::CreateButtons() {
+  // Need to optimize texture here
+  // Choose tile
+  buttons_.emplace_back(
+    [&]() {
+      Application::GetInstance().ChangeScene(
+        std::make_unique<TileSelectorScene>(selected_tile_id_));
+    },
+    ground_tiles_info_.at(1), Rectangle{100, 100, 64, 64},
+    "res/sprites/tilesets/tileset_ground.png");
+
+  // Choose enemy
+  // Implement EnemySelectorScene
+
+  // Choose background
+  // Implement BackgroundSelectorScene
+}
+
+void EditorScene::UpdateButtons() {
+  for (size_t i = 0; i < buttons_.size(); ++i)
+    buttons_[i].Update();
+}
+
+void EditorScene::DrawButtons() {
+  for (size_t i = 0; i < buttons_.size(); ++i)
+    buttons_[i].Draw();
 }
 
 void EditorScene::LoadFile() {

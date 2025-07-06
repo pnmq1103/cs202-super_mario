@@ -14,19 +14,19 @@ Application::Application() {
 }
 
 Application::~Application() {
-  UnloadTexture(cursor_);
-  UnloadImage(icon_);
+  UnloadTexture(cursor_texture_);
+  UnloadImage(icon_image_);
   CloseAudioDevice();
   CloseWindow();
 }
 
 void Application::Init() {
   InitWindow(screenWidth, screenHeight, "Mario");
-  InitAudioDevice();
   SetExitKey(KEY_ZERO);
-  icon_ = LoadImage("res/app_icon.png");
-  SetWindowIcon(icon_);
-  cursor_ = LoadTexture("res/sprites/cursors/hand_point.png");
+  InitAudioDevice();
+  icon_image_ = LoadImage("res/app_icon.png");
+  SetWindowIcon(icon_image_);
+  cursor_texture_ = LoadTexture("res/sprites/cursors/hand_point.png");
   HideCursor();
   media_.Init();
   scene_manager_.Init();
@@ -40,7 +40,8 @@ void Application::Update() {
 void Application::Draw() {
   scene_manager_.Draw();
   DrawFPS(15, 15);
-  DrawTextureRec(cursor_, {0, 0, 64, 64}, GetMousePosition(), WHITE);
+  if (cursor_hidden_ == false)
+    DrawTextureRec(cursor_texture_, {0, 0, 64, 64}, GetMousePosition(), WHITE);
 }
 
 Application &Application::GetInstance() {
@@ -66,10 +67,15 @@ void Application::Close() {
   Application::GetInstance().exit_window_ = true;
 }
 
-bool Application::ShouldClose() {
-  return exit_window_;
+void Application::ToggleCustomCursor() {
+  Application::GetInstance().cursor_hidden_
+    = !Application::GetInstance().cursor_hidden_;
 }
 
 Media &Application::GetMedia() {
   return media_;
+}
+
+bool Application::ShouldClose() {
+  return exit_window_;
 }

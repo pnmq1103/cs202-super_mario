@@ -20,7 +20,7 @@ Button::Button(
 
 void Button::Update() {
   if (
-    IsMouseButtonDown(MOUSE_BUTTON_LEFT)
+    IsMouseButtonPressed(MOUSE_BUTTON_LEFT)
     && CheckCollisionPointRec(GetMousePosition(), bounds_)) {
     if (action_ != nullptr)
       action_();
