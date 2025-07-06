@@ -8,28 +8,32 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <filesystem>
 
-
+namespace fs = std::filesystem;
 
 class ResManager {
   static std::map<std::string, Texture2D> characters;
   static std::map<std::string, Texture2D> blocks;
   static std::map<std::string, Music> musics;
   static std::map<std::string, Sound> sounds;
+  static std::map<std::string, Texture2D> backgrounds;
 
   std::vector<std::pair<Vector2, Vector2>> coors;
   std::map<std::string, Texture2D> tempText;
-  const std::string imgPath = "res\\";
-  const std::string coorPath  = "res\\";
-  const std::string musicPath = "res\\musics\\";
-  const std::string soundPath = "res\\sounds\\";
+  const fs::path imgPath   = "res";
+  const fs::path coorPath  = "res";
+  const fs::path musicPath = "res/musics";
+  const fs::path soundPath = "res/sounds";
 
   
-  void loadTexture(std::string imgPath, std::string coorPath, std::string keyPrefix);
+  void loadTexture(const fs::path& imgPath, const fs::path& coorPath, std::string keyPrefix);
 
   void loadCharacters();
 
   void loadBlocks();
+
+  void loadBackgrounds();
 
   void loadMusic();
 
@@ -46,6 +50,8 @@ class ResManager {
     static Texture2D getCharacter(std::string key);
 
     static Texture2D getBlock(std::string key);
+
+    static Texture2D getBackground(int index);
 
     static Music getMusic(std::string key);
     

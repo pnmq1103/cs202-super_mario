@@ -1,27 +1,30 @@
-#include "..\include\core\resource_manager.hpp"
+﻿#include "..\include\core\resource_manager.hpp"
 
 std::map<std::string, Texture2D> ResManager::characters;
 std::map<std::string, Texture2D> ResManager::blocks;
+std::map<std::string, Texture2D> ResManager::backgrounds;
 std::map<std::string, Music> ResManager::musics;
 std::map<std::string, Sound> ResManager::sounds;
 
 ResManager::ResManager() {
   loadCharacters();
   loadBlocks();
+  loadBackgrounds();
   loadMusic();
   loadSounds();
 }
 
 void ResManager::loadTexture(
-  std::string imgPath, std::string coorPath, std::string key) {
+  const fs::path& imgPath, const fs::path& coorPath, std::string key) {
   // load img
-  Image img = LoadImage(imgPath.c_str());
+  std::string path = imgPath.string();
+  Image img = LoadImage(path.c_str());
 
   // load coors
   std::ifstream in(coorPath);
 
   if (!in.is_open())
-    throw std::runtime_error("Could not open " + coorPath);
+    throw std::runtime_error("Could not open " + path);
 
   std::string line;
   while (std::getline(in, line)) {
@@ -54,180 +57,201 @@ void ResManager::loadTexture(
   UnloadImage(img);
 }
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 void ResManager::loadCharacters() {
-  std::string tmpImgPath  = imgPath + "\\characters\\";
-  std::string tmpCoorPath = coorPath + "\\characters\\";
-
-  loadTexture(tmpImgPath + "bowser.png", tmpCoorPath + "bowser.txt", "bowser");
+  fs::path tmpImgDir  = imgPath / "characters";
+  fs::path tmpCoorDir = coorPath / "characters";
 
   loadTexture(
-    tmpImgPath + "enemies.png", tmpCoorPath + "enemies.txt", "enemies");
+    (tmpImgDir / "bowser.png").string(), (tmpCoorDir / "bowser.txt").string(),
+    "bowser");
 
   loadTexture(
-    tmpImgPath + "luigi_normal.png", tmpCoorPath + "luigi_normal.txt",
-    "luigi_normal");
+    (tmpImgDir / "enemies.png").string(), (tmpCoorDir / "enemies.txt").string(),
+    "enemies");
 
   loadTexture(
-    tmpImgPath + "luigi_normal_carry_shoe_shell.png",
-    tmpCoorPath + "luigi_normal_carry_shoe_shell.txt",
+    (tmpImgDir / "luigi_normal.png").string(),
+    (tmpCoorDir / "luigi_normal.txt").string(), "luigi_normal");
+
+  loadTexture(
+    (tmpImgDir / "luigi_normal_carry_shoe_shell.png").string(),
+    (tmpCoorDir / "luigi_normal_carry_shoe_shell.txt").string(),
     "luigi_normal_carry_shoe_shell");
 
   loadTexture(
-    tmpImgPath + "luigi_starup.png", tmpCoorPath + "luigi_starup.txt",
-    "luigi_starup");
+    (tmpImgDir / "luigi_starup.png").string(),
+    (tmpCoorDir / "luigi_starup.txt").string(), "luigi_starup");
 
   loadTexture(
-    tmpImgPath + "luigi_starup_carry_shoe_shell.png",
-    tmpCoorPath + "luigi_starup_carry_shoe_shell.txt",
+    (tmpImgDir / "luigi_starup_carry_shoe_shell.png").string(),
+    (tmpCoorDir / "luigi_starup_carry_shoe_shell.txt").string(),
     "luigi_starup_carry_shoe_shell");
 
   loadTexture(
-    tmpImgPath + "luigi_starup_carry_shoe_shell_fire.png",
-    tmpCoorPath + "luigi_starup_carry_shoe_shell_fire.txt",
+    (tmpImgDir / "luigi_starup_carry_shoe_shell_fire.png").string(),
+    (tmpCoorDir / "luigi_starup_carry_shoe_shell_fire.txt").string(),
     "luigi_starup_carry_shoe_shell_fire");
 
   loadTexture(
-    tmpImgPath + "luigi_starup_fire.png", tmpCoorPath + "luigi_starup_fire.txt",
-    "luigi_starup_fire");
+    (tmpImgDir / "luigi_starup_fire.png").string(),
+    (tmpCoorDir / "luigi_starup_fire.txt").string(), "luigi_starup_fire");
 
   loadTexture(
-    tmpImgPath + "mario_normal.png", tmpCoorPath + "mario_normal.txt",
-    "mario_normal");
+    (tmpImgDir / "mario_normal.png").string(),
+    (tmpCoorDir / "mario_normal.txt").string(), "mario_normal");
 
   loadTexture(
-    tmpImgPath + "mario_normal_carry_shoe_shell.png",
-    tmpCoorPath + "mario_normal_carry_shoe_shell.txt",
+    (tmpImgDir / "mario_normal_carry_shoe_shell.png").string(),
+    (tmpCoorDir / "mario_normal_carry_shoe_shell.txt").string(),
     "mario_normal_carry_shoe_shell");
 
   loadTexture(
-    tmpImgPath + "mario_starup.png", tmpCoorPath + "mario_starup.txt",
-    "mario_starup");
+    (tmpImgDir / "mario_starup.png").string(),
+    (tmpCoorDir / "mario_starup.txt").string(), "mario_starup");
 
   loadTexture(
-    tmpImgPath + "mario_starup_carry_shoe_shell.png",
-    tmpCoorPath + "mario_starup_carry_shoe_shell.txt",
+    (tmpImgDir / "mario_starup_carry_shoe_shell.png").string(),
+    (tmpCoorDir / "mario_starup_carry_shoe_shell.txt").string(),
     "mario_starup_carry_shoe_shell");
 
   loadTexture(
-    tmpImgPath + "mario_starup_carry_shoe_shell_fire.png",
-    tmpCoorPath + "mario_starup_carry_shoe_shell_fire.txt",
+    (tmpImgDir / "mario_starup_carry_shoe_shell_fire.png").string(),
+    (tmpCoorDir / "mario_starup_carry_shoe_shell_fire.txt").string(),
     "mario_starup_carry_shoe_shell_fire");
 
   loadTexture(
-    tmpImgPath + "mario_starup_fire.png", tmpCoorPath + "mario_starup_fire.txt",
-    "mario_starup_fire");
+    (tmpImgDir / "mario_starup_fire.png").string(),
+    (tmpCoorDir / "mario_starup_fire.txt").string(), "mario_starup_fire");
 
   characters.merge(tempText);
   tempText.clear();
 }
 
 void ResManager::loadBlocks() {
-  std::string tmpImgPath  = imgPath + "\\icons\\";
-  std::string tmpCoorPath = coorPath + "\\icons\\";
-  loadTexture(
-    tmpImgPath + "icon_day.png", tmpCoorPath + "icon_day.txt", "icon_day");
+  fs::path tmpImgDir  = imgPath / "icons";
+  fs::path tmpCoorDir = coorPath / "icons";
 
   loadTexture(
-    tmpImgPath + "icon_sky.png", tmpCoorPath + "icon_sky.txt", "icon_sky");
+    (tmpImgDir / "icons.png").string(), (tmpCoorDir / "icons.txt").string(),
+    "icon");
 
   loadTexture(
-    tmpImgPath + "icon_underground.png", tmpCoorPath + "icon_underground.txt",
-    "icon_underground");
+    (tmpImgDir / "objects.png").string(), (tmpCoorDir / "objects.txt").string(),
+    "objects");
+
+  tmpImgDir  = imgPath / "tileset";
+  tmpCoorDir = coorPath / "tileset";
 
   loadTexture(
-    tmpImgPath + "icon_underwater.png", tmpCoorPath + "icon_underwater.txt",
-    "icon_underwater");
+    (tmpImgDir / "tileset_ground.png").string(),
+    (tmpCoorDir / "tileset_ground.txt").string(), "tileset_ground");
 
   loadTexture(
-    tmpImgPath + "objects.png", tmpCoorPath + "objects.txt", "objects");
-
-  tmpImgPath  = imgPath + "\\tileset\\";
-  tmpCoorPath = coorPath + "\\tileset\\";
+    (tmpImgDir / "tileset_sky.png").string(),
+    (tmpCoorDir / "tileset_sky.txt").string(), "tileset_sky");
 
   loadTexture(
-    tmpImgPath + "tileset_ground.png", tmpCoorPath + "tileset_ground.txt",
-    "tileset_ground");
+    (tmpImgDir / "tileset_underground.png").string(),
+    (tmpCoorDir / "tileset_underground.txt").string(), "tileset_underground");
 
   loadTexture(
-    tmpImgPath + "tileset_sky.png", tmpCoorPath + "tileset_sky.txt",
-    "tileset_sky");
+    (tmpImgDir / "tileset_underwater.png").string(),
+    (tmpCoorDir / "tileset_underwater.txt").string(), "tileset_underwater");
+
+  tmpImgDir  = imgPath / "user_interface";
+  tmpCoorDir = coorPath / "user_interface";
 
   loadTexture(
-    tmpImgPath + "tileset_underground.png",
-    tmpCoorPath + "tileset_underground.txt", "tileset_underground");
-
-  loadTexture(
-    tmpImgPath + "tileset_underwater.png",
-    tmpCoorPath + "tileset_underwater.txt", "tileset_underwater");
-
-  tmpImgPath  = imgPath + "\\user_interface\\";
-  tmpCoorPath = coorPath + "\\user_interface\\";
-
-  loadTexture(tmpImgPath + "buttons.png", tmpCoorPath + "buttons.txt", "UI");
+    (tmpImgDir / "buttons.png").string(), (tmpCoorDir / "buttons.txt").string(),
+    "UI");
 
   blocks.merge(tempText);
   tempText.clear();
 }
 
+void ResManager::loadBackgrounds() {
+  fs::path tmpImgDir  = imgPath / "backgrounds";
+  fs::path tmpCoorDir = coorPath / "backgrounds";
+
+  loadTexture(tmpImgDir.string(), tmpCoorDir.string(), "backgrounds");
+
+  backgrounds.merge(tempText);
+  tempText.clear();
+}
+
+
 void ResManager::loadMusic() {
-  musics["bonus"]      = LoadMusicStream((musicPath + "bonus.ogg").c_str());
-  musics["boss"]       = LoadMusicStream((musicPath + "boss.ogg").c_str());
+  musics["bonus"] = LoadMusicStream((musicPath / "bonus.ogg").string().c_str());
+  musics["boss"]  = LoadMusicStream((musicPath / "boss.ogg").string().c_str());
   musics["bowser_battle"]
-    = LoadMusicStream((musicPath + "bowser_battle.ogg").c_str());
+    = LoadMusicStream((musicPath / "bowser_battle.ogg").string().c_str());
   musics["castle_theme"]
-    = LoadMusicStream((musicPath + "castle_theme.ogg").c_str());
+    = LoadMusicStream((musicPath / "castle_theme.ogg").string().c_str());
   musics["choose_character"]
-    = LoadMusicStream((musicPath + "choose_character.ogg").c_str());
-  musics["ending"] = LoadMusicStream((musicPath + "ending.ogg").c_str());
+    = LoadMusicStream((musicPath / "choose_character.ogg").string().c_str());
+  musics["ending"]
+    = LoadMusicStream((musicPath / "ending.ogg").string().c_str());
   musics["final_battle"]
-    = LoadMusicStream((musicPath + "final_battle.ogg").c_str());
+    = LoadMusicStream((musicPath / "final_battle.ogg").string().c_str());
   musics["ground_theme"]
-    = LoadMusicStream((musicPath + "ground_theme.ogg").c_str());
+    = LoadMusicStream((musicPath / "ground_theme.ogg").string().c_str());
   musics["invincibility_theme"]
-    = LoadMusicStream((musicPath + "invincibility_theme.ogg").c_str());
-  musics["overworld"] = LoadMusicStream((musicPath + "overworld.ogg").c_str());
-  musics["title"]     = LoadMusicStream((musicPath + "title.ogg").c_str());
+    = LoadMusicStream((musicPath / "invincibility_theme.ogg").string().c_str());
+  musics["overworld"]
+    = LoadMusicStream((musicPath / "overworld.ogg").string().c_str());
+  musics["title"] = LoadMusicStream((musicPath / "title.ogg").string().c_str());
   musics["underground_theme"]
-    = LoadMusicStream((musicPath + "underground_theme.ogg").c_str());
+    = LoadMusicStream((musicPath / "underground_theme.ogg").string().c_str());
   musics["underwater_theme"]
-    = LoadMusicStream((musicPath + "underwater_theme.ogg").c_str());
+    = LoadMusicStream((musicPath / "underwater_theme.ogg").string().c_str());
 }
 
 void ResManager::loadSounds() {
-  sounds["1up"]        = LoadSound((soundPath + "1up.wav").c_str());
-  sounds["beep"]         = LoadSound((soundPath + "beep.wav").c_str());
-  sounds["billfirework"] = LoadSound((soundPath + "billfirework.wav").c_str());
-  sounds["bowserfall"]   = LoadSound((soundPath + "bowserfall.wav").c_str());
-  sounds["brick"]        = LoadSound((soundPath + "brick.wav").c_str());
-  sounds["bump"]         = LoadSound((soundPath + "bump.wav").c_str());
+  sounds["1up"]  = LoadSound((soundPath / "1up.wav").string().c_str());
+  sounds["beep"] = LoadSound((soundPath / "beep.wav").string().c_str());
+  sounds["billfirework"]
+    = LoadSound((soundPath / "billfirework.wav").string().c_str());
+  sounds["bowserfall"]
+    = LoadSound((soundPath / "bowserfall.wav").string().c_str());
+  sounds["brick"] = LoadSound((soundPath / "brick.wav").string().c_str());
+  sounds["bump"]  = LoadSound((soundPath / "bump.wav").string().c_str());
   sounds["castle_complete"]
-    = LoadSound((soundPath + "castle_complete.wav").c_str());
-  sounds["coin"]         = LoadSound((soundPath + "coin.wav").c_str());
-  sounds["course_clear"] = LoadSound((soundPath + "course_clear.wav").c_str());
-  sounds["fire"]         = LoadSound((soundPath + "fire.wav").c_str());
-  sounds["fireball"]     = LoadSound((soundPath + "fireball.wav").c_str());
-  sounds["flagpole"]     = LoadSound((soundPath + "flagpole.wav").c_str());
-  sounds["gameover"]     = LoadSound((soundPath + "gameover.wav").c_str());
+    = LoadSound((soundPath / "castle_complete.wav").string().c_str());
+  sounds["coin"] = LoadSound((soundPath / "coin.wav").string().c_str());
+  sounds["course_clear"]
+    = LoadSound((soundPath / "course_clear.wav").string().c_str());
+  sounds["fire"]     = LoadSound((soundPath / "fire.wav").string().c_str());
+  sounds["fireball"] = LoadSound((soundPath / "fireball.wav").string().c_str());
+  sounds["flagpole"] = LoadSound((soundPath / "flagpole.wav").string().c_str());
+  sounds["gameover"] = LoadSound((soundPath / "gameover.wav").string().c_str());
   sounds["gameover_unused"]
-    = LoadSound((soundPath + "gameover_unused.wav").c_str());
-  sounds["hurryup"]   = LoadSound((soundPath + "hurryup.wav").c_str());
-  sounds["item"]      = LoadSound((soundPath + "item.wav").c_str());
-  sounds["jump"]      = LoadSound((soundPath + "jump.wav").c_str());
-  sounds["jumpsmall"] = LoadSound((soundPath + "jumpsmall.wav").c_str());
-  sounds["kickkill"]  = LoadSound((soundPath + "kickkill.wav").c_str());
+    = LoadSound((soundPath / "gameover_unused.wav").string().c_str());
+  sounds["hurryup"] = LoadSound((soundPath / "hurryup.wav").string().c_str());
+  sounds["item"]    = LoadSound((soundPath / "item.wav").string().c_str());
+  sounds["jump"]    = LoadSound((soundPath / "jump.wav").string().c_str());
+  sounds["jumpsmall"]
+    = LoadSound((soundPath / "jumpsmall.wav").string().c_str());
+  sounds["kickkill"] = LoadSound((soundPath / "kickkill.wav").string().c_str());
   sounds["level_complete"]
-    = LoadSound((soundPath + "level_complete.wav").c_str());
-  sounds["life_lost"] = LoadSound((soundPath + "life_lost.wav").c_str());
-
-  sounds["pause"]         = LoadSound((soundPath + "pause.wav").c_str());
-  sounds["pipepowerdown"] = LoadSound((soundPath + "pipepowerdown.wav").c_str());
-  sounds["powerup"]       = LoadSound((soundPath + "powerup.wav").c_str());
-  sounds["stompswim"]     = LoadSound((soundPath + "stompswim.wav").c_str());
+    = LoadSound((soundPath / "level_complete.wav").string().c_str());
+  sounds["life_lost"]
+    = LoadSound((soundPath / "life_lost.wav").string().c_str());
+  sounds["pause"] = LoadSound((soundPath / "pause.wav").string().c_str());
+  sounds["pipepowerdown"]
+    = LoadSound((soundPath / "pipepowerdown.wav").string().c_str());
+  sounds["powerup"] = LoadSound((soundPath / "powerup.wav").string().c_str());
+  sounds["stompswim"]
+    = LoadSound((soundPath / "stompswim.wav").string().c_str());
   sounds["time-up_warning"]
-    = LoadSound((soundPath + "time-up_warning.wav").c_str());
-  sounds["vine"]        = LoadSound((soundPath + "vine.wav").c_str());
-  sounds["world_clear"] = LoadSound((soundPath + "world_clear.wav").c_str());
+    = LoadSound((soundPath / "time-up_warning.wav").string().c_str());
+  sounds["vine"] = LoadSound((soundPath / "vine.wav").string().c_str());
+  sounds["world_clear"]
+    = LoadSound((soundPath / "world_clear.wav").string().c_str());
 }
+
 
 SaveDatawMap ResManager::loadResourcesFromFile() {
   FileHandler fp;
@@ -237,6 +261,8 @@ SaveDatawMap ResManager::loadResourcesFromFile() {
   }
   SaveDatawMap data;
   if (!fp.loadFile(path, data)) {
+    throw std::runtime_error(
+      "Failed to load file at: " + path);
   }
   return data;
 }
@@ -251,19 +277,39 @@ bool ResManager::saveResourcesToFile(const SaveDatawMap &data) {
 }
 
 Texture2D ResManager::getCharacter(std::string key) {
-  return characters[key];
+  auto it = characters.find(key);
+  if (it == characters.end())
+    throw std::out_of_range("Missing character: " + key);
+  return it->second;
 }
 
 Texture2D ResManager::getBlock(std::string key) {
-  return blocks[key];
+  auto it = blocks.find(key);
+  if (it == blocks.end())
+    throw std::out_of_range("Missing block: " + key);
+  return it->second;
+}
+
+Texture2D ResManager::getBackground(int index) {
+  std::string key = "backgrounds_" + std::to_string(index);
+  auto it         = backgrounds.find(key);
+  if (it == backgrounds.end())
+    throw std::out_of_range("Missing background: " + key);
+  return it->second;
 }
 
 Music ResManager::getMusic(std::string key) {
-  return musics[key];
+  auto it = musics.find(key);
+  if (it == musics.end())
+    throw std::out_of_range("Missing music: " + key);
+  return it->second;
 }
 
 Sound ResManager::getSound(std::string key) {
-  return sounds[key];
+  auto it = sounds.find(key);
+  if (it == sounds.end())
+    throw std::out_of_range("Missing sound: " + key);
+  return it->second;
 }
 
 ResManager::~ResManager() {
@@ -275,6 +321,11 @@ ResManager::~ResManager() {
     UnloadTexture(p.second);
   }
   blocks.clear();
+
+  for (auto &p : backgrounds) {
+    UnloadTexture(p.second);
+  }
+  backgrounds.clear();
 
   for (auto &p : sounds) {
     UnloadSound(p.second);
