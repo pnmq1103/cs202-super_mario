@@ -4,7 +4,7 @@
 #include <string>
 
 class Button {
-private:
+public:
   std::function<void()> action_ = {nullptr};
 
   std::string label_ = {};
@@ -16,9 +16,9 @@ public:
   ~Button();
   Button() = default;
   Button(
-    std::function<void()> action, Rectangle source, Rectangle bounds,
-    const std::string &path);
+    std::string label, std::function<void()> action, Rectangle source,
+    Rectangle bounds, const std::string &path);
 
-  void Update();
-  void Draw();
+  virtual void Update();
+  virtual void Draw();
 };

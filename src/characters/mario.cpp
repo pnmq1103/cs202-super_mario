@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <raylib.h>
 
-#include "include/characters/character.hpp"
-#include "include/characters/character_state.hpp"
-#include "include/characters/mario.hpp"
+#include "../include/characters/character.hpp"
+#include "../include/characters/character_state.hpp"
+#include "../include/characters/mario.hpp"
 
 //+----------------------------------------------------------+
 //|                       Normal Mario                       |
@@ -136,7 +136,7 @@ void BigMario::Update() {
   if (disabled)
     return;
   CharacterState::Update();
-  float v0 = 4.0 * jumpHeight / jumpTime;
+  float v0 = 4.0f * jumpHeight / jumpTime;
   if (velocity_y != 0) {
     if (velocity_y < -v0 * 1 / 3) {
       frame = frame_list[6];
@@ -219,7 +219,7 @@ void FireMario::Update() {
   if (disabled)
     return;
   CharacterState::Update();
-  float v0 = 4.0 * jumpHeight / jumpTime;
+  float v0 = 4.0f * jumpHeight / jumpTime;
   if (velocity_y != 0) {
     if (velocity_y < -v0 * 1 / 3) {
       frame = frame_list[6];

@@ -122,19 +122,21 @@ void MenuScene::DrawOptions() {
 void MenuScene::CreateButtons() {
   // Setting
   buttons_.emplace_back(
+    "Setting",
     []() {
       App.ChangeScene(std::make_unique<SettingScene>());
     },
     Rectangle{0, 0, 16, 16},
-    Rectangle{screenWidth - 48 * 2, screenHeight - 48 * 2, 48, 48},
+    Rectangle{screenWidth - 64 * 2, screenHeight - 64 * 2, 64, 64},
     "res/sprites/buttons/setting.png");
 
   // Credit
   buttons_.emplace_back(
+    "Credit",
     []() {
       App.ChangeScene(std::make_unique<CreditScene>());
     },
-    Rectangle{0, 0, 16, 16}, Rectangle{48, screenHeight - 48 * 2, 48, 48},
+    Rectangle{0, 0, 16, 16}, Rectangle{64, screenHeight - 64 * 2, 64, 64},
     "res/sprites/buttons/credit.png");
 }
 

@@ -1,4 +1,5 @@
-#include "include/characters/projectile.hpp"
+#include "../include/characters/projectile.hpp"
+
 Projectile::Projectile(float Nscale, Vector2 Nposition, Vector2 Nvelocity)
     : scale(Nscale) {
   original_position = position = Nposition;

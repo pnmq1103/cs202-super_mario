@@ -1,4 +1,4 @@
-#include "include/characters/fireball.hpp"
+#include "../include/characters/fireball.hpp"
 
 //+----------------------------------------------------------+
 //|                       Mario Fireball                     |

@@ -91,37 +91,30 @@ void EditorScene::PlaceBlock() {
 }
 
 void EditorScene::DrawGrid() {
-  Vector2 camera_topleft = {camera_.target.x - camera_.offset.x, 0};
+  Vector2 camera_topleft = {
+    camera_.target.x - camera_.offset.x, camera_.target.y - camera_.offset.y};
 
   int start_x = static_cast<int>(std::max(0.0f, camera_topleft.x / blockSize));
   int end_x   = static_cast<int>(Clamp(
     std::ceil((camera_topleft.x + screenWidth) / blockSize), 0,
     static_cast<float>(block_width_)));
 
+  int start_y = static_cast<int>(std::max(0.0f, camera_topleft.y / blockSize));
+  int end_y   = static_cast<int>(Clamp(
+    std::ceil((camera_topleft.y + screenHeight) / blockSize), 0,
+    static_cast<float>(block_height_)));
+
   BeginMode2D(camera_);
   // Draw vertical
   for (int i = start_x; i <= end_x; ++i)
-    DrawLineV({i * blockSize, 0}, {i * blockSize, screenHeight}, LIGHTGRAY);
-  // Draw horizontal
-  for (int i = 0; i <= screenHeight / blockSize; ++i)
     DrawLineV(
-      {start_x * blockSize, i * blockSize}, {end_x * blockSize, i * blockSize},
+      {blockSize * i, blockSize * start_y}, {blockSize * i, blockSize * end_y},
       LIGHTGRAY);
-  EndMode2D();
-}
-
-void EditorScene::DrawCursor() {
-  Color transparent = {128, 128, 128, 128};
-
-  BeginMode2D(camera_);
-  //  Draw tile
-  DrawTexturePro(
-    ground_tiles_, ground_tiles_info_[selected_tile_id_],
-    {snapped_.x, snapped_.y, blockSize, blockSize}, {0, 0}, 0, transparent);
-  // Draw crosshair
-  DrawTexturePro(
-    crosshair_, {0, 0, 64, 64}, {snapped_.x, snapped_.y, blockSize, blockSize},
-    {0, 0}, 0, transparent);
+  // Draw horizontal
+  for (int i = start_y; i <= end_y; ++i)
+    DrawLineV(
+      {blockSize * start_x, blockSize * i}, {blockSize * end_x, blockSize * i},
+      LIGHTGRAY);
   EndMode2D();
 }
 
@@ -141,10 +134,26 @@ void EditorScene::DrawMap() {
   EndMode2D();
 }
 
+void EditorScene::DrawCursor() {
+  Color transparent = {128, 128, 128, 128};
+
+  BeginMode2D(camera_);
+  //  Draw tile
+  DrawTexturePro(
+    ground_tiles_, ground_tiles_info_[selected_tile_id_],
+    {snapped_.x, snapped_.y, blockSize, blockSize}, {0, 0}, 0, transparent);
+  // Draw crosshair
+  DrawTexturePro(
+    crosshair_, {0, 0, 64, 64}, {snapped_.x, snapped_.y, blockSize, blockSize},
+    {0, 0}, 0, transparent);
+  EndMode2D();
+}
+
 void EditorScene::CreateButtons() {
   // Choose tile
   buttons_.emplace_back(
-    [&]() {
+    "Overworld",
+    [this] {
       App.ChangeScene(std::make_unique<TileSelectorScene>(selected_tile_id_));
     },
     Rectangle{0, 0, 16, 16}, Rectangle{100, 100, 64, 64},

@@ -2,24 +2,23 @@
 #include <raylib.h>
 #include <stdexcept>
 
-#include "include/characters/character.hpp"
-#include "include/characters/luigi.hpp"
-#include "include/characters/mario.hpp"
+#include "../include/characters/character.hpp"
+#include "../include/characters/luigi.hpp"
+#include "../include/characters/mario.hpp"
 
-Character::Character(float Nscale) {
-  pState_ = nullptr;
-  state_  = 0;
-  scale_  = Nscale;
-}
+Character::Character(float Nscale) : scale_(Nscale) {}
+
 Character::~Character() {
   if (pState_)
     delete pState_;
 }
+
 void Character::SetCharacter(CharacterType Ntype, Vector2 position) {
   type_ = Ntype;
   SetState(0, true);
   pState_->SetPosition(position);
 }
+
 void Character::SetState(int state, bool is_evolving) {
   Vector2 position = {INT_MIN, INT_MIN};
   Rectangle rect;
@@ -65,9 +64,11 @@ void Character::SetState(int state, bool is_evolving) {
   if (position.x > INT_MIN && position.y > INT_MIN)
     pState_->SetPosition(position);
 }
+
 CharacterType Character::GetCharacter() {
   return type_;
 }
+
 int Character::GetState() {
   return state_;
 }
@@ -77,72 +78,86 @@ void Character::Draw() {
     throw std::runtime_error("not yet set character");
   pState_->Draw();
 }
+
 void Character::Run(bool to_left) {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->Run(to_left);
 }
+
 void Character::Jump() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->Jump();
 }
+
 void Character::Update() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->Update();
 }
+
 void Character::SetFrameCount() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->SetFrameCount();
 }
+
 void Character::StopX() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->StopX();
 }
+
 void Character::StopY(float Ny) {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->StopY(Ny);
 }
+
 void Character::StopY() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->StopY();
 }
+
 Rectangle Character::GetRectangle() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   return pState_->GetRectangle();
 }
+
 float Character::GetSpeed() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   return pState_->GetSpeed();
 }
+
 bool Character::IsFalling() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   return pState_->IsFalling();
 }
+
 void Character::Die() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->Die();
 }
+
 void Character::Evolve() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   if (state_ < 4)
     pState_->Evolve();
 }
+
 void Character::ToStarman() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->ToStarman();
 }
+
 bool Character::IsStarman() {
   if (!pState_)
     throw std::runtime_error("not yet set character");

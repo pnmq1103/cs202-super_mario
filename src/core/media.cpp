@@ -25,6 +25,11 @@ void Media::PlaySound(const std::string &name) {
     RAYLIB_H::PlaySound(sounds_[name]);
 }
 
+void Media::SetSoundVolume(float volume) {
+  for (const auto &[_, sound] : sounds_)
+    RAYLIB_H::SetSoundVolume(sound, volume);
+}
+
 void Media::PlayMusic(const std::string &name) {
   if (musics_.find(name) != musics_.end() && IsMusicValid(musics_[name])) {
     PlayMusicStream(musics_[name]);
@@ -49,6 +54,11 @@ void Media::StopMusic() {
     StopMusicStream(musics_[cur_music_]);
     cur_music_ = "";
   }
+}
+
+void Media::SetMusicVolume(float volume) {
+  for (const auto &[_, music] : musics_)
+    RAYLIB_H::SetMusicVolume(music, volume);
 }
 
 void Media::SaveMusicState() {

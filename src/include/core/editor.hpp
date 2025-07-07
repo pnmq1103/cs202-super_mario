@@ -11,7 +11,7 @@ private:
   static constexpr float blockSize = {16 * 4}; // int needs typecast
 
   int block_width_  = {50};
-  int block_height_ = {15};
+  int block_height_ = {50};
 
   Vector2 snapped_    = {0, 0};
   Rectangle boundary_ = {};

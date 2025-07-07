@@ -1,4 +1,5 @@
-#include "include/characters/projectile.hpp"
+#include "../include/characters/projectile.hpp"
+
 class MarioFireball : public Projectile {
 private:
   float gravity_, bounce_coefficient_, range_;

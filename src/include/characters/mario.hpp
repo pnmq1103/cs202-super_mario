@@ -1,13 +1,13 @@
 #pragma once
 #include <raylib.h>
 
-#include "include/characters/character.hpp"
-#include "include/characters/character_state.hpp"
+#include "../include/characters/character.hpp"
+#include "../include/characters/character_state.hpp"
 
 class NormalMario : public CharacterState {
 private:
-  Texture pre_texture_;
-  Rectangle pre_frame_;
+  Texture pre_texture_ = {};
+  Rectangle pre_frame_ = {};
 
 public:
   NormalMario(
@@ -22,8 +22,8 @@ public:
 
 class BigMario : public CharacterState {
 private:
-  Texture pre_texture_;
-  Rectangle pre_frame_;
+  Texture pre_texture_ = {};
+  Rectangle pre_frame_ = {};
 
 public:
   BigMario(Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving);
@@ -37,8 +37,8 @@ public:
 
 class FireMario : public CharacterState {
 private:
-  Texture pre_texture_;
-  Rectangle pre_frame_;
+  Texture pre_texture_ = {};
+  Rectangle pre_frame_ = {};
 
 public:
   FireMario(Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving);

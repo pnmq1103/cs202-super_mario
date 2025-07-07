@@ -5,6 +5,7 @@
 
 class Scene {
 protected:
+  // The scale factor for the whole program is 4x
   static constexpr float screenWidth  = {256 * 4};
   static constexpr float screenHeight = {240 * 4};
 

@@ -15,10 +15,10 @@ ResManager::ResManager() {
 }
 
 void ResManager::loadTexture(
-  const fs::path& imgPath, const fs::path& coorPath, std::string key) {
+  const fs::path &imgPath, const fs::path &coorPath, std::string key) {
   // load img
   std::string path = imgPath.string();
-  Image img = LoadImage(path.c_str());
+  Image img        = LoadImage(path.c_str());
 
   // load coors
   std::ifstream in(coorPath);
@@ -182,7 +182,6 @@ void ResManager::loadBackgrounds() {
   tempText.clear();
 }
 
-
 void ResManager::loadMusic() {
   musics["bonus"] = LoadMusicStream((musicPath / "bonus.ogg").string().c_str());
   musics["boss"]  = LoadMusicStream((musicPath / "boss.ogg").string().c_str());
@@ -252,7 +251,6 @@ void ResManager::loadSounds() {
     = LoadSound((soundPath / "world_clear.wav").string().c_str());
 }
 
-
 SaveDatawMap ResManager::loadResourcesFromFile() {
   FileHandler fp;
   std::string path = fp.openFilePath();
@@ -261,15 +259,14 @@ SaveDatawMap ResManager::loadResourcesFromFile() {
   }
   SaveDatawMap data;
   if (!fp.loadFile(path, data)) {
-    throw std::runtime_error(
-      "Failed to load file at: " + path);
+    throw std::runtime_error("Failed to load file at: " + path);
   }
   return data;
 }
 
 bool ResManager::saveResourcesToFile(const SaveDatawMap &data) {
   FileHandler fp;
-  std::string path = fp.openSavePath(); 
+  std::string path = fp.openSavePath();
   if (path.empty()) {
     return false;
   }
