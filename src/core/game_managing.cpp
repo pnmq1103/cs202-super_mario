@@ -2,7 +2,7 @@
 #include "../include/core/file_handler.hpp"
 
 #include <cstring>
-#include <raylib.h>
+#include "raylib.h"
 
 GameManaging::GameManaging() {
   lives_            = 3;
