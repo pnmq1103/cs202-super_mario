@@ -16,55 +16,51 @@ GameScene::~GameScene() {
     input_command_ = nullptr;
   }
 
-  if (player_character_) {
-    delete player_character_;
-    player_character_ = nullptr;
+  if (mario_character_) {
+    delete mario_character_;
+    mario_character_ = nullptr;
+  }
+
+  if (luigi_character_) {
+    delete luigi_character_;
+    luigi_character_ = nullptr;
   }
 }
 
 void GameScene::Init() {
   App.GetMedia().PlayMusic("ground_theme");
 
-  // Create player character (Mario by default)
-  player_character_ = new Character(4.0f); // Scale factor
-  player_character_->SetCharacter(
-    CharacterType::MARIO, {100.0f, 500.0f}); // Starting position
+  // Create Mario character
+  mario_character_ = new Character(4.0f);
+  mario_character_->SetCharacter(CharacterType::MARIO, {100.0f, 500.0f});
 
-  // Create command handler and link it to the character
-  input_command_ = new Command(player_character_);
+  // Create Luigi character
+  luigi_character_ = new Character(4.0f);
+  luigi_character_->SetCharacter(CharacterType::LUIGI, {100.0f, 500.0f});
 
-  // Load level (stub: replace with actual file path)
+  // Create command handler with both characters (Mario starts as active)
+  input_command_ = new Command(mario_character_, luigi_character_);
+
+  // Load level
   game_manager_.LoadLevel("res/levels/level1.dat");
 }
 
 void GameScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
     App.ChangeScene(nullptr);
-    return; // Early return to prevent use-after-free
+    return;
   }
 
-  // Switch between Mario and Luigi with TAB key
-  if (IsKeyPressed(KEY_TAB) && player_character_) {
-    if (player_character_->GetCharacter() == CharacterType::MARIO) {
-      player_character_->SetCharacter(
-        CharacterType::LUIGI, {player_character_->GetRectangle().x,
-                               player_character_->GetRectangle().y});
-    } else {
-      player_character_->SetCharacter(
-        CharacterType::MARIO, {player_character_->GetRectangle().x,
-                               player_character_->GetRectangle().y});
-    }
-  }
-
-  // Handle character input through command system
+  // Handle character input through command system (includes TAB switching)
   if (input_command_) {
     input_command_->HandleInput();
   }
 
-  // Update character
-  if (player_character_) {
-    player_character_->Update();
-    player_character_->SetFrameCount();
+  // Update active character
+  Character* active_character = input_command_->GetActiveCharacter();
+  if (active_character) {
+    active_character->Update();
+    active_character->SetFrameCount();
   }
 
   // Update game manager (time, lives, etc)
@@ -75,9 +71,10 @@ void GameScene::Draw() {
   // Draw level (background, blocks, enemies)
   game_manager_.DrawLevel();
 
-  // Draw character
-  if (player_character_) {
-    player_character_->Draw();
+  // Draw active character
+  Character* active_character = input_command_->GetActiveCharacter();
+  if (active_character) {
+    active_character->Draw();
   }
 
   // Draw stats (lives, points, time)

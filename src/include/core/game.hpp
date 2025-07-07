@@ -7,9 +7,10 @@
 
 class GameScene : public Scene {
 private:
-  Character *player_character_ = {nullptr};
-  Command *input_command_      = {nullptr};
-  GameManaging game_manager_; // Add GameManaging instance
+  Character *mario_character_ = {nullptr};
+  Character *luigi_character_ = {nullptr};
+  Command *input_command_     = {nullptr};
+  GameManaging game_manager_;
 
 public:
   GameScene();

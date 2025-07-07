@@ -4,19 +4,25 @@
 
 class Command {
 private:
-  Character *active_character_;
-
-  // Input timing for smooth controls
-  double last_input_time_;
-  const double input_cooldown_  = 0.05; // Small cooldown for movement
-  const double action_cooldown_ = 0.2;  // Longer cooldown for actions
+  Character *mario_ = nullptr;
+  Character *luigi_ = nullptr;
+  Character *active_character_ = nullptr;
+  bool fireball_active_ = false; // Only allow one fireball at a time
 
 public:
-  Command(Character *character = nullptr);
+  Command(Character *mario = nullptr, Character *luigi = nullptr);
   ~Command();
+
+  // Set Mario and Luigi pointers
+  void SetMario(Character *mario);
+  void SetLuigi(Character *luigi);
 
   // Set the active character to control
   void SetActiveCharacter(Character *character);
+  Character* GetActiveCharacter() const;
+
+  // Switch between Mario and Luigi
+  void SwitchCharacter();
 
   // Main input handling method
   void HandleInput();
@@ -27,8 +33,7 @@ public:
   void JumpCharacter();
   void ShootFireball();
 
-  // Utility methods
-  bool CanProcessInput() const;
-  bool CanProcessAction() const;
-  void UpdateInputTiming();
+  // Fireball state management
+  void SetFireballActive(bool active);
+  bool IsFireballActive() const;
 };

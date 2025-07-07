@@ -3,117 +3,110 @@
 #include "../include/characters/character.hpp"
 #include "../include/core/command.hpp"
 
-Command::Command(Character *character)
-    : active_character_(character), last_input_time_(0.0) {}
+Command::Command(Character *mario, Character *luigi)
+    : mario_(mario), luigi_(luigi), fireball_active_(false) {
+  active_character_ = mario_ ? mario_ : luigi_;
+}
 
-Command::~Command() {
-  // No cleanup needed as we don't own the character
+Command::~Command() {}
+
+void Command::SetMario(Character *mario) {
+  mario_ = mario;
+  if (!active_character_) active_character_ = mario_;
+}
+
+void Command::SetLuigi(Character *luigi) {
+  luigi_ = luigi;
+  if (!active_character_) active_character_ = luigi_;
 }
 
 void Command::SetActiveCharacter(Character *character) {
   active_character_ = character;
 }
 
+Character* Command::GetActiveCharacter() const {
+  return active_character_;
+}
+
+void Command::SwitchCharacter() {
+  if (active_character_ == mario_ && luigi_) {
+    active_character_ = luigi_;
+  } else if (active_character_ == luigi_ && mario_) {
+    active_character_ = mario_;
+  }
+}
+
 void Command::HandleInput() {
-  if (!active_character_) {
-    return;
+  if (!active_character_) return;
+
+  // --- Handle Character Switch ---
+  if (IsKeyPressed(KEY_TAB)) {
+    SwitchCharacter();
   }
 
-  UpdateInputTiming();
-
-  // Handle movement input
+  // --- Handle Movement ---
   bool is_moving = false;
-
   if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) {
-    if (CanProcessInput()) {
-      MoveCharacter(true); // Move left
-      is_moving = true;
-    }
+    MoveCharacter(true); // Move left
+    is_moving = true;
   }
-
   if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
-    if (CanProcessInput()) {
-      MoveCharacter(false); // Move right
-      is_moving = true;
-    }
+    MoveCharacter(false); // Move right
+    is_moving = true;
   }
-
-  // Stop character if no movement keys are pressed
   if (!is_moving) {
     StopCharacter();
   }
-
-  // Handle jump input
-  if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {
-    if (CanProcessAction()) {
-      JumpCharacter();
-    }
+  if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_SPACE)) {
+    JumpCharacter();
   }
 
-  // Handle fireball shooting (only for Fire Mario/Luigi)
-  if (IsKeyPressed(KEY_X) || IsKeyPressed(KEY_LEFT_CONTROL)) {
-    if (CanProcessAction()) {
-      ShootFireball();
-    }
+  // --- Handle Fireball/Ice Ball ---
+  if ((IsKeyPressed(KEY_LEFT_CONTROL) || IsKeyPressed(KEY_RIGHT_CONTROL) ||
+       IsKeyPressed(KEY_LEFT_SHIFT) || IsKeyPressed(KEY_RIGHT_SHIFT)) &&
+      active_character_->GetState() == 2 && !fireball_active_) {
+    ShootFireball();
+    fireball_active_ = true;
+  }
+
+  // --- Handle Mouse Clicks (for menu or in-game actions) ---
+  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    // Example: Could be used for menu or in-game object interaction
+    // You can expand this to call a callback or interact with objects
   }
 }
 
 void Command::MoveCharacter(bool left) {
-  if (!active_character_) {
-    return;
+  if (active_character_) {
+    active_character_->Run(left);
   }
-
-  active_character_->Run(left);
 }
 
 void Command::StopCharacter() {
-  if (!active_character_) {
-    return;
+  if (active_character_) {
+    active_character_->StopX();
   }
-
-  active_character_->StopX();
 }
 
 void Command::JumpCharacter() {
-  if (!active_character_) {
-    return;
+  if (active_character_) {
+    active_character_->Jump();
   }
-
-  active_character_->Jump();
-  last_input_time_ = GetTime(); // Update timing for action cooldown
 }
 
 void Command::ShootFireball() {
-  if (!active_character_) {
-    return;
-  }
-
-  // Check if character is in Fire state (state 2)
-  if (active_character_->GetState() == 2) {
-    // Note: Shooting fireball functionality would need to be implemented
-    // in the character system. For now, we just mark the action.
-    // You might want to add a ShootFireball method to Character class
-    last_input_time_ = GetTime(); // Update timing for action cooldown
-
-    // Placeholder - this would trigger fireball creation
-    // active_character_->ShootFireball();
+  if (active_character_) {
+    // Only allow one fireball at a time (to be implemented in character/projectile system)
+    // Example: active_character_->ShootFireball();
+    // You need to coordinate with the projectile system for actual fireball creation
+    // When the fireball is destroyed, call SetFireballActive(false) from the projectile system
   }
 }
 
-bool Command::CanProcessInput() const {
-  double current_time = GetTime();
-  return (current_time - last_input_time_) >= input_cooldown_;
+void Command::SetFireballActive(bool active) {
+  fireball_active_ = active;
 }
 
-bool Command::CanProcessAction() const {
-  double current_time = GetTime();
-  return (current_time - last_input_time_) >= action_cooldown_;
-}
-
-void Command::UpdateInputTiming() {
-  // This gets called every frame to update timing for smooth movement
-  double current_time = GetTime();
-  if ((current_time - last_input_time_) >= input_cooldown_) {
-    last_input_time_ = current_time;
-  }
+bool Command::IsFireballActive() const {
+  return fireball_active_;
 }
