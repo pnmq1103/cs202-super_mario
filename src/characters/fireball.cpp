@@ -1,13 +1,15 @@
-#include "../include/characters/fireball.hpp"
-#include <raylib.h>
+#include "include/characters/fireball.hpp"
 
-MarioFireball::MarioFireball(Vector2 Npos, bool left)
-    : Projectile(5, Npos, {10, 0}) {
-  gravity_   = 5;
-  bounce_co_ = 1;
-  if (left)
-    v.x *= -1;
-  range_ = 100000;
+//+----------------------------------------------------------+
+//|                       Mario Fireball                     |
+//+----------------------------------------------------------+
+MarioFireball::MarioFireball(Vector2 Nposition, bool to_left)
+    : Projectile(5, Nposition, {10, 0}) {
+  gravity_            = 5;
+  bounce_coefficient_ = 1;
+  if (to_left)
+    velocity.x *= -1;
+  range_ = 3000;
 
   LoadFrameList("res/sprites/icons/objects.txt");
   Image image = LoadImage("res/sprites/icons/objects.png");
@@ -17,33 +19,36 @@ MarioFireball::MarioFireball(Vector2 Npos, bool left)
   frame = frame_list[133];
 }
 MarioFireball::~MarioFireball() {}
-void MarioFireball::Update(float UpBounce, float LowBounce) {
-  frame = frame_list[(t / 15) % 3 + 133];
-  if (v.x > 0) {
-    if (pos.x >= ori_pos.x + range_)
-      destroy = true;
+void MarioFireball::Update(float upper_bounce, float lower_bounce) {
+  frame = frame_list[(time / 15) % 3 + 133];
+  if (velocity.x > 0) {
+    if (position.x >= original_position.x + range_)
+      is_destroy = true;
   } else {
-    if (pos.x <= ori_pos.x - range_)
-      destroy = true;
+    if (position.x <= original_position.x - range_)
+      is_destroy = true;
   }
-  if (pos.y <= UpBounce)
-    v.y = 0;
-  else if (pos.y + frame.height >= LowBounce)
-    v.y *= -bounce_co_;
+  if (position.y <= upper_bounce) {
+    velocity.y  = 0;
+    velocity.y += gravity_;
+  } else if (position.y + frame.height >= lower_bounce)
+    velocity.y *= -bounce_coefficient_;
   else
-    v.y += gravity_;
-  pos.x += v.x;
-  pos.y += v.y;
+    velocity.y += gravity_;
+  position.x += velocity.x;
+  position.y += velocity.y;
 }
 void MarioFireball::Draw() {
-  if (!destroy)
+  if (!is_destroy)
     Projectile::Draw();
 }
-
-EnemyFireball::EnemyFireball(Vector2 Npos, bool left)
-    : Projectile(5, Npos, {10, 0}) {
-  if (left)
-    v.x *= -1;
+//+----------------------------------------------------------+
+//|                       Enemy Fireball                     |
+//+----------------------------------------------------------+
+EnemyFireball::EnemyFireball(Vector2 Nposition, bool to_left)
+    : Projectile(5, Nposition, {10, 0}) {
+  if (to_left)
+    velocity.x *= -1;
 
   LoadFrameList("res/sprites/icons/objects.txt");
   Image image = LoadImage("res/sprites/icons/objects.png");
@@ -54,25 +59,27 @@ EnemyFireball::EnemyFireball(Vector2 Npos, bool left)
 }
 EnemyFireball::~EnemyFireball() {}
 void EnemyFireball::Update() {
-  if ((t / 5) % 3 == 0) {
+  if ((time / 5) % 3 == 0) {
     frame = frame_list[745];
-  } else if ((t / 5) % 3 == 1) {
+  } else if ((time / 5) % 3 == 1) {
     frame = frame_list[759];
   } else {
     frame = frame_list[773];
   }
-  pos.x += v.x;
-  pos.y += v.y;
+  position.x += velocity.x;
+  position.y += velocity.y;
 }
 void EnemyFireball::Draw() {
-  if (!destroy)
+  if (!is_destroy)
     Projectile::Draw();
 }
-
-ElectricBall::ElectricBall(Vector2 Npos, bool left)
-    : Projectile(1, Npos, {10, 0}) {
-  if (left)
-    v.x *= -1;
+//+----------------------------------------------------------+
+//|                       Electric ball                      |
+//+----------------------------------------------------------+
+ElectricBall::ElectricBall(Vector2 Nposition, bool to_left)
+    : Projectile(1, Nposition, {10, 0}) {
+  if (to_left)
+    velocity.x *= -1;
 
   LoadFrameList("res/sprites/electric_shot/electric_shot.txt");
   Image image = LoadImage("res/sprites/electric_shot/electric_shot.png");
@@ -83,20 +90,30 @@ ElectricBall::ElectricBall(Vector2 Npos, bool left)
 }
 ElectricBall::~ElectricBall() {}
 void ElectricBall::Update() {
-  if (destroy) {
-    frame = frame_list[(t - t_explose_) / 5];
+  if (is_destroy) {
+    frame = frame_list[(time - time_explode_) / 5];
   } else {
-    pos.x += v.x;
-    pos.y += v.y;
+    position.x += velocity.x;
+    position.y += velocity.y;
   }
 }
 void ElectricBall::Draw() {
-  if (!destroy || t - t_explose_ < 40)
+  if (!is_destroy || time - time_explode_ < 40)
     Projectile::Draw();
 }
 void ElectricBall::Destroy() {
-  if (destroy)
+  if (is_destroy)
     return;
   Projectile::Destroy();
-  t_explose_ = t + 1;
+  time_explode_ = time + 1;
+}
+bool ElectricBall::IsDestroyed() {
+  if (is_destroy && time - time_explode_ >= 40)
+    return true;
+  else
+    return false;
+}
+void ElectricBall::Renew(Vector2 Nposition, bool to_left) {
+  Projectile::Renew(Nposition, to_left);
+  frame = frame_list[0];
 }

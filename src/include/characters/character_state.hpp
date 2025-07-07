@@ -5,26 +5,29 @@
 
 #include "character.hpp"
 
+// Time will be counted by frame not by second
+
 class CharacterState {
 protected:
-  float y, v, stop_x;
-  int t_x, t, stop_left, t_star;
-  bool left, is_jump, is_fall, is_die, disabled;
+  float y_before_jump, velocity_y, x_stop;
+  int time_x, time, stop_direction, time_star;
+  bool to_left, is_jump, is_fall, is_die, disabled;
 
   Character *context;
-  Vector2 pos;
+  Vector2 position;
   Texture2D texture;
-  const float speed, jH, scale;
-  const int jT, rT;
+  const float speed, jumpHeight, scale;
+  const int jumpTime, runTime;
   Rectangle frame;
 
   std::vector<Rectangle> frame_list;
-  void LoadFrameList(std::string at);
-  void SetPosition(Vector2 Npos);
+  void LoadFrameList(std::string address);
+  void SetPosition(Vector2 Nposition);
 
 public:
   CharacterState(
-    int NrT, float Nspeed, int NjT, float NjH, float Nscale, bool Nleft);
+    int NrunTime, float Nspeed, int NjumpTime, float NjumpHeight, float Nscale,
+    bool Nto_left);
   virtual ~CharacterState();
 
   Rectangle GetRectangle();
@@ -33,7 +36,7 @@ public:
   float GetSpeed();
 
   virtual void Draw();
-  void Run(bool left);
+  void Run(bool to_left);
   void Jump();
   virtual void Update();
   void StopX();

@@ -1,11 +1,10 @@
-#include "../include/characters/projectile.hpp"
-
-Projectile::Projectile(float Nscale, Vector2 Npos, Vector2 Nv) : scale(Nscale) {
-  ori_pos = pos = Npos;
-  v             = Nv;
-  bounce_count  = 0;
-  destroy       = false;
-  t             = 0;
+#include "include/characters/projectile.hpp"
+Projectile::Projectile(float Nscale, Vector2 Nposition, Vector2 Nvelocity)
+    : scale(Nscale) {
+  original_position = position = Nposition;
+  velocity                     = Nvelocity;
+  is_destroy                   = false;
+  time                         = 0;
 }
 Projectile::~Projectile() {
   UnloadTexture(texture);
@@ -32,14 +31,24 @@ void Projectile::LoadFrameList(std::string at) {
   fin.close();
 }
 void Projectile::SetFrameCount() {
-  ++t;
+  ++time;
 }
 void Projectile::Draw() {
-  DrawTextureRec(texture, frame, pos, WHITE);
+  DrawTextureRec(texture, frame, position, WHITE);
 }
 Rectangle Projectile::GetRectangle() {
-  return {pos.x, pos.y, frame.width, frame.height};
+  return {position.x, position.y, frame.width, frame.height};
 }
 void Projectile::Destroy() {
-  destroy = true;
+  is_destroy = true;
+}
+bool Projectile::IsDestroyed() {
+  return is_destroy;
+}
+void Projectile::Renew(Vector2 Nposition, bool to_left) {
+  original_position = position = Nposition;
+  is_destroy                   = false;
+  time                         = 0;
+  if (to_left)
+    velocity.x *= -1;
 }

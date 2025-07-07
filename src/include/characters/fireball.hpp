@@ -1,19 +1,18 @@
-#include "projectile.hpp"
-
+#include "include/characters/projectile.hpp"
 class MarioFireball : public Projectile {
 private:
-  float gravity_, bounce_co_, range_;
+  float gravity_, bounce_coefficient_, range_;
 
 public:
-  MarioFireball(Vector2 Npos, bool left);
+  MarioFireball(Vector2 Nposition, bool to_left);
   ~MarioFireball();
-  void Update(float UpBounce, float LowBounce);
+  void Update(float upper_bounce, float lower_bounce);
   void Draw();
 };
 
 class EnemyFireball : public Projectile {
 public:
-  EnemyFireball(Vector2 Npos, bool left);
+  EnemyFireball(Vector2 Nposition, bool to_left);
   ~EnemyFireball();
   void Update();
   void Draw();
@@ -21,12 +20,14 @@ public:
 
 class ElectricBall : public Projectile {
 private:
-  int t_explose_;
+  int time_explode_;
 
 public:
-  ElectricBall(Vector2 Npos, bool left);
+  ElectricBall(Vector2 Nposition, bool to_left);
   ~ElectricBall();
   void Update();
   void Draw();
   void Destroy();
+  bool IsDestroyed();
+  void Renew(Vector2 Nposition, bool to_left);
 };

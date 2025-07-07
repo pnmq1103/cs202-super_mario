@@ -1,16 +1,17 @@
 #pragma once
 #include <raylib.h>
 
-#include "character.hpp"
-#include "character_state.hpp"
+#include "include/characters/character.hpp"
+#include "include/characters/character_state.hpp"
 
 class NormalLuigi : public CharacterState {
 private:
-  Texture pre_texture_ = {};
-  Rectangle pre_frame_ = {};
+  Texture pre_texture_;
+  Rectangle pre_frame_;
 
 public:
-  NormalLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran);
+  NormalLuigi(
+    Character *Ncontext, float Nscale, bool Nis_left, bool is_evolving);
   ~NormalLuigi();
 
   void Die();
@@ -21,11 +22,11 @@ public:
 
 class BigLuigi : public CharacterState {
 private:
-  Texture pre_texture_ = {};
-  Rectangle pre_frame_ = {};
+  Texture pre_texture_;
+  Rectangle pre_frame_;
 
 public:
-  BigLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran);
+  BigLuigi(Character *Ncontext, float Nscale, bool Nis_left, bool is_evolving);
   ~BigLuigi();
 
   void Update();
@@ -36,11 +37,11 @@ public:
 
 class FireLuigi : public CharacterState {
 private:
-  Texture pre_texture_ = {};
-  Rectangle pre_frame_ = {};
+  Texture pre_texture_;
+  Rectangle pre_frame_;
 
 public:
-  FireLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran);
+  FireLuigi(Character *Ncontext, float Nscale, bool Nis_left, bool is_evolving);
   ~FireLuigi();
 
   void Die();
