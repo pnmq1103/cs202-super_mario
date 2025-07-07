@@ -1,11 +1,12 @@
 #include <memory>
-#include <raylib.h>
+#include "raylib.h"
 #include <utility>
 
 #include "../include/core/application.hpp"
 #include "../include/core/media.hpp"
 #include "../include/core/menu.hpp"
 #include "../include/core/scene.hpp"
+#include "../include//core/resource_manager.hpp"
 
 Application &App = Application::GetInstance();
 
@@ -32,6 +33,8 @@ void Application::Init() {
   HideCursor();
   media_.Init();
   scene_manager_.Init();
+  //resource manager for testing
+  ResManager res;
 }
 
 void Application::Update() {

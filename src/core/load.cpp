@@ -37,8 +37,8 @@ void LoadScene::Update() {
   }
   if (waitingForPath) {
     FileHandler handler(selectedSlot + 1);
-    path = handler.openFilePath();
-    handler.loadFile(path, saveData[selectedSlot]);
+    path = handler.OpenFilePath();
+    handler.LoadFile(path, saveData[selectedSlot]);
     waitingForPath = false;
   }
 }
@@ -51,7 +51,7 @@ void LoadScene::Draw() {
     // check for existing saved game
     std::string slotText;
     FileHandler handler(i + 1);
-    if (handler.loadFile(path, saveData[i])) {
+    if (handler.LoadFile(path, saveData[i])) {
       slotText = "Save game no." + std::to_string(i + 1) + " - "
                  + std::to_string(saveData[i].header.highScore);
     } else {

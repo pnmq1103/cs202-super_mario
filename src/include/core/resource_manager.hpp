@@ -1,62 +1,73 @@
 #pragma once
 #include "raylib.h"
-#include "..\include\core\file_handler.hpp"
-#include <map>
-#include <string>
-#include <fstream>
+#include "file_handler.hpp"
 #include <algorithm>
-#include <iostream>
-#include <sstream>
-#include <vector>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <string>
+#include <vector>
 
 namespace fs = std::filesystem;
 
+
 class ResManager {
-  static std::map<std::string, Texture2D> characters;
-  static std::map<std::string, Texture2D> blocks;
-  static std::map<std::string, Music> musics;
-  static std::map<std::string, Sound> sounds;
+  static std::map<std::string, Texture2D> mario_normal;
+  static std::map<std::string, Texture2D> mario_star;
+  static std::map<std::string, Texture2D> mario_fire;
+  static std::map<std::string, Texture2D> luigi_normal;
+  static std::map<std::string, Texture2D> luigi_star;
+  static std::map<std::string, Texture2D> luigi_fire;
+  static std::map<std::string, Texture2D> luigi_electric;
+  static std::map<std::string, Texture2D> enemies;
+  static std::map<std::string, Texture2D> icons;
+  static std::map<std::string, Texture2D> tileset;
   static std::map<std::string, Texture2D> backgrounds;
 
-  std::vector<std::pair<Vector2, Vector2>> coors;
-  std::map<std::string, Texture2D> tempText;
-  const fs::path imgPath   = "res";
-  const fs::path coorPath  = "res";
+  static std::map<std::string, Music> musics;
+  static std::map<std::string, Sound> sounds;
+
   const fs::path musicPath = "res/musics";
   const fs::path soundPath = "res/sounds";
 
-  
-  void loadTexture(const fs::path& imgPath, const fs::path& coorPath, std::string keyPrefix);
+  void LoadHelper(
+    const fs::path &imgPath, const fs::path &coorPath, std::string keyPrefix,
+    std::map<std::string, Texture2D>& map);
 
-  void loadCharacters();
+  void LoadTexture(
+    const fs::path &imgPath, const fs::path &coorPath, std::string keyPrefix,
+    std::map<std::string, Texture2D>& textMap);
 
-  void loadBlocks();
+  void LoadMusic();
 
-  void loadBackgrounds();
+  void LoadSounds();
 
-  void loadMusic();
+public:
+  ResManager();
 
-  void loadSounds();
+  SaveDatawMap LoadResourcesFromFile();
 
-  public:
+  static bool SaveResourcesToFile(const SaveDatawMap &data);
 
-    ResManager();
+  static Texture2D GetMario(char type, int index);
 
-    SaveDatawMap loadResourcesFromFile();
+  static Texture2D GetLuigi(char type, int index);
 
-    static bool saveResourcesToFile(const SaveDatawMap& data);
+  static Texture2D GetEnemy(int index);
 
-    static Texture2D getCharacter(std::string key);
+  static Texture2D GetTile(int index);
 
-    static Texture2D getBlock(std::string key);
+  static Texture2D GetIcon(int index);
 
-    static Texture2D getBackground(int index);
+  static Texture2D GetBackground(int index);
 
-    static Music getMusic(std::string key);
-    
-    static Sound getSound(std::string key);
+  static Music GetMusic(std::string key);
 
-    ~ResManager();
+  static Sound GetSound(std::string key);
 
+  void Shutdown();
+
+  ~ResManager();
 };

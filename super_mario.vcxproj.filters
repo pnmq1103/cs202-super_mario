@@ -80,5 +80,297 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\sprites\background\background.txt" />
+    <Text Include="res\sprites\characters\enemies.txt">
+      <Filter>res\sprites\characters</Filter>
+    </Text>
+    <Text Include="res\sprites\characters\normal.txt">
+      <Filter>res\sprites\characters</Filter>
+    </Text>
+    <Text Include="res\sprites\characters\star_fire_electric.txt">
+      <Filter>res\sprites\characters</Filter>
+    </Text>
+    <Text Include="res\sprites\icons\icons.txt">
+      <Filter>res\sprites\icons</Filter>
+    </Text>
+    <Text Include="res\sprites\icons\objects.txt">
+      <Filter>res\sprites\icons</Filter>
+    </Text>
+    <Text Include="res\sprites\tilesets\tileset_ground.txt">
+      <Filter>res\sprites\tilesets</Filter>
+    </Text>
+    <Text Include="res\sprites\tilesets\tileset_sky.txt">
+      <Filter>res\sprites\tilesets</Filter>
+    </Text>
+    <Text Include="res\sprites\tilesets\tileset_underground.txt">
+      <Filter>res\sprites\tilesets</Filter>
+    </Text>
+    <Text Include="res\sprites\tilesets\tileset_underwater.txt">
+      <Filter>res\sprites\tilesets</Filter>
+    </Text>
+    <Text Include="res\sprites\backgrounds\background.txt">
+      <Filter>res\sprites\backgrounds</Filter>
+    </Text>
+    <Text Include="res\sprites\user_interface\buttons.txt">
+      <Filter>res\sprites\user_interface</Filter>
+    </Text>
+    <Text Include="res\sprites\electric_shot\electric_shot.txt">
+      <Filter>res\sprites\electric_shot</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\sounds\1up.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\beep.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\billfirework.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\bowserfall.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\brick.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\bump.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\castle_complete.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\coin.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\course_clear.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\fire.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\fireball.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\flagpole.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\gameover.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\gameover_unused.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\hurryup.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\item.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\jump.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\jumpsmall.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\kickkill.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\level_complete.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\life_lost.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\pause.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\pipepowerdown.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\powerup.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\stompswim.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\time-up_warning.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\vine.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\world_clear.wav">
+      <Filter>res\sounds</Filter>
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\sprites\characters\enemies.png">
+      <Filter>res\sprites\characters</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_electric.png">
+      <Filter>res\sprites\characters</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_fire.png">
+      <Filter>res\sprites\characters</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_normal.png">
+      <Filter>res\sprites\characters</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\luigi_star.png">
+      <Filter>res\sprites\characters</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\mario_fire.png">
+      <Filter>res\sprites\characters</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\mario_normal.png">
+      <Filter>res\sprites\characters</Filter>
+    </Image>
+    <Image Include="res\sprites\characters\mario_star.png">
+      <Filter>res\sprites\characters</Filter>
+    </Image>
+    <Image Include="res\sprites\icons\icons.png">
+      <Filter>res\sprites\icons</Filter>
+    </Image>
+    <Image Include="res\sprites\icons\objects.png">
+      <Filter>res\sprites\icons</Filter>
+    </Image>
+    <Image Include="res\sprites\tilesets\tileset_ground.png">
+      <Filter>res\sprites\tilesets</Filter>
+    </Image>
+    <Image Include="res\sprites\tilesets\tileset_sky.png">
+      <Filter>res\sprites\tilesets</Filter>
+    </Image>
+    <Image Include="res\sprites\tilesets\tileset_underground.png">
+      <Filter>res\sprites\tilesets</Filter>
+    </Image>
+    <Image Include="res\sprites\tilesets\tileset_underwater.png">
+      <Filter>res\sprites\tilesets</Filter>
+    </Image>
+    <Image Include="res\sprites\backgrounds\backgrounds.png">
+      <Filter>res\sprites\backgrounds</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\arrow_e.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\arrow_n.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\arrow_ne.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\arrow_nw.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\arrow_s.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\arrow_se.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\arrow_sw.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\arrow_w.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\bracket_b_vertical.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\cross_large.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\cross_small.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\hand_closed.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\hand_open.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\hand_point.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\line_cross.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\line_horizontal.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\line_vertical.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\mark_exclamation.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\mark_question.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\navigation_e.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\navigation_n.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\navigation_ne.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\navigation_nw.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\navigation_s.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\navigation_se.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\navigation_sw.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\navigation_w.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\resize_b_cross_diagonal.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\resize_d_cross_diagonal.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\rotate_ccw.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\cursors\rotate_cw.png">
+      <Filter>res\sprites\cursors</Filter>
+    </Image>
+    <Image Include="res\sprites\user_interface\buttons.png">
+      <Filter>res\sprites\user_interface</Filter>
+    </Image>
+    <Image Include="res\sprites\electric_shot\electric_shot.png">
+      <Filter>res\sprites\electric_shot</Filter>
+    </Image>
+    <Image Include="res\sprites\crosshairs\crosshair025.png">
+      <Filter>res\sprites\crosshairs</Filter>
+    </Image>
+    <Image Include="res\sprites\crosshairs\crosshair026.png">
+      <Filter>res\sprites\crosshairs</Filter>
+    </Image>
+    <Image Include="res\sprites\crosshairs\crosshair027.png">
+      <Filter>res\sprites\crosshairs</Filter>
+    </Image>
+    <Image Include="res\sprites\crosshairs\crosshair028.png">
+      <Filter>res\sprites\crosshairs</Filter>
+    </Image>
+    <Image Include="res\sprites\crosshairs\crosshair042.png">
+      <Filter>res\sprites\crosshairs</Filter>
+    </Image>
+    <Image Include="res\sprites\crosshairs\crosshair145.png">
+      <Filter>res\sprites\crosshairs</Filter>
+    </Image>
+    <Image Include="res\app_icon.png">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="res\menu_background.png">
+      <Filter>res</Filter>
+    </Image>
   </ItemGroup>
 </Project>
