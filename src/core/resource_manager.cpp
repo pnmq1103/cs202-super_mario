@@ -1,19 +1,24 @@
 ﻿#include "..\include\core\resource_manager.hpp"
 
-std::map<std::string, Texture2D> ResManager::mario_normal;
-std::map<std::string, Texture2D> ResManager::mario_star;
-std::map<std::string, Texture2D> ResManager::mario_fire;
-std::map<std::string, Texture2D> ResManager::luigi_normal;
-std::map<std::string, Texture2D> ResManager::luigi_star;
-std::map<std::string, Texture2D> ResManager::luigi_fire;
-std::map<std::string, Texture2D> ResManager::luigi_electric;
-std::map<std::string, Texture2D> ResManager::enemies;
-std::map<std::string, Texture2D> ResManager::tileset;
-std::map<std::string, Texture2D> ResManager::icons;
-std::map<std::string, Texture2D> ResManager::backgrounds;
+std::unordered_map<std::string, Texture> ResManager::mario_normal;
+std::unordered_map<std::string, Texture> ResManager::mario_star;
+std::unordered_map<std::string, Texture> ResManager::mario_fire;
+std::unordered_map<std::string, Texture> ResManager::luigi_normal;
+std::unordered_map<std::string, Texture> ResManager::luigi_star;
+std::unordered_map<std::string, Texture> ResManager::luigi_fire;
+std::unordered_map<std::string, Texture> ResManager::luigi_electric;
+std::unordered_map<std::string, Texture> ResManager::enemies;
+std::unordered_map<std::string, Texture> ResManager::tileset;
+std::unordered_map<std::string, Texture> ResManager::icons;
+std::unordered_map<std::string, Texture> ResManager::backgrounds;
 
-std::map<std::string, Music> ResManager::musics;
-std::map<std::string, Sound> ResManager::sounds;
+std::unordered_map<std::string, Music> ResManager::musics;
+std::unordered_map<std::string, Sound> ResManager::sounds;
+
+// For safety reasons, call Shutdown once again on object destruction
+ResManager::~ResManager() {
+  Shutdown();
+}
 
 ResManager::ResManager() {
   LoadTexture(
@@ -76,7 +81,7 @@ ResManager::ResManager() {
 
 void ResManager::LoadHelper(
   const fs::path &imgPath, const fs::path &coorPath, std::string key,
-  std::map<std::string, Texture2D> &map) {
+  std::unordered_map<std::string, Texture> &map) {
 
   std::vector<std::pair<Vector2, Vector2>> coors;
   // load img
@@ -109,8 +114,8 @@ void ResManager::LoadHelper(
     Rectangle cropRec   = {
       coors[i].first.x, coors[i].first.y, coors[i].second.x, coors[i].second.y};
 
-    Image cropImg     = ImageFromImage(img, cropRec);
-    Texture2D textImg = LoadTextureFromImage(cropImg);
+    Image cropImg   = ImageFromImage(img, cropRec);
+    Texture textImg = LoadTextureFromImage(cropImg);
 
     map[tempKey] = textImg;
 
@@ -124,77 +129,59 @@ void ResManager::LoadHelper(
 
 void ResManager::LoadTexture(
   const fs::path &imgPath, const fs::path &coorPath, std::string keyPrefix,
-  std::map<std::string, Texture2D> &textMap) {
+  std::unordered_map<std::string, Texture> &textMap) {
   LoadHelper(imgPath, coorPath, keyPrefix, textMap);
 }
 
 void ResManager::LoadMusic() {
-  musics["bonus"] = LoadMusicStream((musicPath / "bonus.ogg").string().c_str());
-  musics["boss"]  = LoadMusicStream((musicPath / "boss.ogg").string().c_str());
-  musics["bowser_battle"]
-    = LoadMusicStream((musicPath / "bowser_battle.ogg").string().c_str());
-  musics["castle_theme"]
-    = LoadMusicStream((musicPath / "castle_theme.ogg").string().c_str());
+  musics["bonus"]         = LoadMusicStream(("res/musics/bonus.ogg"));
+  musics["boss"]          = LoadMusicStream(("res/musics/boss.ogg"));
+  musics["bowser_battle"] = LoadMusicStream(("res/musics/bowser_battle.ogg"));
+  musics["castle_theme"]  = LoadMusicStream(("res/musics/castle_theme.ogg"));
   musics["choose_character"]
-    = LoadMusicStream((musicPath / "choose_character.ogg").string().c_str());
-  musics["ending"]
-    = LoadMusicStream((musicPath / "ending.ogg").string().c_str());
-  musics["final_battle"]
-    = LoadMusicStream((musicPath / "final_battle.ogg").string().c_str());
-  musics["ground_theme"]
-    = LoadMusicStream((musicPath / "ground_theme.ogg").string().c_str());
+    = LoadMusicStream(("res/musics/choose_character.ogg"));
+  musics["ending"]       = LoadMusicStream(("res/musics/ending.ogg"));
+  musics["final_battle"] = LoadMusicStream(("res/musics/final_battle.ogg"));
+  musics["ground_theme"] = LoadMusicStream(("res/musics/ground_theme.ogg"));
   musics["invincibility_theme"]
-    = LoadMusicStream((musicPath / "invincibility_theme.ogg").string().c_str());
-  musics["overworld"]
-    = LoadMusicStream((musicPath / "overworld.ogg").string().c_str());
-  musics["title"] = LoadMusicStream((musicPath / "title.ogg").string().c_str());
+    = LoadMusicStream(("res/musics/invincibility_theme.ogg"));
+  musics["overworld"] = LoadMusicStream(("res/musics/overworld.ogg"));
+  musics["title"]     = LoadMusicStream(("res/musics/title.ogg"));
   musics["underground_theme"]
-    = LoadMusicStream((musicPath / "underground_theme.ogg").string().c_str());
+    = LoadMusicStream(("res/musics/underground_theme.ogg"));
   musics["underwater_theme"]
-    = LoadMusicStream((musicPath / "underwater_theme.ogg").string().c_str());
+    = LoadMusicStream(("res/musics/underwater_theme.ogg"));
 }
 
 void ResManager::LoadSounds() {
-  sounds["1up"]  = LoadSound((soundPath / "1up.wav").string().c_str());
-  sounds["beep"] = LoadSound((soundPath / "beep.wav").string().c_str());
-  sounds["billfirework"]
-    = LoadSound((soundPath / "billfirework.wav").string().c_str());
-  sounds["bowserfall"]
-    = LoadSound((soundPath / "bowserfall.wav").string().c_str());
-  sounds["brick"] = LoadSound((soundPath / "brick.wav").string().c_str());
-  sounds["bump"]  = LoadSound((soundPath / "bump.wav").string().c_str());
-  sounds["castle_complete"]
-    = LoadSound((soundPath / "castle_complete.wav").string().c_str());
-  sounds["coin"] = LoadSound((soundPath / "coin.wav").string().c_str());
-  sounds["course_clear"]
-    = LoadSound((soundPath / "course_clear.wav").string().c_str());
-  sounds["fire"]     = LoadSound((soundPath / "fire.wav").string().c_str());
-  sounds["fireball"] = LoadSound((soundPath / "fireball.wav").string().c_str());
-  sounds["flagpole"] = LoadSound((soundPath / "flagpole.wav").string().c_str());
-  sounds["gameover"] = LoadSound((soundPath / "gameover.wav").string().c_str());
-  sounds["gameover_unused"]
-    = LoadSound((soundPath / "gameover_unused.wav").string().c_str());
-  sounds["hurryup"] = LoadSound((soundPath / "hurryup.wav").string().c_str());
-  sounds["item"]    = LoadSound((soundPath / "item.wav").string().c_str());
-  sounds["jump"]    = LoadSound((soundPath / "jump.wav").string().c_str());
-  sounds["jumpsmall"]
-    = LoadSound((soundPath / "jumpsmall.wav").string().c_str());
-  sounds["kickkill"] = LoadSound((soundPath / "kickkill.wav").string().c_str());
-  sounds["level_complete"]
-    = LoadSound((soundPath / "level_complete.wav").string().c_str());
-  sounds["life_lost"]
-    = LoadSound((soundPath / "life_lost.wav").string().c_str());
-  sounds["pause"] = LoadSound((soundPath / "pause.wav").string().c_str());
-  sounds["pipepowerdown"]
-    = LoadSound((soundPath / "pipepowerdown.wav").string().c_str());
-  sounds["powerup"] = LoadSound((soundPath / "powerup.wav").string().c_str());
-  sounds["stompswim"]
-    = LoadSound((soundPath / "stompswim.wav").string().c_str());
-  sounds["time-up_warning"]
-    = LoadSound((soundPath / "time-up_warning.wav").string().c_str());
-  sounds["vine"] = LoadSound((soundPath / "vine.wav").string().c_str());
-  sounds["world_clear"]
-    = LoadSound((soundPath / "world_clear.wav").string().c_str());
+  sounds["1up"]             = LoadSound(("res/sounds/1up.wav"));
+  sounds["beep"]            = LoadSound(("res/sounds/beep.wav"));
+  sounds["billfirework"]    = LoadSound(("res/sounds/billfirework.wav"));
+  sounds["bowserfall"]      = LoadSound(("res/sounds/bowserfall.wav"));
+  sounds["brick"]           = LoadSound(("res/sounds/brick.wav"));
+  sounds["bump"]            = LoadSound(("res/sounds/bump.wav"));
+  sounds["castle_complete"] = LoadSound(("res/sounds/castle_complete.wav"));
+  sounds["coin"]            = LoadSound(("res/sounds/coin.wav"));
+  sounds["course_clear"]    = LoadSound(("res/sounds/course_clear.wav"));
+  sounds["fire"]            = LoadSound(("res/sounds/fire.wav"));
+  sounds["fireball"]        = LoadSound(("res/sounds/fireball.wav"));
+  sounds["flagpole"]        = LoadSound(("res/sounds/flagpole.wav"));
+  sounds["gameover"]        = LoadSound(("res/sounds/gameover.wav"));
+  sounds["gameover_unused"] = LoadSound(("res/sounds/gameover_unused.wav"));
+  sounds["hurryup"]         = LoadSound(("res/sounds/hurryup.wav"));
+  sounds["item"]            = LoadSound(("res/sounds/item.wav"));
+  sounds["jump"]            = LoadSound(("res/sounds/jump.wav"));
+  sounds["jumpsmall"]       = LoadSound(("res/sounds/jumpsmall.wav"));
+  sounds["kickkill"]        = LoadSound(("res/sounds/kickkill.wav"));
+  sounds["level_complete"]  = LoadSound(("res/sounds/level_complete.wav"));
+  sounds["life_lost"]       = LoadSound(("res/sounds/life_lost.wav"));
+  sounds["pause"]           = LoadSound(("res/sounds/pause.wav"));
+  sounds["pipepowerdown"]   = LoadSound(("res/sounds/pipepowerdown.wav"));
+  sounds["powerup"]         = LoadSound(("res/sounds/powerup.wav"));
+  sounds["stompswim"]       = LoadSound(("res/sounds/stompswim.wav"));
+  sounds["time-up_warning"] = LoadSound(("res/sounds/time-up_warning.wav"));
+  sounds["vine"]            = LoadSound(("res/sounds/vine.wav"));
+  sounds["world_clear"]     = LoadSound(("res/sounds/world_clear.wav"));
 }
 
 SaveDatawMap ResManager::LoadResourcesFromFile() {
@@ -219,7 +206,7 @@ bool ResManager::SaveResourcesToFile(const SaveDatawMap &data) {
   return fp.SaveFile(path, data);
 }
 
-Texture2D ResManager::GetMario(char type, int index) {
+Texture ResManager::GetMario(char type, int index) {
   std::string key;
   switch (type) {
     case 'n': {
@@ -248,7 +235,7 @@ Texture2D ResManager::GetMario(char type, int index) {
   }
 }
 
-Texture2D ResManager::GetLuigi(char type, int index) {
+Texture ResManager::GetLuigi(char type, int index) {
   std::string key;
   switch (type) {
     case 'n': {
@@ -284,7 +271,7 @@ Texture2D ResManager::GetLuigi(char type, int index) {
   }
 }
 
-Texture2D ResManager::GetEnemy(int index) {
+Texture ResManager::GetEnemy(int index) {
   std::string key = "enemy_" + std::to_string(index);
   auto it         = enemies.find(key);
   if (it == enemies.end())
@@ -292,7 +279,7 @@ Texture2D ResManager::GetEnemy(int index) {
   return it->second;
 }
 
-Texture2D ResManager::GetTile(int index) {
+Texture ResManager::GetTile(int index) {
   std::string key = "tile_" + std::to_string(index);
   auto it         = tileset.find(key);
   if (it == tileset.end())
@@ -300,7 +287,7 @@ Texture2D ResManager::GetTile(int index) {
   return it->second;
 }
 
-Texture2D ResManager::GetIcon(int index) {
+Texture ResManager::GetIcon(int index) {
   std::string key = "icon_" + std::to_string(index);
   auto it         = icons.find(key);
   if (it == icons.end())
@@ -308,7 +295,7 @@ Texture2D ResManager::GetIcon(int index) {
   return it->second;
 }
 
-Texture2D ResManager::GetBackground(int index) {
+Texture ResManager::GetBackground(int index) {
   std::string key = "background_" + std::to_string(index);
   auto it         = backgrounds.find(key);
   if (it == backgrounds.end())
@@ -332,7 +319,7 @@ Sound ResManager::GetSound(std::string key) {
 
 // call this function before exiting game to clean up everything
 void ResManager::Shutdown() {
-  // lambda for unloading maps
+  // lambda for unloading unordered_maps
   auto unloadAll = [&](auto &mp) {
     for (auto &p : mp)
       UnloadTexture(p.second);
@@ -359,9 +346,4 @@ void ResManager::Shutdown() {
     UnloadMusicStream(p.second);
   }
   musics.clear();
-}
-
-// for safety reasons, call Shutdown once again on object destruction
-ResManager::~ResManager() {
-  Shutdown();
 }

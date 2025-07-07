@@ -1,5 +1,5 @@
 #include "src/include/core/application.hpp"
-#include "raylib.h"
+#include <raylib.h>
 
 int main() {
   App.Init();
