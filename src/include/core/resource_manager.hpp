@@ -1,17 +1,16 @@
 #pragma once
-#include "raylib.h"
 #include "file_handler.hpp"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <raylib.h>
 #include <sstream>
 #include <string>
 #include <vector>
 
 namespace fs = std::filesystem;
-
 
 class ResManager {
   static std::map<std::string, Texture2D> mario_normal;
@@ -34,11 +33,11 @@ class ResManager {
 
   void LoadHelper(
     const fs::path &imgPath, const fs::path &coorPath, std::string keyPrefix,
-    std::map<std::string, Texture2D>& map);
+    std::map<std::string, Texture2D> &map);
 
   void LoadTexture(
     const fs::path &imgPath, const fs::path &coorPath, std::string keyPrefix,
-    std::map<std::string, Texture2D>& textMap);
+    std::map<std::string, Texture2D> &textMap);
 
   void LoadMusic();
 
