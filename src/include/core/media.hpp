@@ -21,11 +21,14 @@ public:
   void Init();
 
   void PlaySound(const std::string &name);
+  void SetSoundVolume(float volume);
 
   void PlayMusic(const std::string &name);
   void UpdateMusic();
   void TogglePauseMusic();
   void StopMusic();
+  void SetMusicVolume(float volume);
+
   void SaveMusicState();
   void LoadMusicState();
 };

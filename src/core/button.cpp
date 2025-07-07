@@ -12,9 +12,9 @@ Button::~Button() {
 }
 
 Button::Button(
-  std::function<void()> action, Rectangle source, Rectangle bounds,
-  const std::string &path)
-    : action_(action), source_(source), bounds_(bounds) {
+  std::string label, std::function<void()> action, Rectangle source,
+  Rectangle bounds, const std::string &path)
+    : label_(label), action_(action), source_(source), bounds_(bounds) {
   icon_ = LoadTexture(path.c_str());
 }
 
@@ -30,5 +30,5 @@ void Button::Update() {
 }
 
 void Button::Draw() {
-  DrawTexturePro(icon_, source_, bounds_, {0, 0}, 0.0f, WHITE);
+  DrawTexturePro(icon_, source_, bounds_, {0, 0}, 0, WHITE);
 }

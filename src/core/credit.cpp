@@ -9,7 +9,7 @@ void CreditScene::Init() {}
 
 void CreditScene::Update() {
   if (IsKeyDown(KEY_ESCAPE)) {
-    Application::ChangeScene(nullptr);
+    App.ChangeScene(nullptr);
     return;
   }
 }

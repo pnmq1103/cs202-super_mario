@@ -7,25 +7,27 @@
 #include "../include/characters/character_state.hpp"
 
 CharacterState::CharacterState(
-  int NrT, float Nspeed, int NjT, float NjH, float Nscale, bool Nleft)
-    : rT(NrT), speed(Nspeed), jT(NjT), jH(NjH), scale(Nscale) {
-  t_x       = -1;
-  t         = 0;
-  left      = Nleft;
-  is_jump   = false;
-  is_fall   = false;
-  is_die    = false;
-  disabled  = false;
-  stop_left = 0;
-  t_star    = 0;
+  int NrunTime, float Nspeed, int NjumpTime, float NjumpHeight, float Nscale,
+  bool Nto_left)
+    : runTime(NrunTime), speed(Nspeed), jumpTime(NjumpTime),
+      jumpHeight(NjumpHeight), scale(Nscale) {
+  time_x         = -1;
+  time           = 0;
+  to_left        = Nto_left;
+  is_jump        = false;
+  is_fall        = false;
+  is_die         = false;
+  disabled       = false;
+  stop_direction = 0;
+  time_star      = 0;
 }
 CharacterState::~CharacterState() {
   UnloadTexture(texture);
 }
 
-void CharacterState::LoadFrameList(std::string at) {
+void CharacterState::LoadFrameList(std::string address) {
   std::ifstream fin;
-  fin.open(at);
+  fin.open(address);
   if (!fin.is_open())
     throw std::runtime_error("cannot open file");
   while (!fin.eof()) {
@@ -46,7 +48,7 @@ void CharacterState::LoadFrameList(std::string at) {
 }
 
 Rectangle CharacterState::GetRectangle() {
-  Rectangle rect = {pos.x, pos.y, 14 * scale, 27 * scale};
+  Rectangle rect = {position.x, position.y, 14 * scale, 27 * scale};
   return rect;
 }
 
@@ -54,57 +56,57 @@ float CharacterState::GetSpeed() {
   return speed;
 }
 
-void CharacterState::SetPosition(Vector2 Npos) {
-  pos = Npos;
+void CharacterState::SetPosition(Vector2 Nposition) {
+  position = Nposition;
 }
 void CharacterState::SetFrameCount() {
-  ++t;
-  if (t_star > 0)
-    --t_star;
+  ++time;
+  if (time_star > 0)
+    --time_star;
 }
 
 void CharacterState::Draw() {
   std::vector<Color> color_set
     = {RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, WHITE};
-  if (t_star > 0) {
-    DrawTextureRec(texture, frame, pos, color_set[(t_star / 5) % 7]);
+  if (time_star > 0) {
+    DrawTextureRec(texture, frame, position, color_set[(time_star / 5) % 7]);
   } else
-    DrawTextureRec(texture, frame, pos, WHITE);
+    DrawTextureRec(texture, frame, position, WHITE);
 }
 void CharacterState::Jump() {
   if (disabled)
     return;
-  if (v == 0) {
-    y       = pos.y;
-    v       = -4.0 * jH / jT;
-    is_jump = true;
+  if (velocity_y == 0) {
+    y_before_jump = position.y;
+    velocity_y    = -4.0 * jumpHeight / jumpTime;
+    is_jump       = true;
   }
 }
 
-void CharacterState::Run(bool left) {
+void CharacterState::Run(bool to_left) {
   if (disabled)
     return;
-  if (t_x == -1) {
-    t_x        = t;
-    this->left = left;
+  if (time_x == -1) {
+    time_x        = time;
+    this->to_left = to_left;
   }
 }
 void CharacterState::StopX() {
   int n;
-  if (left)
+  if (to_left)
     n = -1;
   else
     n = 1;
 
-  if (stop_left != 0 && stop_left != n) {
-    stop_left = 0;
+  if (stop_direction != 0 && stop_direction != n) {
+    stop_direction = 0;
     return;
   }
-  if (stop_left == 0)
-    stop_left = n;
+  if (stop_direction == 0)
+    stop_direction = n;
 
-  t_x    = -1;
-  stop_x = pos.x;
+  time_x = -1;
+  x_stop = position.x;
 }
 void CharacterState::StopY(float Ny) {
   if (is_die)
@@ -113,18 +115,18 @@ void CharacterState::StopY(float Ny) {
     is_jump = false;
     return;
   }
-  is_fall = false;
-  v       = -8.0 * jH / (jT * jT);
-  pos.y   = Ny;
+  is_fall    = false;
+  velocity_y = -8.0 * jumpHeight / (jumpTime * jumpTime);
+  position.y = Ny;
 
   frame = frame_list[0];
-  if (left) {
+  if (to_left) {
     frame.width = -frame.width;
   }
 }
 void CharacterState::StopY() {
-  v       = 0;
-  is_fall = true;
+  velocity_y = 0;
+  is_fall    = true;
 }
 bool CharacterState::IsFalling() {
   return is_fall;
@@ -132,46 +134,46 @@ bool CharacterState::IsFalling() {
 
 void CharacterState::Update() {
 
-  if (stop_left == 1) {
-    if (pos.x > stop_x)
-      stop_left = 0;
-  } else if (stop_left == -1) {
-    if (pos.x < stop_x)
-      stop_left = 0;
+  if (stop_direction == 1) {
+    if (position.x > x_stop)
+      stop_direction = 0;
+  } else if (stop_direction == -1) {
+    if (position.x < x_stop)
+      stop_direction = 0;
   }
 
-  float a = 8.0 * jH / (jT * jT);
-  v      += a;
-  pos.y  += v;
+  float a     = 8.0 * jumpHeight / (jumpTime * jumpTime);
+  velocity_y += a;
+  position.y += velocity_y;
 
-  if (v > 0)
+  if (velocity_y > 0)
     is_fall = true;
 
-  if (t_x != -1) {
-    if (v == 0) {
-      if (t - t_x == rT) {
-        t_x = -1;
+  if (time_x != -1) {
+    if (velocity_y == 0) {
+      if (time - time_x == runTime) {
+        time_x = -1;
       }
-      if (left)
-        pos.x -= speed;
+      if (to_left)
+        position.x -= speed;
       else
-        pos.x += speed;
+        position.x += speed;
     } else {
-      t_x = -1;
-      if (left)
-        pos.x -= speed;
+      time_x = -1;
+      if (to_left)
+        position.x -= speed;
       else
-        pos.x += speed;
+        position.x += speed;
     }
   }
 }
 void CharacterState::ToStarman() {
   if (disabled)
     return;
-  t_star = 60 * 10;
+  time_star = 60 * 10;
 }
 bool CharacterState::IsStarman() {
-  if (t_star == 0)
+  if (time_star == 0)
     return false;
   else
     return true;

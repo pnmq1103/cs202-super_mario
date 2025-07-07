@@ -1,294 +1,82 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="res">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="res\musics">
-      <UniqueIdentifier>{5d39d5b3-d271-4525-974e-80a035a3c9b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sounds">
-      <UniqueIdentifier>{e3e492e8-1cb6-4fca-ba74-481cf571a6fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sprites">
-      <UniqueIdentifier>{5ca37fbc-efc4-467c-9fb9-b31e1e129985}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sprites\characters">
-      <UniqueIdentifier>{41227369-771b-4ccd-9180-ac0813f540ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sprites\icons">
-      <UniqueIdentifier>{f70d386f-5328-4cce-a21f-69e88e8c84cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sprites\tilesets">
-      <UniqueIdentifier>{a6c25c69-8b48-464c-a7bb-9b849a3df674}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sprites\backgrounds">
-      <UniqueIdentifier>{0a281db7-470e-473a-872b-47ed9240f9c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sprites\cursors">
-      <UniqueIdentifier>{a397f068-2bf6-4cd8-bf96-f898d1cc2ebd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sprites\user_interface">
-      <UniqueIdentifier>{4a33ffe2-3244-4c98-abed-fc7725a60cf3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sprites\electric_shot">
-      <UniqueIdentifier>{a3168964-5813-4774-89fa-9a2d54606e5f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res\sprites\crosshairs">
-      <UniqueIdentifier>{ee8f3fbe-a6ad-4321-a54e-936c3b582761}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\core\application.cpp" />
+    <ClCompile Include="src\blocks\block.cpp" />
+    <ClCompile Include="src\core\credit.cpp" />
+    <ClCompile Include="src\core\resource_manager.cpp" />
+    <ClCompile Include="src\core\tile_selector.cpp" />
+    <ClCompile Include="src\enemies\bowser.cpp" />
+    <ClCompile Include="src\core\button.cpp" />
+    <ClCompile Include="src\characters\character.cpp" />
+    <ClCompile Include="src\characters\character_state.cpp" />
+    <ClCompile Include="src\core\command.cpp" />
+    <ClCompile Include="src\core\editor.cpp" />
+    <ClCompile Include="src\enemies\enemy.cpp" />
+    <ClCompile Include="src\core\file_handler.cpp" />
+    <ClCompile Include="src\characters\fireball.cpp" />
+    <ClCompile Include="src\core\game.cpp" />
+    <ClCompile Include="src\core\game_managing.cpp" />
+    <ClCompile Include="src\enemies\goomba.cpp" />
+    <ClCompile Include="src\enemies\koopa_troopa.cpp" />
+    <ClCompile Include="src\core\media.cpp" />
+    <ClCompile Include="src\core\load.cpp" />
+    <ClCompile Include="src\core\menu.cpp" />
+    <ClCompile Include="src\characters\luigi.cpp" />
+    <ClCompile Include="src\characters\mario.cpp" />
+    <ClCompile Include="src\enemies\piranha_plant.cpp" />
+    <ClCompile Include="src\characters\projectile.cpp" />
+    <ClCompile Include="src\blocks\question_block.cpp" />
+    <ClCompile Include="src\core\scene.cpp" />
+    <ClCompile Include="src\core\scene_stack.cpp" />
+    <ClCompile Include="src\core\setting.cpp" />
+    <ClCompile Include="src\blocks\static_block.cpp" />
+    <ClCompile Include="tinyfiledialogs.cpp" />
+    <ClCompile Include="src\core\slider.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\characters\character_state.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\characters\character.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\editor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\scene_stack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\setting.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\button.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tinyfiledialogs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\characters\luigi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\characters\mario.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\media.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\command.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\file_handler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\load.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\blocks\block.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\blocks\question_block.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\blocks\static_block.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\characters\fireball.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\characters\projectile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\enemies\bowser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\enemies\enemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\resource_manager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\game_managing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\enemies\goomba.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\enemies\koopa_troopa.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\enemies\piranha_plant.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\credit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\tile_selector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="src\include\core\application.hpp" />
+    <ClInclude Include="src\include\blocks\block.hpp" />
+    <ClInclude Include="src\include\core\credit.hpp" />
+    <ClInclude Include="src\include\core\resource_manager.hpp" />
+    <ClInclude Include="src\include\core\tile_selector.hpp" />
+    <ClInclude Include="src\include\enemies\bowser.hpp" />
+    <ClInclude Include="src\include\core\button.hpp" />
+    <ClInclude Include="src\include\characters\character.hpp" />
+    <ClInclude Include="src\include\characters\character_state.hpp" />
+    <ClInclude Include="src\include\core\command.hpp" />
+    <ClInclude Include="src\include\core\editor.hpp" />
+    <ClInclude Include="src\include\enemies\enemy.hpp" />
+    <ClInclude Include="src\include\core\file_handler.hpp" />
+    <ClInclude Include="src\include\characters\fireball.hpp" />
+    <ClInclude Include="src\include\core\game.hpp" />
+    <ClInclude Include="src\include\core\game_managing.hpp" />
+    <ClInclude Include="src\include\enemies\goomba.hpp" />
+    <ClInclude Include="src\include\enemies\koopa_troopa.hpp" />
+    <ClInclude Include="src\include\characters\luigi.hpp" />
+    <ClInclude Include="src\include\core\media.hpp" />
+    <ClInclude Include="src\include\core\load.hpp" />
+    <ClInclude Include="src\include\core\menu.hpp" />
+    <ClInclude Include="src\include\characters\mario.hpp" />
+    <ClInclude Include="src\include\enemies\piranha_plant.hpp" />
+    <ClInclude Include="src\include\characters\projectile.hpp" />
+    <ClInclude Include="src\include\blocks\question_block.hpp" />
+    <ClInclude Include="src\include\core\scene.hpp" />
+    <ClInclude Include="src\include\core\scene_stack.hpp" />
+    <ClInclude Include="src\include\core\setting.hpp" />
+    <ClInclude Include="src\include\blocks\static_block.hpp" />
+    <ClInclude Include="tinyfiledialogs.h" />
+    <ClInclude Include="src\include\core\slider.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\include\core\application.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\characters\character.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\characters\character_state.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\scene.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\editor.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\menu.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\game.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\setting.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\scene_stack.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tinyfiledialogs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\characters\mario.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\characters\luigi.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\media.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\command.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\button.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\file_handler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\load.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\blocks\block.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\blocks\question_block.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\blocks\static_block.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\characters\fireball.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\characters\projectile.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\enemies\bowser.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\enemies\enemy.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\game_managing.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\resource_manager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\enemies\goomba.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\enemies\koopa_troopa.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\enemies\piranha_plant.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\credit.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\core\tile_selector.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <Image Include="res\menu.jpg" />
+    <Image Include="res\sprites\background\background_spritesheet.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".clang-format" />
     <None Include=".gitignore" />
     <None Include="README.md" />
-    <None Include=".clang-format" />
-    <None Include="res\musics\bonus.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\boss.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\bowser_battle.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\castle_theme.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\choose_character.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\ending.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\final_battle.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\ground_theme.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\invincibility_theme.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\overworld.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\title.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\underground_theme.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\musics\underwater_theme.ogg">
-      <Filter>res\musics</Filter>
-    </None>
-    <None Include="res\convert_to_ogg.bat">
-      <Filter>res</Filter>
-    </None>
-    <None Include="res\convert_to_wav.bat">
-      <Filter>res</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\sprites\background\background.txt" />

@@ -25,11 +25,7 @@ MenuScene::~MenuScene() {
 
 void MenuScene::Init() {
   background_ = LoadTexture("res/menu_background.png");
-  Application::GetInstance().GetMedia().PlayMusic("title");
-
-  Scene::ReadSpriteInfo(
-    "res/sprites/user_interface/buttons.txt", buttons_info_);
-
+  App.GetMedia().PlayMusic("title");
   CreateButtons();
 }
 
@@ -49,17 +45,16 @@ void MenuScene::Update() {
 
       switch (selected_idx_) {
         case MenuOption::Game:
-          Application::GetInstance().ChangeScene(std::make_unique<GameScene>());
+          App.ChangeScene(std::make_unique<GameScene>());
           break;
         case MenuOption::Load:
-          Application::GetInstance().ChangeScene(std::make_unique<LoadScene>());
+          App.ChangeScene(std::make_unique<LoadScene>());
           break;
         case MenuOption::Editor:
-          Application::GetInstance().ChangeScene(
-            std::make_unique<EditorScene>());
+          App.ChangeScene(std::make_unique<EditorScene>());
           break;
         case MenuOption::Exit:
-          Application::GetInstance().Close();
+          App.Close();
           break;
 
         default:
@@ -74,17 +69,17 @@ void MenuScene::Update() {
 
 void MenuScene::Draw() {
   // Draw background
-  float x = (screenWidth - background_.width) / 2.0f;
-  float y = (screenHeight - background_.height) / 2.0f;
-  DrawTextureEx(background_, {x, y}, 0.0f, 1.0f, RAYWHITE);
+  float x = (screenWidth - background_.width) / 2;
+  float y = (screenHeight - background_.height) / 2;
+  DrawTextureEx(background_, {x, y}, 0, 1, RAYWHITE);
 
   // Draw title
   float font_size    = 150;
   const char *title  = "Mario";
-  Vector2 title_size = MeasureTextEx(GetFontDefault(), title, font_size, 1.0f);
-  x                  = (screenWidth - title_size.x) / 2.0f;
-  y                  = (screenHeight - title_size.y) / 6.0f;
-  DrawTextEx(GetFontDefault(), title, {x, y}, font_size, 1.0f, RAYWHITE);
+  Vector2 title_size = MeasureTextEx(GetFontDefault(), title, font_size, 1);
+  x                  = (screenWidth - title_size.x) / 2;
+  y                  = (screenHeight - title_size.y) / 6;
+  DrawTextEx(GetFontDefault(), title, {x, y}, font_size, 1, RAYWHITE);
 
   DrawOptions();
   DrawButtons();
@@ -93,59 +88,56 @@ void MenuScene::Draw() {
 void MenuScene::DrawOptions() {
   float font_size = 40;
   for (size_t i = 0; i < menu_items_.size(); ++i) {
-    const char *option = menu_items_[i].c_str();
-    Vector2 option_size
-      = MeasureTextEx(GetFontDefault(), option, font_size, 1.0f);
-    float x = (screenWidth - option_size.x) / 2.0f;
-    float y = (screenHeight - option_size.y) * (i + 12) / 16.0f;
+    const char *option  = menu_items_[i].c_str();
+    Vector2 option_size = MeasureTextEx(GetFontDefault(), option, font_size, 1);
+    float x             = (screenWidth - option_size.x) / 2;
+    float y             = (screenHeight - option_size.y) * (i + 12) / 16;
 
     double time   = GetTime();
-    float wave    = static_cast<float>((sin(time * 3.0) + 1.0) * 0.5); // [0, 1]
+    float wave    = static_cast<float>((sin(time * 3) + 1) * 0.5); // [0, 1]
     float pulsing = 0.1f * wave;
-    float scale   = 1.0f;
+    float scale   = 1;
     float opacity = 0.5f + 0.5f * wave;
     Color color   = RAYWHITE;
 
     if (i == selected_idx_) {
-      scale = 1.0f + pulsing;
+      scale = pulsing + 1;
       color = {245, 245, 245, static_cast<unsigned char>(255 * opacity)};
 
       // Draw arrow
-      float space  = 20.0f;
+      float space  = 20;
       float length = option_size.y * scale;
-      float angle  = static_cast<float>(cos(PI / 6.0f));
-      Vector2 a    = {x - space, y + length / 2.0f};
+      float angle  = static_cast<float>(cos(PI / 6));
+      Vector2 a    = {x - space, y + length / 2};
       Vector2 b    = {x - space - length * angle, y};
       Vector2 c    = {x - space - length * angle, y + length};
 
       DrawTriangle(a, b, c, color);
     }
 
-    DrawTextEx(
-      GetFontDefault(), option, {x, y}, font_size * static_cast<float>(scale),
-      3.0f, color);
+    DrawTextEx(GetFontDefault(), option, {x, y}, font_size * scale, 3, color);
   }
 }
 
 void MenuScene::CreateButtons() {
-  // Need to optimize texture here
   // Setting
   buttons_.emplace_back(
+    "Setting",
     []() {
-      Application::GetInstance().ChangeScene(std::make_unique<SettingScene>());
+      App.ChangeScene(std::make_unique<SettingScene>());
     },
-    buttons_info_.at(ButtonSpriteIndex::SETTING),
-    Rectangle{screenWidth - 48 * 2, screenHeight - 48 * 2, 48, 48},
-    "res/sprites/user_interface/buttons.png");
+    Rectangle{0, 0, 16, 16},
+    Rectangle{screenWidth - 64 * 2, screenHeight - 64 * 2, 64, 64},
+    "res/sprites/buttons/setting.png");
 
   // Credit
   buttons_.emplace_back(
+    "Credit",
     []() {
-      Application::GetInstance().ChangeScene(std::make_unique<CreditScene>());
+      App.ChangeScene(std::make_unique<CreditScene>());
     },
-    buttons_info_.at(ButtonSpriteIndex::CREDIT),
-    Rectangle{48, screenHeight - 48 * 2, 48, 48},
-    "res/sprites/user_interface/buttons.png");
+    Rectangle{0, 0, 16, 16}, Rectangle{64, screenHeight - 64 * 2, 64, 64},
+    "res/sprites/buttons/credit.png");
 }
 
 void MenuScene::UpdateButtons() {

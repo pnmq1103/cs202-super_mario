@@ -23,7 +23,7 @@ GameScene::~GameScene() {
 }
 
 void GameScene::Init() {
-  Application::GetInstance().GetMedia().PlayMusic("ground_theme");
+  App.GetMedia().PlayMusic("ground_theme");
 
   // Create player character (Mario by default)
   player_character_ = new Character(4.0f); // Scale factor
@@ -39,7 +39,7 @@ void GameScene::Init() {
 
 void GameScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    Application::ChangeScene(nullptr);
+    App.ChangeScene(nullptr);
     return; // Early return to prevent use-after-free
   }
 

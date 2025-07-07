@@ -27,7 +27,7 @@ public:
   void Update() override;
   void Draw() override;
 
-  void CameraUpdate();
+  void UpdateCamera();
 
   void BuildSpriteGrid();
   void ChooseTile();

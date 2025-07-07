@@ -10,9 +10,9 @@
 //+----------------------------------------------------------+
 
 NormalLuigi::NormalLuigi(
-  Character *Ncontext, float Nscale, bool Nleft, bool tran)
-    : CharacterState(18, 5, 50, 500, Nscale, Nleft) {
-  if (!tran) {
+  Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
+    : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
+  if (!is_evolving) {
     disabled    = true;
     Image image = LoadImage("res/sprites/characters/luigi_starup.png");
     ImageResize(&image, image.width * scale, image.height * scale);
@@ -50,15 +50,15 @@ void NormalLuigi::Update() {
   if (disabled)
     return;
   CharacterState::Update();
-  if (v != 0) {
+  if (velocity_y != 0) {
     frame = frame_list[8];
   }
 
-  if (t_x != -1 && t - t_x != rT && v == 0) {
-    frame = frame_list[(t - t_x) / (rT / 2) + 3];
+  if (time_x != -1 && time - time_x != runTime && velocity_y == 0) {
+    frame = frame_list[(time - time_x) / (runTime / 2) + 3];
   }
 
-  if (left) {
+  if (to_left) {
     frame.width = -abs(frame.width);
   } else
     frame.width = abs(frame.width);
@@ -66,20 +66,20 @@ void NormalLuigi::Update() {
 
 void NormalLuigi::Draw() {
   if (disabled) {
-    if (t / 5 % 2 == 0) {
-      if (left) {
+    if (time / 5 % 2 == 0) {
+      if (to_left) {
         frame.width = -abs(frame.width);
       } else
         frame.width = abs(frame.width);
-      DrawTextureRec(texture, frame, pos, WHITE);
+      DrawTextureRec(texture, frame, position, WHITE);
     } else {
-      if (left) {
+      if (to_left) {
         pre_frame_.width = -abs(pre_frame_.width);
       } else
         pre_frame_.width = abs(pre_frame_.width);
-      DrawTextureRec(pre_texture_, pre_frame_, pos, WHITE);
+      DrawTextureRec(pre_texture_, pre_frame_, position, WHITE);
     }
-    if (t == 30) {
+    if (time == 30) {
       disabled = false;
       UnloadTexture(pre_texture_);
     }
@@ -92,8 +92,9 @@ void NormalLuigi::Draw() {
 //|                        Big Luigi                         |
 //+----------------------------------------------------------+
 
-BigLuigi::BigLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran)
-    : CharacterState(18, 5, 50, 500, Nscale, Nleft) {
+BigLuigi::BigLuigi(
+  Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
+    : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
   disabled    = true;
   Image image = LoadImage("res/sprites/characters/luigi_starup.png");
   ImageResize(&image, image.width * scale, image.height * scale);
@@ -103,7 +104,7 @@ BigLuigi::BigLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran)
   LoadFrameList("res/sprites/characters/starup.txt");
   frame = frame_list[0];
 
-  if (tran) {
+  if (is_evolving) {
     image      = LoadImage("res/sprites/characters/luigi_normal.png");
     pre_frame_ = {0, 0, 12 * scale, 15 * scale};
   } else {
@@ -133,43 +134,43 @@ void BigLuigi::Update() {
   if (disabled)
     return;
   CharacterState::Update();
-  float v0 = 4.0 * jH / jT;
-  if (v != 0) {
-    if (v < -v0 * 1 / 3) {
+  float v0 = 4.0f * jumpHeight / jumpTime;
+  if (velocity_y != 0) {
+    if (velocity_y < -v0 * 1 / 3) {
       frame = frame_list[6];
-    } else if (v > v0 * 1 / 3) {
+    } else if (velocity_y > v0 * 1 / 3) {
       frame = frame_list[8];
     } else {
       frame = frame_list[7];
     }
   }
 
-  if (t_x != -1 && t - t_x != rT && v == 0) {
-    frame = frame_list[(t - t_x) / (rT / 3) + 3];
+  if (time_x != -1 && time - time_x != runTime && velocity_y == 0) {
+    frame = frame_list[(time - time_x) / (runTime / 3) + 3];
   }
 
-  if (left) {
+  if (to_left) {
     frame.width = -abs(frame.width);
   } else
     frame.width = abs(frame.width);
 }
 
 void BigLuigi::Draw() {
-  if (t <= 30) {
-    if (t / 5 % 2 == 0) {
-      if (left) {
+  if (time <= 30) {
+    if (time / 5 % 2 == 0) {
+      if (to_left) {
         frame.width = -abs(frame.width);
       } else
         frame.width = abs(frame.width);
-      DrawTextureRec(texture, frame, pos, WHITE);
+      DrawTextureRec(texture, frame, position, WHITE);
     } else {
-      if (left) {
+      if (to_left) {
         pre_frame_.width = -abs(pre_frame_.width);
       } else
         pre_frame_.width = abs(pre_frame_.width);
-      DrawTextureRec(pre_texture_, pre_frame_, pos, WHITE);
+      DrawTextureRec(pre_texture_, pre_frame_, position, WHITE);
     }
-    if (t == 30)
+    if (time == 30)
       UnloadTexture(pre_texture_);
   } else {
     disabled = false;
@@ -181,10 +182,11 @@ void BigLuigi::Draw() {
 //|                        Fire Luigi                        |
 //+----------------------------------------------------------+
 
-FireLuigi::FireLuigi(Character *Ncontext, float Nscale, bool Nleft, bool tran)
-    : CharacterState(18, 5, 50, 500, Nscale, Nleft) {
+FireLuigi::FireLuigi(
+  Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
+    : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
   LoadFrameList("res/sprites/characters/starup.txt");
-  if (tran) {
+  if (is_evolving) {
     disabled    = true;
     Image image = LoadImage("res/sprites/characters/luigi_starup.png");
     ImageResize(&image, image.width * scale, image.height * scale);
@@ -216,22 +218,22 @@ void FireLuigi::Update() {
   if (disabled)
     return;
   CharacterState::Update();
-  float v0 = 4.0 * jH / jT;
-  if (v != 0) {
-    if (v < -v0 * 1 / 3) {
+  float v0 = 4.0f * jumpHeight / jumpTime;
+  if (velocity_y != 0) {
+    if (velocity_y < -v0 * 1 / 3) {
       frame = frame_list[6];
-    } else if (v > v0 * 1 / 3) {
+    } else if (velocity_y > v0 * 1 / 3) {
       frame = frame_list[8];
     } else {
       frame = frame_list[7];
     }
   }
 
-  if (t_x != -1 && t - t_x != rT && v == 0) {
-    frame = frame_list[(t - t_x) / (rT / 3) + 3];
+  if (time_x != -1 && time - time_x != runTime && velocity_y == 0) {
+    frame = frame_list[(time - time_x) / (runTime / 3) + 3];
   }
 
-  if (left) {
+  if (to_left) {
     frame.width = -abs(frame.width);
   } else
     frame.width = abs(frame.width);
@@ -239,20 +241,20 @@ void FireLuigi::Update() {
 
 void FireLuigi::Draw() {
   if (disabled) {
-    if (t / 5 % 2 == 0) {
-      if (left) {
+    if (time / 5 % 2 == 0) {
+      if (to_left) {
         frame.width = -abs(frame.width);
       } else
         frame.width = abs(frame.width);
-      DrawTextureRec(texture, frame, pos, WHITE);
+      DrawTextureRec(texture, frame, position, WHITE);
     } else {
-      if (left) {
+      if (to_left) {
         pre_frame_.width = -abs(pre_frame_.width);
       } else
         pre_frame_.width = abs(pre_frame_.width);
-      DrawTextureRec(pre_texture_, pre_frame_, pos, WHITE);
+      DrawTextureRec(pre_texture_, pre_frame_, position, WHITE);
     }
-    if (t == 30) {
+    if (time == 30) {
       disabled = false;
       UnloadTexture(pre_texture_);
     }

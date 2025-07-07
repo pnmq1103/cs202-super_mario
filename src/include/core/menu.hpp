@@ -16,9 +16,7 @@ private:
   double last_input_     = {0.0};
   const double cooldown_ = {0.2};
 
-  Texture buttons_texture = {};
   std::vector<Button> buttons_;
-  std::unordered_map<int, Rectangle> buttons_info_;
 
 public:
   MenuScene();
