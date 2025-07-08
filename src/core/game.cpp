@@ -42,7 +42,7 @@ void GameScene::Init() {
   input_command_ = new Command(mario_character_, luigi_character_);
 
   // Load level
-  game_manager_.LoadLevel("res/levels/level1.dat");
+  //game_manager_.LoadLevel("res/levels/level1.dat");
 }
 
 void GameScene::Update() {
@@ -56,15 +56,18 @@ void GameScene::Update() {
     input_command_->HandleInput();
   }
 
-  // Update active character
+  // Get active character
   Character *active_character = input_command_->GetActiveCharacter();
+
+  // Update character
   if (active_character) {
     active_character->Update();
     active_character->SetFrameCount();
   }
 
-  // Update game manager (time, lives, etc)
-  game_manager_.UpdateTime();
+  // Update game manager with delta time and active character
+  float deltaTime = GetFrameTime();
+  game_manager_.Update(deltaTime, active_character);
 }
 
 void GameScene::Draw() {
@@ -80,7 +83,7 @@ void GameScene::Draw() {
   // Draw stats (lives, points, time)
   game_manager_.DrawStats();
 
-  int controlsStartY = 110;
+  int controlsStartY = 140;
   int lineSpacing    = 25;
 
   DrawText("Controls:", 10, controlsStartY + lineSpacing * 0, 20, DARKBLUE);
