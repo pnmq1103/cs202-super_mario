@@ -4,33 +4,33 @@ Enemy::Enemy(Vector2 pos, int w, int h, EnemyType type, int spriteId)
     : position(pos), width(w), height(h), type(type), spriteId(spriteId),
       alive(true), velocity({0, 0}) {}
 
-Rectangle Enemy::getRect() const {
+Rectangle Enemy::GetRect() const {
   return {position.x, position.y, (float)width, (float)height};
 }
 
-Vector2 Enemy::getPosition() const {
+Vector2 Enemy::GetPosition() const {
   return position;
 }
-EnemyType Enemy::getType() const {
+EnemyType Enemy::GetType() const {
   return type;
 }
-bool Enemy::isAlive() const {
+bool Enemy::IsAlive() const {
   return alive;
 }
 
-void Enemy::setPosition(Vector2 pos) {
+void Enemy::SetPosition(Vector2 pos) {
   position = pos;
 }
-void Enemy::setAlive(bool status) {
+void Enemy::SetAlive(bool status) {
   alive = status;
 }
 
-bool Enemy::checkCollision(Rectangle other) const {
-  return CheckCollisionRecs(getRect(), other);
+bool Enemy::CheckCollision(Rectangle other) const {
+  return CheckCollisionRecs(GetRect(), other);
 }
 
-void Enemy::render(
-  Texture2D &tex, const std::unordered_map<int, Rectangle> &spriteRects) const {
+void Enemy::Render(
+  Texture &tex, const std::unordered_map<int, Rectangle> &spriteRects) const {
   if (!alive)
     return;
   auto it = spriteRects.find(spriteId);

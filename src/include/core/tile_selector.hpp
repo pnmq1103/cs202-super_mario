@@ -6,6 +6,8 @@
 
 class TileSelectorScene : public Scene {
 private:
+  SceneType type_ = {TileSelector};
+
   int &selected_tile_id_ref_;
   static constexpr float cellSize = {16}; // int needs typecast
 
@@ -26,6 +28,7 @@ public:
   void Init() override;
   void Update() override;
   void Draw() override;
+  SceneType Type() override;
 
   void UpdateCamera();
 

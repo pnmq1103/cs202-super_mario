@@ -8,6 +8,8 @@
 
 class EditorScene : public Scene {
 private:
+  SceneType type_ = {Editor};
+
   static constexpr float blockSize = {16 * 4}; // int needs typecast
 
   int block_width_  = {50};
@@ -35,6 +37,7 @@ public:
   void Init() override;
   void Update() override;
   void Draw() override;
+  SceneType Type() override;
 
   // Update
   void PlaceBlock();

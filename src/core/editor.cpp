@@ -74,6 +74,10 @@ void EditorScene::Draw() {
   DrawButtons();
 }
 
+SceneType EditorScene::Type() {
+  return type_;
+}
+
 void EditorScene::PlaceBlock() {
   float tile_x = std::floor(mouse_world_pos_.x / blockSize);
   float tile_y = std::floor(mouse_world_pos_.y / blockSize);

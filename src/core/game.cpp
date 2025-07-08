@@ -57,7 +57,7 @@ void GameScene::Update() {
   }
 
   // Update active character
-  Character* active_character = input_command_->GetActiveCharacter();
+  Character *active_character = input_command_->GetActiveCharacter();
   if (active_character) {
     active_character->Update();
     active_character->SetFrameCount();
@@ -72,7 +72,7 @@ void GameScene::Draw() {
   game_manager_.DrawLevel();
 
   // Draw active character
-  Character* active_character = input_command_->GetActiveCharacter();
+  Character *active_character = input_command_->GetActiveCharacter();
   if (active_character) {
     active_character->Draw();
   }
@@ -97,4 +97,8 @@ void GameScene::Draw() {
     DARKBLUE);
   DrawText(
     "ESC: Back to menu", 10, controlsStartY + lineSpacing * 5, 20, DARKBLUE);
+}
+
+SceneType GameScene::Type() {
+  return type_;
 }

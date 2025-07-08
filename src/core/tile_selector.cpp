@@ -51,6 +51,10 @@ void TileSelectorScene::Draw() {
   EndMode2D();
 }
 
+SceneType TileSelectorScene::Type() {
+  return type_;
+}
+
 void TileSelectorScene::UpdateCamera() {
   // Drag
   if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {

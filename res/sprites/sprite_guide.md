@@ -19,7 +19,7 @@ Sprite ID - X Position - Y Position - Width - Height
         + The second column of normal mario/luigi sheets starts at line 22
         + The second column of star/fire mario/luigi sheets starts at line 36
 
-- You can now load the Texture2D for the sprite you need by specifying the line (index) where the sprite's position is (Example: getEnemy(22)).
+- You can now load the Texture for the sprite you need by specifying the line (index) where the sprite's position is (Example: getEnemy(22)).
 - For mario and luigi, provide an additional parameter for the state you are using:
     + n    :    normal
     + s    :    star

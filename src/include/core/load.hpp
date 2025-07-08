@@ -7,6 +7,8 @@
 
 class LoadScene : public Scene {
 private:
+  SceneType type_ = {Load};
+
   std::string path;
   Rectangle rects[3]       = {};
   SaveDatawMap saveData[3] = {};
@@ -20,4 +22,5 @@ public:
   void Init() override;
   void Update() override;
   void Draw() override;
+  SceneType Type() override;
 };

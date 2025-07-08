@@ -3,7 +3,7 @@
 QuestionBlock::QuestionBlock(Vector2 pos, PowerUpType item, int spriteId)
     : Block(pos, 16, 16, BlockType::Question, true, spriteId), item(item) {}
 
-void QuestionBlock::onHit() {
+void QuestionBlock::OnHit() {
   if (used)
     return;
 
@@ -21,16 +21,16 @@ void QuestionBlock::onHit() {
   }
 }
 
-void QuestionBlock::update(float dt) {}
+void QuestionBlock::Update(float dt) {}
 
-bool QuestionBlock::isUsed() const {
+bool QuestionBlock::IsUsed() const {
   return used;
 }
 
-PowerUpType QuestionBlock::getItem() const {
+PowerUpType QuestionBlock::GetItem() const {
   return item;
 }
 
-Block *QuestionBlock::clone() const {
+Block *QuestionBlock::Clone() const {
   return new QuestionBlock(*this);
 }

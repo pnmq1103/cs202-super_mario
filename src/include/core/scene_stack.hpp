@@ -11,8 +11,11 @@ private:
 public:
   bool Push(std::unique_ptr<Scene> scene);
   bool Pop();
+  Scene &Top();
 
   void Init();
   void Update();
   void Draw();
+
+  size_t Size();
 };

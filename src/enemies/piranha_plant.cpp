@@ -3,7 +3,7 @@
 PiranhaPlant::PiranhaPlant(Vector2 pos, int spriteId)
     : Enemy(pos, 16, 24, EnemyType::Piranha, spriteId) {}
 
-void PiranhaPlant::update(float dt) {
+void PiranhaPlant::Update(float dt) {
   if (!alive)
     return;
 
@@ -16,12 +16,12 @@ void PiranhaPlant::update(float dt) {
   position.y += (up ? -10 : 10) * dt;
 }
 
-void PiranhaPlant::onHitFromAbove() {}
+void PiranhaPlant::OnHitFromAbove() {}
 
-void PiranhaPlant::onHitFromSide() {
+void PiranhaPlant::OnHitFromSide() {
   alive = false;
 }
 
-Enemy *PiranhaPlant::clone() const {
+Enemy *PiranhaPlant::Clone() const {
   return new PiranhaPlant(*this);
 }

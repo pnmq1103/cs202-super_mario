@@ -75,3 +75,7 @@ void Media::LoadMusicState() {
     PlayMusic(name);
   }
 }
+
+size_t Media::MusicStateSize() {
+  return music_state_.size();
+}

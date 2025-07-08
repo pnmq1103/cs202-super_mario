@@ -3,7 +3,7 @@
 Bowser::Bowser(Vector2 pos, int spriteId)
     : Enemy(pos, 32, 32, EnemyType::Bowser, spriteId), hp(5) {}
 
-void Bowser::update(float dt) {
+void Bowser::Update(float dt) {
   if (!alive)
     return;
   fireTimer += dt;
@@ -13,19 +13,19 @@ void Bowser::update(float dt) {
   }
 }
 
-void Bowser::onHitFromAbove() {
+void Bowser::OnHitFromAbove() {
   hp--;
   if (hp <= 0)
     alive = false;
 }
 
-void Bowser::onHitFromSide() {
+void Bowser::OnHitFromSide() {
   hp--;
   if (hp <= 0)
     alive = false;
 }
 
-Enemy *Bowser::clone() const {
+Enemy *Bowser::Clone() const {
   return new Bowser(*this);
 }
 

@@ -67,3 +67,7 @@ void LoadScene::Draw() {
     DrawText(slotText.c_str(), textX, textY, 20, BLACK);
   }
 }
+
+SceneType LoadScene::Type() {
+  return type_;
+}

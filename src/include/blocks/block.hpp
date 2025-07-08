@@ -27,24 +27,24 @@ public:
     int spriteId = 0);
   virtual ~Block() = default;
 
-  virtual Block *clone() const = 0;
+  virtual Block *Clone() const = 0;
 
-  virtual void update(float dt) {}
-  virtual void onHit();
+  virtual void Update(float dt) {}
+  virtual void OnHit();
 
-  Vector2 getPosition() const;
-  Rectangle getRect() const;
-  BlockType getType() const;
-  bool isSolid() const;
-  int getSpriteId() const;
+  Vector2 GetPosition() const;
+  Rectangle GetRect() const;
+  BlockType GetType() const;
+  bool IsSolid() const;
+  int GetSpriteId() const;
 
-  void setPosition(Vector2 pos);
-  void setSpriteId(int id);
-  void setSolid(bool val);
+  void SetPosition(Vector2 pos);
+  void SetSpriteId(int id);
+  void SetSolid(bool val);
 
-  bool checkCollision(Rectangle other) const;
+  bool CheckCollision(Rectangle other) const;
 
-  virtual void render(
-    const Texture2D &texture,
+  virtual void Render(
+    const Texture &texture,
     const std::unordered_map<int, Rectangle> &spriteRects) const;
 };

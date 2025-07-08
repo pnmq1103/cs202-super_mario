@@ -7,6 +7,8 @@
 
 class GameScene : public Scene {
 private:
+  SceneType type_ = {Game};
+
   Character *mario_character_ = {nullptr};
   Character *luigi_character_ = {nullptr};
   Command *input_command_     = {nullptr};
@@ -19,4 +21,5 @@ public:
   void Init() override;
   void Update() override;
   void Draw() override;
+  SceneType Type() override;
 };

@@ -6,7 +6,7 @@ KoopaTroopa::KoopaTroopa(Vector2 pos, int spriteId)
   velocity.x = -20;
 }
 
-void KoopaTroopa::update(float dt) {
+void KoopaTroopa::Update(float dt) {
   if (!alive)
     return;
 
@@ -28,7 +28,7 @@ void KoopaTroopa::update(float dt) {
   }
 }
 
-void KoopaTroopa::onHitFromAbove() {
+void KoopaTroopa::OnHitFromAbove() {
   if (state == KoopaState::Walking) {
     state      = KoopaState::Shell;
     velocity.x = 0;
@@ -41,14 +41,14 @@ void KoopaTroopa::onHitFromAbove() {
   }
 }
 
-void KoopaTroopa::onHitFromSide() {
+void KoopaTroopa::OnHitFromSide() {
   alive = false;
 }
 
-Enemy *KoopaTroopa::clone() const {
+Enemy *KoopaTroopa::Clone() const {
   return new KoopaTroopa(*this);
 }
 
-KoopaState KoopaTroopa::getState() const {
+KoopaState KoopaTroopa::GetState() const {
   return state;
 }

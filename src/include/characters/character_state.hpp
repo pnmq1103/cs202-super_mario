@@ -15,7 +15,7 @@ protected:
 
   Character *context;
   Vector2 position;
-  Texture2D texture;
+  Texture texture;
   const float speed, jumpHeight, scale;
   const int jumpTime, runTime;
   Rectangle frame;

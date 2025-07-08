@@ -5,20 +5,20 @@ Goomba::Goomba(Vector2 pos, int spriteId)
   velocity.x = -30;
 }
 
-void Goomba::update(float dt) {
+void Goomba::Update(float dt) {
   if (!alive)
     return;
   position.x += velocity.x * dt;
 }
 
-void Goomba::onHitFromAbove() {
+void Goomba::OnHitFromAbove() {
   alive = false;
 }
 
-void Goomba::onHitFromSide() {
+void Goomba::OnHitFromSide() {
   alive = false;
 }
 
-Enemy *Goomba::clone() const {
+Enemy *Goomba::Clone() const {
   return new Goomba(*this);
 }

@@ -44,16 +44,17 @@ void MenuScene::Update() {
       last_input_ = time;
 
       switch (selected_idx_) {
-        case MenuOption::Game:
+        // This can be changed later when Load and Editor both have musics
+        case SceneType::Game:
           App.ChangeScene(std::make_unique<GameScene>());
           break;
-        case MenuOption::Load:
+        case SceneType::Load:
           App.ChangeScene(std::make_unique<LoadScene>());
           break;
-        case MenuOption::Editor:
+        case SceneType::Editor:
           App.ChangeScene(std::make_unique<EditorScene>());
           break;
-        case MenuOption::Exit:
+        case SceneType::Exit:
           App.Close();
           break;
 
@@ -69,20 +70,38 @@ void MenuScene::Update() {
 
 void MenuScene::Draw() {
   // Draw background
-  float x = (screenWidth - background_.width) / 2;
-  float y = (screenHeight - background_.height) / 2;
-  DrawTextureEx(background_, {x, y}, 0, 1, RAYWHITE);
+  timer_       += GetFrameTime();
+  float t       = std::min(timer_ / duration_, 1.0f);
+  float end_x   = (screenWidth - background_.width) / 2;
+  float start_x = end_x;
+  if (App.PreviousScene() == SceneType::Setting) {
+    start_x = screenWidth - background_.width;
+    reset_  = true;
+  } else if (App.PreviousScene() == SceneType::Credit)
+    start_x = 0;
+
+  float ease = t < 0.5f ? 4 * t * t * t : 1 - powf(-2 * t + 2, 3) / 2;
+  float y    = (screenHeight - background_.height) / 2;
+  DrawTextureV(background_, {start_x + (end_x - start_x) * ease, y}, RAYWHITE);
 
   // Draw title
   float font_size    = 150;
   const char *title  = "Mario";
   Vector2 title_size = MeasureTextEx(GetFontDefault(), title, font_size, 1);
-  x                  = (screenWidth - title_size.x) / 2;
+  end_x              = (screenWidth - title_size.x) / 2;
   y                  = (screenHeight - title_size.y) / 6;
-  DrawTextEx(GetFontDefault(), title, {x, y}, font_size, 1, RAYWHITE);
+  DrawTextEx(GetFontDefault(), title, {end_x, y}, font_size, 1, RAYWHITE);
 
   DrawOptions();
   DrawButtons();
+}
+
+SceneType MenuScene::Type() {
+  return type_;
+}
+
+void MenuScene::Resume() {
+  timer_ = 0;
 }
 
 void MenuScene::DrawOptions() {

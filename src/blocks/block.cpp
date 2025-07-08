@@ -7,46 +7,46 @@ Block::Block(
     : position(pos), width(w), height(h), type(type), solid(solid),
       spriteId(spriteId) {}
 
-void Block::onHit() {}
+void Block::OnHit() {}
 
-Vector2 Block::getPosition() const {
+Vector2 Block::GetPosition() const {
   return position;
 }
 
-Rectangle Block::getRect() const {
+Rectangle Block::GetRect() const {
   return {position.x, position.y, (float)width, (float)height};
 }
 
-BlockType Block::getType() const {
+BlockType Block::GetType() const {
   return type;
 }
 
-bool Block::isSolid() const {
+bool Block::IsSolid() const {
   return solid;
 }
 
-int Block::getSpriteId() const {
+int Block::GetSpriteId() const {
   return spriteId;
 }
 
-void Block::setPosition(Vector2 pos) {
+void Block::SetPosition(Vector2 pos) {
   position = pos;
 }
 
-void Block::setSpriteId(int id) {
+void Block::SetSpriteId(int id) {
   spriteId = id;
 }
 
-void Block::setSolid(bool val) {
+void Block::SetSolid(bool val) {
   solid = val;
 }
 
-bool Block::checkCollision(Rectangle other) const {
-  return CheckCollisionRecs(getRect(), other);
+bool Block::CheckCollision(Rectangle other) const {
+  return CheckCollisionRecs(GetRect(), other);
 }
 
-void Block::render(
-  const Texture2D &texture,
+void Block::Render(
+  const Texture &texture,
   const std::unordered_map<int, Rectangle> &spriteRects) const {
   auto it = spriteRects.find(spriteId);
   if (it != spriteRects.end()) {

@@ -31,4 +31,6 @@ public:
 
   void SaveMusicState();
   void LoadMusicState();
+
+  size_t MusicStateSize();
 };

@@ -7,9 +7,12 @@ SettingScene::SettingScene() {
   sliders_.reserve(2);
 }
 
-SettingScene::~SettingScene() {}
+SettingScene::~SettingScene() {
+  UnloadTexture(background_);
+}
 
 void SettingScene::Init() {
+  background_ = LoadTexture("res/menu_background.png");
   CreateButtons();
   CreateSliders();
 }
@@ -25,8 +28,20 @@ void SettingScene::Update() {
 }
 
 void SettingScene::Draw() {
+  timer_       += GetFrameTime();
+  float t       = std::min(timer_ / duration_, 1.0f);
+  float start_x = (screenWidth - background_.width) / 2;
+  float end_x   = screenWidth - background_.width;
+  float ease    = t < 0.5f ? 4 * t * t * t : 1 - powf(-2 * t + 2, 3) / 2;
+  float y       = (screenHeight - background_.height) / 2;
+  DrawTextureV(background_, {start_x + (end_x - start_x) * ease, y}, RAYWHITE);
+
   DrawButtons();
   DrawSliders();
+}
+
+SceneType SettingScene::Type() {
+  return type_;
 }
 
 void SettingScene::CreateButtons() {}

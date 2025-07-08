@@ -1,4 +1,5 @@
 #include <memory>
+#include <stdexcept>
 #include <utility>
 
 #include "../include/core/scene.hpp"
@@ -20,6 +21,13 @@ bool SceneStack::Pop() {
   return true;
 }
 
+Scene &SceneStack::Top() {
+  if (scenes_.empty())
+    throw std::runtime_error("empty stack");
+
+  return *scenes_.top();
+}
+
 void SceneStack::Init() {
   if (!scenes_.empty())
     scenes_.top()->Init();
@@ -33,4 +41,8 @@ void SceneStack::Update() {
 void SceneStack::Draw() {
   if (!scenes_.empty())
     scenes_.top()->Draw();
+}
+
+size_t SceneStack::Size() {
+  return scenes_.size();
 }

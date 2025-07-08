@@ -20,11 +20,11 @@ public:
   QuestionBlock(
     Vector2 pos, PowerUpType item = PowerUpType::Coin, int spriteId = 0);
 
-  void onHit() override;
-  void update(float dt) override;
+  void OnHit() override;
+  void Update(float dt) override;
 
-  bool isUsed() const;
-  PowerUpType getItem() const;
+  bool IsUsed() const;
+  PowerUpType GetItem() const;
 
-  Block *clone() const override;
+  Block *Clone() const override;
 };

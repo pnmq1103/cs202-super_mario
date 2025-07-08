@@ -5,6 +5,8 @@
 #include "../../tinyfiledialogs.h"
 #include "../include/core/scene.hpp"
 
+void Scene::Resume() {}
+
 void Scene::ReadSpriteInfo(
   const std::string &path, std::unordered_map<int, Rectangle> &sprites) {
 

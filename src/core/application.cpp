@@ -57,24 +57,31 @@ Application &Application::GetInstance() {
 void Application::ChangeScene(std::unique_ptr<Scene> new_scene) {
 
   if (new_scene != nullptr) {
-    GetInstance().GetMedia().SaveMusicState();
-    GetInstance().GetMedia().StopMusic();
-    GetInstance().scene_manager_.Push(std::move(new_scene));
-    GetInstance().scene_manager_.Init();
+    App.GetMedia().SaveMusicState();
+    App.GetMedia().StopMusic();
+    App.scene_manager_.Push(std::move(new_scene));
+    App.scene_manager_.Init();
   } else {
-    GetInstance().GetMedia().StopMusic();
-    GetInstance().scene_manager_.Pop();
-    GetInstance().GetMedia().LoadMusicState();
+    App.GetMedia().StopMusic();
+    App.previous_scene_ = App.scene_manager_.Top().Type();
+    App.scene_manager_.Pop();
+    if (App.scene_manager_.Size() == App.GetMedia().MusicStateSize())
+      App.GetMedia().LoadMusicState();
+    if (App.scene_manager_.Top().Type() == SceneType::Menu)
+      App.scene_manager_.Top().Resume();
   }
 }
 
 void Application::Close() {
-  Application::GetInstance().exit_window_ = true;
+  App.exit_window_ = true;
 }
 
 void Application::ToggleCustomCursor() {
-  Application::GetInstance().cursor_hidden_
-    = !Application::GetInstance().cursor_hidden_;
+  App.cursor_hidden_ = !App.cursor_hidden_;
+}
+
+SceneType Application::PreviousScene() {
+  return App.previous_scene_;
 }
 
 Media &Application::GetMedia() {
