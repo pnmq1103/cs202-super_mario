@@ -2,35 +2,25 @@
 #include <raylib.h>
 #include <string>
 #include <vector>
-
+#include <include/core/json.hpp>
 #include "../tinyfiledialogs.h"
 
-// stuff to deal with endianness
-#pragma pack(push, 1)
 struct tileData {
-  char tileType; // type of tile
-  int x;         // x position of the tile in the map
-  int y;         // y position of the tile in the map
+  char tileType;
+  int x;
+  int y;
 };
 
-struct SaveData {
-  int32_t highScore;
-  int32_t backgroundID;
-  // character positions
-  int32_t xPos;
-  int32_t yPos;
-  int32_t mapRows;
-  int32_t mapCols;
-};
-
-#pragma pack(pop)
-static_assert(
-  sizeof(SaveData) == sizeof(int32_t) * 6, "SaveData has unexpected padding");
-struct SaveDatawMap {
-  SaveData header = {};
-  // Store each tile x and y positions; must be handled separately
+  struct SaveData {
+  int lives;
+  int score;
+  float gameTime;
+  int backgroundID;
+  int charPosX;
+  int charPosY;
   std::vector<tileData> mapTiles = {};
 };
+
 
 class FileHandler {
 private:
@@ -48,9 +38,9 @@ public:
 
   std::string OpenSavePath(const std::string &defaultName = "untitled.bin");
 
-  bool LoadFile(const std::string &path, SaveDatawMap &sd) const;
+  bool LoadFile(const std::string &path, SaveData &sd) const;
 
-  bool SaveFile(const std::string &path, const SaveDatawMap &sd);
+  bool SaveFile(const std::string &path, const SaveData &sd);
 
   // std::vector<tileData> parseMapTiles();
   // parse all tiles in map into a vector to save/load;  will look at later

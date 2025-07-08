@@ -1,97 +1,83 @@
-﻿#include <cstdint>
+﻿#include "include/core/file_handler.hpp"
 #include <fstream>
-#include <string>
+#include <iostream>
 
-#include "include/core/file_handler.hpp"
-
-// helper functions for endianness handling
-//   Helpers: convert to/from little endian
-uint32_t toLE(uint32_t v) {
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-  return v;
-#else
-  return __builtin_bswap32(v);
-#endif
-}
-
-uint32_t fromLE(uint32_t v) {
-  return toLE(v); // same op
-}
+using json = nlohmann::json;
 
 std::string FileHandler::OpenFilePath() {
-  const char *filter[] = {"*.bin"};
+  const char *filter[] = {"*.json"};
   if (
     const char *fn = tinyfd_openFileDialog(
-      "Select data file", "", 1, filter, "Binary Files (*.bin)", 0)) {
+      "Select data file", "", 1, filter, "JSON File", 0)) {
     return fn;
   }
   return {};
 }
 
 std::string FileHandler::OpenSavePath(const std::string &defaultName) {
-  const char *filter[] = {"*.bin"};
+  const char *filter[] = {"*.json"};
   const char *fn       = tinyfd_saveFileDialog(
     "Save data file as…", defaultName.c_str(), 1, filter,
-    "Binary Files (*.bin)");
+    "JSON File, (*.json)");
   return fn ? std::string(fn) : std::string{};
 }
 
-bool FileHandler::SaveFile(const std::string &path, const SaveDatawMap &sd) {
-  std::ofstream out(path, std::ios::binary);
-  if (!out)
-    return false;
+bool FileHandler::SaveFile(const std::string &path, const SaveData &sd) {
+  json j;
+  j["Score"]           = sd.score;
+  j["Lives"]           = sd.lives;
+  j["Background ID"]   = sd.backgroundID;
+  j["Game time"]       = sd.gameTime;
+  j["Character Pos X"] = sd.charPosX;
+  j["Character Pos Y"] = sd.charPosY;
 
-  auto w32 = [&](uint32_t v) {
-    v = toLE(v);
-    out.write(reinterpret_cast<const char *>(&v), sizeof(v));
-  };
-
-  // write the rest
-  w32(static_cast<uint32_t>(sd.header.highScore));
-  w32(static_cast<uint32_t>(sd.header.backgroundID));
-  w32(static_cast<uint32_t>(sd.header.xPos));
-  w32(static_cast<uint32_t>(sd.header.yPos));
-  w32(static_cast<uint32_t>(sd.header.mapCols));
-  w32(static_cast<uint32_t>(sd.header.mapRows));
-
-  // write tile count and map tiles
-  uint32_t count = static_cast<uint32_t>(sd.mapTiles.size());
-  w32(count);
-  if (count > 0) {
-    out.write(
-      reinterpret_cast<const char *>(sd.mapTiles.data()),
-      count * sizeof(tileData));
+  j["Map tiles"] = json::array();
+  for (auto &tile : sd.mapTiles) {
+    j["Map tiles"].push_back(
+      {{"type", std::string(1, tile.tileType)}, {"x", tile.x}, {"y", tile.y}});
   }
 
+  std::ofstream out(path);
+  if (!out.is_open())
+    return false;
+  out << j.dump(2); // pretty-print with 2-space indent
   return out.good();
 }
 
-bool FileHandler::LoadFile(const std::string &path, SaveDatawMap &sd) const {
-  std::ifstream in(path, std::ios::binary);
-  if (!in)
+bool FileHandler::LoadFile(const std::string &path, SaveData &sd) const {
+  std::ifstream in(path);
+  if (!in.is_open())
     return false;
 
-  auto r32 = [&]() {
-    uint32_t v;
-    in.read(reinterpret_cast<char *>(&v), sizeof(v));
-    return fromLE(v);
-  };
-
-  // the rest of the stuff
-  sd.header.highScore    = static_cast<int32_t>(r32());
-  sd.header.backgroundID = static_cast<int32_t>(r32());
-  sd.header.xPos         = static_cast<int32_t>(r32());
-  sd.header.yPos         = static_cast<int32_t>(r32());
-  sd.header.mapCols      = static_cast<int32_t>(r32());
-  sd.header.mapRows      = static_cast<int32_t>(r32());
-
-  // map tiles
-  uint32_t count = r32();
-  sd.mapTiles.resize(count);
-  if (count > 0) {
-    in.read(
-      reinterpret_cast<char *>(sd.mapTiles.data()), count * sizeof(tileData));
+  json j;
+  try {
+    in >> j; // throws on parse error
+  } catch (const json::parse_error &e) {
+    std::cerr << "JSON parse error at byte " << e.byte << ": " << e.what()
+              << "\n";
+    return false;
   }
 
-  return in.good();
+  // 1) Read back your scalar fields
+  sd.score        = j.value("Score", sd.score);
+  sd.lives        = j.value("Lives", sd.lives);
+  sd.backgroundID = j.value("Background ID", sd.backgroundID);
+  sd.gameTime     = j.value("Game time", sd.gameTime);
+  sd.charPosX     = j.value("Character Pos X", sd.charPosX);
+  sd.charPosY     = j.value("Character Pos Y", sd.charPosY);
+
+  // 2) Read back the tile array
+  sd.mapTiles.clear();
+  auto &tiles = j.at("Map tiles");
+  sd.mapTiles.reserve(tiles.size());
+  for (auto &jtile : tiles) {
+    tileData t;
+    auto s     = jtile.at("type").get<std::string>();
+    t.tileType = s.empty() ? '\0' : s[0];
+    t.x        = jtile.at("x").get<int>();
+    t.y        = jtile.at("y").get<int>();
+    sd.mapTiles.push_back(t);
+  }
+
+  return true;
 }

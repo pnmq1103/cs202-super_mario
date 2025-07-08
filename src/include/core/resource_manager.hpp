@@ -47,9 +47,9 @@ public:
 
   void Shutdown();
 
-  SaveDatawMap LoadResourcesFromFile();
+  SaveData LoadResourcesFromFile();
 
-  static bool SaveResourcesToFile(const SaveDatawMap &data);
+  static bool SaveResourcesToFile(const SaveData &data);
 
   static Texture GetMario(char type, int index);
 

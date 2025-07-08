@@ -53,7 +53,7 @@ void LoadScene::Draw() {
     FileHandler handler(i + 1);
     if (handler.LoadFile(path, saveData[i])) {
       slotText = "Save game no." + std::to_string(i + 1) + " - "
-                 + std::to_string(saveData[i].header.highScore);
+                 + std::to_string(saveData[i].score);
     } else {
       slotText = "Slot " + std::to_string(i + 1);
     }

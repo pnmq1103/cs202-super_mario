@@ -184,20 +184,20 @@ void ResManager::LoadSounds() {
   sounds["world_clear"]     = LoadSound(("res/sounds/world_clear.wav"));
 }
 
-SaveDatawMap ResManager::LoadResourcesFromFile() {
+SaveData ResManager::LoadResourcesFromFile() {
   FileHandler fp;
   std::string path = fp.OpenFilePath();
   if (path.empty()) {
     return {};
   }
-  SaveDatawMap data;
+  SaveData data;
   if (!fp.LoadFile(path, data)) {
     throw std::runtime_error("Failed to load file at: " + path);
   }
   return data;
 }
 
-bool ResManager::SaveResourcesToFile(const SaveDatawMap &data) {
+bool ResManager::SaveResourcesToFile(const SaveData &data) {
   FileHandler fp;
   std::string path = fp.OpenSavePath();
   if (path.empty()) {

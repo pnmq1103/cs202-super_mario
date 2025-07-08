@@ -11,7 +11,7 @@ private:
 
   std::string path;
   Rectangle rects[3]       = {};
-  SaveDatawMap saveData[3] = {};
+  SaveData saveData[3] = {};
   const int buttonWidth    = {256};
   const int buttonHeight   = {128};
 
