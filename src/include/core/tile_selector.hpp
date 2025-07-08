@@ -1,15 +1,15 @@
 #pragma once
-
 #include <unordered_map>
+#include <vector>
 
-#include "scene.hpp"
+#include "include/core/button.hpp"
+#include "include/core/scene.hpp"
 
 class TileSelectorScene : public Scene {
 private:
   SceneType type_ = {TileSelector};
 
   int &selected_tile_id_ref_;
-  static constexpr float cellSize = {16}; // int needs typecast
 
   Texture ground_tiles_ = {};
   std::unordered_map<int, Rectangle> ground_tiles_info_;
@@ -20,6 +20,8 @@ private:
 
   float scroll_speed_ = {30};
   std::vector<std::vector<int>> sprites_grid_;
+
+  std::vector<Button> buttons_;
 
 public:
   TileSelectorScene(int &selected_tile_id);

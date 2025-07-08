@@ -1,9 +1,9 @@
 #pragma once
-
-#include "file_handler.hpp"
-#include "scene.hpp"
 #include <string>
 #include <vector>
+
+#include "include/core/file_handler.hpp"
+#include "include/core/scene.hpp"
 
 class LoadScene : public Scene {
 private:

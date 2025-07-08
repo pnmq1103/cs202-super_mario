@@ -1,8 +1,8 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include "../include/core/application.hpp"
-#include "../include/core/slider.hpp"
+#include "include/core/application.hpp"
+#include "include/core/slider.hpp"
 
 Slider::~Slider() {}
 

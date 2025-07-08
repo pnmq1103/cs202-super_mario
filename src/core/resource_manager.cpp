@@ -1,4 +1,4 @@
-﻿#include "..\include\core\resource_manager.hpp"
+﻿#include "include/core/resource_manager.hpp"
 
 std::unordered_map<std::string, Texture> ResManager::mario_normal;
 std::unordered_map<std::string, Texture> ResManager::mario_star;

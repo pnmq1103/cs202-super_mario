@@ -1,4 +1,4 @@
-#include "../include/enemies/piranha_plant.hpp"
+#include "include/enemies/piranha_plant.hpp"
 
 PiranhaPlant::PiranhaPlant(Vector2 pos, int spriteId)
     : Enemy(pos, 16, 24, EnemyType::Piranha, spriteId) {}

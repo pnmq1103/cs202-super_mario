@@ -1,5 +1,5 @@
 #pragma once
-#include "Enemy.hpp"
+#include "include/enemies/enemy.hpp"
 
 class Bowser : public Enemy {
 private:

@@ -1,4 +1,4 @@
-#include "../include/enemies/koopa_troopa.hpp"
+#include "include/enemies/koopa_troopa.hpp"
 
 KoopaTroopa::KoopaTroopa(Vector2 pos, int spriteId)
     : Enemy(pos, 16, 16, EnemyType::Koopa, spriteId),

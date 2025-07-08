@@ -1,8 +1,8 @@
 #include <raylib.h>
 #include <string>
 
-#include "../include/core/application.hpp"
-#include "../include/core/load.hpp"
+#include "include/core/application.hpp"
+#include "include/core/load.hpp"
 
 LoadScene::LoadScene() {
   for (int i = 0; i < 3; ++i) {

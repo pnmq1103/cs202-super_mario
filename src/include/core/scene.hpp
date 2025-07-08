@@ -20,6 +20,8 @@ protected:
   // The scale factor for the whole program is 4x
   static constexpr float screenWidth  = {256 * 4};
   static constexpr float screenHeight = {240 * 4};
+  static constexpr float blockSize    = {16 * 4}; // int needs typecast
+  static constexpr float cellSize     = {16};
 
   Camera2D camera_ = {};
 

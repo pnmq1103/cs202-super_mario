@@ -1,5 +1,5 @@
-#include "../include/core/credit.hpp"
-#include "../include/core/application.hpp"
+#include "include/core/credit.hpp"
+#include "include/core/application.hpp"
 
 CreditScene::CreditScene() {}
 

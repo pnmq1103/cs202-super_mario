@@ -4,13 +4,13 @@
 #include <raylib.h>
 #include <stdexcept>
 
-#include "../include/core/application.hpp"
-#include "../include/core/credit.hpp"
-#include "../include/core/editor.hpp"
-#include "../include/core/game.hpp"
-#include "../include/core/load.hpp"
-#include "../include/core/menu.hpp"
-#include "../include/core/setting.hpp"
+#include "include/core/application.hpp"
+#include "include/core/credit.hpp"
+#include "include/core/editor.hpp"
+#include "include/core/game.hpp"
+#include "include/core/load.hpp"
+#include "include/core/menu.hpp"
+#include "include/core/setting.hpp"
 
 MenuScene::MenuScene() {
   menu_items_.resize(4);
@@ -44,7 +44,6 @@ void MenuScene::Update() {
       last_input_ = time;
 
       switch (selected_idx_) {
-        // This can be changed later when Load and Editor both have musics
         case SceneType::Game:
           App.ChangeScene(std::make_unique<GameScene>());
           break;
@@ -79,8 +78,7 @@ void MenuScene::Draw() {
     reset_  = true;
   } else if (App.PreviousScene() == SceneType::Credit)
     start_x = 0;
-
-  float ease = t < 0.5f ? 4 * t * t * t : 1 - powf(-2 * t + 2, 3) / 2;
+  float ease = 1 - powf(1 - t, 3);
   float y    = (screenHeight - background_.height) / 2;
   DrawTextureV(background_, {start_x + (end_x - start_x) * ease, y}, RAYWHITE);
 

@@ -1,6 +1,8 @@
 #pragma once
-#include "include/characters/fireball.hpp"
 #include <vector>
+
+#include "include/characters/fireball.hpp"
+
 class ProjectilePool {
 private:
   std::vector<Projectile *> projectile_list_;

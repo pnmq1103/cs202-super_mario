@@ -3,9 +3,9 @@
 #include <raylib.h>
 #include <stack>
 
-#include "media.hpp"
-#include "scene.hpp"
-#include "scene_stack.hpp"
+#include "include/core/media.hpp"
+#include "include/core/scene.hpp"
+#include "include/core/scene_stack.hpp"
 
 class Application {
 private:

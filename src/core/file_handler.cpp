@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 
-#include "../include/core/file_handler.hpp"
+#include "include/core/file_handler.hpp"
 
 // helper functions for endianness handling
 //   Helpers: convert to/from little endian
@@ -28,12 +28,11 @@ std::string FileHandler::OpenFilePath() {
   return {};
 }
 
-std::string FileHandler::OpenSavePath(const std::string& defaultName) {
+std::string FileHandler::OpenSavePath(const std::string &defaultName) {
   const char *filter[] = {"*.bin"};
   const char *fn       = tinyfd_saveFileDialog(
-    "Save data file as…",
-    defaultName.c_str(),
-    1, filter, "Binary Files (*.bin)");
+    "Save data file as…", defaultName.c_str(), 1, filter,
+    "Binary Files (*.bin)");
   return fn ? std::string(fn) : std::string{};
 }
 

@@ -1,4 +1,4 @@
-#include "../include/blocks/question_block.hpp"
+#include "include/blocks/question_block.hpp"
 
 QuestionBlock::QuestionBlock(Vector2 pos, PowerUpType item, int spriteId)
     : Block(pos, 16, 16, BlockType::Question, true, spriteId), item(item) {}

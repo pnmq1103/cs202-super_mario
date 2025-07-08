@@ -4,7 +4,7 @@
 #include <string>
 #include <utility>
 
-#include "../include/core/button.hpp"
+#include "include/core/button.hpp"
 
 Button::~Button() {
   if (IsTextureValid(icon_))

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "button.hpp"
+#include "include/core/button.hpp"
 
 class Slider : public Button {
 private:

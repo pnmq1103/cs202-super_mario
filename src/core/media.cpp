@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include <string>
 
-#include "../include/core/media.hpp"
+#include "include/core/media.hpp"
 
 Media::~Media() {
   for (const auto &[_, sound] : sounds_)

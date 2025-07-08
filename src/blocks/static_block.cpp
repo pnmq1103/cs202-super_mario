@@ -1,4 +1,4 @@
-#include "../include/blocks/static_block.hpp"
+#include "include/blocks/static_block.hpp"
 
 StaticBlock::StaticBlock(
   Vector2 pos, int w, int h, BlockType type, int spriteId)

@@ -1,5 +1,5 @@
 #pragma once
-#include "block.hpp"
+#include "include/blocks/block.hpp"
 
 class StaticBlock : public Block {
 public:

@@ -1,13 +1,14 @@
 #pragma once
-#include "../characters/character.hpp"
 #include <raylib.h>
+
+#include "include/characters/character.hpp"
 
 class Command {
 private:
-  Character *mario_ = nullptr;
-  Character *luigi_ = nullptr;
-  Character *active_character_ = nullptr;
-  bool fireball_active_ = false; // Only allow one fireball at a time
+  Character *mario_            = {nullptr};
+  Character *luigi_            = {nullptr};
+  Character *active_character_ = {nullptr};
+  bool fireball_active_        = {false}; // Only allow one fireball at a time
 
 public:
   Command(Character *mario = nullptr, Character *luigi = nullptr);
@@ -19,7 +20,7 @@ public:
 
   // Set the active character to control
   void SetActiveCharacter(Character *character);
-  Character* GetActiveCharacter() const;
+  Character *GetActiveCharacter() const;
 
   // Switch between Mario and Luigi
   void SwitchCharacter();

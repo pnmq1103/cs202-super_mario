@@ -1,6 +1,6 @@
-#include "../include/core/setting.hpp"
-#include "../include/core/application.hpp"
-#include "../include/core/button.hpp"
+#include "include/core/setting.hpp"
+#include "include/core/application.hpp"
+#include "include/core/button.hpp"
 
 SettingScene::SettingScene() {
   buttons_.reserve(3);

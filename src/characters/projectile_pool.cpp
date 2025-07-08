@@ -1,4 +1,5 @@
 #include "include/characters/projectile_pool.hpp"
+
 ProjectilePool::ProjectilePool() : projectile_list_(7, nullptr) {
   for (int i = 0; i < 3; ++i) {
     projectile_list_[i]     = new MarioFireball();

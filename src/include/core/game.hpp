@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../characters/character.hpp"
-#include "command.hpp"
-#include "game_managing.hpp"
-#include "scene.hpp"
+#include "include/characters/character.hpp"
+#include "include/core/command.hpp"
+#include "include/core/game_managing.hpp"
+#include "include/core/scene.hpp"
 
 class GameScene : public Scene {
 private:

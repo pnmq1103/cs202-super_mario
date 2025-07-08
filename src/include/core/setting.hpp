@@ -1,8 +1,8 @@
 #pragma once
 
-#include "button.hpp"
-#include "scene.hpp"
-#include "slider.hpp"
+#include "include/core/button.hpp"
+#include "include/core/scene.hpp"
+#include "include/core/slider.hpp"
 
 class SettingScene : public Scene {
 private:

@@ -1,5 +1,5 @@
 #pragma once
-#include "scene.hpp"
+#include "include/core/scene.hpp"
 
 class CreditScene : public Scene {
 private:

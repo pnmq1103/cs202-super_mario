@@ -2,7 +2,7 @@
 #include <memory>
 #include <stack>
 
-#include "scene.hpp"
+#include "include/core/scene.hpp"
 
 class SceneStack {
 private:

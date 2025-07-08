@@ -1,4 +1,4 @@
-#include "../include/enemies/bowser.hpp"
+#include "include/enemies/bowser.hpp"
 
 Bowser::Bowser(Vector2 pos, int spriteId)
     : Enemy(pos, 32, 32, EnemyType::Bowser, spriteId), hp(5) {}

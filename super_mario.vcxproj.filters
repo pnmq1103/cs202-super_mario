@@ -34,6 +34,7 @@
     <ClCompile Include="src\blocks\static_block.cpp" />
     <ClCompile Include="tinyfiledialogs.cpp" />
     <ClCompile Include="src\core\slider.cpp" />
+    <ClCompile Include="src\characters\projectile_pool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -68,6 +69,7 @@
     <ClInclude Include="src\include\blocks\static_block.hpp" />
     <ClInclude Include="tinyfiledialogs.h" />
     <ClInclude Include="src\include\core\slider.hpp" />
+    <ClInclude Include="src\include\characters\projectile_pool.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

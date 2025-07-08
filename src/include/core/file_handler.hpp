@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../../tinyfiledialogs.h"
+#include "../tinyfiledialogs.h"
 
 // stuff to deal with endianness
 #pragma pack(push, 1)

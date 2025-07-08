@@ -1,11 +1,11 @@
 #pragma once
 #include <raylib.h>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
-#include "button.hpp"
-#include "scene.hpp"
-#include <unordered_map>
+#include "include/core/button.hpp"
+#include "include/core/scene.hpp"
 
 class MenuScene : public Scene {
 private:
@@ -19,7 +19,7 @@ private:
   const double cooldown_ = {0.2};
 
   float timer_    = {0};
-  float duration_ = {1};
+  float duration_ = {0.5f};
   bool reset_     = {false};
 
   std::vector<Button> buttons_;

@@ -1,4 +1,4 @@
-#include "../include/enemies/enemy.hpp"
+#include "include/enemies/enemy.hpp"
 
 Enemy::Enemy(Vector2 pos, int w, int h, EnemyType type, int spriteId)
     : position(pos), width(w), height(h), type(type), spriteId(spriteId),

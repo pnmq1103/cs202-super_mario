@@ -2,8 +2,8 @@
 #include <stdexcept>
 #include <utility>
 
-#include "../include/core/scene.hpp"
-#include "../include/core/scene_stack.hpp"
+#include "include/core/scene.hpp"
+#include "include/core/scene_stack.hpp"
 
 bool SceneStack::Push(std::unique_ptr<Scene> scene) {
   if (scene == nullptr)

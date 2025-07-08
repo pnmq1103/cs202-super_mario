@@ -3,6 +3,7 @@
 #include <iostream>
 #include <raylib.h>
 #include <vector>
+
 class Projectile {
 protected:
   Texture texture;

@@ -2,11 +2,11 @@
 #include <raylib.h>
 #include <utility>
 
-#include "../include//core/resource_manager.hpp"
-#include "../include/core/application.hpp"
-#include "../include/core/media.hpp"
-#include "../include/core/menu.hpp"
-#include "../include/core/scene.hpp"
+#include "include//core/resource_manager.hpp"
+#include "include/core/application.hpp"
+#include "include/core/media.hpp"
+#include "include/core/menu.hpp"
+#include "include/core/scene.hpp"
 
 Application &App = Application::GetInstance();
 

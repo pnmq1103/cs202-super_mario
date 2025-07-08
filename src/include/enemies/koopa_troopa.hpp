@@ -1,5 +1,5 @@
 #pragma once
-#include "enemy.hpp"
+#include "include/enemies/enemy.hpp"
 
 enum class KoopaState {
   Walking,

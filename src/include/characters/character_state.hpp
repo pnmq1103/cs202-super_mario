@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "character.hpp"
+#include "include/characters/character.hpp"
 
 // Time will be counted by frame not by second
 

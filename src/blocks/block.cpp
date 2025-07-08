@@ -1,4 +1,4 @@
-#include "../include/blocks/block.hpp"
+#include "include/blocks/block.hpp"
 #include <raylib.h>
 #include <unordered_map>
 

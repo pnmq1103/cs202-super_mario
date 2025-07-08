@@ -1,5 +1,5 @@
 #pragma once
-#include "enemy.hpp"
+#include "include/enemies/enemy.hpp"
 
 class Goomba : public Enemy {
 public:

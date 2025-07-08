@@ -1,4 +1,4 @@
-#include "../include/enemies/goomba.hpp"
+#include "include/enemies/goomba.hpp"
 
 Goomba::Goomba(Vector2 pos, int spriteId)
     : Enemy(pos, 16, 16, EnemyType::Goomba, spriteId) {

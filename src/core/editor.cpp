@@ -6,10 +6,10 @@
 #include <raymath.h>
 #include <stdexcept>
 
-#include "../../tinyfiledialogs.h"
-#include "../include/core/application.hpp"
-#include "../include/core/editor.hpp"
-#include "../include/core/tile_selector.hpp"
+#include "../tinyfiledialogs.h"
+#include "include/core/application.hpp"
+#include "include/core/editor.hpp"
+#include "include/core/tile_selector.hpp"
 
 EditorScene::EditorScene() {
   camera_.target   = {0, 0};
@@ -61,6 +61,16 @@ void EditorScene::Update() {
   if (CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
     snapped_.x = std::floor(mouse_world_pos_.x / blockSize) * blockSize;
     snapped_.y = std::floor(mouse_world_pos_.y / blockSize) * blockSize;
+  }
+
+  if (IsKeyDown(KEY_SPACE)) {
+    Vector2 world_delta = GetScreenToWorld2D(GetMouseDelta(), camera_);
+
+    int dx = static_cast<int>(world_delta.x / blockSize);
+    int dy = static_cast<int>(world_delta.y / blockSize);
+
+    selected_tile_id_ += dx;
+    int grid_cols      = static_cast<int>(ground_tiles_.width / cellSize);
   }
 
   UpdateButtons();

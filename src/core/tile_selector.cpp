@@ -1,9 +1,9 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include "../include/core/application.hpp"
-#include "../include/core/scene.hpp"
-#include "../include/core/tile_selector.hpp"
+#include "include/core/application.hpp"
+#include "include/core/scene.hpp"
+#include "include/core/tile_selector.hpp"
 
 TileSelectorScene::TileSelectorScene(int &selected_tile_id)
     : selected_tile_id_ref_(selected_tile_id) {
@@ -11,6 +11,8 @@ TileSelectorScene::TileSelectorScene(int &selected_tile_id)
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
   camera_.zoom     = 1; // Important
+
+  buttons_.reserve(4);
 }
 
 TileSelectorScene::~TileSelectorScene() {
@@ -24,7 +26,7 @@ void TileSelectorScene::Init() {
 
   float width  = static_cast<float>(ground_tiles_.width);
   float height = static_cast<float>(ground_tiles_.height);
-  boundary_    = {0, 0, width * 4, height * 4};
+  boundary_    = {0, 64 * 2, width * 4, height * 4};
 
   BuildSpriteGrid();
 }
@@ -46,8 +48,7 @@ void TileSelectorScene::Draw() {
   float width  = static_cast<float>(ground_tiles_.width);
   float height = static_cast<float>(ground_tiles_.height);
   DrawTexturePro(
-    ground_tiles_, {0, 0, width, height},
-    {0, 0, boundary_.width, boundary_.height}, {0, 0}, 0, WHITE);
+    ground_tiles_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
   EndMode2D();
 }
 
@@ -66,11 +67,17 @@ void TileSelectorScene::UpdateCamera() {
   Vector2 scroll_offset_
     = Vector2Scale(GetMouseWheelMoveV(), -1 * scroll_speed_);
   camera_.target = Vector2Add(camera_.target, scroll_offset_);
+
+  // Restrict camera
+  camera_.target.x
+    = Clamp(camera_.target.x, 0, boundary_.x + boundary_.width - screenWidth);
+  camera_.target.y
+    = Clamp(camera_.target.y, 0, boundary_.y + boundary_.height - screenHeight);
 }
 
 void TileSelectorScene::BuildSpriteGrid() {
-  grid_cols_ = static_cast<int>(ground_tiles_.width / cellSize);
-  grid_rows_ = static_cast<int>(ground_tiles_.height / cellSize);
+  grid_cols_ = static_cast<int>(ground_tiles_.width / cellSize) + 1;
+  grid_rows_ = static_cast<int>(ground_tiles_.height / cellSize) + 1;
   sprites_grid_.resize(grid_cols_ * grid_rows_);
 
   for (const auto &[sprite_id, bounds] : ground_tiles_info_) {

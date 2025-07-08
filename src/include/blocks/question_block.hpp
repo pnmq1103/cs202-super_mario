@@ -1,5 +1,5 @@
 #pragma once
-#include "block.hpp"
+#include "include/blocks/block.hpp"
 
 enum class PowerUpType {
   None,

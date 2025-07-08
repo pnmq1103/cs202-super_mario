@@ -1,7 +1,7 @@
 #include <raylib.h>
 
-#include "../include/characters/character.hpp"
-#include "../include/core/command.hpp"
+#include "include/characters/character.hpp"
+#include "include/core/command.hpp"
 
 Command::Command(Character *mario, Character *luigi)
     : mario_(mario), luigi_(luigi), fireball_active_(false) {
@@ -12,19 +12,21 @@ Command::~Command() {}
 
 void Command::SetMario(Character *mario) {
   mario_ = mario;
-  if (!active_character_) active_character_ = mario_;
+  if (!active_character_)
+    active_character_ = mario_;
 }
 
 void Command::SetLuigi(Character *luigi) {
   luigi_ = luigi;
-  if (!active_character_) active_character_ = luigi_;
+  if (!active_character_)
+    active_character_ = luigi_;
 }
 
 void Command::SetActiveCharacter(Character *character) {
   active_character_ = character;
 }
 
-Character* Command::GetActiveCharacter() const {
+Character *Command::GetActiveCharacter() const {
   return active_character_;
 }
 
@@ -37,7 +39,8 @@ void Command::SwitchCharacter() {
 }
 
 void Command::HandleInput() {
-  if (!active_character_) return;
+  if (!active_character_)
+    return;
 
   // --- Handle Character Switch ---
   if (IsKeyPressed(KEY_TAB)) {
@@ -62,9 +65,10 @@ void Command::HandleInput() {
   }
 
   // --- Handle Fireball/Ice Ball ---
-  if ((IsKeyPressed(KEY_LEFT_CONTROL) || IsKeyPressed(KEY_RIGHT_CONTROL) ||
-       IsKeyPressed(KEY_LEFT_SHIFT) || IsKeyPressed(KEY_RIGHT_SHIFT)) &&
-      active_character_->GetState() == 2 && !fireball_active_) {
+  if (
+    (IsKeyPressed(KEY_LEFT_CONTROL) || IsKeyPressed(KEY_RIGHT_CONTROL)
+     || IsKeyPressed(KEY_LEFT_SHIFT) || IsKeyPressed(KEY_RIGHT_SHIFT))
+    && active_character_->GetState() == 2 && !fireball_active_) {
     ShootFireball();
     fireball_active_ = true;
   }
@@ -96,10 +100,11 @@ void Command::JumpCharacter() {
 
 void Command::ShootFireball() {
   if (active_character_) {
-    // Only allow one fireball at a time (to be implemented in character/projectile system)
-    // Example: active_character_->ShootFireball();
-    // You need to coordinate with the projectile system for actual fireball creation
-    // When the fireball is destroyed, call SetFireballActive(false) from the projectile system
+    // Only allow one fireball at a time (to be implemented in
+    // character/projectile system) Example: active_character_->ShootFireball();
+    // You need to coordinate with the projectile system for actual fireball
+    // creation When the fireball is destroyed, call SetFireballActive(false)
+    // from the projectile system
   }
 }
 
