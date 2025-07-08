@@ -1,10 +1,10 @@
 ﻿#include <raylib.h>
 
-#include "../include/characters/character.hpp"
-#include "../include/core/application.hpp"
-#include "../include/core/command.hpp"
-#include "../include/core/game.hpp"
-#include "../include/core/game_managing.hpp"
+#include "include/characters/character.hpp"
+#include "include/core/application.hpp"
+#include "include/core/command.hpp"
+#include "include/core/game.hpp"
+#include "include/core/game_managing.hpp"
 
 GameScene::GameScene() {}
 
