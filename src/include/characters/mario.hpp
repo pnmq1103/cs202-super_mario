@@ -1,8 +1,8 @@
 #pragma once
 #include <raylib.h>
 
-#include "../include/characters/character.hpp"
-#include "../include/characters/character_state.hpp"
+#include "include/characters/character.hpp"
+#include "include/characters/character_state.hpp"
 
 class NormalMario : public CharacterState {
 private:

@@ -1,34 +1,41 @@
-#include "../include/characters/projectile.hpp"
+#include "include/characters/projectile.hpp"
 
 class MarioFireball : public Projectile {
 private:
   float gravity_, bounce_coefficient_, range_;
 
 public:
-  MarioFireball(Vector2 Nposition, bool to_left);
+  MarioFireball();
   ~MarioFireball();
-  void Update(float upper_bounce, float lower_bounce);
+  void Update();
   void Draw();
+  void StopY(float upper_bounce, float lower_bounce);
 };
 
 class EnemyFireball : public Projectile {
+private:
+  float range_;
+
 public:
-  EnemyFireball(Vector2 Nposition, bool to_left);
+  EnemyFireball();
   ~EnemyFireball();
   void Update();
   void Draw();
+  void StopY(float upper_bounce, float lower_bounce);
 };
 
 class ElectricBall : public Projectile {
 private:
   int time_explode_;
+  bool is_explode_;
+  float range_;
 
 public:
-  ElectricBall(Vector2 Nposition, bool to_left);
+  ElectricBall();
   ~ElectricBall();
   void Update();
   void Draw();
   void Destroy();
-  bool IsDestroyed();
   void Renew(Vector2 Nposition, bool to_left);
+  void StopY(float upper_bounce, float lower_bounce);
 };

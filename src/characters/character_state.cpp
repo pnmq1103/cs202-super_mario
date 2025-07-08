@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "../include/characters/character_state.hpp"
+#include "include/characters/character_state.hpp"
 
 CharacterState::CharacterState(
   int NrunTime, float Nspeed, int NjumpTime, float NjumpHeight, float Nscale,

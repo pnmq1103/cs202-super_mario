@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <raylib.h>
 
-#include "../include/characters/character.hpp"
-#include "../include/characters/character_state.hpp"
-#include "../include/characters/mario.hpp"
+#include "include/characters/character.hpp"
+#include "include/characters/character_state.hpp"
+#include "include/characters/mario.hpp"
 
 //+----------------------------------------------------------+
 //|                       Normal Mario                       |

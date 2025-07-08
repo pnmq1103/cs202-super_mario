@@ -15,12 +15,14 @@ protected:
   void LoadFrameList(std::string address);
 
 public:
-  Projectile(float Nscale, Vector2 Nposition, Vector2 Nvelocity);
+  Projectile(float Nscale, Vector2 Nvelocity);
   virtual ~Projectile();
   void SetFrameCount();
+  virtual void Update() = 0;
   virtual void Draw();
   Rectangle GetRectangle();
   virtual void Destroy();
-  virtual bool IsDestroyed();
-  void Renew(Vector2 Nposition, bool to_left);
+  bool IsDestroyed();
+  virtual void Renew(Vector2 Nposition, bool to_left);
+  virtual void StopY(float upper_bounce, float lower_bounce) = 0;
 };

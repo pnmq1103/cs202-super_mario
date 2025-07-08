@@ -1,11 +1,9 @@
-#include "../include/characters/projectile.hpp"
+#include "include/characters/projectile.hpp"
 
-Projectile::Projectile(float Nscale, Vector2 Nposition, Vector2 Nvelocity)
-    : scale(Nscale) {
-  original_position = position = Nposition;
-  velocity                     = Nvelocity;
-  is_destroy                   = false;
-  time                         = 0;
+Projectile::Projectile(float Nscale, Vector2 Nvelocity) : scale(Nscale) {
+  velocity   = Nvelocity;
+  is_destroy = true;
+  time       = 0;
 }
 Projectile::~Projectile() {
   UnloadTexture(texture);
@@ -52,4 +50,5 @@ void Projectile::Renew(Vector2 Nposition, bool to_left) {
   time                         = 0;
   if (to_left)
     velocity.x *= -1;
+  time = 0;
 }

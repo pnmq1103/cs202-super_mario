@@ -2,9 +2,9 @@
 #include <raylib.h>
 #include <stdexcept>
 
-#include "../include/characters/character.hpp"
-#include "../include/characters/luigi.hpp"
-#include "../include/characters/mario.hpp"
+#include "include/characters/character.hpp"
+#include "include/characters/luigi.hpp"
+#include "include/characters/mario.hpp"
 
 Character::Character(float Nscale) : scale_(Nscale) {}
 
