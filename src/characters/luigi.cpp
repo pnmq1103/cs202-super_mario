@@ -108,7 +108,7 @@ BigLuigi::BigLuigi(
     image      = LoadImage("res/sprites/characters/luigi_normal.png");
     pre_frame_ = {0, 0, 12 * scale, 15 * scale};
   } else {
-    image      = LoadImage("res/sprites/characters/luigi_starup_fire.png");
+    image      = LoadImage("res/sprites/characters/luigi_electric.png");
     pre_frame_ = frame_list[0];
   }
   ImageResize(&image, image.width * scale, image.height * scale);
@@ -194,7 +194,7 @@ FireLuigi::FireLuigi(
     UnloadImage(image);
     pre_frame_ = frame_list[0];
   }
-  Image image = LoadImage("res/sprites/characters/luigi_starup_fire.png");
+  Image image = LoadImage("res/sprites/characters/luigi_electric.png");
   ImageResize(&image, image.width * scale, image.height * scale);
   texture = LoadTextureFromImage(image);
   UnloadImage(image);

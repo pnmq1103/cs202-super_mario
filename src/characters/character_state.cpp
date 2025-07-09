@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include <raylib.h>
 #include <stdexcept>
 #include <string>
@@ -20,6 +21,7 @@ CharacterState::CharacterState(
   disabled       = false;
   stop_direction = 0;
   time_star      = 0;
+  x_stop         = INT_MIN;
 }
 CharacterState::~CharacterState() {
   UnloadTexture(texture);
@@ -48,12 +50,20 @@ void CharacterState::LoadFrameList(std::string address) {
 }
 
 Rectangle CharacterState::GetRectangle() {
-  Rectangle rect = {position.x, position.y, 14 * scale, 27 * scale};
+  Rectangle rect
+    = {position.x, position.y, frame_list[0].width, frame_list[0].height};
   return rect;
 }
 
 float CharacterState::GetSpeed() {
-  return speed;
+  if (time_x == -1)
+    return 0;
+  else {
+    if (to_left)
+      return -speed;
+    else
+      return speed;
+  }
 }
 
 void CharacterState::SetPosition(Vector2 Nposition) {
@@ -100,11 +110,11 @@ void CharacterState::StopX() {
 
   if (stop_direction != 0 && stop_direction != n) {
     stop_direction = 0;
+    x_stop         = INT_MIN;
     return;
   }
   if (stop_direction == 0)
     stop_direction = n;
-
   time_x = -1;
   x_stop = position.x;
 }
@@ -117,9 +127,8 @@ void CharacterState::StopY(float Ny) {
   }
   is_fall    = false;
   velocity_y = -8.0 * jumpHeight / (jumpTime * jumpTime);
-  position.y = Ny;
-
-  frame = frame_list[0];
+  position.y = Ny - frame_list[0].height;
+  frame      = frame_list[0];
   if (to_left) {
     frame.width = -frame.width;
   }
@@ -135,11 +144,16 @@ bool CharacterState::IsFalling() {
 void CharacterState::Update() {
 
   if (stop_direction == 1) {
-    if (position.x > x_stop)
+    if (position.x > x_stop) {
       stop_direction = 0;
+      x_stop         = INT_MIN;
+    }
+
   } else if (stop_direction == -1) {
-    if (position.x < x_stop)
+    if (position.x < x_stop) {
       stop_direction = 0;
+      x_stop         = INT_MIN;
+    }
   }
 
   float a     = 8.0 * jumpHeight / (jumpTime * jumpTime);

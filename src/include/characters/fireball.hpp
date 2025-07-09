@@ -10,6 +10,7 @@ public:
   void Update();
   void Draw();
   void StopY(float upper_bounce, float lower_bounce);
+  ProjectileType GetType();
 };
 
 class EnemyFireball : public Projectile {
@@ -22,6 +23,7 @@ public:
   void Update();
   void Draw();
   void StopY(float upper_bounce, float lower_bounce);
+  ProjectileType GetType();
 };
 
 class ElectricBall : public Projectile {
@@ -38,4 +40,5 @@ public:
   void Destroy();
   void Renew(Vector2 Nposition, bool to_left);
   void StopY(float upper_bounce, float lower_bounce);
+  ProjectileType GetType();
 };

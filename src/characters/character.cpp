@@ -1,4 +1,5 @@
 #include <climits>
+#include <cmath>
 #include <raylib.h>
 #include <stdexcept>
 
@@ -61,8 +62,13 @@ void Character::SetState(int state, bool is_evolving) {
         break;
     }
   }
-  if (position.x > INT_MIN && position.y > INT_MIN)
+  if (position.x > INT_MIN && position.y > INT_MIN) {
+    Rectangle rect2 = pState_->GetRectangle();
+    if (rect.width > 0) {
+      position.x -= fabs(rect2.width) - fabs(rect.width);
+    }
     pState_->SetPosition(position);
+  }
 }
 
 CharacterType Character::GetCharacter() {

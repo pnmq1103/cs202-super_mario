@@ -43,6 +43,10 @@ void MarioFireball::StopY(float upper_bounce, float lower_bounce) {
   } else if (position.y + frame.height >= lower_bounce)
     velocity.y *= -bounce_coefficient_;
 }
+
+ProjectileType MarioFireball::GetType() {
+  return mario_fireball;
+}
 //+----------------------------------------------------------+
 //|                       Enemy Fireball                     |
 //+----------------------------------------------------------+
@@ -84,6 +88,10 @@ void EnemyFireball::Draw() {
   Projectile::Draw();
 }
 void EnemyFireball::StopY(float upper_bounce, float lower_bounce) {}
+
+ProjectileType EnemyFireball::GetType() {
+  return enemy_fireball;
+}
 //+----------------------------------------------------------+
 //|                       Electric ball                      |
 //+----------------------------------------------------------+
@@ -141,3 +149,7 @@ void ElectricBall::Renew(Vector2 Nposition, bool to_left) {
   is_explode_ = false;
 }
 void ElectricBall::StopY(float upper_bounce, float lower_bounce) {}
+
+ProjectileType ElectricBall::GetType() {
+  return electric_ball;
+}

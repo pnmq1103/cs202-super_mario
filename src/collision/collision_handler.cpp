@@ -105,7 +105,6 @@ void CollisionHandler::UpdateToGrid(int type, int index, Rectangle rectangle) {
 void CollisionHandler::AddCharacter(Character *character) {
   if (!character_ && character) {
     character_ = character;
-    UpdateToGrid(1, 0, character_->GetRectangle());
   }
 }
 
@@ -115,7 +114,6 @@ void CollisionHandler::AddProjectile(Projectile *projectile) {
   for (int i = 0; i < projectile_list_.size(); ++i) {
     if (!projectile_list_[i]) {
       projectile_list_[i] = projectile;
-      UpdateToGrid(2, i, projectile->GetRectangle());
       return;
     }
   }
@@ -125,31 +123,79 @@ void CollisionHandler::AddBlock(Block *block) {
   if (!block)
     return;
   block_list_.push_back(block);
-  UpdateToGrid(3, block_list_.size() - 1, block->GetRect());
 }
 
 void CollisionHandler::AddEnemy(Enemy *enemy) {
   if (!enemy)
     return;
   enemy_list_.push_back(enemy);
-  UpdateToGrid(4, enemy_list_.size() - 1, enemy->GetRect());
 }
 
 void CollisionHandler::UpdatePosition() {
-  if (character_) {
-    UpdateToGrid(1, 0, character_->GetRectangle());
-  }
+
   for (int i = 0; i < projectile_list_.size(); ++i) {
     if (projectile_list_[i] && !projectile_list_[i]->IsDestroyed()) {
       UpdateToGrid(2, i, projectile_list_[i]->GetRectangle());
     }
   }
   for (int i = 0; i < block_list_.size(); ++i) {
-    if (block_list_[i]) {}
+    if (block_list_[i]) {
+      UpdateToGrid(3, i, block_list_[i]->GetRect());
+    }
   }
   for (int i = 0; i < enemy_list_.size(); ++i) {
     if (enemy_list_[i] && enemy_list_[i]->IsAlive()) {
       UpdateToGrid(4, i, enemy_list_[i]->GetRect());
     }
   }
+}
+void CollisionHandler::CheckCollisionCharacter() {
+  std::vector<int> position = SearchLocation(character_->GetRectangle());
+  for (int i = position[0]; i <= position[1]; ++i) {
+
+    auto it = grid_[i][position[2]].begin();
+    while (it != grid_[i][position[2]].end()) {
+      int type = it->first, index = it->second;
+      if (type == 2) {
+        if (
+          !projectile_list_[index]->IsDestroyed()
+          && projectile_list_[index]->GetType() == enemy_fireball) {
+          if (CheckCollisionRecs(
+                character_->GetRectangle(),
+                projectile_list_[index]->GetRectangle())) {
+            character_->Die();
+            projectile_list_[index]->Destroy();
+          }
+        }
+      } else if (type == 3) {
+        if (block_list_[index]->CheckCollision(character_->GetRectangle())) {
+          character_->StopY();
+        }
+      } else if (type == 4) {
+      }
+    }
+
+    it = grid_[i][position[2]].begin();
+    while (it != grid_[i][position[3]].end()) {
+      int type = it->first, index = it->second;
+      if (type == 2) {
+        if (
+          !projectile_list_[index]->IsDestroyed()
+          && projectile_list_[index]->GetType() == enemy_fireball) {
+          if (CheckCollisionRecs(
+                character_->GetRectangle(),
+                projectile_list_[index]->GetRectangle())) {
+            character_->Die();
+            projectile_list_[index]->Destroy();
+          }
+        }
+      } else if (type == 3) {
+        if (block_list_[index]->CheckCollision(character_->GetRectangle())) {
+          character_->StopY(block_list_[index]->GetRect().y);
+        }
+      } else if (type == 4) {
+      }
+    }
+  }
+  for (int i = position[2]; i <= position[3]; ++i) {}
 }

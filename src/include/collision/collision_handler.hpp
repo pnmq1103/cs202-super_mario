@@ -32,6 +32,7 @@ private:
   void RemoveFromGrid(int type, int index, std::vector<int> position);
   void UpdateToGrid(int type, int index, Rectangle rectangle);
   void UpdatePosition();
+  void CheckCollisionCharacter();
 
 public:
   CollisionHandler(float width, float height);
