@@ -29,6 +29,10 @@ bool Enemy::CheckCollision(Rectangle other) const {
   return CheckCollisionRecs(GetRect(), other);
 }
 
+void Enemy::ReverseDirection() {
+  velocity.x *= -1;
+}
+
 void Enemy::Render(
   Texture &tex, const std::unordered_map<int, Rectangle> &spriteRects) const {
   if (!alive)

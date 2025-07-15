@@ -34,8 +34,8 @@ public:
 
   void SetPosition(Vector2 pos);
   void SetAlive(bool status);
-
   bool CheckCollision(Rectangle other) const;
+  void ReverseDirection();
 
   virtual void Render(
     Texture &tex, const std::unordered_map<int, Rectangle> &spriteRects) const;
