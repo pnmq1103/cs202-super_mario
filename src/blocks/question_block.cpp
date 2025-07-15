@@ -1,4 +1,5 @@
 #include "include/blocks/question_block.hpp"
+#include "include/items/spawn_item.hpp"
 
 QuestionBlock::QuestionBlock(Vector2 pos, PowerUpType item, int spriteId)
     : Block(pos, 16, 16, BlockType::Question, true, spriteId), item(item) {}
@@ -18,6 +19,8 @@ void QuestionBlock::OnHit() {
     used     = true;
     type     = BlockType::Solid;
     spriteId = 999;
+
+     SpawnItem(item, position);
   }
 }
 
