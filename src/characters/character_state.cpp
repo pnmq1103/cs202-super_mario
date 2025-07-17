@@ -55,15 +55,18 @@ Rectangle CharacterState::GetRectangle() {
   return rect;
 }
 
-float CharacterState::GetSpeed() {
+Vector2 CharacterState::GetSpeed() {
+  Vector2 velocity;
   if (time_x == -1)
-    return 0;
+    velocity.x = 0;
   else {
     if (to_left)
-      return -speed;
+      velocity.x = -speed;
     else
-      return speed;
+      velocity.x = speed;
   }
+  velocity.y = velocity_y;
+  return velocity;
 }
 
 void CharacterState::SetPosition(Vector2 Nposition) {
@@ -191,4 +194,10 @@ bool CharacterState::IsStarman() {
     return false;
   else
     return true;
+}
+void CharacterState::Bounce() {
+  if (IsStarman()) {
+    velocity_y = -2;
+  } else if (IsFalling())
+    velocity_y *= -0.9;
 }

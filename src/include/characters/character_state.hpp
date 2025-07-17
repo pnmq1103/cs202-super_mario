@@ -33,7 +33,7 @@ public:
   Rectangle GetRectangle();
 
   void SetFrameCount();
-  float GetSpeed();
+  Vector2 GetSpeed();
 
   virtual void Draw();
   void Run(bool to_left);
@@ -47,6 +47,7 @@ public:
   virtual void Evolve() = 0;
   void ToStarman();
   bool IsStarman();
+  void Bounce();
 
   friend class Character;
 };

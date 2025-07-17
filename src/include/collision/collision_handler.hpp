@@ -33,6 +33,7 @@ private:
   void UpdateToGrid(int type, int index, Rectangle rectangle);
   void UpdatePosition();
   void CheckCollisionCharacter();
+  void CHeckCollisionProjectile();
 
 public:
   CollisionHandler(float width, float height);

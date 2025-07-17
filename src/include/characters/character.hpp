@@ -35,11 +35,12 @@ public:
   void StopX();
   void StopY(float Ny);
   void StopY();
-  float GetSpeed();
+  Vector2 GetSpeed();
   bool IsFalling();
   void Die();
   void Evolve();
   void ToStarman();
   bool IsStarman();
+  void Bounce();
   Rectangle GetRectangle();
 };

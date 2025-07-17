@@ -133,7 +133,7 @@ Rectangle Character::GetRectangle() {
   return pState_->GetRectangle();
 }
 
-float Character::GetSpeed() {
+Vector2 Character::GetSpeed() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   return pState_->GetSpeed();
@@ -168,4 +168,10 @@ bool Character::IsStarman() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   return pState_->IsStarman();
+}
+
+void Character::Bounce() {
+  if (!pState_)
+    throw std::runtime_error("not yet set character");
+  pState_->Bounce();
 }
