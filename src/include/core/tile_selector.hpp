@@ -36,4 +36,8 @@ public:
 
   void BuildSpriteGrid();
   void ChooseTile();
+
+  void CreateButtons();
+  void UpdateButtons();
+  void DrawButtons();
 };

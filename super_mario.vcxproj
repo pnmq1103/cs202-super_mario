@@ -128,7 +128,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\blocks\brick_block.cpp" />
     <ClCompile Include="src\characters\projectile_pool.cpp" />
+    <ClCompile Include="src\collision\collision_handler.cpp" />
     <ClCompile Include="src\core\application.cpp" />
     <ClCompile Include="src\blocks\block.cpp" />
     <ClCompile Include="src\core\credit.cpp" />
@@ -160,10 +162,17 @@
     <ClCompile Include="src\core\scene_stack.cpp" />
     <ClCompile Include="src\core\setting.cpp" />
     <ClCompile Include="src\blocks\static_block.cpp" />
+    <ClCompile Include="src\items\fire_flower_powerup.cpp" />
+    <ClCompile Include="src\items\mushroom_powerup.cpp" />
+    <ClCompile Include="src\items\powerup.cpp" />
+    <ClCompile Include="src\items\spawn_item.cpp" />
+    <ClCompile Include="src\items\star_powerup.cpp" />
     <ClCompile Include="tinyfiledialogs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\include\blocks\brick_block.hpp" />
     <ClInclude Include="src\include\characters\projectile_pool.hpp" />
+    <ClInclude Include="src\include\collision\collision_handler.hpp" />
     <ClInclude Include="src\include\core\application.hpp" />
     <ClInclude Include="src\include\blocks\block.hpp" />
     <ClInclude Include="src\include\core\credit.hpp" />

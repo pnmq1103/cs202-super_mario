@@ -67,8 +67,7 @@ void Application::ChangeScene(std::unique_ptr<Scene> new_scene) {
     App.scene_manager_.Pop();
     if (App.scene_manager_.Size() == App.GetMedia().MusicStateSize())
       App.GetMedia().LoadMusicState();
-    if (App.scene_manager_.Top().Type() == SceneType::Menu)
-      App.scene_manager_.Top().Resume();
+    App.scene_manager_.Top().Resume();
   }
 }
 

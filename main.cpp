@@ -21,6 +21,7 @@ int main() {
 #include <iostream>
 #include <list>
 #include <raylib.h>
+#include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>

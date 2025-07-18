@@ -35,6 +35,13 @@
     <ClCompile Include="tinyfiledialogs.cpp" />
     <ClCompile Include="src\core\slider.cpp" />
     <ClCompile Include="src\characters\projectile_pool.cpp" />
+    <ClCompile Include="src\blocks\brick_block.cpp" />
+    <ClCompile Include="src\collision\collision_handler.cpp" />
+    <ClCompile Include="src\items\fire_flower_powerup.cpp" />
+    <ClCompile Include="src\items\mushroom_powerup.cpp" />
+    <ClCompile Include="src\items\powerup.cpp" />
+    <ClCompile Include="src\items\spawn_item.cpp" />
+    <ClCompile Include="src\items\star_powerup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -70,6 +77,8 @@
     <ClInclude Include="tinyfiledialogs.h" />
     <ClInclude Include="src\include\core\slider.hpp" />
     <ClInclude Include="src\include\characters\projectile_pool.hpp" />
+    <ClInclude Include="src\include\blocks\brick_block.hpp" />
+    <ClInclude Include="src\include\collision\collision_handler.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

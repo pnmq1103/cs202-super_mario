@@ -27,6 +27,9 @@ private:
   int selected_background_id_ = {0};
 
   std::vector<Button> buttons_;
+  bool button_clicked_ = {false};
+
+  Vector2 drag_delta_ = {0, 0};
 
 public:
   EditorScene();
@@ -36,16 +39,14 @@ public:
   void Update() override;
   void Draw() override;
   SceneType Type() override;
+  void Resume() override;
 
-  // Update
   void PlaceBlock();
 
-  // Draw
   void DrawGrid();
   void DrawCursor();
   void DrawMap();
 
-  // Button
   void CreateButtons();
   void UpdateButtons();
   void DrawButtons();
