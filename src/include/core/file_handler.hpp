@@ -2,8 +2,9 @@
 #include <raylib.h>
 #include <string>
 #include <vector>
-#include <include/core/json.hpp>
-#include "../tinyfiledialogs.h"
+
+#include "include/external/tinyfiledialogs.h"
+#include <include/external/json.hpp>
 
 struct tileData {
   char tileType;
@@ -11,7 +12,7 @@ struct tileData {
   int y;
 };
 
-  struct SaveData {
+struct SaveData {
   int lives;
   int score;
   float gameTime;
@@ -20,7 +21,6 @@ struct tileData {
   int charPosY;
   std::vector<tileData> mapTiles = {};
 };
-
 
 class FileHandler {
 private:

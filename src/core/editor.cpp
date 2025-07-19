@@ -6,10 +6,10 @@
 #include <raymath.h>
 #include <stdexcept>
 
-#include "../tinyfiledialogs.h"
 #include "include/core/application.hpp"
 #include "include/core/editor.hpp"
 #include "include/core/tile_selector.hpp"
+#include "include/external/tinyfiledialogs.h"
 
 EditorScene::EditorScene() {
   camera_.target   = {0, 0};
