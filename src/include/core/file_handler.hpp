@@ -2,25 +2,22 @@
 #include <raylib.h>
 #include <string>
 #include <vector>
-#include "tileson.hpp"
 
-#include "include/external/tinyfiledialogs.h"
+struct tileData {
+  std::string tileType;
+  Vector2 position;
+  int spriteID;
+};
 
-// struct tileData {
-//   char tileType;
-//   int x;
-//   int y;
-// };
-//
-// struct SaveData {
-//   int lives;
-//   int score;
-//   float gameTime;
-//   int backgroundID;
-//   int charPosX;
-//   int charPosY;
-//   std::vector<tileData> mapTiles = {};
-// };
+  struct SaveData {
+  int lives;
+  int score;
+  float gameTime;
+  int backgroundID;
+  Vector2 charPosition;
+  std::vector<tileData> mapTiles = {};
+};
+
 
 class FileHandler {
 private:

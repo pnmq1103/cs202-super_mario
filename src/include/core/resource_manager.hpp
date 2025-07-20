@@ -1,10 +1,14 @@
 #pragma once
+#include <algorithm>
 #include <filesystem>
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <variant>
+#include "tileson.hpp"
+#include "../blocks/block.hpp"
+//#include "include/core/file_handler.hpp"
 
 #include "../blocks/block.hpp"
 #include "include/core/file_handler.hpp"
