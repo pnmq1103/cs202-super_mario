@@ -8,7 +8,7 @@
 #include "include/core/resource_manager.hpp"
 #include "include/core/scene.hpp"
 
-Application &App = Application::GetInstance();
+Application &App = Application::Instance();
 
 Application::Application() {
   SetTargetFPS(120);
@@ -33,8 +33,7 @@ void Application::Init() {
   HideCursor();
   media_.Init();
   scene_manager_.Init();
-  // resource manager for testing
-  // ResManager res;
+  res_manager_.Init();
 }
 
 void Application::Update() {
@@ -49,7 +48,7 @@ void Application::Draw() {
     DrawTextureRec(cursor_texture_, {0, 0, 64, 64}, GetMousePosition(), WHITE);
 }
 
-Application &Application::GetInstance() {
+Application &Application::Instance() {
   static Application instance;
   return instance;
 }
@@ -57,16 +56,16 @@ Application &Application::GetInstance() {
 void Application::ChangeScene(std::unique_ptr<Scene> new_scene) {
 
   if (new_scene != nullptr) {
-    App.GetMedia().SaveMusicState();
-    App.GetMedia().StopMusic();
+    App.Media().SaveMusicState();
+    App.Media().StopMusic();
     App.scene_manager_.Push(std::move(new_scene));
     App.scene_manager_.Init();
   } else {
-    App.GetMedia().StopMusic();
+    App.Media().StopMusic();
     App.previous_scene_ = App.scene_manager_.Top().Type();
     App.scene_manager_.Pop();
-    if (App.scene_manager_.Size() == App.GetMedia().MusicStateSize())
-      App.GetMedia().LoadMusicState();
+    if (App.scene_manager_.Size() == App.Media().MusicStateSize())
+      App.Media().LoadMusicState();
     App.scene_manager_.Top().Resume();
   }
 }
@@ -83,8 +82,12 @@ SceneType Application::PreviousScene() {
   return App.previous_scene_;
 }
 
-Media &Application::GetMedia() {
+Media &Application::Media() {
   return media_;
+}
+
+ResManager &Application::Resource() {
+  return res_manager_;
 }
 
 bool Application::ShouldClose() {

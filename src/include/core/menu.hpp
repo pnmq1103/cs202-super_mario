@@ -20,7 +20,6 @@ private:
 
   float timer_    = {0};
   float duration_ = {0.5f};
-  bool reset_     = {false};
 
   std::vector<Button> buttons_;
 

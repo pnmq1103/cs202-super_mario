@@ -25,21 +25,21 @@ MenuScene::~MenuScene() {
 
 void MenuScene::Init() {
   background_ = LoadTexture("res/menu_background.png");
-  App.GetMedia().PlayMusic("title");
+  App.Media().PlayMusic("title");
   CreateButtons();
 }
 
 void MenuScene::Update() {
-  int size = static_cast<int>(menu_items_.size());
+  int sz = static_cast<int>(menu_items_.size());
 
   double time = GetTime();
   if (time - last_input_ >= cooldown_) {
     if (IsKeyDown(KEY_DOWN)) {
       last_input_   = time;
-      selected_idx_ = (selected_idx_ + 1) % size;
+      selected_idx_ = (selected_idx_ + 1) % sz;
     } else if (IsKeyDown(KEY_UP)) {
       last_input_   = time;
-      selected_idx_ = (selected_idx_ - 1 + size) % size;
+      selected_idx_ = (selected_idx_ - 1 + sz) % sz;
     } else if (IsKeyDown(KEY_ENTER)) {
       last_input_ = time;
 
@@ -59,7 +59,6 @@ void MenuScene::Update() {
 
         default:
           throw std::invalid_argument("Must be positive");
-          break;
       }
     }
   }
@@ -69,26 +68,29 @@ void MenuScene::Update() {
 
 void MenuScene::Draw() {
   // Draw background
-  timer_       += GetFrameTime();
-  float t       = std::min(timer_ / duration_, 1.0f);
-  float end_x   = (screenWidth - background_.width) / 2;
+  timer_     += GetFrameTime();
+  float t     = std::min(timer_ / duration_, 1.0f);
+  float end_x = (screenWidth - background_.width) / 2;
+
   float start_x = end_x;
-  if (App.PreviousScene() == SceneType::Setting) {
+  if (App.PreviousScene() == SceneType::Setting)
     start_x = screenWidth - background_.width;
-    reset_  = true;
-  } else if (App.PreviousScene() == SceneType::Credit)
+  else if (App.PreviousScene() == SceneType::Credit)
     start_x = 0;
-  float ease = 1 - powf(1 - t, 3);
-  float y    = (screenHeight - background_.height) / 2;
-  DrawTextureV(background_, {start_x + (end_x - start_x) * ease, y}, RAYWHITE);
+
+  float ease  = 1 - powf(1 - t, 3);
+  float end_y = (screenHeight - background_.height) / 2;
+
+  DrawTextureV(
+    background_, {start_x + (end_x - start_x) * ease, end_y}, RAYWHITE);
 
   // Draw title
-  float font_size    = 150;
-  const char *title  = "Mario";
-  Vector2 title_size = MeasureTextEx(GetFontDefault(), title, font_size, 1);
-  end_x              = (screenWidth - title_size.x) / 2;
-  y                  = (screenHeight - title_size.y) / 6;
-  DrawTextEx(GetFontDefault(), title, {end_x, y}, font_size, 1, RAYWHITE);
+  float font_sz     = 150;
+  const char *title = "Mario";
+  Vector2 title_sz  = MeasureTextEx(GetFontDefault(), title, font_sz, 1);
+  float x           = (screenWidth - title_sz.x) / 2;
+  float y           = (screenHeight - title_sz.y) / 6;
+  DrawTextEx(GetFontDefault(), title, {x, y}, font_sz, 1, RAYWHITE);
 
   DrawOptions();
   DrawButtons();
@@ -103,10 +105,10 @@ void MenuScene::Resume() {
 }
 
 void MenuScene::DrawOptions() {
-  float font_size = 40;
+  float font_sz = 40;
   for (size_t i = 0; i < menu_items_.size(); ++i) {
     const char *option  = menu_items_[i].c_str();
-    Vector2 option_size = MeasureTextEx(GetFontDefault(), option, font_size, 1);
+    Vector2 option_size = MeasureTextEx(GetFontDefault(), option, font_sz, 1);
     float x             = (screenWidth - option_size.x) / 2;
     float y             = (screenHeight - option_size.y) * (i + 12) / 16;
 
@@ -132,7 +134,7 @@ void MenuScene::DrawOptions() {
       DrawTriangle(a, b, c, color);
     }
 
-    DrawTextEx(GetFontDefault(), option, {x, y}, font_size * scale, 3, color);
+    DrawTextEx(GetFontDefault(), option, {x, y}, font_sz * scale, 3, color);
   }
 }
 

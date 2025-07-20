@@ -4,6 +4,7 @@
 #include <stack>
 
 #include "include/core/media.hpp"
+#include "include/core/resource_manager.hpp"
 #include "include/core/scene.hpp"
 #include "include/core/scene_stack.hpp"
 
@@ -23,6 +24,8 @@ private:
 
   bool exit_window_ = {false};
 
+  ResManager res_manager_;
+
 private:
   Application(); // Singleton constructor should be private
 
@@ -33,13 +36,14 @@ public:
   void Update();
   void Draw();
 
-  static Application &GetInstance();
+  static Application &Instance();
   static void ChangeScene(std::unique_ptr<Scene> new_scene);
   static void Close();
   static void ToggleCustomCursor();
   static SceneType PreviousScene();
 
-  Media &GetMedia();
+  Media &Media();
+  ResManager &Resource();
   bool ShouldClose();
 };
 

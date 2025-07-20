@@ -101,7 +101,7 @@ void TileSelectorScene::BuildSpriteGrid() {
 }
 
 void TileSelectorScene::ChooseTile() {
-  App.GetMedia().PlaySound("beep");
+  App.Media().PlaySound("beep");
   mouse_world_pos_.y -= blockSize * 2; // Compensate for UI
   // Because the display is scaled up 4 times
   mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);

@@ -105,7 +105,7 @@ void EditorScene::PlaceBlock() {
 
   if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
     if (CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
-      App.GetMedia().PlaySound("beep");
+      App.Media().PlaySound("beep");
       tilemap_[idx] = selected_tile_id_;
     }
   } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
