@@ -2,17 +2,6 @@
 #include <fstream>
 #include <include/core/resource_manager.hpp>
 
-std::unordered_map<std::string, Texture> ResManager::mario_normal;
-std::unordered_map<std::string, Texture> ResManager::mario_star;
-std::unordered_map<std::string, Texture> ResManager::mario_fire;
-std::unordered_map<std::string, Texture> ResManager::luigi_normal;
-std::unordered_map<std::string, Texture> ResManager::luigi_star;
-std::unordered_map<std::string, Texture> ResManager::luigi_fire;
-std::unordered_map<std::string, Texture> ResManager::luigi_electric;
-std::unordered_map<std::string, Texture> ResManager::enemies;
-std::unordered_map<std::string, Texture> ResManager::tileset;
-std::unordered_map<std::string, Texture> ResManager::icons;
-std::unordered_map<std::string, Texture> ResManager::backgrounds;
 
 ResManager::~ResManager() {
   auto Unload = [&](auto &mp) {
