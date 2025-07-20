@@ -8,7 +8,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <variant>
 
+#include "../blocks/block.hpp"
 #include "include/core/file_handler.hpp"
 
 namespace fs = std::filesystem;
@@ -29,11 +31,13 @@ class ResManager {
   static std::unordered_map<std::string, Music> musics;
   static std::unordered_map<std::string, Sound> sounds;
 
+  std::map<int, Texture> tilesetMapStore;
+
   void LoadHelper(
     const fs::path &imgPath, const fs::path &coorPath, std::string keyPrefix,
     std::unordered_map<std::string, Texture> &unordered_map);
 
-  void LoadTexture(
+  void LoadTextures(
     const fs::path &imgPath, const fs::path &coorPath, std::string keyPrefix,
     std::unordered_map<std::string, Texture> &textMap);
 
@@ -51,6 +55,8 @@ public:
 
   static bool SaveResourcesToFile(const SaveData &data);
 
+  bool LoadMap(const std::string &path, std::vector<Block*> &blockData);
+
   static Texture GetMario(char type, int index);
 
   static Texture GetLuigi(char type, int index);
@@ -66,4 +72,5 @@ public:
   static Music GetMusic(std::string key);
 
   static Sound GetSound(std::string key);
+
 };

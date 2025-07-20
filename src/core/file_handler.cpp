@@ -22,25 +22,28 @@ std::string FileHandler::OpenSavePath(const std::string &defaultName) {
   return fn ? std::string(fn) : std::string{};
 }
 
+
 bool FileHandler::SaveFile(const std::string &path, const SaveData &sd) {
   json j;
-  j["Score"]           = sd.score;
-  j["Lives"]           = sd.lives;
-  j["Background ID"]   = sd.backgroundID;
-  j["Game time"]       = sd.gameTime;
-  j["Character Pos X"] = sd.charPosX;
-  j["Character Pos Y"] = sd.charPosY;
+  j["Score"]              = sd.score;
+  j["Lives"]              = sd.lives;
+  j["Background ID"]      = sd.backgroundID;
+  j["Game time"]          = sd.gameTime;
+  j["Character Position"] = {{"x", sd.charPosition.x}, {"y", sd.charPosition.y}};
 
   j["Map tiles"] = json::array();
   for (auto &tile : sd.mapTiles) {
-    j["Map tiles"].push_back(
-      {{"type", std::string(1, tile.tileType)}, {"x", tile.x}, {"y", tile.y}});
+    json tileObj = {
+      {"type", tile.tileType},
+      {"position", {tile.position.x, tile.position.y}},
+      {"spriteID", tile.spriteID}};
+    j["Map tiles"].push_back(tileObj);
   }
 
   std::ofstream out(path);
   if (!out.is_open())
     return false;
-  out << j.dump(2); // pretty-print with 2-space indent
+  out << j.dump(2);
   return out.good();
 }
 
@@ -58,15 +61,14 @@ bool FileHandler::LoadFile(const std::string &path, SaveData &sd) const {
     return false;
   }
 
-  // 1) Read back your scalar fields
-  sd.score        = j.value("Score", sd.score);
-  sd.lives        = j.value("Lives", sd.lives);
-  sd.backgroundID = j.value("Background ID", sd.backgroundID);
-  sd.gameTime     = j.value("Game time", sd.gameTime);
-  sd.charPosX     = j.value("Character Pos X", sd.charPosX);
-  sd.charPosY     = j.value("Character Pos Y", sd.charPosY);
+  sd.score        = j["Score"];
+  sd.lives        = j["Lives"];
+  sd.backgroundID = j["Background ID"];
+  sd.gameTime     = j["Game time"];
+  sd.charPosition.x = j["Character position]"]["x"].get<float>();
+  sd.charPosition.y = j["Character position]"]["y"].get<float>();
+ 
 
-  // 2) Read back the tile array
   sd.mapTiles.clear();
   auto &tiles = j.at("Map tiles");
   sd.mapTiles.reserve(tiles.size());
@@ -74,10 +76,11 @@ bool FileHandler::LoadFile(const std::string &path, SaveData &sd) const {
     tileData t;
     auto s     = jtile.at("type").get<std::string>();
     t.tileType = s.empty() ? '\0' : s[0];
-    t.x        = jtile.at("x").get<int>();
-    t.y        = jtile.at("y").get<int>();
+    t.position.x        = jtile.at("x").get<float>();
+    t.position.y      = jtile.at("y").get<float>();
     sd.mapTiles.push_back(t);
   }
 
   return true;
 }
+

@@ -24,6 +24,7 @@ int main() {
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <string>
 class Collision {
 private:
   const float cellSize_;

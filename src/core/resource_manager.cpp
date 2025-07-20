@@ -21,57 +21,57 @@ ResManager::~ResManager() {
 }
 
 ResManager::ResManager() {
-  LoadTexture(
+  LoadTextures(
     "res/sprites/characters/mario_normal.png",
     "res/sprites/characters/normal.txt", "n", mario_normal);
-  LoadTexture(
+  LoadTextures(
     "res/sprites/characters/mario_star.png",
     "res/sprites/characters/star_fire_electric.txt", "s", mario_star);
-  LoadTexture(
+  LoadTextures(
     "res/sprites/characters/mario_fire.png",
     "res/sprites/characters/star_fire_electric.txt", "f", mario_fire);
-  LoadTexture(
+  LoadTextures(
     "res/sprites/characters/luigi_normal.png",
     "res/sprites/characters/normal.txt", "n", luigi_normal);
-  LoadTexture(
+  LoadTextures(
     "res/sprites/characters/luigi_star.png",
     "res/sprites/characters/star_fire_electric.txt", "s", luigi_star);
-  LoadTexture(
+  LoadTextures(
     "res/sprites/characters/luigi_fire.png",
     "res/sprites/characters/star_fire_electric.txt", "f", luigi_fire);
-  LoadTexture(
+  LoadTextures(
     "res/sprites/characters/luigi_electric.png",
     "res/sprites/characters/star_fire_electric.txt", "e", luigi_electric);
 
-  LoadTexture(
+  LoadTextures(
     "res/sprites/characters/enemies.png", "res/sprites/characters/enemies.txt",
     "enemy_", enemies);
 
-  LoadTexture(
+  LoadTextures(
     "res/sprites/tilesets/tileset_ground.png",
     "res/sprites/tilesets/tileset_ground.txt", "tile_", tileset);
 
-  LoadTexture(
+  LoadTextures(
     "res/sprites/tilesets/tileset_sky.png",
     "res/sprites/tilesets/tileset_sky.txt", "tile_", tileset);
 
-  LoadTexture(
+  LoadTextures(
     "res/sprites/tilesets/tileset_underground.png",
     "res/sprites/tilesets/tileset_underground.txt", "tile_", tileset);
 
-  LoadTexture(
+  LoadTextures(
     "res/sprites/tilesets/tileset_underwater.png",
     "res/sprites/tilesets/tileset_underwater.txt", "tile_", tileset);
 
-  LoadTexture(
+  LoadTextures(
     "res/sprites/icons/icons.png", "res/sprites/icons/icons.txt", "icon_",
     icons);
 
-  LoadTexture(
+  LoadTextures(
     "res/sprites/icons/objects.png", "res/sprites/icons/objects.txt", "icon_",
     icons);
 
-  LoadTexture(
+  LoadTextures(
     "res/sprites/backgrounds/backgrounds.png",
     "res/sprites/backgrounds/background.txt", "background_", backgrounds);
 
@@ -127,7 +127,7 @@ void ResManager::LoadHelper(
   UnloadImage(img);
 }
 
-void ResManager::LoadTexture(
+void ResManager::LoadTextures(
   const fs::path &imgPath, const fs::path &coorPath, std::string keyPrefix,
   std::unordered_map<std::string, Texture> &textMap) {
   LoadHelper(imgPath, coorPath, keyPrefix, textMap);
@@ -347,3 +347,60 @@ void ResManager::Shutdown() {
   }
   musics.clear();
 }
+
+bool ResManager::LoadMap(const std::string &path, std::vector<Block*> &blockData) {
+  tson::Tileson t;
+  std::unique_ptr<tson::Map> map = t.parse(path);
+  if (map->getStatus() == tson::ParseStatus::OK) {
+    // get map dimension
+    int mWidth  = map->getTileSize().x;
+    int mHeight = map->getTileSize().y;
+    // for when more than one tileset is included in the map
+    struct TilesetInfo {
+      int firstGid, columns, margin, spacing;
+      Vector2 tileSize;
+    };
+    std::vector<TilesetInfo> tsi;
+    // get all tilesets for convenience
+    for (auto &ts : map->getTilesets()) {
+      std::string texPath = ts.getImagePath().string();
+      Texture tex         = LoadTexture(texPath.c_str());
+
+      int margin          = ts.getMargin();
+      int spacing         = ts.getSpacing();
+      int tileW           = ts.getTileSize().x;
+      int tileH           = ts.getTileSize().y;
+      int cols = (tex.width - 2 * margin + spacing) / (tileW + spacing);
+      //mark each texture with its first Gid
+      tilesetMapStore[ts.getFirstgid()] = tex;
+      tsi.push_back(
+        {ts.getFirstgid(),
+         cols,
+         margin,
+         spacing,
+         {float(tileW), float(tileH)}});
+    }
+    // sort the tileset according to Gid
+    std::sort(tsi.begin(), tsi.end(), [](auto &a, auto &b) {
+      return a.firstGid < b.firstGid;
+    });
+    // loop over layers
+    for (auto &layer : map->getLayers()) {
+      switch (layer.getType()) {
+        case tson::LayerType::TileLayer: {
+          if (!map->isInfinite()) {
+            std::map<std::tuple<int, int>, tson::Tile *> tData
+              = layer.getTileData();
+            for (const auto &[id, tile] : tData) {
+              Block* b;
+              b->SetSpriteId(tile->getGid());
+              b->SetSize(tile->getTileSize().x, tile->getTileSize().y);
+              b->SetPosition({tile->getPosition(id).x, tile->getPosition(id).y});
+              b->SetType(tile->getType());
+              blockData.push_back(b);
+            }
+          }
+        }
+      }
+    }
+  }

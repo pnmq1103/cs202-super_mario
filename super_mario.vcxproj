@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\characters\projectile_pool.cpp" />
+    <ClCompile Include="src\collision\collision_handler.cpp" />
     <ClCompile Include="src\core\application.cpp" />
     <ClCompile Include="src\blocks\block.cpp" />
     <ClCompile Include="src\core\credit.cpp" />
@@ -160,6 +161,11 @@
     <ClCompile Include="src\core\scene_stack.cpp" />
     <ClCompile Include="src\core\setting.cpp" />
     <ClCompile Include="src\blocks\static_block.cpp" />
+    <ClCompile Include="src\items\fire_flower_powerup.cpp" />
+    <ClCompile Include="src\items\mushroom_powerup.cpp" />
+    <ClCompile Include="src\items\powerup.cpp" />
+    <ClCompile Include="src\items\spawn_item.cpp" />
+    <ClCompile Include="src\items\star_powerup.cpp" />
     <ClCompile Include="tinyfiledialogs.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +175,7 @@
     <ClInclude Include="src\include\core\credit.hpp" />
     <ClInclude Include="src\include\core\resource_manager.hpp" />
     <ClInclude Include="src\include\core\slider.hpp" />
+    <ClInclude Include="src\include\core\tileson.hpp" />
     <ClInclude Include="src\include\core\tile_selector.hpp" />
     <ClInclude Include="src\include\enemies\bowser.hpp" />
     <ClInclude Include="src\include\core\button.hpp" />

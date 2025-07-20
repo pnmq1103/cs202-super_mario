@@ -2,13 +2,15 @@
 #include <raylib.h>
 #include <string>
 #include <vector>
+#include <string>
+#include "tileson.hpp"
 #include <include/core/json.hpp>
 #include "../tinyfiledialogs.h"
 
 struct tileData {
-  char tileType;
-  int x;
-  int y;
+  std::string tileType;
+  Vector2 position;
+  int spriteID;
 };
 
   struct SaveData {
@@ -16,8 +18,7 @@ struct tileData {
   int score;
   float gameTime;
   int backgroundID;
-  int charPosX;
-  int charPosY;
+  Vector2 charPosition;
   std::vector<tileData> mapTiles = {};
 };
 
