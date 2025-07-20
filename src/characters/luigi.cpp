@@ -14,7 +14,7 @@ NormalLuigi::NormalLuigi(
     : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
   if (!is_evolving) {
     disabled    = true;
-    Image image = LoadImage("res/sprites/characters/luigi_starup.png");
+    Image image = LoadImage("res/sprites/characters/luigi_star.png");
     ImageResize(&image, image.width * scale, image.height * scale);
     pre_texture_ = LoadTextureFromImage(image);
     UnloadImage(image);
@@ -25,7 +25,7 @@ NormalLuigi::NormalLuigi(
   texture = LoadTextureFromImage(image);
   UnloadImage(image);
   context = Ncontext;
-  LoadFrameList("res/sprites/characters/normal.txt");
+  LoadFrameList("res/sprites/characters/luigi_normal.txt");
   frame = frame_list[0];
 };
 
@@ -96,12 +96,12 @@ BigLuigi::BigLuigi(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
     : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
   disabled    = true;
-  Image image = LoadImage("res/sprites/characters/luigi_starup.png");
+  Image image = LoadImage("res/sprites/characters/luigi_star.png");
   ImageResize(&image, image.width * scale, image.height * scale);
   texture = LoadTextureFromImage(image);
   UnloadImage(image);
   context = Ncontext;
-  LoadFrameList("res/sprites/characters/starup.txt");
+  LoadFrameList("res/sprites/characters/luigi_star.txt");
   frame = frame_list[0];
 
   if (is_evolving) {
@@ -185,10 +185,10 @@ void BigLuigi::Draw() {
 FireLuigi::FireLuigi(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
     : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
-  LoadFrameList("res/sprites/characters/starup.txt");
+  LoadFrameList("res/sprites/characters/luigi_star.txt");
   if (is_evolving) {
     disabled    = true;
-    Image image = LoadImage("res/sprites/characters/luigi_starup.png");
+    Image image = LoadImage("res/sprites/characters/luigi_star.png");
     ImageResize(&image, image.width * scale, image.height * scale);
     pre_texture_ = LoadTextureFromImage(image);
     UnloadImage(image);

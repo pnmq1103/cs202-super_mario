@@ -2,8 +2,8 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "../tinyfiledialogs.h"
 #include "include/core/scene.hpp"
+#include "include/external/tinyfiledialogs.h"
 
 void Scene::Resume() {}
 

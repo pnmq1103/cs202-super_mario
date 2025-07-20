@@ -6,10 +6,10 @@
 #include <raymath.h>
 #include <stdexcept>
 
-#include "../tinyfiledialogs.h"
 #include "include/core/application.hpp"
 #include "include/core/editor.hpp"
 #include "include/core/tile_selector.hpp"
+#include "include/external/tinyfiledialogs.h"
 
 EditorScene::EditorScene() {
   camera_.target   = {0, 0};
@@ -25,7 +25,7 @@ EditorScene::EditorScene() {
 
   tilemap_.resize(block_width_ * block_height_, 0);
 
-  buttons_.reserve(1);
+  buttons_.reserve(3);
 }
 
 EditorScene::~EditorScene() {
@@ -64,17 +64,23 @@ void EditorScene::Update() {
   }
 
   if (IsKeyDown(KEY_SPACE)) {
-    Vector2 world_delta = GetScreenToWorld2D(GetMouseDelta(), camera_);
+    float tile_x = std::floor(mouse_world_pos_.x / blockSize);
+    float tile_y = std::floor(mouse_world_pos_.y / blockSize);
+    if (Vector2Equals(drag_delta_, {0, 0}) == false) {
+      drag_delta_ = Vector2Subtract({tile_x, tile_y}, drag_delta_);
+      int dx      = static_cast<int>(drag_delta_.x);
+      int dy      = static_cast<int>(drag_delta_.y);
+      int idx = static_cast<int>(dy * 16 + dx); // Only true for this tileset
 
-    int dx = static_cast<int>(world_delta.x / blockSize);
-    int dy = static_cast<int>(world_delta.y / blockSize);
-
-    selected_tile_id_ += dx;
-    int grid_cols      = static_cast<int>(ground_tiles_.width / cellSize);
-  }
+      selected_tile_id_ += idx;
+    }
+    drag_delta_ = {tile_x, tile_y};
+  } else if (IsKeyUp(KEY_SPACE))
+    drag_delta_ = {0, 0};
 
   UpdateButtons();
-  PlaceBlock();
+  if (button_clicked_ == false)
+    PlaceBlock();
 }
 
 void EditorScene::Draw() {
@@ -88,16 +94,20 @@ SceneType EditorScene::Type() {
   return type_;
 }
 
+void EditorScene::Resume() {
+  button_clicked_ = false;
+}
+
 void EditorScene::PlaceBlock() {
   float tile_x = std::floor(mouse_world_pos_.x / blockSize);
   float tile_y = std::floor(mouse_world_pos_.y / blockSize);
   int idx      = static_cast<int>(tile_y * block_width_ + tile_x);
 
   if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-    App.GetMedia().PlaySound("beep");
-
-    if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
+    if (CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
+      App.Media().PlaySound("beep");
       tilemap_[idx] = selected_tile_id_;
+    }
   } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
       tilemap_[idx] = 0;
@@ -181,8 +191,11 @@ void EditorScene::CreateButtons() {
 }
 
 void EditorScene::UpdateButtons() {
-  for (size_t i = 0; i < buttons_.size(); ++i)
+  for (size_t i = 0; i < buttons_.size(); ++i) {
     buttons_[i].Update();
+    if (buttons_[i].Clicked())
+      button_clicked_ = true;
+  }
 }
 
 void EditorScene::DrawButtons() {

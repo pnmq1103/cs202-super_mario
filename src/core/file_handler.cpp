@@ -1,29 +1,33 @@
-﻿#include "include/core/file_handler.hpp"
-#include <fstream>
+﻿#include <fstream>
 #include <iostream>
+
+#include "include/core/file_handler.hpp"
+#include "include/external/json.hpp"
 
 using json = nlohmann::json;
 
 std::string FileHandler::OpenFilePath() {
   const char *filter[] = {"*.json"};
-  if (
-    const char *fn = tinyfd_openFileDialog(
-      "Select data file", "", 1, filter, "JSON File", 0)) {
+  const char *fn
+    = tinyfd_openFileDialog("Select file", "", 1, filter, "JSON", 0);
+
+  if (fn != nullptr)
     return fn;
-  }
   return {};
 }
 
-std::string FileHandler::OpenSavePath(const std::string &defaultName) {
+std::string FileHandler::OpenSavePath(const std::string &default_name) {
   const char *filter[] = {"*.json"};
   const char *fn       = tinyfd_saveFileDialog(
-    "Save data file as…", defaultName.c_str(), 1, filter,
-    "JSON File, (*.json)");
-  return fn ? std::string(fn) : std::string{};
+    "Save file as", default_name.c_str(), 1, filter, "(*.json)");
+
+  if (fn != nullptr)
+    return fn;
+  return {};
 }
 
 
-bool FileHandler::SaveFile(const std::string &path, const SaveData &sd) {
+/* bool FileHandler::SaveFile(const std::string &path, const SaveData &sd) {
   json j;
   j["Score"]              = sd.score;
   j["Lives"]              = sd.lives;
@@ -83,4 +87,4 @@ bool FileHandler::LoadFile(const std::string &path, SaveData &sd) const {
 
   return true;
 }
-
+*/

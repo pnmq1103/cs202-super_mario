@@ -320,7 +320,7 @@ void CollisionHandler::CHeckCollisionProjectile() {
           ++it;
         }
 
-        auto it = grid_[j][position[3]].begin();
+        it = grid_[j][position[3]].begin();
         while (it != grid_[j][position[3]].end()) {
           int type = it->first, index = it->second;
           if (type == 2) {
@@ -344,7 +344,7 @@ void CollisionHandler::CHeckCollisionProjectile() {
             ++it;
           }
 
-          auto it = grid_[position[1]][j].begin();
+          it = grid_[position[1]][j].begin();
           while (it != grid_[position[1]][j].end()) {
             int type = it->first, index = it->second;
             if (type == 2) {

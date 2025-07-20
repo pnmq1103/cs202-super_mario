@@ -60,7 +60,7 @@ void SettingScene::CreateSliders() {
   sliders_.emplace_back(
     "Music Volume",
     [this]() {
-      App.GetMedia().SetMusicVolume(volume_);
+      App.Media().SetMusicVolume(volume_);
     },
     Rectangle{0, 0, 16, 16}, Rectangle{50, 50, 16 * 4, 16 * 4},
     "res/sprites/buttons/volume_on.png");

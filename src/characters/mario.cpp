@@ -14,7 +14,7 @@ NormalMario::NormalMario(
     : CharacterState(16, 10, 50, 300, Nscale, Nto_left) {
   if (!is_evolving) {
     disabled    = true;
-    Image image = LoadImage("res/sprites/characters/mario_starup.png");
+    Image image = LoadImage("res/sprites/characters/mario_star.png");
     ImageResize(&image, image.width * scale, image.height * scale);
     pre_texture_ = LoadTextureFromImage(image);
     UnloadImage(image);
@@ -25,7 +25,7 @@ NormalMario::NormalMario(
   texture = LoadTextureFromImage(image);
   UnloadImage(image);
   context = Ncontext;
-  LoadFrameList("res/sprites/characters/normal.txt");
+  LoadFrameList("res/sprites/characters/mario_normal.txt");
   frame = frame_list[0];
 };
 
@@ -96,19 +96,19 @@ BigMario::BigMario(
   Character *Ncontext, float Nscale, bool Nleft, bool is_evolving)
     : CharacterState(15, 10, 50, 300, Nscale, Nleft) {
   disabled    = true;
-  Image image = LoadImage("res/sprites/characters/mario_starup.png");
+  Image image = LoadImage("res/sprites/characters/mario_star.png");
   ImageResize(&image, image.width * scale, image.height * scale);
   texture = LoadTextureFromImage(image);
   UnloadImage(image);
   context = Ncontext;
-  LoadFrameList("res/sprites/characters/starup.txt");
+  LoadFrameList("res/sprites/characters/mario_star.txt");
   frame = frame_list[0];
 
   if (is_evolving) {
     image      = LoadImage("res/sprites/characters/mario_normal.png");
     pre_frame_ = {0, 0, 12 * scale, 15 * scale};
   } else {
-    image      = LoadImage("res/sprites/characters/mario_starup_fire.png");
+    image      = LoadImage("res/sprites/characters/mario_fire.png");
     pre_frame_ = frame_list[0];
   }
   ImageResize(&image, image.width * scale, image.height * scale);
@@ -187,16 +187,16 @@ void BigMario::Draw() {
 FireMario::FireMario(
   Character *Ncontext, float Nscale, bool Nleft, bool is_evolving)
     : CharacterState(15, 10, 50, 300, Nscale, Nleft) {
-  LoadFrameList("res/sprites/characters/starup.txt");
+  LoadFrameList("res/sprites/characters/mario_star.txt");
   if (is_evolving) {
     disabled    = true;
-    Image image = LoadImage("res/sprites/characters/mario_starup.png");
+    Image image = LoadImage("res/sprites/characters/mario_star.png");
     ImageResize(&image, image.width * scale, image.height * scale);
     pre_texture_ = LoadTextureFromImage(image);
     UnloadImage(image);
     pre_frame_ = frame_list[0];
   }
-  Image image = LoadImage("res/sprites/characters/mario_starup_fire.png");
+  Image image = LoadImage("res/sprites/characters/mario_fire.png");
   ImageResize(&image, image.width * scale, image.height * scale);
   texture = LoadTextureFromImage(image);
   UnloadImage(image);

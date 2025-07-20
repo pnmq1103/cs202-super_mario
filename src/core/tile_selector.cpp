@@ -26,7 +26,7 @@ void TileSelectorScene::Init() {
 
   float width  = static_cast<float>(ground_tiles_.width);
   float height = static_cast<float>(ground_tiles_.height);
-  boundary_    = {0, 64 * 2, width * 4, height * 4};
+  boundary_    = {0, blockSize * 2, width * 4, height * 4};
 
   BuildSpriteGrid();
 }
@@ -40,13 +40,18 @@ void TileSelectorScene::Update() {
   UpdateCamera();
   mouse_world_pos_ = GetScreenToWorld2D(GetMousePosition(), camera_);
 
-  ChooseTile();
+  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+    if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
+      ChooseTile();
+  }
 }
 
 void TileSelectorScene::Draw() {
   BeginMode2D(camera_);
   float width  = static_cast<float>(ground_tiles_.width);
   float height = static_cast<float>(ground_tiles_.height);
+  DrawRectangleRec(
+    {blockSize * 2, blockSize / 2, blockSize * 5, blockSize}, GRAY);
   DrawTexturePro(
     ground_tiles_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
   EndMode2D();
@@ -76,8 +81,8 @@ void TileSelectorScene::UpdateCamera() {
 }
 
 void TileSelectorScene::BuildSpriteGrid() {
-  grid_cols_ = static_cast<int>(ground_tiles_.width / cellSize) + 1;
-  grid_rows_ = static_cast<int>(ground_tiles_.height / cellSize) + 1;
+  grid_cols_ = static_cast<int>(ground_tiles_.width / cellSize);
+  grid_rows_ = static_cast<int>(ground_tiles_.height / cellSize);
   sprites_grid_.resize(grid_cols_ * grid_rows_);
 
   for (const auto &[sprite_id, bounds] : ground_tiles_info_) {
@@ -96,24 +101,20 @@ void TileSelectorScene::BuildSpriteGrid() {
 }
 
 void TileSelectorScene::ChooseTile() {
-  if (
-    IsMouseButtonDown(MOUSE_BUTTON_LEFT)
-    && CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
+  App.Media().PlaySound("beep");
+  mouse_world_pos_.y -= blockSize * 2; // Compensate for UI
+  // Because the display is scaled up 4 times
+  mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
 
-    App.GetMedia().PlaySound("beep");
-    // Because the display is scaled up 4 times
-    mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
+  int col = static_cast<int>(mouse_world_pos_.x / cellSize);
+  int row = static_cast<int>(mouse_world_pos_.y / cellSize);
 
-    int col = static_cast<int>(mouse_world_pos_.x / cellSize);
-    int row = static_cast<int>(mouse_world_pos_.y / cellSize);
-
-    if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_) {
-      for (int sprite_idx : sprites_grid_[row * grid_cols_ + col]) {
-        const Rectangle &sprite_bounds = ground_tiles_info_[sprite_idx];
-        if (CheckCollisionPointRec(mouse_world_pos_, sprite_bounds)) {
-          selected_tile_id_ref_ = sprite_idx;
-          break;
-        }
+  if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_) {
+    for (int sprite_idx : sprites_grid_[row * grid_cols_ + col]) {
+      const Rectangle &sprite_bounds = ground_tiles_info_[sprite_idx];
+      if (CheckCollisionPointRec(mouse_world_pos_, sprite_bounds)) {
+        selected_tile_id_ref_ = sprite_idx;
+        break;
       }
     }
   }

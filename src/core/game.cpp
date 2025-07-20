@@ -28,7 +28,7 @@ GameScene::~GameScene() {
 }
 
 void GameScene::Init() {
-  App.GetMedia().PlayMusic("ground_theme");
+  App.Media().PlayMusic("ground_theme");
 
   // Create Mario character
   mario_character_ = new Character(4.0f);
@@ -42,7 +42,7 @@ void GameScene::Init() {
   input_command_ = new Command(mario_character_, luigi_character_);
 
   // Load level
-  //game_manager_.LoadLevel("res/levels/level1.dat");
+  // game_manager_.LoadLevel("res/levels/level1.dat");
 }
 
 void GameScene::Update() {

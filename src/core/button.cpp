@@ -19,9 +19,7 @@ Button::Button(
 }
 
 void Button::Update() {
-  if (
-    IsMouseButtonPressed(MOUSE_BUTTON_LEFT)
-    && CheckCollisionPointRec(GetMousePosition(), bounds_)) {
+  if (Clicked()) {
     if (action_ != nullptr)
       action_();
     else
@@ -31,4 +29,9 @@ void Button::Update() {
 
 void Button::Draw() {
   DrawTexturePro(icon_, source_, bounds_, {0, 0}, 0, WHITE);
+}
+
+bool Button::Clicked() {
+  return IsMouseButtonPressed(MOUSE_BUTTON_LEFT)
+         && CheckCollisionPointRec(GetMousePosition(), bounds_);
 }
