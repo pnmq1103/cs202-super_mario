@@ -89,7 +89,7 @@ void GameManaging::DrawLevel() {
 void GameManaging::DrawBackground() {
   // Draw background using ResManager
   try {
-    Texture backgroundTex = App.Resource().GetBackground(backgroundType_ + 1);
+    Texture backgroundTex = App.Resource().GetBackground();
     DrawTexture(backgroundTex, 0, 0, WHITE);
   } catch (const std::out_of_range &) {
     // Fallback to color backgrounds if texture not found

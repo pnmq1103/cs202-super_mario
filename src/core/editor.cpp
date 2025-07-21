@@ -30,15 +30,14 @@ EditorScene::EditorScene() {
 
 EditorScene::~EditorScene() {
   UnloadTexture(crosshair_);
-  UnloadTexture(ground_tiles_);
 }
 
 void EditorScene::Init() {
   crosshair_ = LoadTexture("res/sprites/crosshairs/crosshair028.png");
 
-  ground_tiles_ = LoadTexture("res/sprites/tilesets/tileset_ground.png");
+  tileset_ground_ = &App.Resource().GetTile('g');
   Scene::ReadSpriteInfo(
-    "res/sprites/tilesets/tileset_ground.txt", ground_tiles_info_);
+    "res/sprites/tilesets/tileset_ground.txt", tileset_ground_info_);
 
   CreateButtons();
 }
@@ -149,7 +148,7 @@ void EditorScene::DrawMap() {
       int idx = y * block_width_ + x;
       if (tilemap_[idx] != 0) {
         DrawTexturePro(
-          ground_tiles_, ground_tiles_info_[tilemap_[idx]],
+          *tileset_ground_, tileset_ground_info_[tilemap_[idx]],
           {x * blockSize, y * blockSize, blockSize, blockSize}, {0, 0}, 0,
           WHITE);
       }
@@ -164,7 +163,7 @@ void EditorScene::DrawCursor() {
   BeginMode2D(camera_);
   //  Draw tile
   DrawTexturePro(
-    ground_tiles_, ground_tiles_info_[selected_tile_id_],
+    *tileset_ground_, tileset_ground_info_[selected_tile_id_],
     {snapped_.x, snapped_.y, blockSize, blockSize}, {0, 0}, 0, transparent);
   // Draw crosshair
   DrawTexturePro(

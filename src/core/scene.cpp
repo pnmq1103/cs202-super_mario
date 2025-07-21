@@ -16,10 +16,11 @@ void Scene::ReadSpriteInfo(
     int id;
     float x, y, w, h;
     while (fin >> id) {
-      fin >> x >> y >> w >> h;
-      sprites[id] = {x, y, w, h};
+      if (fin >> x >> y >> w >> h)
+        sprites[id] = {x, y, w, h};
+      else
+        throw std::runtime_error("malformed input");
     }
-  } else {
+  } else
     throw std::runtime_error("invalid file");
-  }
 }

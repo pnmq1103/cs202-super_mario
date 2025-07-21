@@ -15,17 +15,15 @@ TileSelectorScene::TileSelectorScene(int &selected_tile_id)
   buttons_.reserve(4);
 }
 
-TileSelectorScene::~TileSelectorScene() {
-  UnloadTexture(ground_tiles_);
-}
+TileSelectorScene::~TileSelectorScene() {}
 
 void TileSelectorScene::Init() {
-  ground_tiles_ = LoadTexture("res/sprites/tilesets/tileset_ground.png");
+  tileset_ground_ = &App.Resource().GetTile('g');
   Scene::ReadSpriteInfo(
-    "res/sprites/tilesets/tileset_ground.txt", ground_tiles_info_);
+    "res/sprites/tilesets/tileset_ground.txt", tileset_ground_info_);
 
-  float width  = static_cast<float>(ground_tiles_.width);
-  float height = static_cast<float>(ground_tiles_.height);
+  float width  = static_cast<float>(tileset_ground_->width);
+  float height = static_cast<float>(tileset_ground_->height);
   boundary_    = {0, blockSize * 2, width * 4, height * 4};
 
   BuildSpriteGrid();
@@ -48,12 +46,12 @@ void TileSelectorScene::Update() {
 
 void TileSelectorScene::Draw() {
   BeginMode2D(camera_);
-  float width  = static_cast<float>(ground_tiles_.width);
-  float height = static_cast<float>(ground_tiles_.height);
+  float width  = static_cast<float>(tileset_ground_->width);
+  float height = static_cast<float>(tileset_ground_->height);
   DrawRectangleRec(
     {blockSize * 2, blockSize / 2, blockSize * 5, blockSize}, GRAY);
   DrawTexturePro(
-    ground_tiles_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
+    *tileset_ground_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
   EndMode2D();
 }
 
@@ -81,11 +79,11 @@ void TileSelectorScene::UpdateCamera() {
 }
 
 void TileSelectorScene::BuildSpriteGrid() {
-  grid_cols_ = static_cast<int>(ground_tiles_.width / cellSize);
-  grid_rows_ = static_cast<int>(ground_tiles_.height / cellSize);
+  grid_cols_ = static_cast<int>(tileset_ground_->width / cellSize);
+  grid_rows_ = static_cast<int>(tileset_ground_->height / cellSize);
   sprites_grid_.resize(grid_cols_ * grid_rows_);
 
-  for (const auto &[sprite_id, bounds] : ground_tiles_info_) {
+  for (const auto &[sprite_id, bounds] : tileset_ground_info_) {
     int start_col = static_cast<int>(bounds.x / cellSize);
     int end_col   = static_cast<int>((bounds.x + bounds.width) / cellSize);
     int start_row = static_cast<int>(bounds.y / cellSize);
@@ -111,7 +109,7 @@ void TileSelectorScene::ChooseTile() {
 
   if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_) {
     for (int sprite_idx : sprites_grid_[row * grid_cols_ + col]) {
-      const Rectangle &sprite_bounds = ground_tiles_info_[sprite_idx];
+      const Rectangle &sprite_bounds = tileset_ground_info_[sprite_idx];
       if (CheckCollisionPointRec(mouse_world_pos_, sprite_bounds)) {
         selected_tile_id_ref_ = sprite_idx;
         break;

@@ -11,8 +11,8 @@ private:
 
   int &selected_tile_id_ref_;
 
-  Texture ground_tiles_ = {};
-  std::unordered_map<int, Rectangle> ground_tiles_info_;
+  const Texture *tileset_ground_ = {nullptr};
+  std::unordered_map<int, Rectangle> tileset_ground_info_;
   Rectangle boundary_ = {};
 
   int grid_rows_ = {0};

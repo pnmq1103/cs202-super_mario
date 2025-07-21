@@ -3,6 +3,7 @@
 
 #include "include/core/file_handler.hpp"
 #include "include/external/json.hpp"
+#include "include/external/tinyfiledialogs.h"
 
 using json = nlohmann::json;
 
@@ -26,14 +27,14 @@ std::string FileHandler::OpenSavePath(const std::string &default_name) {
   return {};
 }
 
-
 /* bool FileHandler::SaveFile(const std::string &path, const SaveData &sd) {
   json j;
   j["Score"]              = sd.score;
   j["Lives"]              = sd.lives;
   j["Background ID"]      = sd.backgroundID;
   j["Game time"]          = sd.gameTime;
-  j["Character Position"] = {{"x", sd.charPosition.x}, {"y", sd.charPosition.y}};
+  j["Character Position"] = {{"x", sd.charPosition.x}, {"y",
+sd.charPosition.y}};
 
   j["Map tiles"] = json::array();
   for (auto &tile : sd.mapTiles) {
@@ -71,7 +72,7 @@ bool FileHandler::LoadFile(const std::string &path, SaveData &sd) const {
   sd.gameTime     = j["Game time"];
   sd.charPosition.x = j["Character position]"]["x"].get<float>();
   sd.charPosition.y = j["Character position]"]["y"].get<float>();
- 
+
 
   sd.mapTiles.clear();
   auto &tiles = j.at("Map tiles");
