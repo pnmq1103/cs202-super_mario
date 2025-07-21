@@ -50,3 +50,9 @@ Sprite ID - X Position - Y Position - Width - Height
 ## Save map
 - Game editor will simply pass two arrays containing the position of blocks and enemies to the file handler which then saves it into a bin file.
 - File handler will also have functions to convert the binary data back to usable array and give it back to the game editor.
+
+# Tiled JSON workflow
+- Make the map in Tiled, assigning properties (block type, size, position, isSolid, spriteID) to each tile and icons; export the map to JSON. 
+- Resource manager reads and loads textures upon app start-up. File handler imports the JSON file and make a vector of Block structs with properties.
+- A Block factory calls both of the above classes. It then creates a new Block based on the properties of each block and assign it the right texture and push it into a vector.
+- Map drawer then receives that vector and begin drawing the map based on position and size with a simple loop when called.

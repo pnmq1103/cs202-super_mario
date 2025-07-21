@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <unordered_map>
+#include <string>
 
 enum class BlockType {
   Empty,
@@ -41,6 +42,8 @@ public:
   void SetPosition(Vector2 pos);
   void SetSpriteId(int id);
   void SetSolid(bool val);
+  void SetSize(int width, int height);
+  void SetType(std::string t);
 
   bool CheckCollision(Rectangle other) const;
 

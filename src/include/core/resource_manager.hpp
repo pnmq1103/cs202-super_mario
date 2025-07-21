@@ -1,10 +1,15 @@
 #pragma once
+#include <algorithm>
 #include <filesystem>
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
-
-#include "include/core/file_handler.hpp"
+#include <vector>
+#include <variant>
+#include "tileson.hpp"
+#include "../blocks/block.hpp"
+//#include "include/core/file_handler.hpp"
+#include "../blocks/block.hpp"
 
 namespace fs = std::filesystem;
 
@@ -23,7 +28,8 @@ class ResManager {
 
   std::unordered_map<std::string, Music> musics;
   std::unordered_map<std::string, Sound> sounds;
-
+  //to store textures parsed from map
+  std::map<int, Texture> tilesetMapStore;
 private:
   void LoadHelper(
     const fs::path &img_path, std::string prefix,
@@ -41,7 +47,8 @@ public:
 
   // SaveData LoadResourcesFromFile();
   // bool SaveResourcesToFile(const SaveData &data);
-
+  bool LoadMap(const std::string &path, std::vector<Block*> &blockData);
+  
   Texture GetMario(char type, int idx);
   Texture GetLuigi(char type, int idx);
   Texture GetEnemy(int idx);

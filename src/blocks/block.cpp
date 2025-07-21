@@ -2,6 +2,23 @@
 #include <raylib.h>
 #include <unordered_map>
 
+inline BlockType fromString(const std::string &s) {
+  if (s == "Empty")
+    return BlockType::Empty;
+  if (s == "Brick")
+    return BlockType::Brick;
+  if (s == "Question")
+    return BlockType::Question;
+  if (s == "Solid")
+    return BlockType::Solid;
+  if (s == "Pipe")
+    return BlockType::Pipe;
+  if (s == "Rock")
+    return BlockType::Rock;
+  if (s == "Lava")
+    return BlockType::Lava;
+}
+
 Block::Block(
   Vector2 pos, int w, int h, BlockType type, bool solid, int spriteId)
     : position(pos), width(w), height(h), type(type), solid(solid),
@@ -41,7 +58,15 @@ void Block::SetSolid(bool val) {
   solid = val;
 }
 
-bool Block::CheckCollision(Rectangle other) const {
+void Block::SetSize(int w, int h) {
+  width = w;
+  height = h;
+}
+
+void Block::SetType(std::string t) {
+  type = fromString(t);
+}
+    bool Block::CheckCollision(Rectangle other) const {
   return CheckCollisionRecs(GetRect(), other);
 }
 
