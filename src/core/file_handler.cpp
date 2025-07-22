@@ -5,7 +5,7 @@
 #include "include/external/json.hpp"
 
 using json = nlohmann::json;
-
+/*
 std::string FileHandler::OpenFilePath() {
   const char *filter[] = {"*.json"};
   const char *fn
@@ -25,7 +25,7 @@ std::string FileHandler::OpenSavePath(const std::string &default_name) {
     return fn;
   return {};
 }
-
+*/
 
 /* bool FileHandler::SaveFile(const std::string &path, const SaveData &sd) {
   json j;

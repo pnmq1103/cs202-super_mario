@@ -9,9 +9,21 @@
 #include "tileson.hpp"
 #include "../blocks/block.hpp"
 //#include "include/core/file_handler.hpp"
-#include "../blocks/block.hpp"
 
 namespace fs = std::filesystem;
+
+struct TilesetInfo {
+  int firstGid, columns, margin, spacing;
+  Vector2 tileSize;
+};
+
+struct BlockInfo {
+  int gid;
+  Vector2 pos;
+  Vector2 size;
+  std::string type;
+  bool solid;
+};
 
 class ResManager {
   std::unordered_map<std::string, Texture> mario_normal;
@@ -28,8 +40,17 @@ class ResManager {
 
   std::unordered_map<std::string, Music> musics;
   std::unordered_map<std::string, Sound> sounds;
+
   //to store textures parsed from map
   std::map<int, Texture> tilesetMapStore;
+  //to store block info
+  std::vector<BlockInfo> blockInfoMapStore;
+  //to store backgrounds
+  std::vector < std::pair<Texture, Vector2>> backgroundMapStore;
+  //to store objects
+  std::vector<Rectangle> objectMapStore;
+
+
 private:
   void LoadHelper(
     const fs::path &img_path, std::string prefix,
@@ -47,7 +68,7 @@ public:
 
   // SaveData LoadResourcesFromFile();
   // bool SaveResourcesToFile(const SaveData &data);
-  bool LoadMap(const std::string &path, std::vector<Block*> &blockData);
+  void LoadMap(const std::string &path);
   
   Texture GetMario(char type, int idx);
   Texture GetLuigi(char type, int idx);

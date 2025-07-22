@@ -323,59 +323,79 @@ void ResManager::Shutdown() {
   musics.clear();
 }
 */
-bool ResManager::LoadMap(const std::string &path, std::vector<Block*> &blockData) {
+void
+ResManager::LoadMap(const std::string &path) {
   tson::Tileson t;
-  std::unique_ptr<tson::Map> map = t.parse(path);
-  if (map->getStatus() == tson::ParseStatus::OK) {
-    // get map dimension
-    int mWidth  = map->getTileSize().x;
-    int mHeight = map->getTileSize().y;
-    // for when more than one tileset is included in the map
-    struct TilesetInfo {
-      int firstGid, columns, margin, spacing;
-      Vector2 tileSize;
-    };
-    std::vector<TilesetInfo> tsi;
-    // get all tilesets for convenience
-    for (auto &ts : map->getTilesets()) {
-      std::string texPath = ts.getImagePath().string();
-      Texture tex         = LoadTexture(texPath.c_str());
+  const auto baseDir = std::filesystem::path(path).parent_path();
+  auto mapPtr        = t.parse(path);
+  if (mapPtr->getStatus() != tson::ParseStatus::OK)
+    return;
+  tson::Map &map = *mapPtr;
 
-      int margin          = ts.getMargin();
-      int spacing         = ts.getSpacing();
-      int tileW           = ts.getTileSize().x;
-      int tileH           = ts.getTileSize().y;
-      int cols = (tex.width - 2 * margin + spacing) / (tileW + spacing);
-      //mark each texture with its first Gid
-      tilesetMapStore[ts.getFirstgid()] = tex;
-      tsi.push_back(
-        {ts.getFirstgid(),
-         cols,
-         margin,
-         spacing,
-         {float(tileW), float(tileH)}});
-    }
-    // sort the tileset according to Gid
-    std::sort(tsi.begin(), tsi.end(), [](auto &a, auto &b) {
-      return a.firstGid < b.firstGid;
-    });
-    // loop over layers
-    for (auto &layer : map->getLayers()) {
-      switch (layer.getType()) {
-        case tson::LayerType::TileLayer: {
-          if (!map->isInfinite()) {
-            std::map<std::tuple<int, int>, tson::Tile *> tData
-              = layer.getTileData();
-            for (const auto &[id, tile] : tData) {
-              Block* b;
-              b->SetSpriteId(tile->getGid());
-              b->SetSize(tile->getTileSize().x, tile->getTileSize().y);
-              b->SetPosition({tile->getPosition(id).x, tile->getPosition(id).y});
-              b->SetType(tile->getType());
-              blockData.push_back(b);
-            }
-          }
+
+  std::vector<TilesetInfo> tsi;
+  for (auto &ts : map.getTilesets()) {
+    // resolve the image path relative to the map file
+    auto imgPath = baseDir / ts.getImagePath();
+    Texture tex  = LoadTexture(imgPath.string().c_str());
+
+    int margin  = ts.getMargin();
+    int spacing = ts.getSpacing();
+    int tileW   = ts.getTileSize().x;
+    int tileH   = ts.getTileSize().y;
+    int cols    = (tex.width - 2 * margin + spacing) / (tileW + spacing);
+
+    tilesetMapStore[ts.getFirstgid()] = tex;
+    tsi.push_back(
+      {ts.getFirstgid(), cols, margin, spacing, {float(tileW), float(tileH)}});
+  }
+  std::sort(tsi.begin(), tsi.end(), [](auto &a, auto &b) {
+    return a.firstGid < b.firstGid;
+  });
+
+  //loop over all layers
+  for (auto &layer : map.getLayers()) {
+    switch (layer.getType()) {
+      case tson::LayerType::TileLayer: {
+        if (map.isInfinite())
+          break;
+
+        auto tData = layer.getTileData(); // map<tuple<int,int>,Tile*>
+        for (auto &kv : tData) {
+          tson::Tile *tile = kv.second;
+          BlockInfo info;
+          info.gid   = tile->getGid();
+          info.pos  = {tile->getPosition(kv.first).x, tile->getPosition(kv.first).y};
+          info.size = {static_cast<float>(tile->getTileSize().x), static_cast<float>(tile->getTileSize().y)};
+          info.type  = std::any_cast<std::string>(tile->getProp("type")->getValue());
+          info.solid = std::any_cast<bool>(tile->getProp("solid")->getValue());
+          blockInfoMapStore.push_back(info);
+
+          std::vector<BlockInfo> infos;
         }
+        break;
       }
+
+      case tson::LayerType::ImageLayer: {
+        // resolve against baseDir too
+        auto imgPath = baseDir / layer.getImage();
+        Texture bg   = LoadTexture(imgPath.string().c_str());
+        auto os      = layer.getOffset();
+        backgroundMapStore.push_back({bg, {os.x, os.y}});
+        break;
+      }
+
+      case tson::LayerType::ObjectGroup: {
+        for (auto &obj : layer.getObjects()) {
+          Rectangle bb{
+            obj.getPosition().x, obj.getPosition().y, obj.getSize().x,
+            obj.getSize().y};
+          objectMapStore.push_back(bb);
+        }
+        break;
+      }
+      default:
+        break;
     }
   }
+}
