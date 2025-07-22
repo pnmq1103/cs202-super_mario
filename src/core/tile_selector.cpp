@@ -6,7 +6,7 @@
 #include "include/core/tile_selector.hpp"
 
 TileSelectorScene::TileSelectorScene(int &selected_tile_id)
-    : selected_tile_id_ref_(selected_tile_id) {
+    : selected_tile_idx_ref_(selected_tile_id) {
   camera_.target   = {0, 0};
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
@@ -18,15 +18,15 @@ TileSelectorScene::TileSelectorScene(int &selected_tile_id)
 TileSelectorScene::~TileSelectorScene() {}
 
 void TileSelectorScene::Init() {
-  tileset_ground_ = &App.Resource().GetTile('g');
+  tileset_ = &App.Resource().GetTileset('g');
   Scene::ReadSpriteInfo(
-    "res/sprites/tilesets/tileset_ground.txt", tileset_ground_info_);
+    "res/sprites/tilesets/tileset_ground.txt", tileset_info_);
 
-  float width  = static_cast<float>(tileset_ground_->width);
-  float height = static_cast<float>(tileset_ground_->height);
+  float width  = static_cast<float>(tileset_->width);
+  float height = static_cast<float>(tileset_->height);
   boundary_    = {0, blockSize * 2, width * 4, height * 4};
-
-  BuildSpriteGrid();
+  grid_cols_   = static_cast<int>(tileset_->width / cellSize);
+  grid_rows_   = static_cast<int>(tileset_->height / cellSize);
 }
 
 void TileSelectorScene::Update() {
@@ -46,12 +46,11 @@ void TileSelectorScene::Update() {
 
 void TileSelectorScene::Draw() {
   BeginMode2D(camera_);
-  float width  = static_cast<float>(tileset_ground_->width);
-  float height = static_cast<float>(tileset_ground_->height);
+  float width  = static_cast<float>(tileset_->width);
+  float height = static_cast<float>(tileset_->height);
   DrawRectangleRec(
     {blockSize * 2, blockSize / 2, blockSize * 5, blockSize}, GRAY);
-  DrawTexturePro(
-    *tileset_ground_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
+  DrawTexturePro(*tileset_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
   EndMode2D();
 }
 
@@ -78,26 +77,6 @@ void TileSelectorScene::UpdateCamera() {
     = Clamp(camera_.target.y, 0, boundary_.y + boundary_.height - screenHeight);
 }
 
-void TileSelectorScene::BuildSpriteGrid() {
-  grid_cols_ = static_cast<int>(tileset_ground_->width / cellSize);
-  grid_rows_ = static_cast<int>(tileset_ground_->height / cellSize);
-  sprites_grid_.resize(grid_cols_ * grid_rows_);
-
-  for (const auto &[sprite_id, bounds] : tileset_ground_info_) {
-    int start_col = static_cast<int>(bounds.x / cellSize);
-    int end_col   = static_cast<int>((bounds.x + bounds.width) / cellSize);
-    int start_row = static_cast<int>(bounds.y / cellSize);
-    int end_row   = static_cast<int>((bounds.y + bounds.height) / cellSize);
-
-    for (int row = start_row; row <= end_row; ++row) {
-      for (int col = start_col; col <= end_col; ++col) {
-        if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_)
-          sprites_grid_[row * grid_cols_ + col].push_back(sprite_id);
-      }
-    }
-  }
-}
-
 void TileSelectorScene::ChooseTile() {
   App.Media().PlaySound("beep");
   mouse_world_pos_.y -= blockSize * 2; // Compensate for UI
@@ -107,13 +86,7 @@ void TileSelectorScene::ChooseTile() {
   int col = static_cast<int>(mouse_world_pos_.x / cellSize);
   int row = static_cast<int>(mouse_world_pos_.y / cellSize);
 
-  if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_) {
-    for (int sprite_idx : sprites_grid_[row * grid_cols_ + col]) {
-      const Rectangle &sprite_bounds = tileset_ground_info_[sprite_idx];
-      if (CheckCollisionPointRec(mouse_world_pos_, sprite_bounds)) {
-        selected_tile_id_ref_ = sprite_idx;
-        break;
-      }
-    }
-  }
+  int global_idx = 11;
+  if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_)
+    selected_tile_idx_ref_ = global_idx + row * grid_cols_ + col;
 }

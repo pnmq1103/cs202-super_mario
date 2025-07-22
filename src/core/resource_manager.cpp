@@ -1,18 +1,14 @@
 ﻿#include <array>
-#include <fstream>
+
 #include <include/core/resource_manager.hpp>
-#include <iostream>
 
 ResManager::~ResManager() {
-  std::cout << "UNLOAD TEXTURES\n";
   for (auto &texture : textures_)
     UnloadTexture(texture.second);
 
-  std::cout << "UNLOAD SOUNDS\n";
   for (auto &sound : sounds)
     UnloadSound(sound.second);
 
-  std::cout << "UNLOAD MUSICS\n";
   for (auto &music : musics) {
     StopMusicStream(music.second);
     UnloadMusicStream(music.second);
@@ -66,8 +62,8 @@ void ResManager::LoadMusic() {
     musics[name] = LoadMusicStream(("res/musics/" + name + ".ogg").c_str());
   };
 
-  for (const auto &name : music_names)
-    Load(name);
+  for (const auto &music : music_names)
+    Load(music);
 }
 
 void ResManager::LoadSounds() {
@@ -75,8 +71,8 @@ void ResManager::LoadSounds() {
     sounds[name] = LoadSound(("res/sounds/" + name + ".wav").c_str());
   };
 
-  for (const auto &name : sound_names)
-    Load(name);
+  for (const auto &sound : sound_names)
+    Load(sound);
 }
 
 // SaveData ResManager::LoadResourcesFromFile() {
@@ -133,7 +129,7 @@ const Texture &ResManager::GetEnemy() const {
   return textures_.at("enemies");
 }
 
-const Texture &ResManager::GetTile(char type) const {
+const Texture &ResManager::GetTileset(char type) const {
   switch (type) {
     case 'g':
       return textures_.at("tileset_ground");

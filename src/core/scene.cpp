@@ -3,7 +3,6 @@
 #include <stdexcept>
 
 #include "include/core/scene.hpp"
-#include "include/external/tinyfiledialogs.h"
 
 void Scene::Resume() {}
 

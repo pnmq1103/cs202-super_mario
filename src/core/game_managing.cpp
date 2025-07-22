@@ -116,7 +116,7 @@ void GameManaging::DrawBlock(const Block *block) {
 
   try {
     // Get tile texture from ResManager based on sprite ID
-    Texture tileTexture = App.Resource().GetTile(block->GetSpriteId() + 1);
+    Texture tileTexture = App.Resource().GetTileset(block->GetSpriteId() + 1);
     Vector2 position    = block->GetPosition();
     DrawTexture(tileTexture, (int)position.x, (int)position.y, WHITE);
   } catch (const std::out_of_range &) {

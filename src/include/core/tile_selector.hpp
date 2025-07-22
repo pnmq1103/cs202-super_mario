@@ -9,17 +9,16 @@ class TileSelectorScene : public Scene {
 private:
   SceneType type_ = {TileSelector};
 
-  int &selected_tile_id_ref_;
+  int &selected_tile_idx_ref_;
 
-  const Texture *tileset_ground_ = {nullptr};
-  std::unordered_map<int, Rectangle> tileset_ground_info_;
+  const Texture *tileset_ = {nullptr};
+  std::unordered_map<int, Rectangle> tileset_info_;
   Rectangle boundary_ = {};
 
   int grid_rows_ = {0};
   int grid_cols_ = {0};
 
   float scroll_speed_ = {30};
-  std::vector<std::vector<int>> sprites_grid_;
 
   std::vector<Button> buttons_;
 
@@ -34,7 +33,6 @@ public:
 
   void UpdateCamera();
 
-  void BuildSpriteGrid();
   void ChooseTile();
 
   void CreateButtons();

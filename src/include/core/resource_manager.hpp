@@ -6,10 +6,8 @@
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
-#include <variant>
 #include <vector>
 // #include "include/core/file_handler.hpp"
-#include "../blocks/block.hpp"
 
 class ResManager {
   std::unordered_map<std::string, Texture> textures_;
@@ -63,7 +61,7 @@ class ResManager {
   };
 
   // to store textures parsed from map
-  std::map<int, Texture> tilesetMapStore;
+  // std::map<int, Texture> tilesetMapStore;
 
 private:
   void LoadTextures();
@@ -78,12 +76,12 @@ public:
 
   // SaveData LoadResourcesFromFile();
   // bool SaveResourcesToFile(const SaveData &data);
-  bool LoadMap(const std::string &path, std::vector<Block *> &blockData);
+  // bool LoadMap(const std::string &path, std::vector<Block *> &blockData);
 
   const Texture &GetMario(char type) const;
   const Texture &GetLuigi(char type) const;
   const Texture &GetEnemy() const;
-  const Texture &GetTile(char type) const;
+  const Texture &GetTileset(char type) const;
   const Texture &GetIcon() const;
   const Texture &GetBackground() const;
   const Music &GetMusic(std::string key) const;

@@ -32,3 +32,5 @@ public:
   void UpdateSliders();
   void DrawSliders();
 };
+
+// if volume = 0->translucent and red diagonal line
