@@ -13,25 +13,17 @@ NormalMario::NormalMario(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
     : CharacterState(16, 10, 50, 300, Nscale, Nto_left) {
   if (!is_evolving) {
-    disabled    = true;
-    Image image = LoadImage("res/sprites/characters/mario_star.png");
-    ImageResize(&image, image.width * scale, image.height * scale);
-    pre_texture_ = LoadTextureFromImage(image);
-    UnloadImage(image);
-    pre_frame_ = {254 * scale, 0, 14 * scale, 27 * scale};
+    disabled     = true;
+    pre_texture_ = &App.Resource().GetMario('s');
+    pre_frame_   = {254, 0, 14, 27};
   }
-  Image image = LoadImage("res/sprites/characters/mario_normal.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
+  texture = &App.Resource().GetMario('n');
   context = Ncontext;
-  LoadFrameList("res/sprites/characters/mario_normal.txt");
+  LoadFrameList("res/sprites/characters/normal.txt");
   frame = frame_list[0];
 };
 
-NormalMario::~NormalMario() {
-  UnloadTexture(pre_texture_);
-}
+NormalMario::~NormalMario() {}
 
 void NormalMario::Die() {
   if (disabled)
@@ -71,17 +63,18 @@ void NormalMario::Draw() {
         frame.width = -abs(frame.width);
       } else
         frame.width = abs(frame.width);
-      DrawTextureRec(texture, frame, position, WHITE);
+      DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
     } else {
       if (to_left) {
         pre_frame_.width = -abs(pre_frame_.width);
       } else
         pre_frame_.width = abs(pre_frame_.width);
-      DrawTextureRec(pre_texture_, pre_frame_, position, WHITE);
+      DrawTexturePro(
+        *pre_texture_, pre_frame_, MakeDestRect(pre_frame_), {0, 0}, 0.f,
+        WHITE);
     }
     if (time == 30) {
       disabled = false;
-      UnloadTexture(pre_texture_);
     }
   } else {
     CharacterState::Draw();
@@ -95,30 +88,22 @@ void NormalMario::Draw() {
 BigMario::BigMario(
   Character *Ncontext, float Nscale, bool Nleft, bool is_evolving)
     : CharacterState(15, 10, 50, 300, Nscale, Nleft) {
-  disabled    = true;
-  Image image = LoadImage("res/sprites/characters/mario_star.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
-  context = Ncontext;
-  LoadFrameList("res/sprites/characters/mario_star.txt");
+  disabled = true;
+  texture  = &App.Resource().GetMario('s');
+  context  = Ncontext;
+  LoadFrameList("res/sprites/characters/starup.txt");
   frame = frame_list[0];
 
   if (is_evolving) {
-    image      = LoadImage("res/sprites/characters/mario_normal.png");
-    pre_frame_ = {0, 0, 12 * scale, 15 * scale};
+    pre_texture_ = &App.Resource().GetMario('n');
+    pre_frame_   = {0, 0, 12, 15};
   } else {
-    image      = LoadImage("res/sprites/characters/mario_fire.png");
-    pre_frame_ = frame_list[0];
+    pre_texture_ = &App.Resource().GetMario('f');
+    pre_frame_   = frame_list[0];
   }
-  ImageResize(&image, image.width * scale, image.height * scale);
-  pre_texture_ = LoadTextureFromImage(image);
-  UnloadImage(image);
 }
 
-BigMario::~BigMario() {
-  UnloadTexture(pre_texture_);
-}
+BigMario::~BigMario() {}
 
 void BigMario::Die() {
   if (disabled)
@@ -164,16 +149,16 @@ void BigMario::Draw() {
         frame.width = -abs(frame.width);
       } else
         frame.width = abs(frame.width);
-      DrawTextureRec(texture, frame, position, WHITE);
+      DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
     } else {
       if (to_left) {
         pre_frame_.width = -abs(pre_frame_.width);
       } else
         pre_frame_.width = abs(pre_frame_.width);
-      DrawTextureRec(pre_texture_, pre_frame_, position, WHITE);
+      DrawTexturePro(
+        *pre_texture_, pre_frame_, MakeDestRect(pre_frame_), {0, 0}, 0.f,
+        WHITE);
     }
-    if (time == 30)
-      UnloadTexture(pre_texture_);
   } else {
     disabled = false;
     CharacterState::Draw();
@@ -187,26 +172,18 @@ void BigMario::Draw() {
 FireMario::FireMario(
   Character *Ncontext, float Nscale, bool Nleft, bool is_evolving)
     : CharacterState(15, 10, 50, 300, Nscale, Nleft) {
-  LoadFrameList("res/sprites/characters/mario_star.txt");
+  LoadFrameList("res/sprites/characters/starup.txt");
   if (is_evolving) {
-    disabled    = true;
-    Image image = LoadImage("res/sprites/characters/mario_star.png");
-    ImageResize(&image, image.width * scale, image.height * scale);
-    pre_texture_ = LoadTextureFromImage(image);
-    UnloadImage(image);
-    pre_frame_ = frame_list[0];
+    disabled     = true;
+    pre_texture_ = &App.Resource().GetMario('s');
+    pre_frame_   = frame_list[0];
   }
-  Image image = LoadImage("res/sprites/characters/mario_fire.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
+  texture = &App.Resource().GetMario('f');
   context = Ncontext;
   frame   = frame_list[0];
 };
 
-FireMario::~FireMario() {
-  UnloadTexture(pre_texture_);
-}
+FireMario::~FireMario() {}
 
 void FireMario::Die() {
   if (disabled)
@@ -247,17 +224,18 @@ void FireMario::Draw() {
         frame.width = -abs(frame.width);
       } else
         frame.width = abs(frame.width);
-      DrawTextureRec(texture, frame, position, WHITE);
+      DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
     } else {
       if (to_left) {
         pre_frame_.width = -abs(pre_frame_.width);
       } else
         pre_frame_.width = abs(pre_frame_.width);
-      DrawTextureRec(pre_texture_, pre_frame_, position, WHITE);
+      DrawTexturePro(
+        *pre_texture_, pre_frame_, MakeDestRect(pre_frame_), {0, 0}, 0.f,
+        WHITE);
     }
     if (time == 30) {
       disabled = false;
-      UnloadTexture(pre_texture_);
     }
   } else {
     CharacterState::Draw();

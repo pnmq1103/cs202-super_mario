@@ -4,6 +4,6 @@
 class StarPowerUp : public PowerUp {
 public:
   StarPowerUp(Vector2 pos);
-  void ApplyEffect(Player& player) override;
+  void ApplyEffect() override;
   PowerUpType GetType() const override;
 };

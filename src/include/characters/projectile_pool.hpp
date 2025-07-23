@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "include/characters/fireball.hpp"
+#include "include/collision/collision_handler.hpp"
 
 class ProjectilePool {
 private:

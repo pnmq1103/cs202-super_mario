@@ -23,7 +23,7 @@ void ProjectilePool::ShootEnemyFireball(Vector2 Nposition, bool to_left) {
   for (int i = 3; i < 6; ++i) {
     if (projectile_list_[i]->IsDestroyed()) {
       projectile_list_[i]->Renew(Nposition, to_left);
-      break;
+      return;
     }
   }
 }

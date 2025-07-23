@@ -4,6 +4,6 @@
 class MushroomPowerUp : public PowerUp {
 public:
   MushroomPowerUp(Vector2 pos);
-  void ApplyEffect(Player& player) override;
+  void ApplyEffect() override;
   PowerUpType GetType() const override;
 };

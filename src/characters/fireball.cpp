@@ -37,10 +37,11 @@ void MarioFireball::Draw() {
     return;
   Projectile::Draw();
 }
-void MarioFireball::StopY(float upper_bounce, float lower_bounce) {
-  if (position.y <= upper_bounce) {
+void MarioFireball::StopY(bool stop_upper, bool stop_lower) {
+  if (stop_upper) {
     velocity.y = 0;
-  } else if (position.y + frame.height >= lower_bounce)
+  }
+  if (stop_lower)
     velocity.y *= -bounce_coefficient_;
 }
 
@@ -87,7 +88,7 @@ void EnemyFireball::Draw() {
     return;
   Projectile::Draw();
 }
-void EnemyFireball::StopY(float upper_bounce, float lower_bounce) {}
+void EnemyFireball::StopY(bool stop_upper, bool stop_lower) {}
 
 ProjectileType EnemyFireball::GetType() {
   return enemy_fireball;
@@ -95,7 +96,7 @@ ProjectileType EnemyFireball::GetType() {
 //+----------------------------------------------------------+
 //|                       Electric ball                      |
 //+----------------------------------------------------------+
-ElectricBall::ElectricBall() : Projectile(1, {10, 0}) {
+ElectricBall::ElectricBall() : Projectile(1, {20, 0}) {
 
   LoadFrameList("res/sprites/electric_shot/electric_shot.txt");
   Image image = LoadImage("res/sprites/electric_shot/electric_shot.png");
@@ -137,7 +138,7 @@ void ElectricBall::Draw() {
   Projectile::Draw();
 }
 void ElectricBall::Destroy() {
-  if (is_destroy)
+  if (is_destroy || is_explode_)
     return;
   is_explode_   = true;
   time_explode_ = time;
@@ -148,7 +149,7 @@ void ElectricBall::Renew(Vector2 Nposition, bool to_left) {
   frame       = frame_list[0];
   is_explode_ = false;
 }
-void ElectricBall::StopY(float upper_bounce, float lower_bounce) {}
+void ElectricBall::StopY(bool stop_upper, bool stop_lower) {}
 
 ProjectileType ElectricBall::GetType() {
   return electric_ball;

@@ -1,3 +1,4 @@
+#pragma once
 #include "include/characters/projectile.hpp"
 
 class MarioFireball : public Projectile {
@@ -9,7 +10,7 @@ public:
   ~MarioFireball();
   void Update();
   void Draw();
-  void StopY(float upper_bounce, float lower_bounce);
+  void StopY(bool stop_upper, bool stop_lower);
   ProjectileType GetType();
 };
 
@@ -22,7 +23,7 @@ public:
   ~EnemyFireball();
   void Update();
   void Draw();
-  void StopY(float upper_bounce, float lower_bounce);
+  void StopY(bool stop_upper, bool stop_lower);
   ProjectileType GetType();
 };
 
@@ -39,6 +40,6 @@ public:
   void Draw();
   void Destroy();
   void Renew(Vector2 Nposition, bool to_left);
-  void StopY(float upper_bounce, float lower_bounce);
+  void StopY(bool stop_upper, bool stop_lower);
   ProjectileType GetType();
 };

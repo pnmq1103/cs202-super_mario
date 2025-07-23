@@ -1,9 +1,8 @@
 #include "include/items/star_powerup.hpp"
 
-StarPowerUp::StarPowerUp(Vector2 pos)
-  : PowerUp(pos, /*spriteId=*/3) {} 
+StarPowerUp::StarPowerUp(Vector2 pos) : PowerUp(pos, /*spriteId=*/3) {}
 
-void StarPowerUp::ApplyEffect(Player& player) {
+void StarPowerUp::ApplyEffect() {
   // player.BecomeInvincible();
   Deactivate();
 }

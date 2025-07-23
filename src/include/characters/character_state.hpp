@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "include/characters/character.hpp"
+#include "include/core/application.hpp"
 
 // Time will be counted by frame not by second
 
@@ -14,8 +15,9 @@ protected:
   bool to_left, is_jump, is_fall, is_die, disabled;
 
   Character *context;
+
   Vector2 position;
-  Texture texture;
+  const Texture *texture;
   const float speed, jumpHeight, scale;
   const int jumpTime, runTime;
   Rectangle frame;
@@ -23,6 +25,7 @@ protected:
   std::vector<Rectangle> frame_list;
   void LoadFrameList(std::string address);
   void SetPosition(Vector2 Nposition);
+  Rectangle MakeDestRect(Rectangle rectangle);
 
 public:
   CharacterState(

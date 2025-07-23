@@ -31,6 +31,6 @@ public:
   virtual void Destroy();
   bool IsDestroyed();
   virtual void Renew(Vector2 Nposition, bool to_left);
-  virtual void StopY(float upper_bounce, float lower_bounce) = 0;
-  virtual ProjectileType GetType()                           = 0;
+  virtual void StopY(bool stop_upper, bool stop_lower) = 0;
+  virtual ProjectileType GetType()                     = 0;
 };
