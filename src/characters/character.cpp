@@ -175,3 +175,9 @@ void Character::Bounce() {
     throw std::runtime_error("not yet set character");
   pState_->Bounce();
 }
+
+bool Character::IsToLeft() {
+  if (!pState_)
+    throw std::runtime_error("not yet set character");
+  return pState_->IsToLeft();
+}

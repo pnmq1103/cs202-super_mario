@@ -1,5 +1,6 @@
 #pragma once
 #include "include/core/scene.hpp"
+#include <cmath>
 
 class CreditScene : public Scene {
 private:

@@ -5,9 +5,7 @@ Projectile::Projectile(float Nscale, Vector2 Nvelocity) : scale(Nscale) {
   is_destroy = true;
   time       = 0;
 }
-Projectile::~Projectile() {
-  UnloadTexture(texture);
-}
+Projectile::~Projectile() {}
 void Projectile::LoadFrameList(std::string at) {
   std::ifstream fin;
   fin.open(at);
@@ -18,25 +16,31 @@ void Projectile::LoadFrameList(std::string at) {
     float n;
     fin >> n;
     fin >> n;
-    rect.x = n * scale;
+    rect.x = n;
     fin >> n;
-    rect.y = n * scale;
+    rect.y = n;
     fin >> n;
-    rect.width = n * scale;
+    rect.width = n;
     fin >> n;
-    rect.height = n * scale;
+    rect.height = n;
     frame_list.push_back(rect);
   }
   fin.close();
 }
+
+Rectangle Projectile::MakeDestRect(Rectangle rectangle) {
+  return {
+    position.x, position.y, rectangle.width * scale, rectangle.height * scale};
+}
+
 void Projectile::SetFrameCount() {
   ++time;
 }
 void Projectile::Draw() {
-  DrawTextureRec(texture, frame, position, WHITE);
+  DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
 }
 Rectangle Projectile::GetRectangle() {
-  return {position.x, position.y, frame.width, frame.height};
+  return {position.x, position.y, frame.width * scale, frame.height * scale};
 }
 void Projectile::Destroy() {
   is_destroy = true;

@@ -1,4 +1,4 @@
-#include "include/core/application.hpp"
+/*#include "include/core/application.hpp"
 #include <raylib.h>
 
 int main() {
@@ -14,9 +14,10 @@ int main() {
 
   CloseWindow();
   return 0;
-}
+}*/
 
-/*#include "include/characters/character.hpp"
+#include "include/characters/character.hpp"
+#include "include/characters/projectile_pool.hpp"
 #include "include/core/application.hpp"
 #include "include/core/game_managing.hpp"
 #include <cmath>
@@ -56,8 +57,9 @@ int main() {
   SetTargetFPS(60);
   App.Resource().Init();
   Character character(5);
-  character.SetCharacter(LUIGI, {200, 300});
+  character.SetCharacter(MARIO, {200, 300});
   Rectangle rect1 = {2000, 400, 100, 100};
+  ProjectilePool pool;
   Collision collision(3000.0, 1000.0);
   collision.AddCharacter(&character);
   collision.AddRectangle(&rect1);
@@ -81,6 +83,10 @@ int main() {
     character.Update();
     character.Draw();
 
+    pool.SetFrameCount();
+    pool.Update();
+    pool.Draw();
+
     if (IsKeyDown(KEY_LEFT))
       character.Run(true);
     if (IsKeyDown(KEY_RIGHT))
@@ -91,6 +97,10 @@ int main() {
       character.Die();
     if (IsKeyDown(KEY_E))
       character.Evolve();
+    if (IsKeyDown(KEY_LEFT_SHIFT)) {
+      Rectangle rect = character.GetRectangle();
+      pool.ShootElectricBall({rect.x, rect.y}, character.IsToLeft());
+    }
 
     EndDrawing();
   }
@@ -289,4 +299,4 @@ int Collision::CheckCollision(Rectangle r1, Rectangle r2) {
     return 2;
   else
     return 0;
-}*/
+}

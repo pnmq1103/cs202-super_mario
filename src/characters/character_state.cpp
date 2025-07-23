@@ -73,6 +73,13 @@ Vector2 CharacterState::GetSpeed() {
   return velocity;
 }
 
+bool CharacterState::IsToLeft() {
+  if (frame.width > 0)
+    return false;
+  else
+    return true;
+}
+
 void CharacterState::SetPosition(Vector2 Nposition) {
   position = Nposition;
 }
@@ -189,7 +196,6 @@ void CharacterState::Update() {
         position.x += speed;
     }
   }
-  std::cout << position.y << " " << GetRectangle().height << '\n';
 }
 void CharacterState::ToStarman() {
   time_star = 60 * 10;

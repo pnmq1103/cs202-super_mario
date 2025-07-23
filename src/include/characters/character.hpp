@@ -44,4 +44,5 @@ public:
   bool IsStarman();
   void Bounce();
   Rectangle GetRectangle();
+  bool IsToLeft();
 };

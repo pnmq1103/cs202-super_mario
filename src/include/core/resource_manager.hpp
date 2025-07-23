@@ -82,6 +82,8 @@ public:
   const Texture &GetEnemy() const;
   const Texture &GetTileset(char type) const;
   const Texture &GetIcon() const;
+  const Texture &GetObject() const;
+  const Texture &GetElectricShot() const;
   const Texture &GetBackground() const;
   const Music &GetMusic(std::string key) const;
   const Sound &GetSound(std::string key) const;

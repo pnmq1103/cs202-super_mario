@@ -34,9 +34,9 @@ public:
   virtual ~CharacterState();
 
   Rectangle GetRectangle();
-
   void SetFrameCount();
   Vector2 GetSpeed();
+  bool IsToLeft();
 
   virtual void Draw();
   void Run(bool to_left);
