@@ -1,17 +1,9 @@
-<<<<<<< Updated upstream
 ﻿#include <array>
+#include <stdexcept>
 
-#include <include/core/resource_manager.hpp>
+#include "include/core/resource_manager.hpp"
 
 ResManager::~ResManager() {
-=======
-
-﻿#include<array>
-
-#include <include/core/resource_manager.hpp>
-
-  ResManager::~ResManager() {
->>>>>>> Stashed changes
   for (auto &texture : textures_)
     UnloadTexture(texture.second);
 

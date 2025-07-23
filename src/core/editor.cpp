@@ -23,11 +23,13 @@ EditorScene::EditorScene() {
     blockSize * block_height_ - 2 * buffer};
 
   tilemap_.resize(block_width_ * block_height_, 0);
-
   buttons_.reserve(3);
-
-  sprite_sheets_.emplace_back(11, 144, App.Resource().GetTileset('g'));
-  sprite_sheets_.emplace_back(155, 144, App.Resource().GetTileset('u'));
+  sprite_sheets_.reserve(3);
+  sprite_sheets_ = {
+    {1, 10, App.Resource().GetBackground()},
+    {11, 144, App.Resource().GetTileset('g')},
+    {155, 144, App.Resource().GetTileset('u')},
+  };
 }
 
 EditorScene::~EditorScene() {
@@ -37,11 +39,8 @@ EditorScene::~EditorScene() {
 void EditorScene::Init() {
   crosshair_ = LoadTexture("res/sprites/crosshairs/crosshair028.png");
 
-  tileset_ = &App.Resource().GetTileset('g');
   Scene::ReadSpriteInfo(
     "res/sprites/tilesets/tileset_ground.txt", tileset_info_);
-
-  // background_ = &App.Resource().GetBackground();
 
   CreateButtons();
 }

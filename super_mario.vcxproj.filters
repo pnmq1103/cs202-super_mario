@@ -76,11 +76,11 @@
     <ClInclude Include="src\include\blocks\static_block.hpp" />
     <ClInclude Include="src\include\core\slider.hpp" />
     <ClInclude Include="src\include\characters\projectile_pool.hpp" />
-    <ClInclude Include="src\include\core\tileson.hpp" />
     <ClInclude Include="src\include\blocks\brick_block.hpp" />
     <ClInclude Include="src\include\collision\collision_handler.hpp" />
     <ClInclude Include="src\include\external\json.hpp" />
     <ClInclude Include="src\include\external\tinyfiledialogs.h" />
+    <ClInclude Include="src\include\external\tileson.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

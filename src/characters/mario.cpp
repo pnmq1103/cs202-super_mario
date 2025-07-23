@@ -91,7 +91,7 @@ BigMario::BigMario(
   disabled = true;
   texture  = &App.Resource().GetMario('s');
   context  = Ncontext;
-  LoadFrameList("res/sprites/characters/starup.txt");
+  LoadFrameList("res/sprites/characters/powerup.txt");
   frame = frame_list[0];
 
   if (is_evolving) {
@@ -172,7 +172,7 @@ void BigMario::Draw() {
 FireMario::FireMario(
   Character *Ncontext, float Nscale, bool Nleft, bool is_evolving)
     : CharacterState(15, 10, 50, 300, Nscale, Nleft) {
-  LoadFrameList("res/sprites/characters/starup.txt");
+  LoadFrameList("res/sprites/characters/powerup.txt");
   if (is_evolving) {
     disabled     = true;
     pre_texture_ = &App.Resource().GetMario('s');

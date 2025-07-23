@@ -17,8 +17,8 @@ private:
   Rectangle boundary_ = {};
 
   Texture crosshair_ = {};
-  std::vector<int> tilemap_;
 
+  std::vector<int> tilemap_;
   const Texture *tileset_ = {nullptr};
   std::unordered_map<int, Rectangle> tileset_info_;
   const Texture *background_ = {nullptr};

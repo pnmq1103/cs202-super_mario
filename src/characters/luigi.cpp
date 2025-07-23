@@ -91,7 +91,7 @@ BigLuigi::BigLuigi(
   disabled = true;
   texture  = &App.Resource().GetLuigi('s');
   context  = Ncontext;
-  LoadFrameList("res/sprites/characters/starup.txt");
+  LoadFrameList("res/sprites/characters/powerup.txt");
   frame = frame_list[0];
 
   if (is_evolving) {
@@ -170,7 +170,7 @@ void BigLuigi::Draw() {
 FireLuigi::FireLuigi(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
     : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
-  LoadFrameList("res/sprites/characters/starup.txt");
+  LoadFrameList("res/sprites/characters/powerup.txt");
   if (is_evolving) {
     disabled     = true;
     pre_texture_ = &App.Resource().GetLuigi('s');
