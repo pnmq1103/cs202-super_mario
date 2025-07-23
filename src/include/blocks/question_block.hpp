@@ -1,30 +1,27 @@
 #pragma once
 #include "include/blocks/block.hpp"
 
-enum class PowerUpType {
-  None,
-  Coin,
-  SuperMushroom,
-  FireFlower,
-  Star,
-};
-
 class QuestionBlock : public Block {
 private:
   int coinCount = 0;
   int maxCoins  = 10;
-  bool used     = false;
-  PowerUpType item;
+  PowerUpType chosen;
+  bool isUniqueLoot = false;
+  bool isUsed     = false;
+  bool isHit        = false;
+  float timer       = 0.0f;
+
+  PowerUpType GetLoot();
+  
 
 public:
-  QuestionBlock(
-    Vector2 pos, PowerUpType item = PowerUpType::Coin, int spriteId = 0);
+  QuestionBlock(int gid, Vector2 pos, Vector2 size, int spriteID, bool solid, bool animating);
 
   void OnHit() override;
   void Update(float dt) override;
 
   bool IsUsed() const;
-  PowerUpType GetItem() const;
+  PowerUpType GetPowerUp() const;
 
   Block *Clone() const override;
 };

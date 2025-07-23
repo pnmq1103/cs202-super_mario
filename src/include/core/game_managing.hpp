@@ -70,6 +70,6 @@ private:
     
     // Helper methods
     void LoadResources();
-    void CreateBlockFromType(int tileType, Vector2 position);
+    //void CreateBlockFromType(int tileType, Vector2 position);
     void CreateEnemyFromType(int enemyType, Vector2 position);
 };

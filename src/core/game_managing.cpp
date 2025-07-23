@@ -36,9 +36,9 @@ void GameManaging::LoadLevel(const std::string &filename) {
   // TODO: Use FileHandler to load binary level data when file format is ready
 
   // Example blocks
-  CreateBlockFromType(1, {100.0f, 600.0f}); // Solid block
-  CreateBlockFromType(2, {200.0f, 600.0f}); // Question block
-  CreateBlockFromType(3, {300.0f, 600.0f}); // Brick block
+  //CreateBlockFromType(1, {100.0f, 600.0f}); // Solid block
+  //CreateBlockFromType(2, {200.0f, 600.0f}); // Question block
+  //CreateBlockFromType(3, {300.0f, 600.0f}); // Brick block
 
   // Example enemies
   SpawnEnemy(EnemyType::Goomba, {200.0f, 500.0f});
@@ -127,11 +127,20 @@ void GameManaging::DrawBlock(const Block *block) {
       case BlockType::Question:
         color = YELLOW;
         break;
-      case BlockType::Brick:
-        color = BROWN;
+      case BlockType::Music:
+        color = GRAY;
         break;
       case BlockType::Solid:
-        color = GRAY;
+        color = BROWN;
+        break;
+      case BlockType::Rock:
+        color = DARKGRAY;
+        break;
+      case BlockType::Empty:
+        color = WHITE;
+        break;
+      case BlockType::Ground:
+        color = DARKBROWN;
         break;
       default:
         color = LIGHTGRAY;
@@ -342,7 +351,7 @@ void GameManaging::LoadResources() {
   // Resources are automatically loaded by ResManager singleton
   // No need to manually load textures here
 }
-
+/*
 void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
   std::unique_ptr<Block> newBlock;
 
@@ -368,6 +377,7 @@ void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
     blocks_.push_back(std::move(newBlock));
   }
 }
+*/
 
 void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
   SpawnEnemy(static_cast<EnemyType>(enemyType), position);

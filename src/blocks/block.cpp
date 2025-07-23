@@ -3,35 +3,34 @@
 #include <unordered_map>
 
 inline BlockType fromString(const std::string &s) {
-  if (s == "Empty")
+  if (s == "EMPTY_BLOCK")
     return BlockType::Empty;
-  if (s == "Brick")
-    return BlockType::Brick;
-  if (s == "Question")
-    return BlockType::Question;
-  if (s == "Solid")
+  if (s == "SOLID_BLOCK")
     return BlockType::Solid;
-  if (s == "Pipe")
-    return BlockType::Pipe;
-  if (s == "Rock")
+  if (s == "QUESTION_BLOCK")
+    return BlockType::Question;
+  if (s == "MUSIC_BLOCK")
+    return BlockType::Music;
+  if (s == "GROUND_BLOCK")
+    return BlockType::Ground;
+  if (s == "ROCK_BLOCK")
     return BlockType::Rock;
-  if (s == "Lava")
-    return BlockType::Lava;
 }
 
 Block::Block(
-  Vector2 pos, int w, int h, BlockType type, bool solid, int spriteId)
-    : position(pos), width(w), height(h), type(type), solid(solid),
-      spriteId(spriteId) {}
+  int gid, Vector2 pos, Vector2 s, BlockType type, bool solid, bool animating, int spriteId)
+    : Gid(gid), position(pos), size(s), type(type), solid(solid), animating(animating), spriteId(spriteId) {}
 
-void Block::OnHit() {}
+int Block::GetGid() const {
+  return Gid;
+}
 
 Vector2 Block::GetPosition() const {
   return position;
 }
 
 Rectangle Block::GetRect() const {
-  return {position.x, position.y, (float)width, (float)height};
+  return {position.x, position.y, size.x, size.y};
 }
 
 BlockType Block::GetType() const {
@@ -42,8 +41,16 @@ bool Block::IsSolid() const {
   return solid;
 }
 
+bool Block::IsAnimating() const {
+  return animating;
+}
+
 int Block::GetSpriteId() const {
   return spriteId;
+}
+
+void Block::SetGid(int val) {
+  Gid = val;
 }
 
 void Block::SetPosition(Vector2 pos) {
@@ -58,9 +65,12 @@ void Block::SetSolid(bool val) {
   solid = val;
 }
 
-void Block::SetSize(int w, int h) {
-  width = w;
-  height = h;
+void Block::SetAnimating(bool val) {
+  animating = val;
+}
+
+void Block::SetSize(Vector2 s) {
+  size = s;
 }
 
 void Block::SetType(std::string t) {
@@ -70,11 +80,7 @@ void Block::SetType(std::string t) {
   return CheckCollisionRecs(GetRect(), other);
 }
 
-void Block::Render(
-  const Texture &texture,
-  const std::unordered_map<int, Rectangle> &spriteRects) const {
-  auto it = spriteRects.find(spriteId);
-  if (it != spriteRects.end()) {
-    DrawTextureRec(texture, it->second, position, WHITE);
-  }
+    //game manager will get block gid via getGid() then extract the texture from resource manager
+void Block::Render(const Texture& texture) const {
+  DrawTexture(texture, position.x, position.y, RAYWHITE);
 }

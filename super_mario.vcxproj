@@ -128,7 +128,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\blocks\brick_block.cpp" />
+    <ClCompile Include="src\blocks\block_factory.cpp" />
+    <ClCompile Include="src\blocks\empty_block.cpp" />
+    <ClCompile Include="src\blocks\music_block.cpp" />
+    <ClCompile Include="src\blocks\rock_block.cpp" />
+    <ClCompile Include="src\blocks\solid_block.cpp" />
     <ClCompile Include="src\characters\projectile_pool.cpp" />
     <ClCompile Include="src\collision\collision_handler.cpp" />
     <ClCompile Include="src\core\application.cpp" />
@@ -161,7 +165,7 @@
     <ClCompile Include="src\core\scene.cpp" />
     <ClCompile Include="src\core\scene_stack.cpp" />
     <ClCompile Include="src\core\setting.cpp" />
-    <ClCompile Include="src\blocks\static_block.cpp" />
+    <ClCompile Include="src\blocks\ground_block.cpp" />
     <ClCompile Include="src\include\external\tinyfiledialogs.cpp" />
     <ClCompile Include="src\items\fire_flower_powerup.cpp" />
     <ClCompile Include="src\items\mushroom_powerup.cpp" />
@@ -170,7 +174,12 @@
     <ClCompile Include="src\items\star_powerup.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\include\blocks\brick_block.hpp" />
+    <ClInclude Include="src\include\blocks\block_factory.hpp" />
+    <ClInclude Include="src\include\blocks\empty_block.hpp" />
+    <ClInclude Include="src\include\blocks\ground_block.hpp" />
+    <ClInclude Include="src\include\blocks\music_block.hpp" />
+    <ClInclude Include="src\include\blocks\rock_block.hpp" />
+    <ClInclude Include="src\include\blocks\solid_block.hpp" />
     <ClInclude Include="src\include\characters\projectile_pool.hpp" />
     <ClInclude Include="src\include\collision\collision_handler.hpp" />
     <ClInclude Include="src\include\core\application.hpp" />
@@ -204,7 +213,6 @@
     <ClInclude Include="src\include\core\scene.hpp" />
     <ClInclude Include="src\include\core\scene_stack.hpp" />
     <ClInclude Include="src\include\core\setting.hpp" />
-    <ClInclude Include="src\include\blocks\static_block.hpp" />
     <ClInclude Include="src\include\external\json.hpp" />
     <ClInclude Include="src\include\external\tinyfiledialogs.h" />
   </ItemGroup>

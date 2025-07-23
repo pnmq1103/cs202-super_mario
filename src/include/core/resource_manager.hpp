@@ -23,6 +23,7 @@ struct BlockInfo {
   Vector2 size;
   std::string type;
   bool solid;
+  bool animating;
 };
 
 class ResManager {

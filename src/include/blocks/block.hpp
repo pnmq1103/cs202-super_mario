@@ -4,50 +4,61 @@
 #include <string>
 
 enum class BlockType {
-  Empty,
-  Brick,
-  Question,
-  Solid,
-  Pipe,
-  Rock,
-  Lava,
+      Empty,
+      Solid,
+      Question,
+      Music,
+      Ground,
+      Rock,
+};
+
+
+enum class PowerUpType {
+  None,
+  Coin,
+  SuperMushroom,
+  FireFlower,
+  Star,
 };
 
 class Block {
 protected:
+  int Gid;
   Vector2 position;
-  int width;
-  int height;
+  Vector2 size;
   BlockType type;
   bool solid;
+  bool animating;
   int spriteId;
 
 public:
   Block(
-    Vector2 pos, int w, int h, BlockType type, bool solid = true,
+    int gid, Vector2 pos, Vector2 s, BlockType type, bool solid, bool animating,
     int spriteId = 0);
+  //virtual functions
   virtual ~Block() = default;
-
   virtual Block *Clone() const = 0;
+  virtual void Update(float dt) = 0;
+  virtual void OnHit() = 0;
 
-  virtual void Update(float dt) {}
-  virtual void OnHit();
-
+  //getters and setters
+  int GetGid() const;
   Vector2 GetPosition() const;
   Rectangle GetRect() const;
   BlockType GetType() const;
   bool IsSolid() const;
+  bool IsAnimating() const;
   int GetSpriteId() const;
 
+  void SetGid(int val);
   void SetPosition(Vector2 pos);
   void SetSpriteId(int id);
   void SetSolid(bool val);
-  void SetSize(int width, int height);
+  void SetAnimating(bool val);
+  void SetSize(Vector2 s);
   void SetType(std::string t);
 
   bool CheckCollision(Rectangle other) const;
 
-  virtual void Render(
-    const Texture &texture,
-    const std::unordered_map<int, Rectangle> &spriteRects) const;
+  virtual void Render(const Texture &texture) const;
 };

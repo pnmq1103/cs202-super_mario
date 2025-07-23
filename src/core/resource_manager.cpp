@@ -369,6 +369,7 @@ ResManager::LoadMap(const std::string &path) {
           info.size = {static_cast<float>(tile->getTileSize().x), static_cast<float>(tile->getTileSize().y)};
           info.type  = std::any_cast<std::string>(tile->getProp("type")->getValue());
           info.solid = std::any_cast<bool>(tile->getProp("solid")->getValue());
+          info.animating = std::any_cast<bool>(tile->getProp("animating")->getValue());
           blockInfoMapStore.push_back(info);
 
           std::vector<BlockInfo> infos;
@@ -387,10 +388,10 @@ ResManager::LoadMap(const std::string &path) {
 
       case tson::LayerType::ObjectGroup: {
         for (auto &obj : layer.getObjects()) {
-          Rectangle bb{
+          Rectangle objectRec{
             obj.getPosition().x, obj.getPosition().y, obj.getSize().x,
             obj.getSize().y};
-          objectMapStore.push_back(bb);
+          objectMapStore.push_back(objectRec);
         }
         break;
       }
