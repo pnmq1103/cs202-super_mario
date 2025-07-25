@@ -212,7 +212,7 @@ void GameManaging::DrawBlock(const Block *block) {
 void GameManaging::DrawEnemy(const Enemy *enemy) {
   if (!enemy)
     return;
-  Texture tileTexture = App.Resource().GetTile(enemy->GetSpriteId() + 1);
+  Texture tileTexture = App.Resource().GetEnemy(enemy->GetSpriteId() + 1);
   Vector2 position    = enemy->GetPosition();
   DrawTexture(tileTexture, (int)position.x, (int)position.y, WHITE);
   Rectangle rect = enemy->GetRect();

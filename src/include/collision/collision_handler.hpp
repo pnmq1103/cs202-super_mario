@@ -1,6 +1,5 @@
 #pragma once
 #include "include/blocks/question_block.hpp"
-#include "include/blocks/static_block.hpp"
 #include "include/characters/character.hpp"
 #include "include/characters/fireball.hpp"
 #include "include/enemies/bowser.hpp"

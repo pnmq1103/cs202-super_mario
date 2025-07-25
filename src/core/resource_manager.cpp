@@ -4,10 +4,10 @@
 
 
 ResManager::~ResManager() {
-  auto Unload = [&](auto &mp) {
-    for (auto &p : mp)
+  auto Unload = [&](auto &map) {
+    for (auto &p : map)
       UnloadTexture(p.second);
-    mp.clear();
+    map.clear();
   };
   Unload(mario_normal);
   Unload(mario_star);
@@ -19,7 +19,7 @@ ResManager::~ResManager() {
   Unload(enemies);
   Unload(icons);
   Unload(tileset);
-  Unload(backgrounds);
+  UnloadTexture(background_ground);
 
   for (auto &sound : sounds)
     UnloadSound(sound.second);
@@ -38,6 +38,7 @@ void ResManager::Init() {
   LoadTextures();
   LoadMusic();
   LoadSounds();
+  LoadMap("res/sprite/map/map1.tmj");
 }
 
 void ResManager::LoadHelper(
@@ -99,15 +100,15 @@ void ResManager::LoadTextures() {
   LoadHelper("res/sprites/characters/enemies.png", "enemy_", enemies);
 
   LoadHelper("res/sprites/tilesets/tileset_ground.png", "tile_", tileset);
-  LoadHelper("res/sprites/tilesets/tileset_sky.png", "tile_", tileset);
   LoadHelper("res/sprites/tilesets/tileset_underground.png", "tile_", tileset);
-  LoadHelper("res/sprites/tilesets/tileset_underwater.png", "tile_", tileset);
 
-  LoadHelper("res/sprites/icons/icons.png", "icon_", icons);
-  LoadHelper("res/sprites/icons/objects.png", "icon_", icons);
+  LoadHelper("res/sprites/icons/block_objects.png", "icons_", icons);
+  LoadHelper("res/sprites/icons/objects.png", "icons_", icons);
 
-  LoadHelper(
-    "res/sprites/backgrounds/backgrounds.png", "background_", backgrounds);
+  /*LoadHelper(
+    "res/sprites/backgrounds/backgrounds.png", "background_", backgrounds);*/
+  background_ground = LoadTextureFromImage(
+    LoadImage("res/sprites/backgrounds/background_ground.png"));
 }
 
 void ResManager::LoadMusic() {
@@ -270,11 +271,12 @@ Texture ResManager::GetIcon(int idx) {
 }
 
 Texture ResManager::GetBackground(int idx) {
-  std::string key = "background_" + std::to_string(idx);
+  /*std::string key = "background_" + std::to_string(idx);
   auto it         = backgrounds.find(key);
   if (it == backgrounds.end())
     throw std::out_of_range("Missing background");
-  return it->second;
+  return it->second;*/
+  return background_ground;
 }
 
 Music ResManager::GetMusic(std::string key) {
@@ -384,9 +386,34 @@ void ResManager::LoadMap(const std::string &path) {
           info.gid   = tile->getGid();
           info.pos  = {tile->getPosition(kv.first).x, tile->getPosition(kv.first).y};
           info.size = {static_cast<float>(tile->getTileSize().x), static_cast<float>(tile->getTileSize().y)};
-          info.type  = std::any_cast<int>(tile->getProp("type")->getValue());
-          info.solid = std::any_cast<bool>(tile->getProp("solid")->getValue());
-          info.animating = std::any_cast<bool>(tile->getProp("animating")->getValue());
+          // add exception handling for properties
+          auto *propType = tile->getProp("type");
+          if (!propType)
+            throw std::runtime_error("Missing tile property 'type'");
+          if (auto p = std::any_cast<int>(&propType->getValue())) {
+            info.type = *p;
+          } else {
+            throw std::runtime_error("Tile property 'type' is not an int");
+          }
+
+          auto *propSolid = tile->getProp("solid");
+          if (!propSolid)
+            throw std::runtime_error("Missing tile property 'solid'");
+          if (auto p = std::any_cast<bool>(&propSolid->getValue())) {
+            info.solid = *p;
+          } else {
+            throw std::runtime_error("Tile property 'solid' is not a bool");
+          }
+
+          auto *propAnim = tile->getProp("animating");
+          if (!propAnim)
+            throw std::runtime_error("Missing tile property 'animating'");
+          if (auto p = std::any_cast<bool>(&propAnim->getValue())) {
+            info.animating = *p;
+          } else {
+            throw std::runtime_error("Tile property 'animating' is not a bool");
+          }
+
           blockInfoMapStore.push_back(info);
 
           std::vector<BlockInfo> infos;
@@ -411,9 +438,36 @@ void ResManager::LoadMap(const std::string &path) {
           e.size = {
             static_cast<float>(obj.getSize().x),
             static_cast<float>(obj.getSize().y)};
-          e.type = std::any_cast<int>(obj.getProp("type")->getValue());
-          e.velocity.x = std::any_cast<int>(obj.getProp("velocityX")->getValue());
-          e.velocity.y = std::any_cast<int>(obj.getProp("velocityY")->getValue());
+          // add exception handling for properties
+          auto *propEType = obj.getProp("type");
+          if (!propEType)
+            throw std::runtime_error("Missing enemy property 'type'");
+          if (auto p = std::any_cast<int>(&propEType->getValue())) {
+            e.type = *p;
+          } else {
+            throw std::runtime_error("Enemy property 'type' is not an int");
+          }
+
+          auto *propVx = obj.getProp("velocityX");
+          if (!propVx)
+            throw std::runtime_error("Missing enemy property 'velocityX'");
+          if (auto p = std::any_cast<int>(&propVx->getValue())) {
+            e.velocity.x = *p;
+          } else {
+            throw std::runtime_error(
+              "Enemy property 'velocityX' is not an int");
+          }
+
+          auto *propVy = obj.getProp("velocityY");
+          if (!propVy)
+            throw std::runtime_error("Missing enemy property 'velocityY'");
+          if (auto p = std::any_cast<int>(&propVy->getValue())) {
+            e.velocity.y = *p;
+          } else {
+            throw std::runtime_error(
+              "Enemy property 'velocityY' is not an int");
+          }
+
           enemyMapStore.push_back(e);
         }
         break;

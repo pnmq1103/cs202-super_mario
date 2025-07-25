@@ -40,12 +40,12 @@
     <ClCompile Include="src\items\spawn_item.cpp" />
     <ClCompile Include="src\items\star_powerup.cpp" />
     <ClCompile Include="src\include\external\tinyfiledialogs.cpp" />
-    <ClCompile Include="src\blocks\block_factory.cpp" />
     <ClCompile Include="src\blocks\empty_block.cpp" />
     <ClCompile Include="src\blocks\music_block.cpp" />
     <ClCompile Include="src\blocks\solid_block.cpp" />
     <ClCompile Include="src\blocks\rock_block.cpp" />
     <ClCompile Include="src\blocks\ground_block.cpp" />
+    <ClCompile Include="src\blocks\pipe_block.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -89,6 +89,7 @@
     <ClInclude Include="src\include\blocks\solid_block.hpp" />
     <ClInclude Include="src\include\blocks\rock_block.hpp" />
     <ClInclude Include="src\include\blocks\ground_block.hpp" />
+    <ClInclude Include="src\include\blocks\pipe_block.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

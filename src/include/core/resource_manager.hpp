@@ -45,7 +45,8 @@ class ResManager {
   std::unordered_map<std::string, Texture> enemies;
   std::unordered_map<std::string, Texture> icons;
   std::unordered_map<std::string, Texture> tileset;
-  std::unordered_map<std::string, Texture> backgrounds;
+  //std::unordered_map<std::string, Texture> backgrounds;
+  Texture background_ground;
 
   std::unordered_map<std::string, Music> musics;
   std::unordered_map<std::string, Sound> sounds;
