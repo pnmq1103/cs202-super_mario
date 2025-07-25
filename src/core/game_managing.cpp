@@ -142,11 +142,8 @@ void GameManaging::DrawLevel() {
 void GameManaging::DrawBackground() {
   // Draw background using ResManager
   try {
-    /*Texture backgroundTex = App.Resource().GetBackground(backgroundType_ + 1);
-    DrawTexture(backgroundTex, 0, 0, WHITE);*/
-
-      //draw the texture from Tiled map
-    DrawTexture(background_, 0, 0, WHITE);
+    Texture backgroundTex = App.Resource().GetBackground();
+    DrawTexture(backgroundTex, 0, 0, WHITE);
   } catch (const std::out_of_range &) {
     // Fallback to color backgrounds if texture not found
     switch (backgroundType_) {
@@ -172,7 +169,7 @@ void GameManaging::DrawBlock(const Block *block) {
 
   try {
     // Get tile texture from ResManager based on sprite ID
-    Texture tileTexture = App.Resource().GetTile(block->GetSpriteId() + 1);
+    Texture tileTexture = App.Resource().GetTileset(block->GetSpriteId() + 1);
     Vector2 position    = block->GetPosition();
     DrawTexture(tileTexture, (int)position.x, (int)position.y, WHITE);
   } catch (const std::out_of_range &) {

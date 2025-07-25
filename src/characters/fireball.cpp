@@ -9,11 +9,8 @@ MarioFireball::MarioFireball() : Projectile(5, {10, 0}) {
   range_              = 1000;
 
   LoadFrameList("res/sprites/icons/objects.txt");
-  Image image = LoadImage("res/sprites/icons/objects.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
-  frame = frame_list[133];
+  texture = &App.Resource().GetObject();
+  frame   = frame_list[133];
 }
 MarioFireball::~MarioFireball() {}
 void MarioFireball::Update() {
@@ -37,10 +34,11 @@ void MarioFireball::Draw() {
     return;
   Projectile::Draw();
 }
-void MarioFireball::StopY(float upper_bounce, float lower_bounce) {
-  if (position.y <= upper_bounce) {
+void MarioFireball::StopY(bool stop_upper, bool stop_lower) {
+  if (stop_upper) {
     velocity.y = 0;
-  } else if (position.y + frame.height >= lower_bounce)
+  }
+  if (stop_lower)
     velocity.y *= -bounce_coefficient_;
 }
 
@@ -52,12 +50,9 @@ ProjectileType MarioFireball::GetType() {
 //+----------------------------------------------------------+
 EnemyFireball::EnemyFireball() : Projectile(5, {10, 0}) {
   LoadFrameList("res/sprites/icons/objects.txt");
-  Image image = LoadImage("res/sprites/icons/objects.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
-  frame  = frame_list[133];
-  range_ = 1000;
+  texture = &App.Resource().GetObject();
+  frame   = frame_list[133];
+  range_  = 1000;
 }
 EnemyFireball::~EnemyFireball() {}
 void EnemyFireball::Update() {
@@ -87,7 +82,7 @@ void EnemyFireball::Draw() {
     return;
   Projectile::Draw();
 }
-void EnemyFireball::StopY(float upper_bounce, float lower_bounce) {}
+void EnemyFireball::StopY(bool stop_upper, bool stop_lower) {}
 
 ProjectileType EnemyFireball::GetType() {
   return enemy_fireball;
@@ -95,13 +90,10 @@ ProjectileType EnemyFireball::GetType() {
 //+----------------------------------------------------------+
 //|                       Electric ball                      |
 //+----------------------------------------------------------+
-ElectricBall::ElectricBall() : Projectile(1, {10, 0}) {
+ElectricBall::ElectricBall() : Projectile(1, {20, 0}) {
 
   LoadFrameList("res/sprites/electric_shot/electric_shot.txt");
-  Image image = LoadImage("res/sprites/electric_shot/electric_shot.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
+  texture     = &App.Resource().GetElectricShot();
   frame       = frame_list[0];
   is_explode_ = false;
   range_      = 1000;
@@ -113,12 +105,15 @@ void ElectricBall::Update() {
 
   if (velocity.x > 0) {
     if (position.x >= original_position.x + range_)
-      if (!is_explode_)
+      if (!is_explode_) {
         Destroy();
+      }
+
   } else {
     if (position.x <= original_position.x - range_)
-      if (!is_explode_)
+      if (!is_explode_) {
         Destroy();
+      }
   }
   if (is_explode_) {
     if (time - time_explode_ == 40) {
@@ -137,7 +132,7 @@ void ElectricBall::Draw() {
   Projectile::Draw();
 }
 void ElectricBall::Destroy() {
-  if (is_destroy)
+  if (is_destroy || is_explode_)
     return;
   is_explode_   = true;
   time_explode_ = time;
@@ -148,7 +143,7 @@ void ElectricBall::Renew(Vector2 Nposition, bool to_left) {
   frame       = frame_list[0];
   is_explode_ = false;
 }
-void ElectricBall::StopY(float upper_bounce, float lower_bounce) {}
+void ElectricBall::StopY(bool stop_upper, bool stop_lower) {}
 
 ProjectileType ElectricBall::GetType() {
   return electric_ball;

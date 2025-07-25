@@ -1,6 +1,6 @@
 #pragma once
 #include <algorithm>
-#include <filesystem>
+#include <array>
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
@@ -35,23 +35,58 @@ struct EnemyInfo {
 };
 
 class ResManager {
-  std::unordered_map<std::string, Texture> mario_normal;
-  std::unordered_map<std::string, Texture> mario_star;
-  std::unordered_map<std::string, Texture> mario_fire;
-  std::unordered_map<std::string, Texture> luigi_normal;
-  std::unordered_map<std::string, Texture> luigi_star;
-  std::unordered_map<std::string, Texture> luigi_fire;
-  std::unordered_map<std::string, Texture> luigi_electric;
-  std::unordered_map<std::string, Texture> enemies;
-  std::unordered_map<std::string, Texture> icons;
-  std::unordered_map<std::string, Texture> tileset;
-  //std::unordered_map<std::string, Texture> backgrounds;
-  Texture background_ground;
+  std::unordered_map<std::string, Texture> textures_;
 
   std::unordered_map<std::string, Music> musics;
-  std::unordered_map<std::string, Sound> sounds;
+  std::array<std::string, 13> music_names = {
+    "bonus",
+    "boss",
+    "bowser_battle",
+    "castle_theme",
+    "choose_character",
+    "ending",
+    "final_battle",
+    "ground_theme",
+    "invincibility_theme",
+    "overworld",
+    "title",
+    "underground_theme",
+    "underwater_theme"};
 
-  //to store textures parsed from map
+  std::unordered_map<std::string, Sound> sounds;
+  std::array<std::string, 28> sound_names = {
+    "1up",
+    "beep",
+    "billfirework",
+    "bowserfall",
+    "brick",
+    "bump",
+    "castle_complete",
+    "coin",
+    "course_clear",
+    "fire",
+    "fireball",
+    "flagpole",
+    "gameover",
+    "gameover_unused",
+    "hurryup",
+    "item",
+    "jump",
+    "jumpsmall",
+    "kickkill",
+    "level_complete",
+    "life_lost",
+    "pause",
+    "pipepowerdown",
+    "powerup",
+    "stompswim",
+    "time-up_warning",
+    "vine",
+    "world_clear",
+  };
+
+    private:
+ //to store textures parsed from map
   std::map<int, Texture> tilesetMapStore;
   //to store block info
   std::vector<BlockInfo> blockInfoMapStore;
@@ -60,17 +95,13 @@ class ResManager {
   //to store enemies
   std::vector<EnemyInfo> enemyMapStore;
 
-
-public:
-  void LoadHelper(
-    const fs::path &img_path, std::string prefix,
-    std::unordered_map<std::string, Texture> &texture_map);
-
+  //load all textures, music, and sounds
   void LoadTextures();
   void LoadMusic();
   void LoadSounds();
 
-public:
+  public:
+
   ~ResManager();
   ResManager();
 
@@ -81,18 +112,23 @@ public:
   void LoadMap(const std::string &path);
   
   //getters for preloaded resources
-  Texture GetMario(char type, int idx);
-  Texture GetLuigi(char type, int idx);
-  Texture GetEnemy(int idx);
-  Texture GetTile(int idx);
-  Texture GetIcon(int idx);
-  Texture GetBackground(int idx);
-  Music GetMusic(std::string key);
-  Sound GetSound(std::string key);
+  const Texture &GetMario(char type) const;
+  const Texture &GetLuigi(char type) const;
+  const Texture &GetEnemy() const;
+  const Texture &GetTileset(char type) const;
+  const Texture &GetIcon() const;
+  const Texture &GetObject() const;
+  const Texture &GetElectricShot() const;
+  const Texture &GetBackground() const;
+  const Music &GetMusic(std::string key) const;
+  const Sound &GetSound(std::string key) const;
 
   //getters for maps
   std::map<int, Texture> GetTilesetMap() const;
   std::vector<BlockInfo> GetBlocksMap() const;
   Texture GetBackgroundMap() const;
   std::vector<EnemyInfo> GetEnemiesMap() const;
+
+  bool LoadMap(const std::string &path);
+
 };

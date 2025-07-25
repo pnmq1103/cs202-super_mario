@@ -1,4 +1,5 @@
 #pragma once
+#include "include/core/resource_manager.hpp"
 #include <raylib.h>
 
 enum CharacterType {
@@ -43,4 +44,5 @@ public:
   bool IsStarman();
   void Bounce();
   Rectangle GetRectangle();
+  bool IsToLeft();
 };

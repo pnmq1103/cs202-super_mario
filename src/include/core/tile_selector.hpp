@@ -9,32 +9,33 @@ class TileSelectorScene : public Scene {
 private:
   SceneType type_ = {TileSelector};
 
-  int &selected_tile_id_ref_;
+  int &select_gidx_ref_;
 
-  Texture ground_tiles_ = {};
-  std::unordered_map<int, Rectangle> ground_tiles_info_;
-  Rectangle boundary_ = {};
+  int first_gidx = 11; // need to support more first gidx
+
+  const Texture *sprite_sheet_ = {nullptr};
+  Rectangle boundary_          = {};
 
   int grid_rows_ = {0};
   int grid_cols_ = {0};
 
   float scroll_speed_ = {30};
-  std::vector<std::vector<int>> sprites_grid_;
 
   std::vector<Button> buttons_;
 
 public:
-  TileSelectorScene(int &selected_tile_id);
+  TileSelectorScene(int &g_select_idx);
   ~TileSelectorScene();
 
   void Init() override;
   void Update() override;
   void Draw() override;
+  void Resume() override;
   SceneType Type() override;
 
+private:
   void UpdateCamera();
 
-  void BuildSpriteGrid();
   void ChooseTile();
 
   void CreateButtons();

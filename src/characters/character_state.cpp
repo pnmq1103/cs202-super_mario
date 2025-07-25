@@ -23,9 +23,7 @@ CharacterState::CharacterState(
   time_star      = 0;
   x_stop         = INT_MIN;
 }
-CharacterState::~CharacterState() {
-  UnloadTexture(texture);
-}
+CharacterState::~CharacterState() {}
 
 void CharacterState::LoadFrameList(std::string address) {
   std::ifstream fin;
@@ -37,21 +35,27 @@ void CharacterState::LoadFrameList(std::string address) {
     float n;
     fin >> n;
     fin >> n;
-    rect.x = n * scale;
+    rect.x = n;
     fin >> n;
-    rect.y = n * scale;
+    rect.y = n;
     fin >> n;
-    rect.width = n * scale;
+    rect.width = n;
     fin >> n;
-    rect.height = n * scale;
+    rect.height = n;
     frame_list.push_back(rect);
   }
   fin.close();
 }
 
+Rectangle CharacterState::MakeDestRect(Rectangle rectangle) {
+  return {
+    position.x, position.y, rectangle.width * scale, rectangle.height * scale};
+}
+
 Rectangle CharacterState::GetRectangle() {
-  Rectangle rect
-    = {position.x, position.y, frame_list[0].width, frame_list[0].height};
+  Rectangle rect = {
+    position.x, position.y, frame_list[0].width * scale,
+    frame_list[0].height * scale};
   return rect;
 }
 
@@ -69,6 +73,13 @@ Vector2 CharacterState::GetSpeed() {
   return velocity;
 }
 
+bool CharacterState::IsToLeft() {
+  if (frame.width > 0)
+    return false;
+  else
+    return true;
+}
+
 void CharacterState::SetPosition(Vector2 Nposition) {
   position = Nposition;
 }
@@ -82,9 +93,11 @@ void CharacterState::Draw() {
   std::vector<Color> color_set
     = {RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, WHITE};
   if (time_star > 0) {
-    DrawTextureRec(texture, frame, position, color_set[(time_star / 5) % 7]);
+    DrawTexturePro(
+      *texture, frame, MakeDestRect(frame), {0, 0}, 0.f,
+      color_set[(time_star / 5) % 7]);
   } else
-    DrawTextureRec(texture, frame, position, WHITE);
+    DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
 }
 void CharacterState::Jump() {
   if (disabled)
@@ -130,7 +143,7 @@ void CharacterState::StopY(float Ny) {
   }
   is_fall    = false;
   velocity_y = -8.0 * jumpHeight / (jumpTime * jumpTime);
-  position.y = Ny - frame_list[0].height;
+  position.y = Ny - frame_list[0].height * scale;
   frame      = frame_list[0];
   if (to_left) {
     frame.width = -frame.width;
@@ -185,8 +198,6 @@ void CharacterState::Update() {
   }
 }
 void CharacterState::ToStarman() {
-  if (disabled)
-    return;
   time_star = 60 * 10;
 }
 bool CharacterState::IsStarman() {

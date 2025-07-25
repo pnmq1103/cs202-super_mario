@@ -1,9 +1,9 @@
 #pragma once
 #include <raylib.h>
-#include <unordered_map>
 #include <vector>
 
 #include "include/core/button.hpp"
+#include "include/core/map.hpp"
 #include "include/core/scene.hpp"
 
 class EditorScene : public Scene {
@@ -17,14 +17,9 @@ private:
   Rectangle boundary_ = {};
 
   Texture crosshair_ = {};
-  std::vector<int> tilemap_;
 
-  Texture ground_tiles_ = {};
-  std::unordered_map<int, Rectangle> ground_tiles_info_;
-
-  int selected_tile_id_       = {0};
-  int selected_enemy_id_      = {0};
-  int selected_background_id_ = {0};
+  int select_gidx_ = {0};
+  Map map_;
 
   std::vector<Button> buttons_;
   bool button_clicked_ = {false};
@@ -38,8 +33,8 @@ public:
   void Init() override;
   void Update() override;
   void Draw() override;
-  SceneType Type() override;
   void Resume() override;
+  SceneType Type() override;
 
   void PlaceBlock();
 
@@ -50,8 +45,6 @@ public:
   void CreateButtons();
   void UpdateButtons();
   void DrawButtons();
-
-  void LoadFile();
 };
 
 // Since the original game's resolution is 256x240 pixels

@@ -1,9 +1,8 @@
 #include "include/items/mushroom_powerup.hpp"
 
-MushroomPowerUp::MushroomPowerUp(Vector2 pos)
-  : PowerUp(pos, /*spriteId=*/1) {}
+MushroomPowerUp::MushroomPowerUp(Vector2 pos) : PowerUp(pos, /*spriteId=*/1) {}
 
-void MushroomPowerUp::ApplyEffect(Player& player) {
+void MushroomPowerUp::ApplyEffect() {
   // Player::Grow()
   Deactivate();
 }

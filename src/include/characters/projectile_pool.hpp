@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "include/characters/fireball.hpp"
+#include "include/collision/collision_handler.hpp"
 
 class ProjectilePool {
 private:
@@ -16,4 +17,10 @@ public:
   void SetFrameCount();
   void Update();
   void Draw();
+  
+  // Check if there are any active Mario fireballs
+  bool HasActiveMarioFireball() const;
+  
+  // Check if there is an active electric ball (Luigi)
+  bool HasActiveElectricBall() const;
 };

@@ -28,7 +28,6 @@
     <ClCompile Include="src\enemies\piranha_plant.cpp" />
     <ClCompile Include="src\characters\projectile.cpp" />
     <ClCompile Include="src\blocks\question_block.cpp" />
-    <ClCompile Include="src\core\scene.cpp" />
     <ClCompile Include="src\core\scene_stack.cpp" />
     <ClCompile Include="src\core\setting.cpp" />
     <ClCompile Include="src\core\slider.cpp" />
@@ -46,6 +45,12 @@
     <ClCompile Include="src\blocks\rock_block.cpp" />
     <ClCompile Include="src\blocks\ground_block.cpp" />
     <ClCompile Include="src\blocks\pipe_block.cpp" />
+    <ClCompile Include="src\core\enemy_selector.cpp" />
+    <ClCompile Include="src\core\map.cpp" />
+    <ClCompile Include="src\core\utility.cpp" />
+    <ClCompile Include="src\managers\block_manager.cpp" />
+    <ClCompile Include="src\managers\enemy_manager.cpp" />
+    <ClCompile Include="src\managers\item_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -79,7 +84,6 @@
     <ClInclude Include="src\include\core\setting.hpp" />
     <ClInclude Include="src\include\core\slider.hpp" />
     <ClInclude Include="src\include\characters\projectile_pool.hpp" />
-    <ClInclude Include="src\include\core\tileson.hpp" />
     <ClInclude Include="src\include\collision\collision_handler.hpp" />
     <ClInclude Include="src\include\external\json.hpp" />
     <ClInclude Include="src\include\external\tinyfiledialogs.h" />
@@ -90,10 +94,22 @@
     <ClInclude Include="src\include\blocks\rock_block.hpp" />
     <ClInclude Include="src\include\blocks\ground_block.hpp" />
     <ClInclude Include="src\include\blocks\pipe_block.hpp" />
+    <ClInclude Include="src\include\external\tileson.hpp" />
+    <ClInclude Include="src\include\core\enemy_selector.hpp" />
+    <ClInclude Include="src\include\core\map.hpp" />
+    <ClInclude Include="src\include\core\utility.hpp" />
+    <ClInclude Include="src\include\managers\block_manager.hpp" />
+    <ClInclude Include="src\include\managers\enemy_manager.hpp" />
+    <ClInclude Include="src\include\managers\item_manager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include=".gitignore" />
-    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\sprites\characters\enemies.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\sprites\characters\enemies.txt" />
   </ItemGroup>
 </Project>

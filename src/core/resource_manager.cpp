@@ -1,138 +1,73 @@
 ﻿#include <array>
-#include <fstream>
-#include <include/core/resource_manager.hpp>
+#include <stdexcept>
 
+#include "include/core/resource_manager.hpp"
 
 ResManager::~ResManager() {
-  auto Unload = [&](auto &map) {
-    for (auto &p : map)
-      UnloadTexture(p.second);
-    map.clear();
-  };
-  Unload(mario_normal);
-  Unload(mario_star);
-  Unload(mario_fire);
-  Unload(luigi_normal);
-  Unload(luigi_star);
-  Unload(luigi_fire);
-  Unload(luigi_electric);
-  Unload(enemies);
-  Unload(icons);
-  Unload(tileset);
-  UnloadTexture(background_ground);
+  for (auto &texture : textures_)
+    UnloadTexture(texture.second);
 
   for (auto &sound : sounds)
     UnloadSound(sound.second);
-  sounds.clear();
 
   for (auto &music : musics) {
     StopMusicStream(music.second);
     UnloadMusicStream(music.second);
   }
-  musics.clear();
 }
 
 ResManager::ResManager() {}
 
 void ResManager::Init() {
   LoadTextures();
-  LoadMusic();
   LoadSounds();
+  LoadMusic();
   LoadMap("res/sprite/map/map1.tmj");
 }
 
-void ResManager::LoadHelper(
-  const fs::path &img_path, std::string key,
-  std::unordered_map<std::string, Texture> &texture_map) {
-
-  // Load image
-  std::string path = img_path.string();
-  Image img        = LoadImage(path.c_str());
-
-  // Load info
-  fs::path info_path = img_path;
-  info_path.replace_extension(".txt");
-  std::ifstream fin(info_path);
-
-  if (!fin.is_open())
-    throw std::runtime_error("Could not open file");
-  if (!img.data)
-    throw std::runtime_error("Failed to load image");
-
-  std::vector<Rectangle> recs;
-  int id;
-  float x, y, width, height;
-  while (fin >> id) {
-    if (fin >> x >> y >> width >> height)
-      recs.push_back({x, y, width, height});
-    else
-      throw std::runtime_error("malformed input");
-  }
-
-  // Fill the texture map
-  for (size_t i = 0; i < recs.size(); ++i) {
-    std::string tmp_key = key + "_" + std::to_string(i + 1);
-    Rectangle cropRec   = {recs[i].x, recs[i].y, recs[i].width, recs[i].height};
-
-    Image cropped_img    = ImageFromImage(img, cropRec);
-    Texture cropped_txtr = LoadTextureFromImage(cropped_img);
-
-    texture_map[tmp_key] = cropped_txtr;
-
-    // Cleanup after each loop
-    UnloadImage(cropped_img);
-  }
-
-  recs.clear();
-  UnloadImage(img);
-}
-
 void ResManager::LoadTextures() {
-  LoadHelper("res/sprites/characters/mario_normal.png", "n", mario_normal);
-  LoadHelper("res/sprites/characters/mario_star.png", "s", mario_star);
-  LoadHelper("res/sprites/characters/mario_fire.png", "f", mario_fire);
+  textures_["mario_normal"]
+    = LoadTexture("res/sprites/characters/mario_normal.png");
+  textures_["mario_star"]
+    = LoadTexture("res/sprites/characters/mario_star.png");
+  textures_["mario_fire"]
+    = LoadTexture("res/sprites/characters/mario_fire.png");
 
-  LoadHelper("res/sprites/characters/luigi_normal.png", "n", luigi_normal);
-  LoadHelper("res/sprites/characters/luigi_star.png", "s", luigi_star);
-  LoadHelper("res/sprites/characters/luigi_fire.png", "f", luigi_fire);
-  LoadHelper("res/sprites/characters/luigi_electric.png", "e", luigi_electric);
+  textures_["luigi_normal"]
+    = LoadTexture("res/sprites/characters/luigi_normal.png");
+  textures_["luigi_star"]
+    = LoadTexture("res/sprites/characters/luigi_star.png");
+  textures_["luigi_fire"]
+    = LoadTexture("res/sprites/characters/luigi_fire.png");
+  textures_["luigi_electric"]
+    = LoadTexture("res/sprites/characters/luigi_electric.png");
 
-  LoadHelper("res/sprites/characters/enemies.png", "enemy_", enemies);
+  textures_["enemies"] = LoadTexture("res/sprites/enemies/enemies.png");
+  textures_["icons"]   = LoadTexture("res/sprites/icons/icons.png");
+  textures_["objects"] = LoadTexture("res/sprites/icons/objects.png");
+  textures_["electric_shot"]
+    = LoadTexture("res/sprites/electric_shot/electric_shot.png");
 
-  LoadHelper("res/sprites/tilesets/tileset_ground.png", "tile_", tileset);
-  LoadHelper("res/sprites/tilesets/tileset_underground.png", "tile_", tileset);
+  textures_["tileset_ground"]
+    = LoadTexture("res/sprites/tilesets/tileset_ground.png");
+  textures_["tileset_sky"]
+    = LoadTexture("res/sprites/tilesets/tileset_sky.png");
+  textures_["tileset_underground"]
+    = LoadTexture("res/sprites/tilesets/tileset_underground.png");
+  textures_["tileset_water"]
+    = LoadTexture("res/sprites/tilesets/tileset_underwater.png");
 
-  LoadHelper("res/sprites/icons/block_objects.png", "icons_", icons);
-  LoadHelper("res/sprites/icons/objects.png", "icons_", icons);
-
-  /*LoadHelper(
-    "res/sprites/backgrounds/backgrounds.png", "background_", backgrounds);*/
-  background_ground = LoadTextureFromImage(
-    LoadImage("res/sprites/backgrounds/background_ground.png"));
+  textures_["backgrounds"]
+    = LoadTexture("res/sprites/backgrounds/backgrounds.png");
 }
 
 void ResManager::LoadMusic() {
   auto Load = [this](const std::string &name) {
-    musics[name] = LoadMusicStream(("res/music/" + name + ".ogg").c_str());
+    musics[name] = LoadMusicStream(("res/musics/" + name + ".ogg").c_str());
   };
 
-  std::array<std::string, 13> names = {
-    "bonus",
-    "boss",
-    "bowser_battle",
-    "castle_theme",
-    "choose_character",
-    "ending",
-    "final_battle",
-    "ground_theme",
-    "invincibility_theme",
-    "overworld",
-    "title",
-    "underground_theme",
-    "underwater_theme"};
-
-  for (const auto &name : names)
-    Load(name);
+  for (const auto &music : music_names)
+    Load(music);
 }
 
 void ResManager::LoadSounds() {
@@ -140,39 +75,8 @@ void ResManager::LoadSounds() {
     sounds[name] = LoadSound(("res/sounds/" + name + ".wav").c_str());
   };
 
-  std::array<std::string, 28> names = {
-    "1up",
-    "beep",
-    "billfirework",
-    "bowserfall",
-    "brick",
-    "bump",
-    "castle_complete",
-    "coin",
-    "course_clear",
-    "fire",
-    "fireball",
-    "flagpole",
-    "gameover",
-    "gameover_unused",
-    "hurryup",
-    "item",
-    "jump",
-    "jumpsmall",
-    "kickkill",
-    "level_complete",
-    "life_lost",
-    "pause",
-    "pipepowerdown",
-    "powerup",
-    "stompswim",
-    "time-up_warning",
-    "vine",
-    "world_clear",
-  };
-
-  for (const auto &name : names)
-    Load(name);
+  for (const auto &sound : sound_names)
+    Load(sound);
 }
 
 // SaveData ResManager::LoadResourcesFromFile() {
@@ -197,96 +101,77 @@ void ResManager::LoadSounds() {
 //   return fp.SaveFile(path, data);
 // }
 
-Texture ResManager::GetMario(char type, int idx) {
-  std::string key = std::string(1, type) + std::to_string(idx);
-  std::unordered_map<std::string, Texture> *form;
+const Texture &ResManager::GetMario(char type) const {
   switch (type) {
     case 'n':
-      form = &mario_normal;
-      break;
+      return textures_.at("mario_normal");
     case 's':
-      form = &mario_star;
-      break;
+      return textures_.at("mario_star");
     case 'f':
-      form = &mario_fire;
-      break;
+      return textures_.at("mario_fire");
     default:
       throw std::runtime_error("Invalid Mario type");
   }
-
-  auto it = form->find(key);
-  if (it == form->end())
-    throw std::out_of_range("Missing character");
-  return it->second;
 }
 
-Texture ResManager::GetLuigi(char type, int idx) {
-  std::string key = std::string(1, type) + std::to_string(idx);
-  std::unordered_map<std::string, Texture> *form = nullptr;
+const Texture &ResManager::GetLuigi(char type) const {
   switch (type) {
     case 'n':
-      form = &luigi_normal;
-      break;
+      return textures_.at("luigi_normal");
     case 's':
-      form = &luigi_star;
-      break;
+      return textures_.at("luigi_star");
     case 'f':
-      form = &luigi_fire;
-      break;
+      return textures_.at("luigi_fire");
     case 'e':
-      form = &luigi_electric;
-      break;
+      return textures_.at("luigi_electric");
     default:
       throw std::runtime_error("Invalid Luigi type");
   }
-
-  auto it = form->find(key);
-  if (it == form->end())
-    throw std::out_of_range("Missing character");
-  return it->second;
 }
 
-Texture ResManager::GetEnemy(int idx) {
-  std::string key = "enemy_" + std::to_string(idx);
-  auto it         = enemies.find(key);
-  if (it == enemies.end())
-    throw std::out_of_range("Missing enemy");
-  return it->second;
+const Texture &ResManager::GetEnemy() const {
+  return textures_.at("enemies");
 }
 
-Texture ResManager::GetTile(int idx) {
-  std::string key = "tile_" + std::to_string(idx);
-  auto it         = tileset.find(key);
-  if (it == tileset.end())
-    throw std::out_of_range("Missing tile");
-  return it->second;
+const Texture &ResManager::GetTileset(char type) const {
+  switch (type) {
+    case 'g':
+      return textures_.at("tileset_ground");
+    case 's':
+      return textures_.at("tileset_sky");
+    case 'w':
+      return textures_.at("tileset_water");
+    case 'u':
+      return textures_.at("tileset_underground");
+    default:
+      throw std::runtime_error("Invalid tileset type");
+  }
 }
 
-Texture ResManager::GetIcon(int idx) {
-  std::string key = "icon_" + std::to_string(idx);
-  auto it         = icons.find(key);
-  if (it == icons.end())
-    throw std::out_of_range("Missing icon");
-  return it->second;
+const Texture &ResManager::GetIcon() const {
+  return textures_.at("icons");
 }
 
-Texture ResManager::GetBackground(int idx) {
-  /*std::string key = "background_" + std::to_string(idx);
-  auto it         = backgrounds.find(key);
-  if (it == backgrounds.end())
-    throw std::out_of_range("Missing background");
-  return it->second;*/
-  return background_ground;
+const Texture &ResManager::GetObject() const {
+  return textures_.at("objects");
 }
 
-Music ResManager::GetMusic(std::string key) {
+const Texture &ResManager::GetElectricShot() const {
+  return textures_.at("electric_shot");
+}
+
+const Texture &ResManager::GetBackground() const {
+  return textures_.at("backgrounds");
+}
+
+const Music &ResManager::GetMusic(std::string key) const {
   auto it = musics.find(key);
   if (it == musics.end())
     throw std::out_of_range("Missing music");
   return it->second;
 }
 
-Sound ResManager::GetSound(std::string key) {
+const Sound &ResManager::GetSound(std::string key) const {
   auto it = sounds.find(key);
   if (it == sounds.end())
     throw std::out_of_range("Missing sound");

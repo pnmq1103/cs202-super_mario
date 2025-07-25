@@ -23,7 +23,7 @@ void ProjectilePool::ShootEnemyFireball(Vector2 Nposition, bool to_left) {
   for (int i = 3; i < 6; ++i) {
     if (projectile_list_[i]->IsDestroyed()) {
       projectile_list_[i]->Renew(Nposition, to_left);
-      break;
+      return;
     }
   }
 }
@@ -42,4 +42,17 @@ void ProjectilePool::Update() {
 void ProjectilePool::Draw() {
   for (int i = 0; i < 7; ++i)
     projectile_list_[i]->Draw();
+}
+
+bool ProjectilePool::HasActiveMarioFireball() const {
+  for (int i = 0; i < 3; ++i) {
+    if (!projectile_list_[i]->IsDestroyed()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool ProjectilePool::HasActiveElectricBall() const {
+  return !projectile_list_[6]->IsDestroyed();
 }

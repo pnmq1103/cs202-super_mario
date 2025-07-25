@@ -31,6 +31,9 @@ Block::Block(
 int Block::GetGid() const {
   return Gid;
 }
+void Block::Update(float dt) {}
+
+void Block::OnHit() {}
 
 Vector2 Block::GetPosition() const {
   return position;
@@ -83,7 +86,7 @@ void Block::SetSize(Vector2 s) {
 void Block::SetType(int t) {
   type = fromInt(t);
 }
-    bool Block::CheckCollision(Rectangle other) const {
+bool Block::CheckCollision(Rectangle other) const {
   return CheckCollisionRecs(GetRect(), other);
 }
 

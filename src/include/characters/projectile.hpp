@@ -1,4 +1,5 @@
 #pragma once
+#include "include/core/application.hpp"
 #include <fstream>
 #include <iostream>
 #include <raylib.h>
@@ -12,7 +13,7 @@ enum ProjectileType {
 
 class Projectile {
 protected:
-  Texture texture;
+  const Texture *texture;
   Rectangle frame;
   std::vector<Rectangle> frame_list;
   Vector2 position, velocity, original_position;
@@ -20,6 +21,7 @@ protected:
   bool is_destroy;
   const float scale;
   void LoadFrameList(std::string address);
+  Rectangle MakeDestRect(Rectangle rectangle);
 
 public:
   Projectile(float Nscale, Vector2 Nvelocity);
@@ -31,6 +33,6 @@ public:
   virtual void Destroy();
   bool IsDestroyed();
   virtual void Renew(Vector2 Nposition, bool to_left);
-  virtual void StopY(float upper_bounce, float lower_bounce) = 0;
-  virtual ProjectileType GetType()                           = 0;
+  virtual void StopY(bool stop_upper, bool stop_lower) = 0;
+  virtual ProjectileType GetType()                     = 0;
 };

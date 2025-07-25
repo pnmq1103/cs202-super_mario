@@ -13,25 +13,17 @@ NormalLuigi::NormalLuigi(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
     : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
   if (!is_evolving) {
-    disabled    = true;
-    Image image = LoadImage("res/sprites/characters/luigi_star.png");
-    ImageResize(&image, image.width * scale, image.height * scale);
-    pre_texture_ = LoadTextureFromImage(image);
-    UnloadImage(image);
-    pre_frame_ = {254 * scale, 0, 14 * scale, 27 * scale};
+    disabled     = true;
+    pre_texture_ = &App.Resource().GetLuigi('s');
+    pre_frame_   = {254, 0, 14, 27};
   }
-  Image image = LoadImage("res/sprites/characters/luigi_normal.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
+  texture = &App.Resource().GetLuigi('n');
   context = Ncontext;
-  LoadFrameList("res/sprites/characters/luigi_normal.txt");
+  LoadFrameList("res/sprites/characters/normal.txt");
   frame = frame_list[0];
 };
 
-NormalLuigi::~NormalLuigi() {
-  UnloadTexture(pre_texture_);
-}
+NormalLuigi::~NormalLuigi() {}
 
 void NormalLuigi::Die() {
   if (disabled)
@@ -71,17 +63,18 @@ void NormalLuigi::Draw() {
         frame.width = -abs(frame.width);
       } else
         frame.width = abs(frame.width);
-      DrawTextureRec(texture, frame, position, WHITE);
+      DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
     } else {
       if (to_left) {
         pre_frame_.width = -abs(pre_frame_.width);
       } else
         pre_frame_.width = abs(pre_frame_.width);
-      DrawTextureRec(pre_texture_, pre_frame_, position, WHITE);
+      DrawTexturePro(
+        *pre_texture_, pre_frame_, MakeDestRect(pre_frame_), {0, 0}, 0.f,
+        WHITE);
     }
     if (time == 30) {
       disabled = false;
-      UnloadTexture(pre_texture_);
     }
   } else {
     CharacterState::Draw();
@@ -95,30 +88,22 @@ void NormalLuigi::Draw() {
 BigLuigi::BigLuigi(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
     : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
-  disabled    = true;
-  Image image = LoadImage("res/sprites/characters/luigi_star.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
-  context = Ncontext;
-  LoadFrameList("res/sprites/characters/luigi_star.txt");
+  disabled = true;
+  texture  = &App.Resource().GetLuigi('s');
+  context  = Ncontext;
+  LoadFrameList("res/sprites/characters/powerup.txt");
   frame = frame_list[0];
 
   if (is_evolving) {
-    image      = LoadImage("res/sprites/characters/luigi_normal.png");
-    pre_frame_ = {0, 0, 12 * scale, 15 * scale};
+    pre_texture_ = &App.Resource().GetLuigi('n');
+    pre_frame_   = {0, 0, 12, 15};
   } else {
-    image      = LoadImage("res/sprites/characters/luigi_electric.png");
-    pre_frame_ = frame_list[0];
+    pre_texture_ = &App.Resource().GetLuigi('e');
+    pre_frame_   = frame_list[0];
   }
-  ImageResize(&image, image.width * scale, image.height * scale);
-  pre_texture_ = LoadTextureFromImage(image);
-  UnloadImage(image);
 }
 
-BigLuigi::~BigLuigi() {
-  UnloadTexture(pre_texture_);
-}
+BigLuigi::~BigLuigi() {}
 
 void BigLuigi::Die() {
   if (disabled)
@@ -162,16 +147,16 @@ void BigLuigi::Draw() {
         frame.width = -abs(frame.width);
       } else
         frame.width = abs(frame.width);
-      DrawTextureRec(texture, frame, position, WHITE);
+      DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
     } else {
       if (to_left) {
         pre_frame_.width = -abs(pre_frame_.width);
       } else
         pre_frame_.width = abs(pre_frame_.width);
-      DrawTextureRec(pre_texture_, pre_frame_, position, WHITE);
+      DrawTexturePro(
+        *pre_texture_, pre_frame_, MakeDestRect(pre_frame_), {0, 0}, 0.f,
+        WHITE);
     }
-    if (time == 30)
-      UnloadTexture(pre_texture_);
   } else {
     disabled = false;
     CharacterState::Draw();
@@ -185,26 +170,18 @@ void BigLuigi::Draw() {
 FireLuigi::FireLuigi(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
     : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
-  LoadFrameList("res/sprites/characters/luigi_star.txt");
+  LoadFrameList("res/sprites/characters/powerup.txt");
   if (is_evolving) {
-    disabled    = true;
-    Image image = LoadImage("res/sprites/characters/luigi_star.png");
-    ImageResize(&image, image.width * scale, image.height * scale);
-    pre_texture_ = LoadTextureFromImage(image);
-    UnloadImage(image);
-    pre_frame_ = frame_list[0];
+    disabled     = true;
+    pre_texture_ = &App.Resource().GetLuigi('s');
+    pre_frame_   = frame_list[0];
   }
-  Image image = LoadImage("res/sprites/characters/luigi_electric.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
+  texture = &App.Resource().GetLuigi('e');
   context = Ncontext;
   frame   = frame_list[0];
 };
 
-FireLuigi::~FireLuigi() {
-  UnloadTexture(pre_texture_);
-}
+FireLuigi::~FireLuigi() {}
 
 void FireLuigi::Die() {
   if (disabled)
@@ -246,17 +223,18 @@ void FireLuigi::Draw() {
         frame.width = -abs(frame.width);
       } else
         frame.width = abs(frame.width);
-      DrawTextureRec(texture, frame, position, WHITE);
+      DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
     } else {
       if (to_left) {
         pre_frame_.width = -abs(pre_frame_.width);
       } else
         pre_frame_.width = abs(pre_frame_.width);
-      DrawTextureRec(pre_texture_, pre_frame_, position, WHITE);
+      DrawTexturePro(
+        *pre_texture_, pre_frame_, MakeDestRect(pre_frame_), {0, 0}, 0.f,
+        WHITE);
     }
     if (time == 30) {
       disabled = false;
-      UnloadTexture(pre_texture_);
     }
   } else {
     CharacterState::Draw();

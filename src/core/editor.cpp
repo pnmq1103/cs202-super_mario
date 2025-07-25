@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -8,10 +7,11 @@
 
 #include "include/core/application.hpp"
 #include "include/core/editor.hpp"
+#include "include/core/enemy_selector.hpp"
+#include "include/core/file_handler.hpp"
 #include "include/core/tile_selector.hpp"
-#include "include/external/tinyfiledialogs.h"
 
-EditorScene::EditorScene() {
+EditorScene::EditorScene() : map_(block_width_, block_height_) {
   camera_.target   = {0, 0};
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
@@ -22,24 +22,15 @@ EditorScene::EditorScene() {
   boundary_    = {
     0 + buffer, 0 + buffer, blockSize * block_width_ - 2 * buffer,
     blockSize * block_height_ - 2 * buffer};
-
-  tilemap_.resize(block_width_ * block_height_, 0);
-
-  buttons_.reserve(3);
 }
 
 EditorScene::~EditorScene() {
   UnloadTexture(crosshair_);
-  UnloadTexture(ground_tiles_);
 }
 
 void EditorScene::Init() {
   crosshair_ = LoadTexture("res/sprites/crosshairs/crosshair028.png");
-
-  ground_tiles_ = LoadTexture("res/sprites/tilesets/tileset_ground.png");
-  Scene::ReadSpriteInfo(
-    "res/sprites/tilesets/tileset_ground.txt", ground_tiles_info_);
-
+  map_.Init();
   CreateButtons();
 }
 
@@ -63,18 +54,19 @@ void EditorScene::Update() {
     snapped_.y = std::floor(mouse_world_pos_.y / blockSize) * blockSize;
   }
 
-  if (IsKeyDown(KEY_SPACE)) {
-    float tile_x = std::floor(mouse_world_pos_.x / blockSize);
-    float tile_y = std::floor(mouse_world_pos_.y / blockSize);
+  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && IsKeyDown(KEY_SPACE)) {
+    float col = std::floor(mouse_world_pos_.x / blockSize);
+    float row = std::floor(mouse_world_pos_.y / blockSize);
     if (Vector2Equals(drag_delta_, {0, 0}) == false) {
-      drag_delta_ = Vector2Subtract({tile_x, tile_y}, drag_delta_);
-      int dx      = static_cast<int>(drag_delta_.x);
-      int dy      = static_cast<int>(drag_delta_.y);
-      int idx = static_cast<int>(dy * 16 + dx); // Only true for this tileset
+      drag_delta_   = Vector2Subtract({col, row}, drag_delta_);
+      int dx        = static_cast<int>(drag_delta_.x);
+      int dy        = static_cast<int>(drag_delta_.y);
+      int grid_cols = static_cast<int>(map_.GetTexture(1).width / cellSize);
+      int idx       = static_cast<int>(dy * grid_cols + dx);
 
-      selected_tile_id_ += idx;
+      select_gidx_ += idx;
     }
-    drag_delta_ = {tile_x, tile_y};
+    drag_delta_ = {col, row};
   } else if (IsKeyUp(KEY_SPACE))
     drag_delta_ = {0, 0};
 
@@ -90,27 +82,27 @@ void EditorScene::Draw() {
   DrawButtons();
 }
 
-SceneType EditorScene::Type() {
-  return type_;
-}
-
 void EditorScene::Resume() {
   button_clicked_ = false;
 }
 
+SceneType EditorScene::Type() {
+  return type_;
+}
+
 void EditorScene::PlaceBlock() {
-  float tile_x = std::floor(mouse_world_pos_.x / blockSize);
-  float tile_y = std::floor(mouse_world_pos_.y / blockSize);
-  int idx      = static_cast<int>(tile_y * block_width_ + tile_x);
+  float col = std::floor(mouse_world_pos_.x / blockSize);
+  float row = std::floor(mouse_world_pos_.y / blockSize);
+  int pos   = static_cast<int>(row * block_width_ + col);
 
   if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
     if (CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
       App.Media().PlaySound("beep");
-      tilemap_[idx] = selected_tile_id_;
+      map_.SetTile(pos, select_gidx_);
     }
   } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
-      tilemap_[idx] = 0;
+      map_.SetTile(pos, 0);
   }
 }
 
@@ -146,10 +138,10 @@ void EditorScene::DrawMap() {
   BeginMode2D(camera_);
   for (int y = 0; y < block_height_; ++y) {
     for (int x = 0; x < block_width_; ++x) {
-      int idx = y * block_width_ + x;
-      if (tilemap_[idx] != 0) {
+      int gidx = map_.GetTile(y * block_width_ + x);
+      if (gidx != 0) {
         DrawTexturePro(
-          ground_tiles_, ground_tiles_info_[tilemap_[idx]],
+          map_.GetTexture(gidx), map_.GetInfo(gidx),
           {x * blockSize, y * blockSize, blockSize, blockSize}, {0, 0}, 0,
           WHITE);
       }
@@ -163,9 +155,11 @@ void EditorScene::DrawCursor() {
 
   BeginMode2D(camera_);
   //  Draw tile
-  DrawTexturePro(
-    ground_tiles_, ground_tiles_info_[selected_tile_id_],
-    {snapped_.x, snapped_.y, blockSize, blockSize}, {0, 0}, 0, transparent);
+  if (select_gidx_ != 0)
+    DrawTexturePro(
+      map_.GetTexture(select_gidx_), map_.GetInfo(select_gidx_),
+      {snapped_.x, snapped_.y, blockSize, blockSize}, {0, 0}, 0, transparent);
+
   // Draw crosshair
   DrawTexturePro(
     crosshair_, {0, 0, 64, 64}, {snapped_.x, snapped_.y, blockSize, blockSize},
@@ -174,20 +168,34 @@ void EditorScene::DrawCursor() {
 }
 
 void EditorScene::CreateButtons() {
+  buttons_.reserve(3);
+  Rectangle source = {0, 0, 16, 16};
+  Rectangle dest   = {100, 100, 64, 64};
+
   // Choose tile
   buttons_.emplace_back(
-    "Overworld",
+    "Tilset",
     [this] {
-      App.ChangeScene(std::make_unique<TileSelectorScene>(selected_tile_id_));
+      App.ChangeScene(std::make_unique<TileSelectorScene>(select_gidx_));
     },
-    Rectangle{0, 0, 16, 16}, Rectangle{100, 100, 64, 64},
-    "res/sprites/buttons/choose_ground_tile.png");
+    source, dest, "res/sprites/buttons/choose_ground_tile.png");
 
   // Choose enemy
-  // Implement EnemySelectorScene
+  dest = {300, 100, 64, 64};
+  buttons_.emplace_back(
+    "Enemy",
+    [this] {
+      App.ChangeScene(std::make_unique<EnemySelectorScene>(select_gidx_));
+    },
+    source, dest, "res/sprites/buttons/choose_underground_tile.png");
 
-  // Choose background
-  // Implement BackgroundSelectorScene
+  dest = {500, 100, 64, 64};
+  buttons_.emplace_back(
+    "Save",
+    [this] {
+      FileHandler::SaveMapToFile(map_);
+    },
+    source, dest, "res/sprites/buttons/save.png");
 }
 
 void EditorScene::UpdateButtons() {
@@ -201,22 +209,4 @@ void EditorScene::UpdateButtons() {
 void EditorScene::DrawButtons() {
   for (size_t i = 0; i < buttons_.size(); ++i)
     buttons_[i].Draw();
-}
-
-void EditorScene::LoadFile() {
-  const char *filter[]  = {"*.txt"};
-  const char *file_path = tinyfd_openFileDialog(
-    "Select map",
-    "", // (last used folder)
-    1, filter, "Text file (*.txt)", 0);
-
-  if (file_path) {
-    std::cout << "Trying to open " << file_path << '\n';
-    std::ifstream fin(file_path);
-    if (fin.is_open()) {
-    } else {
-      throw std::runtime_error("invalid file");
-    }
-    fin.close();
-  }
 }

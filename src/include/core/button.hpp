@@ -9,7 +9,7 @@ public:
 
   std::string label_ = {};
   Rectangle bounds_  = {};
-  Rectangle source_  = {};
+  Rectangle dest_    = {};
   Texture icon_      = {};
 
 public:

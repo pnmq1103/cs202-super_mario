@@ -1,7 +1,7 @@
 #pragma once
 #include <raylib.h>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 enum class BlockType {
       Empty,
@@ -39,11 +39,13 @@ public:
   //virtual functions
   virtual ~Block() = default;
   virtual Block *Clone() const = 0;
-  virtual void Update(float dt) = 0;
-  virtual void OnHit() = 0;
-
+  virtual void Update(float dt);
+  virtual void OnHit();
+  
   //getters and setters
   int GetGid() const;
+
+
   Vector2 GetPosition() const;
   Rectangle GetRect() const;
   BlockType GetType() const;

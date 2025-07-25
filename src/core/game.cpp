@@ -29,7 +29,6 @@ GameScene::~GameScene() {
 
 void GameScene::Init() {
   App.Media().PlayMusic("ground_theme");
-
   // Create Mario character
   mario_character_ = new Character(4.0f);
   mario_character_->SetCharacter(CharacterType::MARIO, {100.0f, 500.0f});
@@ -101,6 +100,8 @@ void GameScene::Draw() {
   DrawText(
     "ESC: Back to menu", 10, controlsStartY + lineSpacing * 5, 20, DARKBLUE);
 }
+
+void GameScene::Resume() {}
 
 SceneType GameScene::Type() {
   return type_;
