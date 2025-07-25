@@ -1,5 +1,5 @@
 #pragma once
-#include "enemies/enemy.hpp"
+#include "include/enemies/enemy.hpp"
 #include <vector>
 #include <memory>
 

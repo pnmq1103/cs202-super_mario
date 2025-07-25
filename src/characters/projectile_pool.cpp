@@ -43,3 +43,16 @@ void ProjectilePool::Draw() {
   for (int i = 0; i < 7; ++i)
     projectile_list_[i]->Draw();
 }
+
+bool ProjectilePool::HasActiveMarioFireball() const {
+  for (int i = 0; i < 3; ++i) {
+    if (!projectile_list_[i]->IsDestroyed()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool ProjectilePool::HasActiveElectricBall() const {
+  return !projectile_list_[6]->IsDestroyed();
+}
