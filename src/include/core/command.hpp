@@ -3,12 +3,16 @@
 
 #include "include/characters/character.hpp"
 
+// Forward declaration
+class ProjectilePool;
+
 class Command {
 private:
   Character *mario_            = {nullptr};
   Character *luigi_            = {nullptr};
   Character *active_character_ = {nullptr};
   bool fireball_active_        = {false}; // Only allow one fireball at a time
+  ProjectilePool *projectile_pool_ = {nullptr}; // Reference to projectile pool
 
 public:
   Command(Character *mario = nullptr, Character *luigi = nullptr);
@@ -17,6 +21,9 @@ public:
   // Set Mario and Luigi pointers
   void SetMario(Character *mario);
   void SetLuigi(Character *luigi);
+
+  // Set the projectile pool reference
+  void SetProjectilePool(ProjectilePool *projectile_pool);
 
   // Set the active character to control
   void SetActiveCharacter(Character *character);
@@ -28,10 +35,10 @@ public:
   // Main input handling method
   void HandleInput();
 
-  // Individual command methods
+  // Individual command methods - ARROW KEYS ONLY
   void MoveCharacter(bool left);
   void StopCharacter();
-  void JumpCharacter();
+  void JumpCharacter(); // Added back for UP arrow key
   void ShootFireball();
 
   // Fireball state management

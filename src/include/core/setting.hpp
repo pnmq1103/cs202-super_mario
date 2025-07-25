@@ -2,6 +2,7 @@
 #include "include/core/button.hpp"
 #include "include/core/scene.hpp"
 #include "include/core/slider.hpp"
+#include <cmath>
 
 class SettingScene : public Scene {
 private:

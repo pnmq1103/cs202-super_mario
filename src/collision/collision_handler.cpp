@@ -113,7 +113,7 @@ void CollisionHandler::UpdateToGrid(int type, int index, Rectangle rectangle) {
 }
 
 void CollisionHandler::AddCharacter(Character *character) {
-  if (!character_ && character) {
+  if (character) {
     character_ = character;
   }
 }
@@ -183,11 +183,23 @@ void CollisionHandler::UpdatePosition() {
       UpdateToGrid(3, i, enemy_list_[i]->GetRect());
     }
   }
-  for (int i = 0; i < spawnedItems_->size(); ++i) {
-    if ((*spawnedItems_)[i] && (*spawnedItems_)[i]->IsActive()) {
-      UpdateToGrid(4, i, (*spawnedItems_)[i]->GetRect());
+  if (spawnedItems_) {
+    for (int i = 0; i < spawnedItems_->size(); ++i) {
+      if ((*spawnedItems_)[i] && (*spawnedItems_)[i]->IsActive()) {
+        UpdateToGrid(4, i, (*spawnedItems_)[i]->GetRect());
+      }
     }
   }
+}
+        
+// Temporary implementation for collision checking
+void CollisionHandler::CheckCollision() {
+  if (!character_) return;
+  
+  UpdatePosition();
+  CheckCollisionCharacter();
+  CheckCollisionProjectile();
+  CheckCollisionEnemy();
 }
 
 void CollisionHandler::CheckCollisionCharacter() {
@@ -225,7 +237,7 @@ void CollisionHandler::CheckCollisionCharacter() {
           else
             character_->Die();
         }
-      } else if (type == 4) {
+      } else if (type == 4 && spawnedItems_) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
           switch ((*spawnedItems_)[index]->GetType()) {
@@ -290,7 +302,7 @@ void CollisionHandler::CheckCollisionCharacter() {
           else
             character_->Die();
         }
-      } else if (type == 4) {
+      } else if (type == 4 && spawnedItems_) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
           switch ((*spawnedItems_)[index]->GetType()) {
@@ -355,7 +367,7 @@ void CollisionHandler::CheckCollisionCharacter() {
           else
             character_->Die();
         }
-      } else if (type == 4) {
+      } else if (type == 4 && spawnedItems_) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
           switch ((*spawnedItems_)[index]->GetType()) {
@@ -423,7 +435,7 @@ void CollisionHandler::CheckCollisionCharacter() {
               character_->Bounce();
           }
         }
-      } else if (type == 4) {
+      } else if (type == 4 && spawnedItems_) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
           switch ((*spawnedItems_)[index]->GetType()) {

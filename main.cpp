@@ -1,4 +1,4 @@
-#include "include/core/application.hpp"
+/*#include "include/core/application.hpp"
 #include <raylib.h>
 
 int main() {
@@ -14,10 +14,12 @@ int main() {
 
   CloseWindow();
   return 0;
-}
+}*/
 
-/*#include "include/characters/character.hpp"
+#include "include/characters/character.hpp"
+#include "include/characters/projectile_pool.hpp"
 #include "include/core/application.hpp"
+#include "include/core/command.hpp"
 #include "include/core/game_managing.hpp"
 #include <cmath>
 #include <iostream>
@@ -27,6 +29,7 @@ int main() {
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
 class Collision {
 private:
   const float cellSize_;
@@ -52,14 +55,26 @@ public:
 };
 
 int main() {
-  InitWindow(3000, 1000, "super mario");
+  InitWindow(3000, 1000, "Super Mario - Arrow Keys Only");
   SetTargetFPS(60);
   App.Resource().Init();
-  Character character(5);
-  character.SetCharacter(LUIGI, {200, 300});
+  
+  // Create both Mario and Luigi for character switching
+  Character mario(5);
+  mario.SetCharacter(MARIO, {200, 300});
+  
+  Character luigi(5);
+  luigi.SetCharacter(LUIGI, {300, 300});
+  
   Rectangle rect1 = {2000, 400, 100, 100};
+  ProjectilePool pool;
+  
+  // Create Command system with BOTH characters for TAB switching
+  Command inputCommand(&mario, &luigi);
+  inputCommand.SetProjectilePool(&pool);
+  
   Collision collision(3000.0, 1000.0);
-  collision.AddCharacter(&character);
+  collision.AddCharacter(inputCommand.GetActiveCharacter());
   collision.AddRectangle(&rect1);
   collision.PrintGrid();
 
@@ -68,29 +83,65 @@ int main() {
     ClearBackground(BLACK);
     DrawRectangleRec(rect1, BLUE);
 
-    collision.Check();
+    // Use Command system for input handling (Arrow Keys + TAB)
+    inputCommand.HandleInput();
+    
+    // Get active character for ALL operations
+    Character* activeCharacter = inputCommand.GetActiveCharacter();
+    
+    if (activeCharacter) {
+      // Update collision handler with current active character
+      collision.AddCharacter(activeCharacter);
+      collision.Check();
 
-    Rectangle rect1 = character.GetRectangle();
-
-    Rectangle rect = character.GetRectangle();
-    if (rect.y + rect.height >= 500) {
-      character.StopY(500);
+      // Ground collision only for active character
+      Rectangle rect = activeCharacter->GetRectangle();
+      if (rect.y + rect.height >= 500) {
+        activeCharacter->StopY(500);
+      }
+      
+      // Update ONLY the active character
+      activeCharacter->SetFrameCount();
+      activeCharacter->Update();
+      
+      // Draw ONLY the active character
+      activeCharacter->Draw();
     }
 
-    character.SetFrameCount();
-    character.Update();
-    character.Draw();
+    // Update and draw projectiles
+    pool.SetFrameCount();
+    pool.Update();
+    pool.Draw();
 
-    if (IsKeyDown(KEY_LEFT))
-      character.Run(true);
-    if (IsKeyDown(KEY_RIGHT))
-      character.Run(false);
-    if (IsKeyDown(KEY_UP))
-      character.Jump();
-    if (IsKeyDown(KEY_D))
-      character.Die();
-    if (IsKeyDown(KEY_E))
-      character.Evolve();
+    // Display controls info
+    const char* activeCharName = (activeCharacter == &mario) ? "Mario" : "Luigi";
+    DrawText(TextFormat("Active Character: %s", activeCharName), 10, 10, 20, WHITE);
+    DrawText("Arrow Keys Only Control:", 10, 40, 20, YELLOW);
+    DrawText("LEFT/RIGHT: Move", 10, 70, 16, WHITE);
+    DrawText("UP: Jump", 10, 90, 16, WHITE);
+    DrawText("TAB: Switch Mario/Luigi", 10, 110, 16, WHITE);
+    DrawText("Shift: Shoot (Fire state)", 10, 130, 16, WHITE);
+    DrawText("E: Evolve, D: Die", 10, 150, 16, WHITE);
+    
+    // Show character state
+    if (activeCharacter) {
+      const char* stateNames[] = {"Small", "Big", "Fire/Electric"};
+      DrawText(TextFormat("State: %s", stateNames[activeCharacter->GetState()]), 10, 180, 14, WHITE);
+      
+      if (activeCharacter->IsStarman()) {
+        DrawText("STAR POWER!", 10, 200, 16, GOLD);
+      }
+    }
+    
+    if (inputCommand.IsFireballActive()) {
+      DrawText("FIREBALL ACTIVE!", 10, 220, 16, RED);
+    }
+
+    // Legacy controls for testing
+    if (IsKeyPressed(KEY_D))
+      activeCharacter->Die();
+    if (IsKeyPressed(KEY_E))
+      activeCharacter->Evolve();
 
     EndDrawing();
   }
@@ -99,6 +150,7 @@ int main() {
   return 0;
 }
 
+// Collision class implementation
 std::string Collision::MakeID(int type, int index) {
   return std::to_string(type) + "," + std::to_string(index);
 }
@@ -153,12 +205,15 @@ Collision::Collision(float width, float height) : cellSize_(16 * 4) {
   }
   pre_position_.clear();
 }
+
 void Collision::AddCharacter(Character *character) {
   character_ = character;
 }
+
 void Collision::AddRectangle(Rectangle *rectangle) {
   rectangle_ = rectangle;
 }
+
 void Collision::AddToGrid(int type, int index, std::vector<int> position) {
   if (position.size() != 4)
     throw std::runtime_error("invalid position vector\n");
@@ -168,6 +223,7 @@ void Collision::AddToGrid(int type, int index, std::vector<int> position) {
     }
   }
 }
+
 void Collision::RemoveFromGrid(int type, int index, std::vector<int> position) {
   if (position.size() != 4)
     throw std::runtime_error("invalid position vector\n");
@@ -203,6 +259,7 @@ void Collision::UpdateToGrid(int type, int index, Rectangle rectangle) {
   if (different_position)
     AddToGrid(type, index, position);
 }
+
 void Collision::Check() {
   Rectangle rect = character_->GetRectangle();
   Vector2 speed  = character_->GetSpeed();
@@ -215,7 +272,6 @@ void Collision::Check() {
     auto it = grid_[i][position[2]].begin();
     while (it != grid_[i][position[2]].end()) {
       if (it->first == 2) {
-
         if (
           rect.x + speed.x <= rectangle_->x + rectangle_->width
           && !(
@@ -243,13 +299,10 @@ void Collision::Check() {
   }
 
   for (int i = position[2]; i <= position[3]; ++i) {
-
     auto it = grid_[position[0]][i].begin();
     while (it != grid_[position[0]][i].end()) {
       if (it->first == 2) {
-        if (rect.y + speed.y <= rectangle_->y + rectangle_->height && (rect.x
-         +
- rect.width >= rectangle_->x
+        if (rect.y + speed.y <= rectangle_->y + rectangle_->height && (rect.x + rect.width >= rectangle_->x
            && rect.x <= rectangle_->x + rectangle_->width)) {
           character_->StopY();
         }
@@ -261,8 +314,7 @@ void Collision::Check() {
     while (it != grid_[position[1]][i].end()) {
       if (it->first == 2) {
         if (
-           rect.y + rect.height >= rectangle_->y && (rect.x + rect.width >=
- rectangle_->x
+           rect.y + rect.height >= rectangle_->y && (rect.x + rect.width >= rectangle_->x
            && rect.x <= rectangle_->x + rectangle_->width)) {
           character_->StopY(rectangle_->y);
         }
@@ -271,6 +323,7 @@ void Collision::Check() {
     }
   }
 }
+
 void Collision::PrintGrid() {
   std::cout << row_ << " " << column_ << '\n';
   for (int i = 0; i < grid_.size(); ++i) {
@@ -280,6 +333,7 @@ void Collision::PrintGrid() {
     std::cout << '\n';
   }
 }
+
 int Collision::CheckCollision(Rectangle r1, Rectangle r2) {
   if (
     r1.x <= r2.x + r2.width && r1.x + r1.width >= r2.x
@@ -289,4 +343,4 @@ int Collision::CheckCollision(Rectangle r1, Rectangle r2) {
     return 2;
   else
     return 0;
-}*/
+}

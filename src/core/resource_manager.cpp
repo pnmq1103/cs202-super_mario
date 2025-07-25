@@ -44,6 +44,8 @@ void ResManager::LoadTextures() {
   textures_["enemies"] = LoadTexture("res/sprites/enemies/enemies.png");
   textures_["icons"]   = LoadTexture("res/sprites/icons/icons.png");
   textures_["objects"] = LoadTexture("res/sprites/icons/objects.png");
+  textures_["electric_shot"]
+    = LoadTexture("res/sprites/electric_shot/electric_shot.png");
 
   textures_["tileset_ground"]
     = LoadTexture("res/sprites/tilesets/tileset_ground.png");
@@ -147,6 +149,14 @@ const Texture &ResManager::GetTileset(char type) const {
 
 const Texture &ResManager::GetIcon() const {
   return textures_.at("icons");
+}
+
+const Texture &ResManager::GetObject() const {
+  return textures_.at("objects");
+}
+
+const Texture &ResManager::GetElectricShot() const {
+  return textures_.at("electric_shot");
 }
 
 const Texture &ResManager::GetBackground() const {

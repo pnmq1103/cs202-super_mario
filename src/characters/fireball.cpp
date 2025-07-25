@@ -9,11 +9,8 @@ MarioFireball::MarioFireball() : Projectile(5, {10, 0}) {
   range_              = 1000;
 
   LoadFrameList("res/sprites/icons/objects.txt");
-  Image image = LoadImage("res/sprites/icons/objects.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
-  frame = frame_list[133];
+  texture = &App.Resource().GetObject();
+  frame   = frame_list[133];
 }
 MarioFireball::~MarioFireball() {}
 void MarioFireball::Update() {
@@ -53,12 +50,9 @@ ProjectileType MarioFireball::GetType() {
 //+----------------------------------------------------------+
 EnemyFireball::EnemyFireball() : Projectile(5, {10, 0}) {
   LoadFrameList("res/sprites/icons/objects.txt");
-  Image image = LoadImage("res/sprites/icons/objects.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
-  frame  = frame_list[133];
-  range_ = 1000;
+  texture = &App.Resource().GetObject();
+  frame   = frame_list[133];
+  range_  = 1000;
 }
 EnemyFireball::~EnemyFireball() {}
 void EnemyFireball::Update() {
@@ -99,10 +93,7 @@ ProjectileType EnemyFireball::GetType() {
 ElectricBall::ElectricBall() : Projectile(1, {20, 0}) {
 
   LoadFrameList("res/sprites/electric_shot/electric_shot.txt");
-  Image image = LoadImage("res/sprites/electric_shot/electric_shot.png");
-  ImageResize(&image, image.width * scale, image.height * scale);
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);
+  texture     = &App.Resource().GetElectricShot();
   frame       = frame_list[0];
   is_explode_ = false;
   range_      = 1000;
@@ -114,12 +105,15 @@ void ElectricBall::Update() {
 
   if (velocity.x > 0) {
     if (position.x >= original_position.x + range_)
-      if (!is_explode_)
+      if (!is_explode_) {
         Destroy();
+      }
+
   } else {
     if (position.x <= original_position.x - range_)
-      if (!is_explode_)
+      if (!is_explode_) {
         Destroy();
+      }
   }
   if (is_explode_) {
     if (time - time_explode_ == 40) {
