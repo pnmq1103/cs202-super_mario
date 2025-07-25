@@ -1,4 +1,4 @@
-/*#include "include/core/application.hpp"
+#include "include/core/application.hpp"
 #include <raylib.h>
 
 int main() {
@@ -14,9 +14,9 @@ int main() {
 
   CloseWindow();
   return 0;
-}*/
+}
 
-#include "include/characters/character.hpp"
+/* #include "include/characters/character.hpp"
 #include "include/characters/projectile_pool.hpp"
 #include "include/core/application.hpp"
 #include "include/core/command.hpp"
@@ -58,21 +58,21 @@ int main() {
   InitWindow(3000, 1000, "Super Mario - Arrow Keys Only");
   SetTargetFPS(60);
   App.Resource().Init();
-  
+
   // Create both Mario and Luigi for character switching
   Character mario(5);
   mario.SetCharacter(MARIO, {200, 300});
-  
+
   Character luigi(5);
   luigi.SetCharacter(LUIGI, {300, 300});
-  
+
   Rectangle rect1 = {2000, 400, 100, 100};
   ProjectilePool pool;
-  
+
   // Create Command system with BOTH characters for TAB switching
   Command inputCommand(&mario, &luigi);
   inputCommand.SetProjectilePool(&pool);
-  
+
   Collision collision(3000.0, 1000.0);
   collision.AddCharacter(inputCommand.GetActiveCharacter());
   collision.AddRectangle(&rect1);
@@ -85,10 +85,10 @@ int main() {
 
     // Use Command system for input handling (Arrow Keys + TAB)
     inputCommand.HandleInput();
-    
+
     // Get active character for ALL operations
     Character* activeCharacter = inputCommand.GetActiveCharacter();
-    
+
     if (activeCharacter) {
       // Update collision handler with current active character
       collision.AddCharacter(activeCharacter);
@@ -99,11 +99,11 @@ int main() {
       if (rect.y + rect.height >= 500) {
         activeCharacter->StopY(500);
       }
-      
+
       // Update ONLY the active character
       activeCharacter->SetFrameCount();
       activeCharacter->Update();
-      
+
       // Draw ONLY the active character
       activeCharacter->Draw();
     }
@@ -114,25 +114,26 @@ int main() {
     pool.Draw();
 
     // Display controls info
-    const char* activeCharName = (activeCharacter == &mario) ? "Mario" : "Luigi";
-    DrawText(TextFormat("Active Character: %s", activeCharName), 10, 10, 20, WHITE);
-    DrawText("Arrow Keys Only Control:", 10, 40, 20, YELLOW);
+    const char* activeCharName = (activeCharacter == &mario) ? "Mario" :
+"Luigi"; DrawText(TextFormat("Active Character: %s", activeCharName), 10, 10,
+20, WHITE); DrawText("Arrow Keys Only Control:", 10, 40, 20, YELLOW);
     DrawText("LEFT/RIGHT: Move", 10, 70, 16, WHITE);
     DrawText("UP: Jump", 10, 90, 16, WHITE);
     DrawText("TAB: Switch Mario/Luigi", 10, 110, 16, WHITE);
     DrawText("Shift: Shoot (Fire state)", 10, 130, 16, WHITE);
     DrawText("E: Evolve, D: Die", 10, 150, 16, WHITE);
-    
+
     // Show character state
     if (activeCharacter) {
       const char* stateNames[] = {"Small", "Big", "Fire/Electric"};
-      DrawText(TextFormat("State: %s", stateNames[activeCharacter->GetState()]), 10, 180, 14, WHITE);
-      
+      DrawText(TextFormat("State: %s", stateNames[activeCharacter->GetState()]),
+10, 180, 14, WHITE);
+
       if (activeCharacter->IsStarman()) {
         DrawText("STAR POWER!", 10, 200, 16, GOLD);
       }
     }
-    
+
     if (inputCommand.IsFireballActive()) {
       DrawText("FIREBALL ACTIVE!", 10, 220, 16, RED);
     }
@@ -302,7 +303,8 @@ void Collision::Check() {
     auto it = grid_[position[0]][i].begin();
     while (it != grid_[position[0]][i].end()) {
       if (it->first == 2) {
-        if (rect.y + speed.y <= rectangle_->y + rectangle_->height && (rect.x + rect.width >= rectangle_->x
+        if (rect.y + speed.y <= rectangle_->y + rectangle_->height && (rect.x +
+rect.width >= rectangle_->x
            && rect.x <= rectangle_->x + rectangle_->width)) {
           character_->StopY();
         }
@@ -314,7 +316,8 @@ void Collision::Check() {
     while (it != grid_[position[1]][i].end()) {
       if (it->first == 2) {
         if (
-           rect.y + rect.height >= rectangle_->y && (rect.x + rect.width >= rectangle_->x
+           rect.y + rect.height >= rectangle_->y && (rect.x + rect.width >=
+rectangle_->x
            && rect.x <= rectangle_->x + rectangle_->width)) {
           character_->StopY(rectangle_->y);
         }
@@ -343,4 +346,4 @@ int Collision::CheckCollision(Rectangle r1, Rectangle r2) {
     return 2;
   else
     return 0;
-}
+}*/
