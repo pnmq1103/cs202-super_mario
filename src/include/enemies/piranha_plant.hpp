@@ -8,7 +8,7 @@ private:
   bool up        = false;
 
 public:
-  PiranhaPlant(Vector2 pos, int spriteId);
+  PiranhaPlant(Vector2 pos, Vector2 size, Vector2 velo, int spriteId);
   void Update(float dt) override;
   void OnHitFromAbove() override;
   void OnHitFromSide() override;

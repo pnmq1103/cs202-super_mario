@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <unordered_map>
+#include <string>
 
 enum class EnemyType {
   Goomba,
@@ -12,14 +13,14 @@ enum class EnemyType {
 class Enemy {
 protected:
   Vector2 position;
+  Vector2 size;
   Vector2 velocity;
-  int width, height;
   bool alive;
   int spriteId;
   EnemyType type;
 
 public:
-  Enemy(Vector2 pos, int w, int h, EnemyType type, int spriteId);
+  Enemy(EnemyType type, Vector2 pos, Vector2 size, Vector2 velo, int spriteId);
   virtual ~Enemy() = default;
 
   virtual void Update(float dt) = 0;
@@ -30,10 +31,12 @@ public:
   Rectangle GetRect() const;
   Vector2 GetPosition() const;
   EnemyType GetType() const;
+  int GetSpriteId() const;
   bool IsAlive() const;
 
   void SetPosition(Vector2 pos);
   void SetAlive(bool status);
+  void SetType(int t);
   bool CheckCollision(Rectangle other) const;
   void ReverseDirection();
 

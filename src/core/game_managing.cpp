@@ -2,8 +2,14 @@
 #include <raylib.h>
 #include <stdexcept>
 
+#include "include/blocks/block_factory.hpp"
 #include "include/blocks/question_block.hpp"
-#include "include/blocks/static_block.hpp"
+#include "include/blocks/music_block.hpp"
+#include "include/blocks/ground_block.hpp"
+#include "include/blocks/empty_block.hpp"
+#include "include/blocks/solid_block.hpp"
+#include "include/blocks/pipe_block.hpp"
+#include "include/blocks/rock_block.hpp"
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
 #include "include/core/game_managing.hpp"
@@ -26,23 +32,70 @@ GameManaging::~GameManaging() {
   // No need to manually unload textures - ResManager handles this
 }
 
-void GameManaging::LoadLevel(const std::string &filename) {
+void GameManaging::LoadLevel(const std::string& path) {
   // Clear previous level data
   UnloadLevel();
+  //load map
+  App.Resource().LoadMap(path);
+  //get block info
+  auto blocksInfo = App.Resource().GetBlocksMap();
+  for (auto& info : blocksInfo) {
+      //choose the suitable type
+    BlockType b;
+      switch (info.type) {
+        case 1:
+          b = BlockType::Empty;
+          break;
+        case 2:
+          b = BlockType::Solid;
+          break;
+        case 3:
+          b = BlockType::Question;
+          break;
+        case 4:
+          b = BlockType::Music;
+          break;
+        case 5:
+          b = BlockType::Ground;
+          break;
+        case 6:
+          b = BlockType::Rock;
+          break;
+        case 7:
+          b = BlockType::Pipe;
+          break;
+        default:
+          b = BlockType::Empty;
+      }
 
-  (void)filename; // Suppress unused parameter warning
+    int blockID = info.gid - 1;
 
-  // For now, create some example blocks and enemies
-  // TODO: Use FileHandler to load binary level data when file format is ready
+  CreateBlockFromType(
+      b, info.gid, info.pos, info.size, blockID, info.solid, info.animating);
+  }
+  //get background
+  background_ = App.Resource().GetBackgroundMap();
+  //get enemies
+  auto enemies = App.Resource().GetEnemiesMap();
+  for (auto& enemy : enemies) {
+    EnemyType e;
+    switch (enemy.type) {
+      case 1:
+        e = EnemyType::Goomba;
+        break;
+      case 2:
+        e = EnemyType::Koopa;
+        break;
+      case 3:
+        e = EnemyType::Piranha;
+      default:
+        e = EnemyType::Bowser;
+        break;
+    }
 
-  // Example blocks
-  //CreateBlockFromType(1, {100.0f, 600.0f}); // Solid block
-  //CreateBlockFromType(2, {200.0f, 600.0f}); // Question block
-  //CreateBlockFromType(3, {300.0f, 600.0f}); // Brick block
-
-  // Example enemies
-  SpawnEnemy(EnemyType::Goomba, {200.0f, 500.0f});
-  SpawnEnemy(EnemyType::Koopa, {400.0f, 500.0f});
+    int enemyID = enemy.gid - 1;
+    CreateEnemyFromType(e, enemy.pos, enemy.size, enemy.velocity, enemyID);
+  } 
 }
 
 void GameManaging::Update(float deltaTime, Character *activeCharacter) {
@@ -89,8 +142,11 @@ void GameManaging::DrawLevel() {
 void GameManaging::DrawBackground() {
   // Draw background using ResManager
   try {
-    Texture backgroundTex = App.Resource().GetBackground(backgroundType_ + 1);
-    DrawTexture(backgroundTex, 0, 0, WHITE);
+    /*Texture backgroundTex = App.Resource().GetBackground(backgroundType_ + 1);
+    DrawTexture(backgroundTex, 0, 0, WHITE);*/
+
+      //draw the texture from Tiled map
+    DrawTexture(background_, 0, 0, WHITE);
   } catch (const std::out_of_range &) {
     // Fallback to color backgrounds if texture not found
     switch (backgroundType_) {
@@ -142,6 +198,9 @@ void GameManaging::DrawBlock(const Block *block) {
       case BlockType::Ground:
         color = DARKBROWN;
         break;
+      case BlockType::Pipe:
+          color = DARKGREEN;
+        break;
       default:
         color = LIGHTGRAY;
         break;
@@ -153,8 +212,9 @@ void GameManaging::DrawBlock(const Block *block) {
 void GameManaging::DrawEnemy(const Enemy *enemy) {
   if (!enemy)
     return;
-
-  // For now, use fallback rectangles since Enemy doesn't have GetSpriteId yet
+  Texture tileTexture = App.Resource().GetTile(enemy->GetSpriteId() + 1);
+  Vector2 position    = enemy->GetPosition();
+  DrawTexture(tileTexture, (int)position.x, (int)position.y, WHITE);
   Rectangle rect = enemy->GetRect();
   Color color    = RED;
   switch (enemy->GetType()) {
@@ -163,6 +223,12 @@ void GameManaging::DrawEnemy(const Enemy *enemy) {
       break;
     case EnemyType::Koopa:
       color = GREEN;
+      break;
+    case EnemyType::Piranha:
+        color = DARKGREEN;
+      break;
+    case EnemyType::Bowser:
+        color = ORANGE;
       break;
     default:
       color = RED;
@@ -286,24 +352,25 @@ void GameManaging::HitBlock(Block *block, Character *character) {
   }
 }
 
-void GameManaging::SpawnEnemy(EnemyType type, Vector2 position) {
-  std::unique_ptr<Enemy> newEnemy;
-
-  switch (type) {
-    case EnemyType::Goomba:
-      newEnemy = std::make_unique<Goomba>(position, 0);
-      break;
-    case EnemyType::Koopa:
-      newEnemy = std::make_unique<KoopaTroopa>(position, 0);
-      break;
-    default:
-      return;
-  }
-
-  if (newEnemy) {
-    enemies_.push_back(std::move(newEnemy));
-  }
-}
+//dont need this function right now
+//void GameManaging::SpawnEnemy(EnemyType type, Vector2 position) {
+//  std::unique_ptr<Enemy> newEnemy;
+//
+//  switch (type) {
+//    case EnemyType::Goomba:
+//      newEnemy = std::make_unique<Goomba>(position, 0);
+//      break;
+//    case EnemyType::Koopa:
+//      newEnemy = std::make_unique<KoopaTroopa>(position, 0);
+//      break;
+//    default:
+//      return;
+//  }
+//
+//  if (newEnemy) {
+//    enemies_.push_back(std::move(newEnemy));
+//  }
+//}
 
 void GameManaging::RemoveDeadEnemies() {
   enemies_.erase(
@@ -351,34 +418,72 @@ void GameManaging::LoadResources() {
   // Resources are automatically loaded by ResManager singleton
   // No need to manually load textures here
 }
-/*
-void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
-  std::unique_ptr<Block> newBlock;
 
-  // Map tile types to block types
-  switch (tileType) {
-    case 1: // Solid block
-      newBlock = std::make_unique<StaticBlock>(
-        position, 32, 32, BlockType::Solid, tileType);
+void GameManaging::CreateBlockFromType(
+  BlockType type, int gid, Vector2 pos, Vector2 size, int spriteID, bool solid,
+  bool animating) {
+  switch (type) {
+    case BlockType::Empty: {
+      blocks_.push_back(std::make_unique<EmptyBlock>(
+        gid, pos, size, spriteID, solid, animating));
       break;
-    case 2: // Question block
-      newBlock = std::make_unique<QuestionBlock>(
-        position, PowerUpType::Coin, tileType);
+    }
+    case BlockType::Solid: {
+      blocks_.push_back(std::make_unique<SolidBlock>(
+        gid, pos, size, spriteID, solid, animating));
       break;
-    case 3: // Brick block
-      newBlock = std::make_unique<StaticBlock>(
-        position, 32, 32, BlockType::Brick, tileType);
+    }
+    case BlockType::Question: {
+      blocks_.push_back(std::make_unique<QuestionBlock>(
+        gid, pos, size, spriteID, solid, animating));
       break;
-    default:
-      return; // Unknown tile type
+    }
+    case BlockType::Music: {
+      blocks_.push_back(std::make_unique<MusicBlock>(
+        gid, pos, size, spriteID, solid, animating));
+      break;
+    }
+    case BlockType::Ground: {
+      blocks_.push_back(std::make_unique<GroundBlock>(
+        gid, pos, size, spriteID, solid, animating));
+      break;
+    }
+    case BlockType::Rock: {
+      blocks_.push_back(std::make_unique<RockBlock>(
+        gid, pos, size, spriteID, solid, animating));
+      break;
+    }
+    case BlockType::Pipe: {
+      blocks_.push_back(std::make_unique<PipeBlock>(
+        gid, pos, size, spriteID, solid, animating));
+      break;
+    }
+    default: {
+      throw std::invalid_argument("Unknown block type");
+      break;
   }
-
-  if (newBlock) {
-    blocks_.push_back(std::move(newBlock));
   }
 }
-*/
 
-void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
-  SpawnEnemy(static_cast<EnemyType>(enemyType), position);
+void GameManaging::CreateEnemyFromType(EnemyType type, Vector2 pos, Vector2 size, Vector2 velo, int spriteID) {
+  switch (type) {
+    case EnemyType::Goomba: {
+      enemies_.push_back(std::make_unique<Goomba>(pos, size, velo, spriteID));
+      break;
+    }
+    case EnemyType::Koopa: {
+      enemies_.push_back(std::make_unique<KoopaTroopa>(pos, size, velo, spriteID));
+      break;
+    }
+    case EnemyType::Piranha: {
+      enemies_.push_back(std::make_unique<Goomba>(pos,size, velo, spriteID));
+      break;
+    }
+     case EnemyType::Bowser: {
+      enemies_.push_back(std::make_unique<Goomba>(pos, size, velo, spriteID));
+      break;
+                           }
+    default:
+      throw std::invalid_argument("Unknown enemy type");
+  }
 }

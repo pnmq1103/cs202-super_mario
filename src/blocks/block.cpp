@@ -2,20 +2,27 @@
 #include <raylib.h>
 #include <unordered_map>
 
-inline BlockType fromString(const std::string &s) {
-  if (s == "EMPTY_BLOCK")
-    return BlockType::Empty;
-  if (s == "SOLID_BLOCK")
-    return BlockType::Solid;
-  if (s == "QUESTION_BLOCK")
-    return BlockType::Question;
-  if (s == "MUSIC_BLOCK")
-    return BlockType::Music;
-  if (s == "GROUND_BLOCK")
-    return BlockType::Ground;
-  if (s == "ROCK_BLOCK")
-    return BlockType::Rock;
-}
+inline BlockType fromInt(int type) {
+    switch (type) {
+      case 0:
+        return BlockType::Empty;
+      case 1:
+        return BlockType::Solid;
+      case 2:
+        return BlockType::Question;
+      case 3:
+        return BlockType::Music;
+      case 4:
+        return BlockType::Ground;
+      case 5:
+        return BlockType::Rock;
+      case 6:
+        return BlockType::Pipe;
+      default:
+        return BlockType::Empty;
+    }
+  }
+
 
 Block::Block(
   int gid, Vector2 pos, Vector2 s, BlockType type, bool solid, bool animating, int spriteId)
@@ -73,8 +80,8 @@ void Block::SetSize(Vector2 s) {
   size = s;
 }
 
-void Block::SetType(std::string t) {
-  type = fromString(t);
+void Block::SetType(int t) {
+  type = fromInt(t);
 }
     bool Block::CheckCollision(Rectangle other) const {
   return CheckCollisionRecs(GetRect(), other);

@@ -10,6 +10,7 @@ enum class BlockType {
       Music,
       Ground,
       Rock,
+      Pipe
 };
 
 
@@ -56,7 +57,7 @@ public:
   void SetSolid(bool val);
   void SetAnimating(bool val);
   void SetSize(Vector2 s);
-  void SetType(std::string t);
+  void SetType(int t);
 
   bool CheckCollision(Rectangle other) const;
 

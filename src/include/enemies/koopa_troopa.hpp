@@ -13,7 +13,7 @@ private:
   float shellTimer = 0;
 
 public:
-  KoopaTroopa(Vector2 pos, int spriteId);
+  KoopaTroopa(Vector2 pos, Vector2 size, Vector2 velo, int spriteId);
   void Update(float dt) override;
   void OnHitFromAbove() override;
   void OnHitFromSide() override;

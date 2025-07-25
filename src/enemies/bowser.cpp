@@ -1,7 +1,8 @@
 #include "include/enemies/bowser.hpp"
 
-Bowser::Bowser(Vector2 pos, int spriteId)
-    : Enemy(pos, 32, 32, EnemyType::Bowser, spriteId), hp(5) {}
+Bowser::Bowser(
+  Vector2 pos, Vector2 size, Vector2 velo, int spriteId)
+    : Enemy(EnemyType::Bowser, pos, size, velo, spriteId), hp(5) {}
 
 void Bowser::Update(float dt) {
   if (!alive)

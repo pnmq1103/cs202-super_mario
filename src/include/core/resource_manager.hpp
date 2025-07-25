@@ -21,9 +21,17 @@ struct BlockInfo {
   int gid;
   Vector2 pos;
   Vector2 size;
-  std::string type;
+  int type;
   bool solid;
   bool animating;
+};
+
+struct EnemyInfo {
+  int gid;
+  Vector2 pos;
+  Vector2 size;
+  Vector2 velocity;
+  int type;
 };
 
 class ResManager {
@@ -47,12 +55,12 @@ class ResManager {
   //to store block info
   std::vector<BlockInfo> blockInfoMapStore;
   //to store backgrounds
-  std::vector < std::pair<Texture, Vector2>> backgroundMapStore;
-  //to store objects
-  std::vector<Rectangle> objectMapStore;
+  Texture background;
+  //to store enemies
+  std::vector<EnemyInfo> enemyMapStore;
 
 
-private:
+public:
   void LoadHelper(
     const fs::path &img_path, std::string prefix,
     std::unordered_map<std::string, Texture> &texture_map);
@@ -71,6 +79,7 @@ public:
   // bool SaveResourcesToFile(const SaveData &data);
   void LoadMap(const std::string &path);
   
+  //getters for preloaded resources
   Texture GetMario(char type, int idx);
   Texture GetLuigi(char type, int idx);
   Texture GetEnemy(int idx);
@@ -79,4 +88,10 @@ public:
   Texture GetBackground(int idx);
   Music GetMusic(std::string key);
   Sound GetSound(std::string key);
+
+  //getters for maps
+  std::map<int, Texture> GetTilesetMap() const;
+  std::vector<BlockInfo> GetBlocksMap() const;
+  Texture GetBackgroundMap() const;
+  std::vector<EnemyInfo> GetEnemiesMap() const;
 };

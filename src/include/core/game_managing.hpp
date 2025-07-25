@@ -18,7 +18,7 @@ public:
     ~GameManaging();
     
     // Level loading and management
-    void LoadLevel(const std::string& filename);
+    void LoadLevel(const std::string& path);
     void ResetGame();
     void UnloadLevel();
 
@@ -66,10 +66,11 @@ private:
     // Level data
     std::vector<std::unique_ptr<Block>> blocks_;
     std::vector<std::unique_ptr<Enemy>> enemies_;
+    Texture background_;
     int backgroundType_;
     
     // Helper methods
     void LoadResources();
-    //void CreateBlockFromType(int tileType, Vector2 position);
-    void CreateEnemyFromType(int enemyType, Vector2 position);
+    void CreateBlockFromType(BlockType type, int gid, Vector2 pos, Vector2 size, int spriteID, bool solid, bool animating);
+    void CreateEnemyFromType(EnemyType type, Vector2 pos, Vector2 size, Vector2 velo, int spriteID);
 };

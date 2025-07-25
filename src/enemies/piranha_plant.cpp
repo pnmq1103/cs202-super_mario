@@ -1,7 +1,7 @@
 #include "include/enemies/piranha_plant.hpp"
 
-PiranhaPlant::PiranhaPlant(Vector2 pos, int spriteId)
-    : Enemy(pos, 16, 24, EnemyType::Piranha, spriteId) {}
+PiranhaPlant::PiranhaPlant(Vector2 pos, Vector2 size, Vector2 velo, int spriteId)
+    : Enemy(EnemyType::Piranha, pos, size, velo, spriteId) {}
 
 void PiranhaPlant::Update(float dt) {
   if (!alive)

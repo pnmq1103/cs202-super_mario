@@ -1,7 +1,7 @@
 #include "include/enemies/goomba.hpp"
 
-Goomba::Goomba(Vector2 pos, int spriteId)
-    : Enemy(pos, 16, 16, EnemyType::Goomba, spriteId) {
+Goomba::Goomba(Vector2 pos, Vector2 size, Vector2 velo, int spriteId)
+    : Enemy(EnemyType::Goomba, pos, size, velo, spriteId) {
   velocity.x = -30;
 }
 

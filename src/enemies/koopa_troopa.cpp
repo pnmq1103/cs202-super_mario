@@ -1,7 +1,7 @@
 #include "include/enemies/koopa_troopa.hpp"
 
-KoopaTroopa::KoopaTroopa(Vector2 pos, int spriteId)
-    : Enemy(pos, 16, 16, EnemyType::Koopa, spriteId),
+KoopaTroopa::KoopaTroopa(Vector2 pos, Vector2 size, Vector2 velo, int spriteId)
+    : Enemy(EnemyType::Koopa, pos, size, velo, spriteId),
       state(KoopaState::Walking) {
   velocity.x = -20;
 }

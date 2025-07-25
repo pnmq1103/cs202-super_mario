@@ -291,8 +291,24 @@ Sound ResManager::GetSound(std::string key) {
   return it->second;
 }
 
+std::map<int, Texture> ResManager::GetTilesetMap() const {
+  return tilesetMapStore;
+}
+
+std::vector<BlockInfo> ResManager::GetBlocksMap() const {
+  return blockInfoMapStore;
+}
+
+std::vector<EnemyInfo> ResManager::GetEnemiesMap() const {
+  return enemyMapStore;
+} 
+
+Texture ResManager::GetBackgroundMap() const {
+  return background;
+}
+
 /*
-// call this function before exiting game to clean up everything
+  // call this function before exiting game to clean up everything
 void ResManager::Shutdown() {
   // lambda for unloading unordered_maps
   auto unloadAll = [&](auto &mp) {
@@ -323,32 +339,32 @@ void ResManager::Shutdown() {
   musics.clear();
 }
 */
-void
-ResManager::LoadMap(const std::string &path) {
+void ResManager::LoadMap(const std::string &path) {
   tson::Tileson t;
   const auto baseDir = std::filesystem::path(path).parent_path();
   auto mapPtr        = t.parse(path);
+
   if (mapPtr->getStatus() != tson::ParseStatus::OK)
     return;
+
   tson::Map &map = *mapPtr;
-
-
   std::vector<TilesetInfo> tsi;
   for (auto &ts : map.getTilesets()) {
     // resolve the image path relative to the map file
     auto imgPath = baseDir / ts.getImagePath();
     Texture tex  = LoadTexture(imgPath.string().c_str());
-
+    //get the attributes
     int margin  = ts.getMargin();
     int spacing = ts.getSpacing();
     int tileW   = ts.getTileSize().x;
     int tileH   = ts.getTileSize().y;
     int cols    = (tex.width - 2 * margin + spacing) / (tileW + spacing);
-
+    //store tilesets according to their gid
     tilesetMapStore[ts.getFirstgid()] = tex;
     tsi.push_back(
       {ts.getFirstgid(), cols, margin, spacing, {float(tileW), float(tileH)}});
   }
+  //sort the tileset map
   std::sort(tsi.begin(), tsi.end(), [](auto &a, auto &b) {
     return a.firstGid < b.firstGid;
   });
@@ -356,6 +372,7 @@ ResManager::LoadMap(const std::string &path) {
   //loop over all layers
   for (auto &layer : map.getLayers()) {
     switch (layer.getType()) {
+        //tile layer
       case tson::LayerType::TileLayer: {
         if (map.isInfinite())
           break;
@@ -367,7 +384,7 @@ ResManager::LoadMap(const std::string &path) {
           info.gid   = tile->getGid();
           info.pos  = {tile->getPosition(kv.first).x, tile->getPosition(kv.first).y};
           info.size = {static_cast<float>(tile->getTileSize().x), static_cast<float>(tile->getTileSize().y)};
-          info.type  = std::any_cast<std::string>(tile->getProp("type")->getValue());
+          info.type  = std::any_cast<int>(tile->getProp("type")->getValue());
           info.solid = std::any_cast<bool>(tile->getProp("solid")->getValue());
           info.animating = std::any_cast<bool>(tile->getProp("animating")->getValue());
           blockInfoMapStore.push_back(info);
@@ -376,22 +393,28 @@ ResManager::LoadMap(const std::string &path) {
         }
         break;
       }
-
+        //image layer (mainly to get the background)
       case tson::LayerType::ImageLayer: {
-        // resolve against baseDir too
+        // resolve against baseDir
         auto imgPath = baseDir / layer.getImage();
-        Texture bg   = LoadTexture(imgPath.string().c_str());
-        auto os      = layer.getOffset();
-        backgroundMapStore.push_back({bg, {os.x, os.y}});
+        background   = LoadTexture(imgPath.string().c_str());
         break;
       }
-
+        //object group (enemies)
       case tson::LayerType::ObjectGroup: {
         for (auto &obj : layer.getObjects()) {
-          Rectangle objectRec{
-            obj.getPosition().x, obj.getPosition().y, obj.getSize().x,
-            obj.getSize().y};
-          objectMapStore.push_back(objectRec);
+          EnemyInfo e;
+          e.gid = obj.getGid();
+          e.pos = {
+              static_cast<float>(obj.getPosition().x), 
+              static_cast<float>(obj.getPosition().y)};
+          e.size = {
+            static_cast<float>(obj.getSize().x),
+            static_cast<float>(obj.getSize().y)};
+          e.type = std::any_cast<int>(obj.getProp("type")->getValue());
+          e.velocity.x = std::any_cast<int>(obj.getProp("velocityX")->getValue());
+          e.velocity.y = std::any_cast<int>(obj.getProp("velocityY")->getValue());
+          enemyMapStore.push_back(e);
         }
         break;
       }
