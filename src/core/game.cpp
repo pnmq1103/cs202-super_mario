@@ -101,6 +101,8 @@ void GameScene::Draw() {
     "ESC: Back to menu", 10, controlsStartY + lineSpacing * 5, 20, DARKBLUE);
 }
 
+void GameScene::Resume() {}
+
 SceneType GameScene::Type() {
   return type_;
 }

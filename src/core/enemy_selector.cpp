@@ -2,23 +2,24 @@
 #include <raymath.h>
 
 #include "include/core/application.hpp"
+#include "include/core/enemy_selector.hpp"
 #include "include/core/scene.hpp"
-#include "include/core/tile_selector.hpp"
+#include "include/core/utility.hpp"
 
-TileSelectorScene::TileSelectorScene(int &select_gidx)
-    : select_gidx_ref_(select_gidx) {
+EnemySelectorScene::EnemySelectorScene(int &g_select_idx)
+    : g_select_idx_ref_(g_select_idx) {
   camera_.target   = {0, 0};
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
   camera_.zoom     = 1; // Important
-
-  buttons_.reserve(3);
 }
 
-TileSelectorScene::~TileSelectorScene() {}
+EnemySelectorScene::~EnemySelectorScene() {}
 
-void TileSelectorScene::Init() {
-  sprite_sheet_ = &App.Resource().GetTileset('g');
+void EnemySelectorScene::Init() {
+  sprite_sheet_ = &App.Resource().GetEnemy();
+  utility::ReadSpriteInfo(
+    "res/sprites/enemies/enemies.txt", sprite_sheet_info_);
 
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
@@ -27,7 +28,7 @@ void TileSelectorScene::Init() {
   grid_rows_   = static_cast<int>(height / cellSize);
 }
 
-void TileSelectorScene::Update() {
+void EnemySelectorScene::Update() {
   if (IsKeyDown(KEY_ESCAPE)) {
     App.ChangeScene(nullptr);
     return;
@@ -42,7 +43,7 @@ void TileSelectorScene::Update() {
   }
 }
 
-void TileSelectorScene::Draw() {
+void EnemySelectorScene::Draw() {
   BeginMode2D(camera_);
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
@@ -53,13 +54,13 @@ void TileSelectorScene::Draw() {
   EndMode2D();
 }
 
-void TileSelectorScene::Resume() {}
+void EnemySelectorScene::Resume() {}
 
-SceneType TileSelectorScene::Type() {
+SceneType EnemySelectorScene::Type() {
   return type_;
 }
 
-void TileSelectorScene::UpdateCamera() {
+void EnemySelectorScene::UpdateCamera() {
   // Drag
   if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
     Vector2 delta  = Vector2Scale(GetMouseDelta(), -1 / camera_.zoom);
@@ -78,7 +79,7 @@ void TileSelectorScene::UpdateCamera() {
     = Clamp(camera_.target.y, 0, boundary_.y + boundary_.height - screenHeight);
 }
 
-void TileSelectorScene::ChooseTile() {
+void EnemySelectorScene::ChooseTile() {
   App.Media().PlaySound("beep");
   mouse_world_pos_.y -= blockSize * 2; // Compensate for UI
   // Because the display is scaled up 4 times
@@ -88,5 +89,5 @@ void TileSelectorScene::ChooseTile() {
   int row = static_cast<int>(mouse_world_pos_.y / cellSize);
 
   if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_)
-    select_gidx_ref_ = first_gidx + row * grid_cols_ + col;
+    g_select_idx_ref_ = first_gidx + row * grid_cols_ + col;
 }

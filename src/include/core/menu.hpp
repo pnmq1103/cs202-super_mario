@@ -30,8 +30,8 @@ public:
   void Init() override;
   void Update() override;
   void Draw() override;
-  SceneType Type() override;
   void Resume() override;
+  SceneType Type() override;
 
   void DrawOptions();
 

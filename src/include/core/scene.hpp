@@ -33,11 +33,8 @@ public:
   virtual void Init()      = 0;
   virtual void Update()    = 0;
   virtual void Draw()      = 0;
+  virtual void Resume()    = 0;
   virtual SceneType Type() = 0;
-  virtual void Resume();
-
-  void ReadSpriteInfo(
-    const std::string &path, std::unordered_map<int, Rectangle> &sprites);
 };
 
 // Constructor should be used to initialize members only

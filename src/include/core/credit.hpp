@@ -17,5 +17,6 @@ public:
   void Init() override;
   void Update() override;
   void Draw() override;
+  void Resume() override;
   SceneType Type() override;
 };

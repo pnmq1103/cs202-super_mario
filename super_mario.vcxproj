@@ -134,9 +134,12 @@
     <ClCompile Include="src\core\application.cpp" />
     <ClCompile Include="src\blocks\block.cpp" />
     <ClCompile Include="src\core\credit.cpp" />
+    <ClCompile Include="src\core\enemy_selector.cpp" />
+    <ClCompile Include="src\core\map.cpp" />
     <ClCompile Include="src\core\resource_manager.cpp" />
     <ClCompile Include="src\core\slider.cpp" />
     <ClCompile Include="src\core\tile_selector.cpp" />
+    <ClCompile Include="src\core\utility.cpp" />
     <ClCompile Include="src\enemies\bowser.cpp" />
     <ClCompile Include="src\core\button.cpp" />
     <ClCompile Include="src\characters\character.cpp" />
@@ -158,7 +161,6 @@
     <ClCompile Include="src\enemies\piranha_plant.cpp" />
     <ClCompile Include="src\characters\projectile.cpp" />
     <ClCompile Include="src\blocks\question_block.cpp" />
-    <ClCompile Include="src\core\scene.cpp" />
     <ClCompile Include="src\core\scene_stack.cpp" />
     <ClCompile Include="src\core\setting.cpp" />
     <ClCompile Include="src\blocks\static_block.cpp" />
@@ -179,9 +181,12 @@
     <ClInclude Include="src\include\core\application.hpp" />
     <ClInclude Include="src\include\blocks\block.hpp" />
     <ClInclude Include="src\include\core\credit.hpp" />
+    <ClInclude Include="src\include\core\enemy_selector.hpp" />
+    <ClInclude Include="src\include\core\map.hpp" />
     <ClInclude Include="src\include\core\resource_manager.hpp" />
     <ClInclude Include="src\include\core\slider.hpp" />
     <ClInclude Include="src\include\core\tile_selector.hpp" />
+    <ClInclude Include="src\include\core\utility.hpp" />
     <ClInclude Include="src\include\enemies\bowser.hpp" />
     <ClInclude Include="src\include\core\button.hpp" />
     <ClInclude Include="src\include\characters\character.hpp" />

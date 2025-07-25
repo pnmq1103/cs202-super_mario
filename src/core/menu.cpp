@@ -96,12 +96,12 @@ void MenuScene::Draw() {
   DrawButtons();
 }
 
-SceneType MenuScene::Type() {
-  return type_;
-}
-
 void MenuScene::Resume() {
   timer_ = 0;
+}
+
+SceneType MenuScene::Type() {
+  return type_;
 }
 
 void MenuScene::DrawOptions() {

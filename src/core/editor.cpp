@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -8,9 +7,11 @@
 
 #include "include/core/application.hpp"
 #include "include/core/editor.hpp"
+#include "include/core/enemy_selector.hpp"
+#include "include/core/file_handler.hpp"
 #include "include/core/tile_selector.hpp"
 
-EditorScene::EditorScene() {
+EditorScene::EditorScene() : map_(block_width_, block_height_) {
   camera_.target   = {0, 0};
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
@@ -21,15 +22,6 @@ EditorScene::EditorScene() {
   boundary_    = {
     0 + buffer, 0 + buffer, blockSize * block_width_ - 2 * buffer,
     blockSize * block_height_ - 2 * buffer};
-
-  tilemap_.resize(block_width_ * block_height_, 0);
-  buttons_.reserve(3);
-  sprite_sheets_.reserve(3);
-  sprite_sheets_ = {
-    {1, 10, App.Resource().GetBackground()},
-    {11, 144, App.Resource().GetTileset('g')},
-    {155, 144, App.Resource().GetTileset('u')},
-  };
 }
 
 EditorScene::~EditorScene() {
@@ -38,10 +30,7 @@ EditorScene::~EditorScene() {
 
 void EditorScene::Init() {
   crosshair_ = LoadTexture("res/sprites/crosshairs/crosshair028.png");
-
-  Scene::ReadSpriteInfo(
-    "res/sprites/tilesets/tileset_ground.txt", tileset_info_);
-
+  map_.Init();
   CreateButtons();
 }
 
@@ -65,17 +54,17 @@ void EditorScene::Update() {
     snapped_.y = std::floor(mouse_world_pos_.y / blockSize) * blockSize;
   }
 
-  if (IsKeyDown(KEY_SPACE) && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && IsKeyDown(KEY_SPACE)) {
     float col = std::floor(mouse_world_pos_.x / blockSize);
     float row = std::floor(mouse_world_pos_.y / blockSize);
     if (Vector2Equals(drag_delta_, {0, 0}) == false) {
       drag_delta_   = Vector2Subtract({col, row}, drag_delta_);
       int dx        = static_cast<int>(drag_delta_.x);
       int dy        = static_cast<int>(drag_delta_.y);
-      int grid_cols = static_cast<int>(tileset_->width / cellSize);
+      int grid_cols = static_cast<int>(map_.GetTexture(1).width / cellSize);
       int idx       = static_cast<int>(dy * grid_cols + dx);
 
-      global_selected_idx_ += idx;
+      select_gidx_ += idx;
     }
     drag_delta_ = {col, row};
   } else if (IsKeyUp(KEY_SPACE))
@@ -93,27 +82,27 @@ void EditorScene::Draw() {
   DrawButtons();
 }
 
-SceneType EditorScene::Type() {
-  return type_;
-}
-
 void EditorScene::Resume() {
   button_clicked_ = false;
 }
 
+SceneType EditorScene::Type() {
+  return type_;
+}
+
 void EditorScene::PlaceBlock() {
-  float tile_x = std::floor(mouse_world_pos_.x / blockSize);
-  float tile_y = std::floor(mouse_world_pos_.y / blockSize);
-  int idx      = static_cast<int>(tile_y * block_width_ + tile_x);
+  float col = std::floor(mouse_world_pos_.x / blockSize);
+  float row = std::floor(mouse_world_pos_.y / blockSize);
+  int pos   = static_cast<int>(row * block_width_ + col);
 
   if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
     if (CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
       App.Media().PlaySound("beep");
-      tilemap_[idx] = global_selected_idx_;
+      map_.SetTile(pos, select_gidx_);
     }
   } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
-      tilemap_[idx] = 0;
+      map_.SetTile(pos, 0);
   }
 }
 
@@ -149,11 +138,10 @@ void EditorScene::DrawMap() {
   BeginMode2D(camera_);
   for (int y = 0; y < block_height_; ++y) {
     for (int x = 0; x < block_width_; ++x) {
-      int global_idx = tilemap_[y * block_width_ + x];
-      if (global_idx != 0) {
-        int local_idx = FindLocalIndex(global_idx);
+      int gidx = map_.GetTile(y * block_width_ + x);
+      if (gidx != 0) {
         DrawTexturePro(
-          *tileset_, tileset_info_[local_idx],
+          map_.GetTexture(gidx), map_.GetInfo(gidx),
           {x * blockSize, y * blockSize, blockSize, blockSize}, {0, 0}, 0,
           WHITE);
       }
@@ -167,12 +155,10 @@ void EditorScene::DrawCursor() {
 
   BeginMode2D(camera_);
   //  Draw tile
-  if (global_selected_idx_ != 0) {
-    int local_idx = FindLocalIndex(global_selected_idx_);
+  if (select_gidx_ != 0)
     DrawTexturePro(
-      *tileset_, tileset_info_[local_idx],
+      map_.GetTexture(select_gidx_), map_.GetInfo(select_gidx_),
       {snapped_.x, snapped_.y, blockSize, blockSize}, {0, 0}, 0, transparent);
-  }
 
   // Draw crosshair
   DrawTexturePro(
@@ -182,21 +168,34 @@ void EditorScene::DrawCursor() {
 }
 
 void EditorScene::CreateButtons() {
+  buttons_.reserve(3);
+  Rectangle source = {0, 0, 16, 16};
+  Rectangle dest   = {100, 100, 64, 64};
+
   // Choose tile
   buttons_.emplace_back(
-    "Overworld",
+    "Tilset",
     [this] {
-      App.ChangeScene(
-        std::make_unique<TileSelectorScene>(global_selected_idx_));
+      App.ChangeScene(std::make_unique<TileSelectorScene>(select_gidx_));
     },
-    Rectangle{0, 0, 16, 16}, Rectangle{100, 100, 64, 64},
-    "res/sprites/buttons/choose_ground_tile.png");
+    source, dest, "res/sprites/buttons/choose_ground_tile.png");
 
   // Choose enemy
-  // Implement EnemySelectorScene
+  dest = {300, 100, 64, 64};
+  buttons_.emplace_back(
+    "Enemy",
+    [this] {
+      App.ChangeScene(std::make_unique<EnemySelectorScene>(select_gidx_));
+    },
+    source, dest, "res/sprites/buttons/choose_underground_tile.png");
 
-  // Choose background
-  // Implement BackgroundSelectorScene
+  dest = {500, 100, 64, 64};
+  buttons_.emplace_back(
+    "Save",
+    [this] {
+      FileHandler::SaveMapToFile(map_);
+    },
+    source, dest, "res/sprites/buttons/save.png");
 }
 
 void EditorScene::UpdateButtons() {
@@ -210,14 +209,4 @@ void EditorScene::UpdateButtons() {
 void EditorScene::DrawButtons() {
   for (size_t i = 0; i < buttons_.size(); ++i)
     buttons_[i].Draw();
-}
-
-int EditorScene::FindLocalIndex(int gidx) {
-  for (const auto &sheet : sprite_sheets_) {
-    if (gidx >= sheet.first_gidx_ && gidx < sheet.first_gidx_ + sheet.count_) {
-      tileset_ = sheet.texture_;
-      return gidx - sheet.first_gidx_;
-    }
-  }
-  return -1;
 }
