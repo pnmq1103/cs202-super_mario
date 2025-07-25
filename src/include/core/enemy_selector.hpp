@@ -14,6 +14,7 @@ private:
   int first_gidx = 299;
 
   const Texture *sprite_sheet_ = {nullptr};
+  // since the enemies do not equal in sizes
   std::unordered_map<int, Rectangle> sprite_sheet_info_;
   Rectangle boundary_ = {};
 

@@ -11,11 +11,10 @@ private:
 
   int &select_gidx_ref_;
 
-  int first_gidx = 11;
+  int first_gidx = 11; // need to support more first gidx
 
   const Texture *sprite_sheet_ = {nullptr};
-  std::unordered_map<int, Rectangle> sprite_sheet_info_;
-  Rectangle boundary_ = {};
+  Rectangle boundary_          = {};
 
   int grid_rows_ = {0};
   int grid_cols_ = {0};

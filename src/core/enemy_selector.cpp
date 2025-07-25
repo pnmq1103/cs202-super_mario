@@ -3,8 +3,8 @@
 
 #include "include/core/application.hpp"
 #include "include/core/enemy_selector.hpp"
-#include "include/core/file_handler.hpp"
 #include "include/core/scene.hpp"
+#include "include/core/utility.hpp"
 
 EnemySelectorScene::EnemySelectorScene(int &g_select_idx)
     : g_select_idx_ref_(g_select_idx) {
@@ -18,7 +18,7 @@ EnemySelectorScene::~EnemySelectorScene() {}
 
 void EnemySelectorScene::Init() {
   sprite_sheet_ = &App.Resource().GetEnemy();
-  FileHandler::ReadSpriteInfo(
+  utility::ReadSpriteInfo(
     "res/sprites/enemies/enemies.txt", sprite_sheet_info_);
 
   float width  = static_cast<float>(sprite_sheet_->width);

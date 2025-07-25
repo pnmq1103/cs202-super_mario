@@ -1,16 +1,19 @@
-﻿#include <fstream>
+﻿#include <filesystem>
+#include <fstream>
 #include <iostream>
 
 #include "include/core/file_handler.hpp"
-#include "include/external/json.hpp"
+#include "include/core/map.hpp"
 #include "include/external/tinyfiledialogs.h"
 
-using json = nlohmann::json;
+int FileHandler::count = 0;
+
+const std::filesystem::path FileHandler::base_path = "res/saves";
 
 std::string FileHandler::OpenFilePath() {
   const char *filter[] = {"*.json"};
   const char *fn
-    = tinyfd_openFileDialog("Select file", "", 1, filter, "JSON", 0);
+    = tinyfd_openFileDialog("Select file", "", 1, filter, "(*.json)", 0);
 
   if (fn != nullptr)
     return fn;
@@ -27,81 +30,36 @@ std::string FileHandler::OpenSavePath(const std::string &default_name) {
   return {};
 }
 
-void FileHandler::ReadSpriteInfo(
-  const std::string &path, std::unordered_map<int, Rectangle> &sprites) {
-  std::ifstream fin;
-  fin.open(path);
-  if (fin.is_open()) {
-    int id;
-    float x, y, w, h;
-    while (fin >> id) {
-      if (fin >> x >> y >> w >> h)
-        sprites[id] = {x, y, w, h};
-      else
-        throw std::runtime_error("malformed input");
-    }
-  } else
-    throw std::runtime_error("invalid file");
-}
-/* bool FileHandler::SaveFile(const std::string &path, const SaveData &sd) {
-  json j;
-  j["Score"]              = sd.score;
-  j["Lives"]              = sd.lives;
-  j["Background ID"]      = sd.backgroundID;
-  j["Game time"]          = sd.gameTime;
-  j["Character Position"] = {{"x", sd.charPosition.x}, {"y",
-sd.charPosition.y}};
+void FileHandler::SaveMapToFile(const Map &map) {
+  std::filesystem::create_directories(base_path);
 
-  j["Map tiles"] = json::array();
-  for (auto &tile : sd.mapTiles) {
-    json tileObj = {
-      {"type", tile.tileType},
-      {"position", {tile.position.x, tile.position.y}},
-      {"spriteID", tile.spriteID}};
-    j["Map tiles"].push_back(tileObj);
-  }
+  std::ostringstream filename;
+  filename << "map_" << std::setw(2) << std::setfill('0') << count << ".json";
+  ++count;
 
-  std::ofstream out(path);
-  if (!out.is_open())
-    return false;
-  out << j.dump(2);
-  return out.good();
+  std::filesystem::path full_path = base_path / filename.str();
+
+  std::ofstream fout(full_path);
+  if (!fout.is_open())
+    throw std::runtime_error("failed to create file");
+
+  nlohmann::json j = map;
+  fout << j.dump();
 }
 
-bool FileHandler::LoadFile(const std::string &path, SaveData &sd) const {
-  std::ifstream in(path);
-  if (!in.is_open())
-    return false;
+Map LoadMapFromFile(const std::filesystem::path &path) {
+  if (std::filesystem::exists(path) == false)
+    throw std::runtime_error("file not found");
 
-  json j;
-  try {
-    in >> j; // throws on parse error
-  } catch (const json::parse_error &e) {
-    std::cerr << "JSON parse error at byte " << e.byte << ": " << e.what()
-              << "\n";
-    return false;
-  }
+  std::ifstream fin(path);
+  if (fin.is_open() == false)
+    throw std::runtime_error("cannot open file");
 
-  sd.score        = j["Score"];
-  sd.lives        = j["Lives"];
-  sd.backgroundID = j["Background ID"];
-  sd.gameTime     = j["Game time"];
-  sd.charPosition.x = j["Character position]"]["x"].get<float>();
-  sd.charPosition.y = j["Character position]"]["y"].get<float>();
+  nlohmann::json j;
+  fin >> j;
 
+  Map map(0, 0);
+  j.get_to(map);
 
-  sd.mapTiles.clear();
-  auto &tiles = j.at("Map tiles");
-  sd.mapTiles.reserve(tiles.size());
-  for (auto &jtile : tiles) {
-    tileData t;
-    auto s     = jtile.at("type").get<std::string>();
-    t.tileType = s.empty() ? '\0' : s[0];
-    t.position.x        = jtile.at("x").get<float>();
-    t.position.y      = jtile.at("y").get<float>();
-    sd.mapTiles.push_back(t);
-  }
-
-  return true;
+  return map;
 }
-*/

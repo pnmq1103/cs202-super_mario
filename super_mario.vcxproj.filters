@@ -43,6 +43,7 @@
     <ClCompile Include="src\include\external\tinyfiledialogs.cpp" />
     <ClCompile Include="src\core\enemy_selector.cpp" />
     <ClCompile Include="src\core\map.cpp" />
+    <ClCompile Include="src\core\utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -84,6 +85,7 @@
     <ClInclude Include="src\include\external\tileson.hpp" />
     <ClInclude Include="src\include\core\enemy_selector.hpp" />
     <ClInclude Include="src\include\core\map.hpp" />
+    <ClInclude Include="src\include\core\utility.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

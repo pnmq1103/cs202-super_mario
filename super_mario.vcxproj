@@ -139,6 +139,7 @@
     <ClCompile Include="src\core\resource_manager.cpp" />
     <ClCompile Include="src\core\slider.cpp" />
     <ClCompile Include="src\core\tile_selector.cpp" />
+    <ClCompile Include="src\core\utility.cpp" />
     <ClCompile Include="src\enemies\bowser.cpp" />
     <ClCompile Include="src\core\button.cpp" />
     <ClCompile Include="src\characters\character.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="src\include\core\resource_manager.hpp" />
     <ClInclude Include="src\include\core\slider.hpp" />
     <ClInclude Include="src\include\core\tile_selector.hpp" />
+    <ClInclude Include="src\include\core\utility.hpp" />
     <ClInclude Include="src\include\enemies\bowser.hpp" />
     <ClInclude Include="src\include\core\button.hpp" />
     <ClInclude Include="src\include\characters\character.hpp" />

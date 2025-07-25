@@ -8,6 +8,7 @@
 #include "include/core/application.hpp"
 #include "include/core/editor.hpp"
 #include "include/core/enemy_selector.hpp"
+#include "include/core/file_handler.hpp"
 #include "include/core/tile_selector.hpp"
 
 EditorScene::EditorScene() : map_(block_width_, block_height_) {
@@ -167,7 +168,7 @@ void EditorScene::DrawCursor() {
 }
 
 void EditorScene::CreateButtons() {
-  buttons_.reserve(2);
+  buttons_.reserve(3);
   Rectangle source = {0, 0, 16, 16};
   Rectangle dest   = {100, 100, 64, 64};
 
@@ -187,6 +188,14 @@ void EditorScene::CreateButtons() {
       App.ChangeScene(std::make_unique<EnemySelectorScene>(select_gidx_));
     },
     source, dest, "res/sprites/buttons/choose_underground_tile.png");
+
+  dest = {500, 100, 64, 64};
+  buttons_.emplace_back(
+    "Save",
+    [this] {
+      FileHandler::SaveMapToFile(map_);
+    },
+    source, dest, "res/sprites/buttons/save.png");
 }
 
 void EditorScene::UpdateButtons() {

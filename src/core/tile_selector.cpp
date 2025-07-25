@@ -2,7 +2,6 @@
 #include <raymath.h>
 
 #include "include/core/application.hpp"
-#include "include/core/file_handler.hpp"
 #include "include/core/scene.hpp"
 #include "include/core/tile_selector.hpp"
 
@@ -20,8 +19,6 @@ TileSelectorScene::~TileSelectorScene() {}
 
 void TileSelectorScene::Init() {
   sprite_sheet_ = &App.Resource().GetTileset('g');
-  FileHandler::ReadSpriteInfo(
-    "res/sprites/tilesets/tileset_ground.txt", sprite_sheet_info_);
 
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
