@@ -68,6 +68,8 @@ void LoadScene::Draw() {
   //}
 }
 
+void LoadScene::Resume() {}
+
 SceneType LoadScene::Type() {
   return type_;
 }

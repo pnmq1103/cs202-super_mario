@@ -41,7 +41,7 @@ void ResManager::LoadTextures() {
   textures_["luigi_electric"]
     = LoadTexture("res/sprites/characters/luigi_electric.png");
 
-  textures_["enemies"] = LoadTexture("res/sprites/characters/enemies.png");
+  textures_["enemies"] = LoadTexture("res/sprites/enemies/enemies.png");
   textures_["icons"]   = LoadTexture("res/sprites/icons/icons.png");
   textures_["objects"] = LoadTexture("res/sprites/icons/objects.png");
 

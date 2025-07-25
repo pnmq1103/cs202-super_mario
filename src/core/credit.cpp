@@ -28,6 +28,8 @@ void CreditScene::Draw() {
   DrawTextureV(background_, {start_x + (end_x - start_x) * ease, y}, RAYWHITE);
 }
 
+void CreditScene::Resume() {}
+
 SceneType CreditScene::Type() {
   return type_;
 }

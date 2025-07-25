@@ -40,6 +40,8 @@ void SettingScene::Draw() {
   DrawSliders();
 }
 
+void SettingScene::Resume() {}
+
 SceneType SettingScene::Type() {
   return type_;
 }

@@ -19,7 +19,7 @@ AllowShortLoopsOnASingleLine: false
 BreakBeforeBraces: Attach
 BreakBeforeBinaryOperators: All
 BreakAfterReturnType: Automatic
-BreakTemplateDeclarations: Leave
+BreakTemplateDeclarations: Yes 
 BinPackArguments: true
 
 ColumnLimit: 80

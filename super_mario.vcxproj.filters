@@ -28,7 +28,6 @@
     <ClCompile Include="src\enemies\piranha_plant.cpp" />
     <ClCompile Include="src\characters\projectile.cpp" />
     <ClCompile Include="src\blocks\question_block.cpp" />
-    <ClCompile Include="src\core\scene.cpp" />
     <ClCompile Include="src\core\scene_stack.cpp" />
     <ClCompile Include="src\core\setting.cpp" />
     <ClCompile Include="src\blocks\static_block.cpp" />
@@ -42,6 +41,8 @@
     <ClCompile Include="src\items\spawn_item.cpp" />
     <ClCompile Include="src\items\star_powerup.cpp" />
     <ClCompile Include="src\include\external\tinyfiledialogs.cpp" />
+    <ClCompile Include="src\core\enemy_selector.cpp" />
+    <ClCompile Include="src\core\map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -81,6 +82,8 @@
     <ClInclude Include="src\include\external\json.hpp" />
     <ClInclude Include="src\include\external\tinyfiledialogs.h" />
     <ClInclude Include="src\include\external\tileson.hpp" />
+    <ClInclude Include="src\include\core\enemy_selector.hpp" />
+    <ClInclude Include="src\include\core\map.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <raylib.h>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 struct tileData {
@@ -9,7 +10,7 @@ struct tileData {
   int spriteID;
 };
 
-  struct SaveData {
+struct SaveData {
   int lives;
   int score;
   float gameTime;
@@ -17,7 +18,6 @@ struct tileData {
   Vector2 charPosition;
   std::vector<tileData> mapTiles = {};
 };
-
 
 class FileHandler {
 private:
@@ -35,6 +35,9 @@ public:
   static std::string OpenFilePath();
 
   std::string OpenSavePath(const std::string &default_name = "untitled.bin");
+
+  static void ReadSpriteInfo(
+    const std::string &path, std::unordered_map<int, Rectangle> &sprites);
 
   // bool LoadFile(const std::string &path, SaveData &sd) const;
   // bool SaveFile(const std::string &path, const SaveData &sd);
