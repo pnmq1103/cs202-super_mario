@@ -66,12 +66,12 @@ void GameScene::Update() {
 
   // Update game manager with delta time and active character
   float deltaTime = GetFrameTime();
-  game_manager_.Update(deltaTime, active_character);
+  // game_manager_.Update(deltaTime, active_character);
 }
 
 void GameScene::Draw() {
   // Draw level (background, blocks, enemies)
-  game_manager_.DrawLevel();
+  // game_manager_.DrawLevel();
 
   // Draw active character
   Character *active_character = input_command_->GetActiveCharacter();
@@ -80,7 +80,7 @@ void GameScene::Draw() {
   }
 
   // Draw stats (lives, points, time)
-  game_manager_.DrawStats();
+  // game_manager_.DrawStats();
 
   int controlsStartY = 140;
   int lineSpacing    = 25;

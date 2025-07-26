@@ -1,6 +1,13 @@
-#pragma once
+/*#pragma once
 #include "include/blocks/question_block.hpp"
 #include <raylib.h>
+enum class PowerUpType {
+  None,
+  Coin,
+  SuperMushroom,
+  FireFlower,
+  Star,
+};
 
 class PowerUp {
 protected:
@@ -20,4 +27,4 @@ public:
   Rectangle GetRect() const;
   bool IsActive() const;
   void Deactivate();
-};
+};*/

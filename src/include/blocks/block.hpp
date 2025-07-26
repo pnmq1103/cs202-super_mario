@@ -1,7 +1,7 @@
-#pragma once
+/*#pragma once
 #include <raylib.h>
-#include <string>
 #include <unordered_map>
+#include <string>
 
 enum class BlockType {
   Empty,
@@ -30,7 +30,7 @@ public:
 
   virtual Block *Clone() const = 0;
 
-  virtual void Update(float dt);
+  virtual void Update(float dt) {}
   virtual void OnHit();
 
   Vector2 GetPosition() const;
@@ -50,4 +50,4 @@ public:
   virtual void Render(
     const Texture &texture,
     const std::unordered_map<int, Rectangle> &spriteRects) const;
-};
+};*/

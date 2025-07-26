@@ -1,7 +1,7 @@
-#include "include/items/fire_flower_powerup.hpp"
+/*#include "include/items/fire_flower_powerup.hpp"
 
 FireFlowerPowerUp::FireFlowerPowerUp(Vector2 pos)
-    : PowerUp(pos, /*spriteId=*/2) {}
+    : PowerUp(pos, spriteId=2) {}
 
 void FireFlowerPowerUp::ApplyEffect() {
   // player.EnableFireMode();
@@ -10,4 +10,4 @@ void FireFlowerPowerUp::ApplyEffect() {
 
 PowerUpType FireFlowerPowerUp::GetType() const {
   return PowerUpType::FireFlower;
-}
+}*/

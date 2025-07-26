@@ -11,7 +11,7 @@
 #include "include/enemies/goomba.hpp"
 #include "include/enemies/koopa_troopa.hpp"
 
-GameManaging::GameManaging() {
+/*GameManaging::GameManaging() {
   lives_            = 3;
   gameTime_         = 0.0f;
   points_           = 0;
@@ -19,14 +19,14 @@ GameManaging::GameManaging() {
   backgroundType_   = 0;
 
   LoadResources();
-}
+}*/
 
-GameManaging::~GameManaging() {
+/*GameManaging::~GameManaging() {
   UnloadLevel();
   // No need to manually unload textures - ResManager handles this
-}
+}*/
 
-void GameManaging::LoadLevel(const std::string &filename) {
+/*void GameManaging::LoadLevel(const std::string &filename) {
   // Clear previous level data
   UnloadLevel();
 
@@ -45,7 +45,7 @@ void GameManaging::LoadLevel(const std::string &filename) {
   SpawnEnemy(EnemyType::Koopa, {400.0f, 500.0f});
 }
 
-void GameManaging::Update(float deltaTime, Character *activeCharacter) {
+/*void GameManaging::Update(float deltaTime, Character *activeCharacter) {
   // Update time
   UpdateTime();
 
@@ -68,9 +68,9 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
 
   // Remove dead enemies
   RemoveDeadEnemies();
-}
+}*/
 
-void GameManaging::DrawLevel() {
+/*void GameManaging::DrawLevel() {
   DrawBackground();
 
   // Draw all blocks using ResManager
@@ -84,9 +84,9 @@ void GameManaging::DrawLevel() {
       DrawEnemy(enemy.get());
     }
   }
-}
+}*/
 
-void GameManaging::DrawBackground() {
+/*void GameManaging::DrawBackground() {
   // Draw background using ResManager
   try {
     Texture backgroundTex = App.Resource().GetBackground();
@@ -110,7 +110,7 @@ void GameManaging::DrawBackground() {
   }
 }
 
-void GameManaging::DrawBlock(const Block *block) {
+/*void GameManaging::DrawBlock(const Block *block) {
   if (!block)
     return;
 
@@ -139,9 +139,9 @@ void GameManaging::DrawBlock(const Block *block) {
     }
     DrawRectangleRec(rect, color);
   }
-}
+}*/
 
-void GameManaging::DrawEnemy(const Enemy *enemy) {
+/*void GameManaging::DrawEnemy(const Enemy *enemy) {
   if (!enemy)
     return;
 
@@ -201,7 +201,7 @@ void GameManaging::CheckCollisions(Character *character) {
   CheckEnemyCollisions(character);
 }
 
-bool GameManaging::CheckBlockCollision(
+/*bool GameManaging::CheckBlockCollision(
   Rectangle characterRect, Vector2 &correction) {
   bool collided = false;
   correction    = {0, 0};
@@ -242,9 +242,9 @@ bool GameManaging::CheckBlockCollision(
   }
 
   return collided;
-}
+}*/
 
-void GameManaging::CheckEnemyCollisions(Character *character) {
+/*void GameManaging::CheckEnemyCollisions(Character *character) {
   Rectangle characterRect = character->GetRectangle();
 
   for (auto &enemy : enemies_) {
@@ -267,7 +267,7 @@ void GameManaging::CheckEnemyCollisions(Character *character) {
   }
 }
 
-void GameManaging::HitBlock(Block *block, Character *character) {
+/*void GameManaging::HitBlock(Block *block, Character *character) {
   if (block) {
     block->OnHit();
     // Award points for hitting certain blocks
@@ -275,9 +275,9 @@ void GameManaging::HitBlock(Block *block, Character *character) {
       AddPoints(50);
     }
   }
-}
+}*/
 
-void GameManaging::SpawnEnemy(EnemyType type, Vector2 position) {
+/*void GameManaging::SpawnEnemy(EnemyType type, Vector2 position) {
   std::unique_ptr<Enemy> newEnemy;
 
   switch (type) {
@@ -333,31 +333,31 @@ void GameManaging::ResetGame() {
   UnloadLevel();
 }
 
-void GameManaging::UnloadLevel() {
+/*void GameManaging::UnloadLevel() {
   blocks_.clear();
   enemies_.clear();
-}
+}*/
 
-void GameManaging::LoadResources() {
+/*void GameManaging::LoadResources() {
   // Resources are automatically loaded by ResManager singleton
   // No need to manually load textures here
 }
 
-void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
+/*void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
   std::unique_ptr<Block> newBlock;
 
   // Map tile types to block types
   switch (tileType) {
     case 1: // Solid block
-      newBlock = std::make_unique<StaticBlock>(
+      /*newBlock = std::make_unique<StaticBlock>(
         position, 32, 32, BlockType::Solid, tileType);
       break;
     case 2: // Question block
-      newBlock = std::make_unique<QuestionBlock>(
+      /*newBlock = std::make_unique<QuestionBlock>(
         position, PowerUpType::Coin, tileType);
       break;
     case 3: // Brick block
-      newBlock = std::make_unique<StaticBlock>(
+      /*newBlock = std::make_unique<StaticBlock>(
         position, 32, 32, BlockType::Brick, tileType);
       break;
     default:
@@ -367,8 +367,8 @@ void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
   if (newBlock) {
     blocks_.push_back(std::move(newBlock));
   }
-}
+}*/
 
-void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
+/*void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
   SpawnEnemy(static_cast<EnemyType>(enemyType), position);
-}
+}*/

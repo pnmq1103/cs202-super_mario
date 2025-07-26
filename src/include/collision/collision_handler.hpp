@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "include/blocks/brick_block.hpp"
 #include "include/blocks/question_block.hpp"
 #include "include/blocks/static_block.hpp"
@@ -54,4 +54,4 @@ public:
   void RemoveBlock(int index);
   void RemoveEnemy(int index);
   void CheckCollision();
-};
+};*/

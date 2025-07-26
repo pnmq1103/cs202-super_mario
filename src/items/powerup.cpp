@@ -1,4 +1,4 @@
-#include "include/items/powerup.hpp"
+/*#include "include/items/powerup.hpp"
 
 PowerUp::PowerUp(Vector2 pos, int spriteId)
   : position(pos), spriteId(spriteId) {}
@@ -21,4 +21,4 @@ bool PowerUp::IsActive() const {
 
 void PowerUp::Deactivate() {
   active = false;
-}
+}*/

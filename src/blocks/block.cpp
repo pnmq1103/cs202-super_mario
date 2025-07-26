@@ -1,4 +1,4 @@
-#include "include/blocks/block.hpp"
+/*#include "include/blocks/block.hpp"
 #include <raylib.h>
 #include <unordered_map>
 
@@ -23,8 +23,6 @@ Block::Block(
   Vector2 pos, int w, int h, BlockType type, bool solid, int spriteId)
     : position(pos), width(w), height(h), type(type), solid(solid),
       spriteId(spriteId) {}
-
-void Block::Update(float dt) {}
 
 void Block::OnHit() {}
 
@@ -61,14 +59,14 @@ void Block::SetSolid(bool val) {
 }
 
 void Block::SetSize(int w, int h) {
-  width  = w;
+  width = w;
   height = h;
 }
 
 void Block::SetType(std::string t) {
   type = fromString(t);
 }
-bool Block::CheckCollision(Rectangle other) const {
+    bool Block::CheckCollision(Rectangle other) const {
   return CheckCollisionRecs(GetRect(), other);
 }
 
@@ -79,4 +77,4 @@ void Block::Render(
   if (it != spriteRects.end()) {
     DrawTextureRec(texture, it->second, position, WHITE);
   }
-}
+}*/

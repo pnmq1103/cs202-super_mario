@@ -1,6 +1,6 @@
-#include "include/items/star_powerup.hpp"
+/*#include "include/items/star_powerup.hpp"
 
-StarPowerUp::StarPowerUp(Vector2 pos) : PowerUp(pos, /*spriteId=*/3) {}
+StarPowerUp::StarPowerUp(Vector2 pos) : PowerUp(pos, spriteId=3) {}
 
 void StarPowerUp::ApplyEffect() {
   // player.BecomeInvincible();
@@ -10,3 +10,4 @@ void StarPowerUp::ApplyEffect() {
 PowerUpType StarPowerUp::GetType() const {
   return PowerUpType::Star;
 }
+*/

@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "include/blocks/block.hpp"
 
 enum class PowerUpType {
@@ -27,4 +27,4 @@ public:
   PowerUpType GetItem() const;
 
   Block *Clone() const override;
-};
+};*/

@@ -1,4 +1,4 @@
-#include "include/blocks/brick_block.hpp"
+/*#include "include/blocks/brick_block.hpp"
 
 BrickBlock::BrickBlock(Vector2 pos, int spriteId)
     : Block(pos, 16, 16, BlockType::Brick, true, spriteId) {}
@@ -19,4 +19,4 @@ bool BrickBlock::IsDestroyed() const {
 
 Block *BrickBlock::Clone() const {
   return new BrickBlock(*this);
-}
+}*/

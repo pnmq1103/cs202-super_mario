@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "include/blocks/block.hpp"
 
 class BrickBlock : public Block {
@@ -14,4 +14,4 @@ public:
   bool IsDestroyed() const;
 
   Block *Clone() const override;
-};
+};*/

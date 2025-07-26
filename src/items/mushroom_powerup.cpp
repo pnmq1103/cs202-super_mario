@@ -1,6 +1,6 @@
-#include "include/items/mushroom_powerup.hpp"
+/*#include "include/items/mushroom_powerup.hpp"
 
-MushroomPowerUp::MushroomPowerUp(Vector2 pos) : PowerUp(pos, /*spriteId=*/1) {}
+MushroomPowerUp::MushroomPowerUp(Vector2 pos) : PowerUp(pos, spriteId=1) {}
 
 void MushroomPowerUp::ApplyEffect() {
   // Player::Grow()
@@ -9,4 +9,4 @@ void MushroomPowerUp::ApplyEffect() {
 
 PowerUpType MushroomPowerUp::GetType() const {
   return PowerUpType::SuperMushroom;
-}
+}*/

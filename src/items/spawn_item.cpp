@@ -1,4 +1,4 @@
-#include "include/items/spawn_item.hpp"
+/*#include "include/items/spawn_item.hpp"
 #include "include/items/mushroom_powerup.hpp"
 #include "include/items/fire_flower_powerup.hpp"
 #include "include/items/star_powerup.hpp"
@@ -18,3 +18,4 @@ void SpawnItem(PowerUpType type, Vector2 pos) {
   }
   spawnedItems.push_back(item);
 }
+*/
