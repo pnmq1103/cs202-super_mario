@@ -152,6 +152,8 @@
     <ClCompile Include="src\core\menu.cpp" />
     <ClCompile Include="src\characters\luigi.cpp" />
     <ClCompile Include="src\characters\mario.cpp" />
+    <ClCompile Include="src\enemies\movement_strategy.cpp" />
+    <ClCompile Include="src\enemies\piranha_plant.cpp" />
     <ClCompile Include="src\characters\projectile.cpp" />
     <ClCompile Include="src\core\scene_stack.cpp" />
     <ClCompile Include="src\core\setting.cpp" />
@@ -189,6 +191,8 @@
     <ClInclude Include="src\include\core\load.hpp" />
     <ClInclude Include="src\include\core\menu.hpp" />
     <ClInclude Include="src\include\characters\mario.hpp" />
+    <ClInclude Include="src\include\enemies\movement_strategy.hpp" />
+    <ClInclude Include="src\include\enemies\piranha_plant.hpp" />
     <ClInclude Include="src\include\characters\projectile.hpp" />
     <ClInclude Include="src\include\core\scene.hpp" />
     <ClInclude Include="src\include\core\scene_stack.hpp" />
@@ -207,6 +211,7 @@
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include=".gitignore" />
+    <None Include="ENEMY_SYSTEM_COMPLETE.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\sprites\characters\enemies.png" />
