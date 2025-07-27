@@ -1,5 +1,6 @@
-#include "include/collision/collision_handler.hpp"
 #include <cmath>
+
+#include "include/collision/collision_handler.hpp"
 
 /*CollisionHandler::CollisionHandler(float width, float height)
     : cellSize_(16 * 4), projectile_list_(7, nullptr) {
@@ -191,11 +192,11 @@ void CollisionHandler::UpdatePosition() {
     }
   }
 }
-        
+
 // Temporary implementation for collision checking
 void CollisionHandler::CheckCollision() {
   if (!character_) return;
-  
+
   UpdatePosition();
   CheckCollisionCharacter();
   CheckCollisionProjectile();

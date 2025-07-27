@@ -10,10 +10,10 @@ class EditorScene : public Scene {
 private:
   SceneType type_ = {Editor};
 
-  int block_width_  = {50};
-  int block_height_ = {50};
+  int block_width_  = {250}; // Fixed size
+  int block_height_ = {28};
 
-  Vector2 snapped_    = {0, 0};
+  Vector2 snap_       = {0, 0};
   Rectangle boundary_ = {};
 
   Texture crosshair_ = {};

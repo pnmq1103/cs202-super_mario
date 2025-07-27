@@ -5,10 +5,6 @@
 #include <unordered_map>
 #include <vector>
 
-// Include the actual Block and Enemy classes
-#include "include/blocks/block.hpp"
-#include "include/enemies/enemy.hpp"
-
 /*class Character;
 class Command;
 
@@ -23,7 +19,7 @@ public:
     void UnloadLevel();
 
     // Core game update loop
-    void Update(float deltaTime, Character* activeCharacter);
+    void Update(float dt, Character* activeCharacter);
 
     // Rendering
     void DrawLevel();

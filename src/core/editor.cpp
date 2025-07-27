@@ -50,8 +50,8 @@ void EditorScene::Update() {
 
   // Snapping grid, check only if mouse is in the boundary
   if (CheckCollisionPointRec(mouse_world_pos_, boundary_)) {
-    snapped_.x = std::floor(mouse_world_pos_.x / blockSize) * blockSize;
-    snapped_.y = std::floor(mouse_world_pos_.y / blockSize) * blockSize;
+    snap_.x = std::floor(mouse_world_pos_.x / blockSize) * blockSize;
+    snap_.y = std::floor(mouse_world_pos_.y / blockSize) * blockSize;
   }
 
   if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && IsKeyDown(KEY_SPACE)) {
@@ -155,15 +155,24 @@ void EditorScene::DrawCursor() {
 
   BeginMode2D(camera_);
   //  Draw tile
-  if (select_gidx_ != 0)
+  if (select_gidx_ != 0) {
+    Rectangle src       = map_.GetInfo(select_gidx_);
+    float scaled_width  = src.width * 4;
+    float scaled_height = src.height * 4;
+    Rectangle dst       = {
+      snap_.x,
+      snap_.y + blockSize - scaled_height,
+      scaled_width,
+      scaled_height,
+    };
     DrawTexturePro(
-      map_.GetTexture(select_gidx_), map_.GetInfo(select_gidx_),
-      {snapped_.x, snapped_.y, blockSize, blockSize}, {0, 0}, 0, transparent);
+      map_.GetTexture(select_gidx_), src, dst, {0, 0}, 0, transparent);
+  }
 
   // Draw crosshair
-  DrawTexturePro(
-    crosshair_, {0, 0, 64, 64}, {snapped_.x, snapped_.y, blockSize, blockSize},
-    {0, 0}, 0, transparent);
+  // DrawTexturePro(
+  //  crosshair_, {0, 0, 64, 64}, {snap_.x, snap_.y, blockSize,
+  //  blockSize}, {0, 0}, 0, transparent);
   EndMode2D();
 }
 
@@ -171,6 +180,7 @@ void EditorScene::CreateButtons() {
   buttons_.reserve(3);
   Rectangle source = {0, 0, 16, 16};
   Rectangle dest   = {100, 100, 64, 64};
+  float spacing    = 30;
 
   // Choose tile
   buttons_.emplace_back(
@@ -181,7 +191,7 @@ void EditorScene::CreateButtons() {
     source, dest, "res/sprites/buttons/choose_ground_tile.png");
 
   // Choose enemy
-  dest = {300, 100, 64, 64};
+  dest = {100 + 64 + spacing, 100, 64, 64};
   buttons_.emplace_back(
     "Enemy",
     [this] {
@@ -189,7 +199,8 @@ void EditorScene::CreateButtons() {
     },
     source, dest, "res/sprites/buttons/choose_underground_tile.png");
 
-  dest = {500, 100, 64, 64};
+  // Save
+  dest = {100 + 2 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
     "Save",
     [this] {

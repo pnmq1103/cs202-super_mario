@@ -5,8 +5,6 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-// #include "include/core/file_handler.hpp"
-// #include "include/blocks/block.hpp"
 
 class ResManager {
   std::unordered_map<std::string, Texture> textures_;

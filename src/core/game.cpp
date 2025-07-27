@@ -1,4 +1,5 @@
 ﻿#include <raylib.h>
+#include <stdexcept>
 
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
@@ -64,9 +65,8 @@ void GameScene::Update() {
     active_character->SetFrameCount();
   }
 
-  // Update game manager with delta time and active character
-  float deltaTime = GetFrameTime();
-  // game_manager_.Update(deltaTime, active_character);
+  // float dt = GetFrameTime();
+  // game_manager_.Update(dt, active_character);
 }
 
 void GameScene::Draw() {

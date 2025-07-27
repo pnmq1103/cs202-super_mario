@@ -2,14 +2,10 @@
 #include <raylib.h>
 #include <stdexcept>
 
-#include "include/blocks/question_block.hpp"
-#include "include/blocks/static_block.hpp"
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
 #include "include/core/game_managing.hpp"
 #include "include/core/resource_manager.hpp"
-#include "include/enemies/goomba.hpp"
-#include "include/enemies/koopa_troopa.hpp"
 
 /*GameManaging::GameManaging() {
   lives_            = 3;
@@ -45,19 +41,19 @@
   SpawnEnemy(EnemyType::Koopa, {400.0f, 500.0f});
 }
 
-/*void GameManaging::Update(float deltaTime, Character *activeCharacter) {
+/*void GameManaging::Update(float dt, Character *activeCharacter) {
   // Update time
   UpdateTime();
 
   // Update all blocks
   for (auto &block : blocks_) {
-    block->Update(deltaTime);
+    block->Update(dt);
   }
 
   // Update all enemies
   for (auto &enemy : enemies_) {
     if (enemy->IsAlive()) {
-      enemy->Update(deltaTime);
+      enemy->Update(dt);
     }
   }
 
