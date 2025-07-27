@@ -4,8 +4,6 @@
 #include <raylib.h>
 #include <stdexcept>
 
-#include "include/blocks/question_block.hpp"
-#include "include/blocks/static_block.hpp"
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
 #include "include/core/resource_manager.hpp"
@@ -15,7 +13,7 @@
 #include "include/enemies/bowser.hpp"
 #include "include/managers/enemy_manager.hpp"
 
-GameManaging::GameManaging() {
+/*GameManaging::GameManaging() {
   lives_            = 3;
   gameTime_         = 0.0f;
   points_           = 0;
@@ -25,13 +23,13 @@ GameManaging::GameManaging() {
   updateCounter_    = 0;
 
   LoadResources();
-}
+}*/
 
-GameManaging::~GameManaging() {
+/*GameManaging::~GameManaging() {
   UnloadLevel();
 }
 
-void GameManaging::LoadLevel(const std::string &filename) {
+/*void GameManaging::LoadLevel(const std::string &filename) {
   // Clear previous level data
   UnloadLevel();
 
@@ -79,7 +77,7 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
 
   // Update all blocks
   for (auto &block : blocks_) {
-    block->Update(deltaTime);
+    block->Update(dt);
   }
 
   // ✅ Enhanced enemy management with full functionality
@@ -168,7 +166,7 @@ void GameManaging::CheckSimpleCollisions(Character* character) {
   // This provides more sophisticated collision detection and response
 }
 
-void GameManaging::DrawLevel() {
+/*void GameManaging::DrawLevel() {
   DrawBackground();
 
   // Draw all blocks
@@ -328,7 +326,7 @@ void GameManaging::DrawBackground() {
   }
 }
 
-void GameManaging::DrawBlock(const Block *block) {
+/*void GameManaging::DrawBlock(const Block *block) {
   if (!block)
     return;
 
@@ -361,7 +359,7 @@ void GameManaging::DrawBlock(const Block *block) {
   DrawRectangleLinesEx(rect, 2, DARKGRAY);
 }
 
-void GameManaging::DrawEnemy(const Enemy *enemy) {
+/*void GameManaging::DrawEnemy(const Enemy *enemy) {
   if (!enemy)
     return;
 
@@ -441,14 +439,14 @@ void GameManaging::InitializeCollisionSystem(Character* character) {
   }
 }
 
-void GameManaging::HitBlock(Block *block, Character *character) {
+/*void GameManaging::HitBlock(Block *block, Character *character) {
   if (block) {
     block->OnHit();
     if (block->GetType() == BlockType::Question) {
       AddPoints(50);
     }
   }
-}
+}*/
 
 void GameManaging::SpawnEnemy(EnemyType type, Vector2 position) {
   if (enemyManager_) {
@@ -552,7 +550,7 @@ void GameManaging::ResetGame() {
   UnloadLevel();
 }
 
-void GameManaging::UnloadLevel() {
+/*void GameManaging::UnloadLevel() {
   blocks_.clear();
   enemies_.clear();
   if (enemyManager_) {
@@ -560,24 +558,24 @@ void GameManaging::UnloadLevel() {
   }
 }
 
-void GameManaging::LoadResources() {
+/*void GameManaging::LoadResources() {
   // Resources are automatically loaded by ResManager singleton
 }
 
-void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
+/*void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
   std::unique_ptr<Block> newBlock;
 
   switch (tileType) {
     case 1: // Solid block
-      newBlock = std::make_unique<StaticBlock>(
+      /*newBlock = std::make_unique<StaticBlock>(
         position, 32, 32, BlockType::Solid, tileType);
       break;
     case 2: // Question block
-      newBlock = std::make_unique<QuestionBlock>(
+      /*newBlock = std::make_unique<QuestionBlock>(
         position, PowerUpType::Coin, tileType);
       break;
     case 3: // Brick block
-      newBlock = std::make_unique<StaticBlock>(
+      /*newBlock = std::make_unique<StaticBlock>(
         position, 32, 32, BlockType::Brick, tileType);
       break;
     default:
@@ -587,9 +585,9 @@ void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
   if (newBlock) {
     blocks_.push_back(std::move(newBlock));
   }
-}
+}*/
 
-void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
+/*void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
   SpawnEnemy(static_cast<EnemyType>(enemyType), position);
 }
 

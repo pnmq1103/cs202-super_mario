@@ -1,22 +1,12 @@
-#pragma once
-#include "include/blocks/brick_block.hpp"
-#include "include/blocks/question_block.hpp"
-#include "include/blocks/static_block.hpp"
-#include "include/characters/character.hpp"
-#include "include/characters/fireball.hpp"
-#include "include/enemies/bowser.hpp"
-#include "include/enemies/goomba.hpp"
-#include "include/enemies/koopa_troopa.hpp"
-#include "include/enemies/piranha_plant.hpp"
-#include "include/items/fire_flower_powerup.hpp"
-#include "include/items/mushroom_powerup.hpp"
-#include "include/items/spawn_item.hpp"
-#include "include/items/star_powerup.hpp"
+/*#pragma once
 #include <iostream>
 #include <list>
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
+#include "include/characters/character.hpp"
+#include "include/characters/fireball.hpp"
 
 class CollisionHandler {
 private:
@@ -54,4 +44,4 @@ public:
   void RemoveBlock(int index);
   void RemoveEnemy(int index);
   void CheckCollision();
-};
+};*/

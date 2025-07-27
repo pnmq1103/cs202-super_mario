@@ -1,15 +1,11 @@
 #pragma once
-#include <vector>
-#include <string>
 #include <memory>
-#include <unordered_map>
 #include <raylib.h>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-// Include the actual Block and Enemy classes
-#include "include/blocks/block.hpp"
-#include "include/enemies/enemy.hpp"
-
-class Character;
+/*class Character;
 class Command;
 class EnemyManager;
 class CollisionHandler; // Forward declaration (temporarily unused)
@@ -18,15 +14,15 @@ class GameManaging {
 public:
     GameManaging();
     ~GameManaging();
-    
+
     // Level loading and management
     void LoadLevel(const std::string& filename);
     void ResetGame();
     void UnloadLevel();
 
     // Core game update loop
-    void Update(float deltaTime, Character* activeCharacter);
-    
+    void Update(float dt, Character* activeCharacter);
+
     // Rendering
     void DrawLevel();
     void DrawBackground();
@@ -81,7 +77,7 @@ private:
     float gameTime_;
     int points_;
     int countdownSeconds_;
-    
+
     // Level data
     std::vector<std::unique_ptr<Block>> blocks_;
     std::vector<std::unique_ptr<Enemy>> enemies_; // Legacy enemy system
@@ -98,4 +94,4 @@ private:
     void LoadResources();
     void CreateBlockFromType(int tileType, Vector2 position);
     void CreateEnemyFromType(int enemyType, Vector2 position);
-};
+};*/
