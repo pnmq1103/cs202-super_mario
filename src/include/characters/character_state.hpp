@@ -27,6 +27,7 @@ protected:
   void SetPosition(Vector2 Nposition);
   Rectangle MakeDestRect(Rectangle rectangle);
 
+
 public:
   CharacterState(
     int NrunTime, float Nspeed, int NjumpTime, float NjumpHeight, float Nscale,

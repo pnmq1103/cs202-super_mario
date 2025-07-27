@@ -13,5 +13,10 @@ public:
   void OnHitFromSide() override;
   Enemy *Clone() const override;
 
+  // Boss-specific methods
   int getHP() const;
+  bool IsVulnerable() const;
+  void EnterRageMode(); // Special mode when low health
+  void PerformSpecialAttack(); // Boss special attack
+  Vector2 GetCenterPosition() const; // Get center for projectile targeting
 };

@@ -11,7 +11,7 @@
 Application &App = Application::Instance();
 
 Application::Application() {
-  SetTargetFPS(120);
+  SetTargetFPS(60);
   SetConfigFlags(FLAG_MSAA_4X_HINT);
   scene_manager_.Push(std::make_unique<MenuScene>());
 }

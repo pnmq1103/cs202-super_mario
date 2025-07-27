@@ -47,6 +47,7 @@
     <ClCompile Include="src\managers\block_manager.cpp" />
     <ClCompile Include="src\managers\enemy_manager.cpp" />
     <ClCompile Include="src\managers\item_manager.cpp" />
+    <ClCompile Include="src\enemies\movement_strategy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -92,10 +93,12 @@
     <ClInclude Include="src\include\managers\block_manager.hpp" />
     <ClInclude Include="src\include\managers\enemy_manager.hpp" />
     <ClInclude Include="src\include\managers\item_manager.hpp" />
+    <ClInclude Include="src\include\enemies\movement_strategy.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include=".gitignore" />
+    <None Include="ENEMY_SYSTEM_COMPLETE.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\sprites\characters\enemies.png" />
