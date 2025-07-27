@@ -21,7 +21,32 @@ PipeBlock::PipeBlock(
 
 PipeBlock::~PipeBlock() {}
 
+Rectangle PipeBlock::GetRectangle() {
+  Rectangle rect;
+  rect.x      = position.x;
+  rect.y      = position.y;
+  rect.width  = 0;
+  rect.height = 0;
+  if (is_vertical_) {
+    rect.width = 16 * scale * 2;
+    if (has_head_)
+      rect.height += 16 * scale;
+    if (has_tail_)
+      rect.height += 16 * scale;
+    rect.height += 16 * scale * length_;
+  } else {
+    rect.height = 16 * scale * 2;
+    if (has_head_)
+      rect.width += 16 * scale;
+    if (has_tail_)
+      rect.width += 16 * scale;
+    rect.width += 16 * scale * length_;
+  }
+  return rect;
+}
+
 void PipeBlock::OnHit() {}
+
 void PipeBlock::Draw() {
   if (is_vertical_) {
 

@@ -9,6 +9,7 @@ public:
   SuperMushroom(Vector2 Nposition, float Nscale, bool to_left);
   ~SuperMushroom();
   void OnHit();
+  void Update();
   void Draw();
   void StopY(float Ny);
 };

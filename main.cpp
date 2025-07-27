@@ -1,4 +1,4 @@
-#include "include/core/application.hpp"
+/*#include "include/core/application.hpp"
 #include <raylib.h>
 
 int main() {
@@ -14,17 +14,20 @@ int main() {
 
   CloseWindow();
   return 0;
-}
+}*/
 
-/* #include "include/characters/character.hpp"
+#include "include/characters/character.hpp"
 #include "include/characters/projectile_pool.hpp"
 #include "include/core/application.hpp"
 #include "include/objects/brick_block.hpp"
 #include "include/objects/coin.hpp"
+#include "include/objects/fire_flower.hpp"
+#include "include/objects/object_manager.hpp"
 #include "include/objects/pipe_block.hpp"
 #include "include/objects/question_block.hpp"
 #include "include/objects/static_block.hpp"
 #include "include/objects/super_mushroom.hpp"
+#include "include/objects/super_star.hpp"
 #include <cmath>
 #include <iostream>
 #include <list>
@@ -38,19 +41,23 @@ int main() {
   InitWindow(3000, 1000, "super mario");
   SetTargetFPS(60);
   App.Resource().Init();
-  SuperMushroom block({500, 500}, 4, false);
+  ObjectManager &object = ObjectManager::GetInstance();
+  object.Reset(4);
+  object.AddPipeBlock({100, 100}, 2, true, true, true);
+  object.AddQuestionBlock({500, 100}, super_mushroom);
+  object.AddBrickBlock({600, 100});
 
   while (!WindowShouldClose()) {
 
     BeginDrawing();
     ClearBackground(BLACK);
 
-    block.SetFrameCount();
-    block.Update();
-    block.Draw();
+    object.SetFrameCount();
+    object.Update();
+    object.Draw();
 
-    if (IsKeyDown(KEY_H))
-      block.OnHit();
+    if (IsKeyDown(KEY_A))
+      object.OnHit(1);
 
     EndDrawing();
   }

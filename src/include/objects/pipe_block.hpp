@@ -13,6 +13,7 @@ public:
     Vector2 Nposition, float Nscale, int Nlength, bool Nis_vertical,
     bool Nhas_head, bool Nhas_tail);
   ~PipeBlock();
+  Rectangle GetRectangle();
   void OnHit();
   void Draw();
 };

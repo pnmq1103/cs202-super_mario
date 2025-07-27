@@ -18,6 +18,11 @@ void SuperMushroom::OnHit() {
   is_destroyed = true;
 }
 
+void SuperMushroom::Update() {
+  GameObject::Update();
+  position.x += velocity.x;
+}
+
 void SuperMushroom::Draw() {
   if (!is_destroyed)
     GameObject::Draw();

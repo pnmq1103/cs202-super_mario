@@ -7,11 +7,16 @@
 #include <vector>
 
 class GameObject {
+private:
+  static int object_count_;
+  int index_;
+
 protected:
+  static int time;
+
   Vector2 position;
   const float scale, gravity;
   bool is_destroyed;
-  int time;
 
   const Texture *texture;
   Rectangle frame;
@@ -24,11 +29,14 @@ protected:
   void LoadFrameList(std::string address);
 
 public:
+  static void SetFrameCount();
+  static void Reset();
+
   GameObject(Vector2 Nposition, float Nscale);
   virtual ~GameObject();
+  virtual Rectangle GetRectangle();
   bool IsDestroyed();
   void Bounce();
-  void SetFrameCount();
   virtual void OnHit() = 0;
   virtual void Update();
   virtual void Draw();

@@ -1,4 +1,8 @@
 #include "include/objects/game_object.hpp"
+#include "include/objects/object_manager.hpp"
+
+int GameObject::object_count_ = 0;
+int GameObject::time          = 0;
 
 Rectangle GameObject::MakeDestRect(Rectangle rect) {
   return {position.x, position.y, rect.width * scale, rect.height * scale};
@@ -28,6 +32,8 @@ void GameObject::LoadFrameList(std::string address) {
 
 GameObject::GameObject(Vector2 Nposition, float Nscale)
     : scale(Nscale), gravity(5) {
+  index_ = object_count_;
+  ++object_count_;
   position     = Nposition;
   is_destroyed = false;
   time         = 0;
@@ -36,6 +42,10 @@ GameObject::GameObject(Vector2 Nposition, float Nscale)
 }
 
 GameObject::~GameObject() {}
+
+Rectangle GameObject::GetRectangle() {
+  return {position.x, position.y, frame.width, frame.height};
+}
 
 void GameObject::SetFrameCount() {
   ++time;
@@ -48,6 +58,13 @@ void GameObject::Update() {
     position.y = y_mark;
     velocity.y = 0;
   }
+  if (is_destroyed && position.y > 1000)
+    ObjectManager::GetInstance().DeleteObject(index_);
+}
+
+void GameObject::Reset() {
+  time          = 0;
+  object_count_ = 0;
 }
 
 void GameObject::Draw() {
