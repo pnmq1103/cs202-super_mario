@@ -1,3 +1,5 @@
+﻿#include "include/core/game_managing.hpp"
+#include "include/enemies/movement_strategy.hpp" // Add this include
 #include <algorithm>
 #include <raylib.h>
 #include <stdexcept>
@@ -12,25 +14,29 @@
 #include "include/blocks/rock_block.hpp"
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
-#include "include/core/game_managing.hpp"
 #include "include/core/resource_manager.hpp"
 #include "include/enemies/goomba.hpp"
 #include "include/enemies/koopa_troopa.hpp"
+#include "include/enemies/piranha_plant.hpp"
+#include "include/enemies/bowser.hpp"
+#include "include/managers/enemy_manager.hpp"
 
-GameManaging::GameManaging() {
+/*GameManaging::GameManaging() {
   lives_            = 3;
   gameTime_         = 0.0f;
   points_           = 0;
   countdownSeconds_ = 300;
   backgroundType_   = 0;
+  enemyManager_     = std::make_unique<EnemyManager>();
+  updateCounter_    = 0;
 
   LoadResources();
-}
+}*/
 
-GameManaging::~GameManaging() {
+/*GameManaging::~GameManaging() {
   UnloadLevel();
-  // No need to manually unload textures - ResManager handles this
 }
+*/
 
 void GameManaging::LoadLevel(const std::string& path) {
   // Clear previous level data
@@ -96,42 +102,151 @@ void GameManaging::LoadLevel(const std::string& path) {
     int enemyID = enemy.gid - 1;
     CreateEnemyFromType(e, enemy.pos, enemy.size, enemy.velocity, enemyID);
   } 
+  // Create test objects for better performance
+  //CreateBlockFromType(1, {100.0f, 600.0f}); // Solid block
+  //CreateBlockFromType(2, {200.0f, 600.0f}); // Question block
+  //CreateBlockFromType(3, {300.0f, 600.0f}); // Brick block
+
+  // Enhanced enemy spawning with full functionality
+  SpawnEnemyFormation();
+}
+
+void GameManaging::SpawnEnemyFormation() {
+  if (!enemyManager_) return;
+  
+  // Spawn a variety of enemies to showcase the system
+  enemyManager_->SpawnEnemy(EnemyType::Goomba, {400.0f, 600.0f});
+  enemyManager_->SpawnEnemy(EnemyType::Koopa, {500.0f, 600.0f});
+  enemyManager_->SpawnEnemy(EnemyType::Piranha, {600.0f, 620.0f});
+  
+  // Spawn a patrol group
+  enemyManager_->SpawnPatrolGroup(EnemyType::Goomba, {150.0f, 600.0f}, {350.0f, 600.0f}, 2);
+  
+  // Spawn jumping enemy
+  enemyManager_->SpawnEnemy(EnemyType::Koopa, {700.0f, 600.0f});
+  Enemy* jumpingKoopa = nullptr;
+  for (Enemy* enemy : enemyManager_->GetEnemies()) {
+    if (enemy->GetPosition().x == 700.0f) {
+      jumpingKoopa = enemy;
+      break;
+    }
+  }
+  if (jumpingKoopa) {
+    enemyManager_->MakeEnemyJump(jumpingKoopa, 3.0f, 150.0f);
+  }
 }
 
 void GameManaging::Update(float deltaTime, Character *activeCharacter) {
+  updateCounter_++;
+  
   // Update time
   UpdateTime();
 
   // Update all blocks
   for (auto &block : blocks_) {
-    block->Update(deltaTime);
+    block->Update(dt);
   }
 
-  // Update all enemies
-  for (auto &enemy : enemies_) {
-    if (enemy->IsAlive()) {
-      enemy->Update(deltaTime);
+  // ✅ Enhanced enemy management with full functionality
+  if (enemyManager_) {
+    // Set character references for enemy AI
+    if (activeCharacter) {
+      Rectangle charRect = activeCharacter->GetRectangle();
+      Vector2 charPos = {charRect.x, charRect.y};
+      static Vector2 characterPosition;
+      characterPosition = charPos;
+      enemyManager_->SetCharacterReferences(&characterPosition, &characterPosition, &characterPosition);
+    }
+    
+    // Update all enemies with enhanced AI
+    enemyManager_->UpdateAll(deltaTime);
+    
+    // Handle character interactions
+    if (activeCharacter) {
+      enemyManager_->HandleCharacterInteractions(activeCharacter);
+    }
+    
+    // Handle wall collisions
+    if (updateCounter_ % 2 == 0) {
+      enemyManager_->HandleWallCollisions();
+    }
+    
+    // Clean up dead enemies
+    if (updateCounter_ % 10 == 0) {
+      enemyManager_->ClearDeadEnemies();
     }
   }
 
-  // Check collisions if character exists
-  if (activeCharacter) {
-    CheckCollisions(activeCharacter);
+  // Update legacy enemies if any
+  if (updateCounter_ % 2 == 0) {
+    for (auto &enemy : enemies_) {
+      if (enemy->IsAlive()) {
+        enemy->Update(deltaTime);
+      }
+    }
   }
 
-  // Remove dead enemies
-  RemoveDeadEnemies();
+  // ✅ Enhanced collision detection with enemy interactions
+  if (activeCharacter) {
+    CheckSimpleCollisions(activeCharacter);
+  }
+
+  // Clean up dead enemies less frequently
+  if (updateCounter_ % 20 == 0) {
+    RemoveDeadEnemies();
+  }
 }
 
-void GameManaging::DrawLevel() {
+void GameManaging::CheckSimpleCollisions(Character* character) {
+  if (!character) return;
+  
+  Rectangle characterRect = character->GetRectangle();
+  
+  // Simple block collision
+  for (auto &block : blocks_) {
+    if (block->IsSolid() && block->CheckCollision(characterRect)) {
+      Rectangle blockRect = block->GetRect();
+      
+      // Simple collision response
+      if (characterRect.y + characterRect.height > blockRect.y && 
+          characterRect.y < blockRect.y + blockRect.height) {
+        // Horizontal collision
+        character->StopX();
+      }
+      
+      if (characterRect.x + characterRect.width > blockRect.x && 
+          characterRect.x < blockRect.x + blockRect.width) {
+        // Vertical collision
+        if (characterRect.y < blockRect.y) {
+          // Hit from above
+          character->StopY(blockRect.y - characterRect.height);
+        } else {
+          // Hit from below
+          character->StopY();
+          HitBlock(block.get(), character);
+        }
+      }
+    }
+  }
+  
+  // ✅ Note: Enemy collision is now handled by EnemyManager::HandleCharacterInteractions()
+  // This provides more sophisticated collision detection and response
+}
+
+/*void GameManaging::DrawLevel() {
   DrawBackground();
 
-  // Draw all blocks using ResManager
+  // Draw all blocks
   for (const auto &block : blocks_) {
     DrawBlock(block.get());
   }
 
-  // Draw all enemies using ResManager
+  // ✅ Enhanced enemy rendering
+  if (enemyManager_) {
+    DrawEnemiesAdvanced();
+  }
+
+  // Draw legacy enemies
   for (const auto &enemy : enemies_) {
     if (enemy->IsAlive()) {
       DrawEnemy(enemy.get());
@@ -139,81 +254,183 @@ void GameManaging::DrawLevel() {
   }
 }
 
-void GameManaging::DrawBackground() {
-  // Draw background using ResManager
-  try {
-    Texture backgroundTex = App.Resource().GetBackground();
-    DrawTexture(backgroundTex, 0, 0, WHITE);
-  } catch (const std::out_of_range &) {
-    // Fallback to color backgrounds if texture not found
-    switch (backgroundType_) {
-      case 0: // Overworld
-        ClearBackground(SKYBLUE);
-        break;
-      case 1: // Underground
-        ClearBackground(BLACK);
-        break;
-      case 2: // Castle
-        ClearBackground(DARKGRAY);
-        break;
-      default:
-        ClearBackground(SKYBLUE);
-        break;
+void GameManaging::DrawEnemiesAdvanced() {
+  // Draw enemies with enhanced visual effects and state indicators
+  for (Enemy* enemy : enemyManager_->GetEnemies()) {
+    if (enemy && enemy->IsAlive()) {
+      Rectangle rect = enemy->GetRect();
+      Color color = RED;
+      
+      // Color based on enemy type
+      switch (enemy->GetType()) {
+        case EnemyType::Goomba:
+          color = BROWN;
+          break;
+        case EnemyType::Koopa:
+          color = GREEN;
+          break;
+        case EnemyType::Piranha:
+          color = DARKGREEN;
+          break;
+        case EnemyType::Bowser:
+          color = ORANGE;
+          rect.width *= 1.5f;
+          rect.height *= 1.5f;
+          break;
+      }
+      
+      // Visual effects based on state
+      switch (enemy->GetState()) {
+        case EnemyState::Stunned:
+          color = ColorAlpha(color, 0.7f);
+          break;
+        case EnemyState::Attacking:
+          color = ColorBrightness(color, 0.3f); // Brighter when attacking
+          break;
+        case EnemyState::Shell:
+          color = GRAY;
+          break;
+        default:
+          break;
+      }
+      
+      // Apply invulnerability flashing
+      if (enemy->IsInvulnerable()) {
+        color = ColorAlpha(color, 0.5f);
+      }
+      
+      DrawRectangleRec(rect, color);
+      
+      // Draw type indicator
+      const char* typeName = "";
+      switch (enemy->GetType()) {
+        case EnemyType::Goomba: typeName = "G"; break;
+        case EnemyType::Koopa: typeName = "K"; break;
+        case EnemyType::Piranha: typeName = "P"; break;
+        case EnemyType::Bowser: typeName = "B"; break;
+      }
+      DrawText(typeName, (int)rect.x + 2, (int)rect.y + 2, 12, WHITE);
+      
+      // Draw state indicators
+      if (enemy->GetState() == EnemyState::Stunned) {
+        DrawText("!", (int)rect.x + (int)rect.width - 8, (int)rect.y - 10, 12, YELLOW);
+      } else if (enemy->GetState() == EnemyState::Attacking) {
+        DrawText("*", (int)rect.x + (int)rect.width - 8, (int)rect.y - 10, 12, RED);
+      }
+      
+      // Draw health bar for bosses
+      if (enemy->GetType() == EnemyType::Bowser) {
+        float healthPercentage = enemy->GetHealth() / enemy->GetMaxHealth();
+        Rectangle healthBar = {rect.x, rect.y - 20, rect.width, 6};
+        DrawRectangleRec(healthBar, RED);
+        healthBar.width *= healthPercentage;
+        DrawRectangleRec(healthBar, GREEN);
+      }
+      
+      // Draw detection range for debugging (optional)
+      #ifdef DEBUG_ENEMY_AI
+      if (enemy->IsPlayerInRange(enemy->GetDetectionRange())) {
+        DrawCircleLines((int)(rect.x + rect.width/2), (int)(rect.y + rect.height/2), 
+                       enemy->GetDetectionRange(), YELLOW);
+      }
+      #endif
     }
   }
 }
 
-void GameManaging::DrawBlock(const Block *block) {
+void GameManaging::DrawEnemiesSimple() {
+  // Fallback simple rendering (kept for compatibility)
+  for (Enemy* enemy : enemyManager_->GetEnemies()) {
+    if (enemy && enemy->IsAlive()) {
+      Rectangle rect = enemy->GetRect();
+      Color color = RED;
+      
+      switch (enemy->GetType()) {
+        case EnemyType::Goomba:
+          color = BROWN;
+          break;
+        case EnemyType::Koopa:
+          color = GREEN;
+          break;
+        case EnemyType::Piranha:
+          color = DARKGREEN;
+          break;
+        case EnemyType::Bowser:
+          color = ORANGE;
+          rect.width *= 1.5f;
+          rect.height *= 1.5f;
+          break;
+      }
+      
+      DrawRectangleRec(rect, color);
+      
+      const char* typeName = "";
+      switch (enemy->GetType()) {
+        case EnemyType::Goomba: typeName = "G"; break;
+        case EnemyType::Koopa: typeName = "K"; break;
+        case EnemyType::Piranha: typeName = "P"; break;
+        case EnemyType::Bowser: typeName = "B"; break;
+      }
+      DrawText(typeName, (int)rect.x + 2, (int)rect.y + 2, 12, WHITE);
+    }
+  }
+}
+
+void GameManaging::DrawBackground() {
+  switch (backgroundType_) {
+    case 0: // Overworld
+      ClearBackground(SKYBLUE);
+      break;
+    case 1: // Underground
+      ClearBackground(BLACK);
+      break;
+    case 2: // Castle (for boss fights)
+      ClearBackground(DARKGRAY);
+      break;
+    default:
+      ClearBackground(SKYBLUE);
+      break;
+  }
+}
+
+/*void GameManaging::DrawBlock(const Block *block) {
   if (!block)
     return;
 
-  try {
-    // Get tile texture from ResManager based on sprite ID
-    Texture tileTexture = App.Resource().GetTileset(block->GetSpriteId() + 1);
-    Vector2 position    = block->GetPosition();
-    DrawTexture(tileTexture, (int)position.x, (int)position.y, WHITE);
-  } catch (const std::out_of_range &) {
-    // Fallback to simple rectangle if texture not found
-    Rectangle rect = block->GetRect();
-    Color color    = GRAY;
-    switch (block->GetType()) {
-      case BlockType::Question:
-        color = YELLOW;
-        break;
-      case BlockType::Music:
-        color = GRAY;
-        break;
-      case BlockType::Solid:
-        color = BROWN;
-        break;
-      case BlockType::Rock:
-        color = DARKGRAY;
-        break;
-      case BlockType::Empty:
-        color = WHITE;
-        break;
-      case BlockType::Ground:
-        color = DARKBROWN;
-        break;
-      case BlockType::Pipe:
-          color = DARKGREEN;
-        break;
-      default:
-        color = LIGHTGRAY;
-        break;
-    }
-    DrawRectangleRec(rect, color);
+  // Use fallback rendering for better performance
+  Rectangle rect = block->GetRect();
+  Color color = GRAY;
+  
+  switch (block->GetType()) {
+    case BlockType::Question:
+      color = YELLOW;
+      DrawRectangleRec(rect, color);
+      DrawText("?", (int)rect.x + 12, (int)rect.y + 8, 16, BLACK);
+      break;
+    case BlockType::Brick:
+      color = BROWN;
+      DrawRectangleRec(rect, color);
+      DrawText("B", (int)rect.x + 12, (int)rect.y + 8, 16, WHITE);
+      break;
+    case BlockType::Solid:
+      color = GRAY;
+      DrawRectangleRec(rect, color);
+      DrawText("S", (int)rect.x + 12, (int)rect.y + 8, 16, WHITE);
+      break;
+    default:
+      color = LIGHTGRAY;
+      DrawRectangleRec(rect, color);
+      break;
   }
+  
+  DrawRectangleLinesEx(rect, 2, DARKGRAY);
 }
 
-void GameManaging::DrawEnemy(const Enemy *enemy) {
+/*void GameManaging::DrawEnemy(const Enemy *enemy) {
   if (!enemy)
     return;
-  Texture tileTexture = App.Resource().GetEnemy(enemy->GetSpriteId() + 1);
-  Vector2 position    = enemy->GetPosition();
-  DrawTexture(tileTexture, (int)position.x, (int)position.y, WHITE);
   Rectangle rect = enemy->GetRect();
-  Color color    = RED;
+  Color color = RED;
   switch (enemy->GetType()) {
     case EnemyType::Goomba:
       color = BROWN;
@@ -240,134 +457,129 @@ void GameManaging::DrawStats() const {
   DrawText(
     TextFormat("Time: %d", countdownSeconds_ - (int)gameTime_), 10, 100, 24,
     GREEN);
-}
-
-void GameManaging::CheckCollisions(Character *character) {
-  if (!character)
-    return;
-
-  Rectangle characterRect = character->GetRectangle();
-
-  // Check block collisions
-  Vector2 correction = {0, 0};
-  if (CheckBlockCollision(characterRect, correction)) {
-    // Apply collision correction to character
-    // Character doesn't have SetPosition, so we'll use StopY for vertical
-    // corrections
-    if (correction.y != 0) {
-      if (correction.y < 0) {
-        // Character hit something from below
-        character->StopY();
-      } else {
-        // Character landed on something
-        character->StopY(characterRect.y + correction.y);
+    
+  // ✅ Enhanced enemy stats display
+  if (enemyManager_) {
+    size_t aliveEnemies = enemyManager_->GetAliveEnemyCount();
+    size_t totalEnemies = enemyManager_->GetEnemyCount();
+    DrawText(TextFormat("Enemies: %zu/%zu", aliveEnemies, totalEnemies), 10, 130, 16, WHITE);
+    
+    // Boss status
+    if (enemyManager_->HasBoss()) {
+      Enemy* boss = enemyManager_->GetBoss();
+      if (boss) {
+        float healthPercentage = boss->GetHealth() / boss->GetMaxHealth();
+        DrawText(TextFormat("Boss HP: %.0f%%", healthPercentage * 100), 10, 150, 20, RED);
+        
+        // Boss phase indicator (simplified - removed BossMovement reference)
+        DrawText("Boss Phase: Active", 10, 170, 16, ORANGE);
       }
     }
-    if (correction.x != 0) {
-      // For horizontal collisions, stop horizontal movement
-      character->StopX();
+    
+    // Enemy type breakdown
+    auto goombas = enemyManager_->GetEnemiesByType(EnemyType::Goomba);
+    auto koopas = enemyManager_->GetEnemiesByType(EnemyType::Koopa);
+    auto piranhas = enemyManager_->GetEnemiesByType(EnemyType::Piranha);
+    
+    int yOffset = 190;
+    if (!goombas.empty()) {
+      DrawText(TextFormat("Goombas: %zu", goombas.size()), 10, yOffset, 14, BROWN);
+      yOffset += 16;
     }
-  }
-
-  // Check enemy collisions
-  CheckEnemyCollisions(character);
-}
-
-bool GameManaging::CheckBlockCollision(
-  Rectangle characterRect, Vector2 &correction) {
-  bool collided = false;
-  correction    = {0, 0};
-
-  for (auto &block : blocks_) {
-    if (block->IsSolid() && block->CheckCollision(characterRect)) {
-      Rectangle blockRect = block->GetRect();
-
-      // Calculate collision correction
-      float overlapX = std::min(
-        characterRect.x + characterRect.width - blockRect.x,
-        blockRect.x + blockRect.width - characterRect.x);
-      float overlapY = std::min(
-        characterRect.y + characterRect.height - blockRect.y,
-        blockRect.y + blockRect.height - characterRect.y);
-
-      if (overlapX < overlapY) {
-        // Horizontal collision
-        if (characterRect.x < blockRect.x) {
-          correction.x = -overlapX;
-        } else {
-          correction.x = overlapX;
-        }
-      } else {
-        // Vertical collision
-        if (characterRect.y < blockRect.y) {
-          correction.y = -overlapY;
-          // Character hit block from below
-          HitBlock(block.get(), nullptr);
-        } else {
-          correction.y = overlapY;
-          // Character landed on block
-        }
-      }
-      collided = true;
-      break; // Handle one collision at a time
+    if (!koopas.empty()) {
+      DrawText(TextFormat("Koopas: %zu", koopas.size()), 10, yOffset, 14, GREEN);
+      yOffset += 16;
     }
-  }
-
-  return collided;
-}
-
-void GameManaging::CheckEnemyCollisions(Character *character) {
-  Rectangle characterRect = character->GetRectangle();
-
-  for (auto &enemy : enemies_) {
-    if (enemy->IsAlive() && enemy->CheckCollision(characterRect)) {
-      // Determine collision type
-      Vector2 enemyPos = enemy->GetPosition();
-      Vector2 charPos  = {characterRect.x, characterRect.y};
-
-      if (charPos.y + characterRect.height <= enemyPos.y + 10) {
-        // Character hit enemy from above
-        enemy->OnHitFromAbove();
-        AddPoints(100); // Award points for defeating enemy
-      } else {
-        // Enemy hit character from side
-        enemy->OnHitFromSide();
-        character->Die(); // Character takes damage
-        DecreaseLife();
-      }
+    if (!piranhas.empty()) {
+      DrawText(TextFormat("Piranhas: %zu", piranhas.size()), 10, yOffset, 14, DARKGREEN);
+      yOffset += 16;
     }
   }
 }
 
-void GameManaging::HitBlock(Block *block, Character *character) {
+void GameManaging::InitializeCollisionSystem(Character* character) {
+  // Enhanced collision system initialization
+  if (enemyManager_ && character) {
+    Rectangle charRect = character->GetRectangle();
+    Vector2 charPos = {charRect.x, charRect.y};
+    static Vector2 characterPosition;
+    characterPosition = charPos;
+    enemyManager_->SetCharacterReferences(&characterPosition, &characterPosition, &characterPosition);
+  }
+}
+
+/*void GameManaging::HitBlock(Block *block, Character *character) {
   if (block) {
     block->OnHit();
-    // Award points for hitting certain blocks
     if (block->GetType() == BlockType::Question) {
       AddPoints(50);
     }
   }
+}*/
+
+void GameManaging::SpawnEnemy(EnemyType type, Vector2 position) {
+  if (enemyManager_) {
+    enemyManager_->SpawnEnemy(type, position, 0);
+  } else {
+    // Fallback to old system
+    std::unique_ptr<Enemy> newEnemy;
+
+    switch (type) {
+      case EnemyType::Goomba:
+        newEnemy = std::make_unique<Goomba>(position, 0);
+        break;
+      case EnemyType::Koopa:
+        newEnemy = std::make_unique<KoopaTroopa>(position, 0);
+        break;
+      case EnemyType::Piranha:
+        newEnemy = std::make_unique<PiranhaPlant>(position, 0);
+        break;
+      case EnemyType::Bowser:
+        newEnemy = std::make_unique<Bowser>(position, 0);
+        break;
+      default:
+        return;
+    }
+
+    if (newEnemy) {
+      enemies_.push_back(std::move(newEnemy));
+    }
+  }
 }
 
-//dont need this function right now
-//void GameManaging::SpawnEnemy(EnemyType type, Vector2 position) {
-//  std::unique_ptr<Enemy> newEnemy;
-//
-//  switch (type) {
-//    case EnemyType::Goomba:
-//      newEnemy = std::make_unique<Goomba>(position, 0);
-//      break;
-//    case EnemyType::Koopa:
-//      newEnemy = std::make_unique<KoopaTroopa>(position, 0);
-//      break;
-//    default:
-//      return;
-//  }
-//
-//  if (newEnemy) {
-//    enemies_.push_back(std::move(newEnemy));
-//  }
-//}
+void GameManaging::SpawnBoss(Vector2 position) {
+  backgroundType_ = 2;
+  if (enemyManager_) {
+    enemyManager_->SpawnBoss(EnemyType::Bowser, position);
+  } else {
+    SpawnEnemy(EnemyType::Bowser, position);
+  }
+}
+
+// ✅ Enhanced enemy management methods
+void GameManaging::SetEnemyDifficulty(float multiplier) {
+  if (enemyManager_) {
+    enemyManager_->SetDifficulty(multiplier);
+  }
+}
+
+void GameManaging::PauseEnemies() {
+  if (enemyManager_) {
+    enemyManager_->PauseAllEnemies();
+  }
+}
+
+void GameManaging::ResumeEnemies() {
+  if (enemyManager_) {
+    enemyManager_->ResumeAllEnemies();
+  }
+}
+
+void GameManaging::ActivateBossRageMode() {
+  if (enemyManager_) {
+    enemyManager_->SetBossRageMode();
+  }
+}
 
 void GameManaging::RemoveDeadEnemies() {
   enemies_.erase(
@@ -381,7 +593,7 @@ void GameManaging::RemoveDeadEnemies() {
 
 void GameManaging::UpdateTime() {
   float delta = GetFrameTime();
-  gameTime_  += delta;
+  gameTime_ += delta;
   if (countdownSeconds_ - (int)gameTime_ <= 0) {
     DecreaseLife();
     gameTime_ = 0;
@@ -400,80 +612,40 @@ void GameManaging::AddPoints(int points) {
 }
 
 void GameManaging::ResetGame() {
-  lives_    = 3;
-  points_   = 0;
+  lives_ = 3;
+  points_ = 0;
   gameTime_ = 0.0f;
+  backgroundType_ = 0;
   UnloadLevel();
 }
 
-void GameManaging::UnloadLevel() {
+/*void GameManaging::UnloadLevel() {
   blocks_.clear();
   enemies_.clear();
+  if (enemyManager_) {
+    enemyManager_->ClearAllEnemies();
+  }
 }
 
-void GameManaging::LoadResources() {
+/*void GameManaging::LoadResources() {
   // Resources are automatically loaded by ResManager singleton
-  // No need to manually load textures here
 }
 
-void GameManaging::CreateBlockFromType(
-  BlockType type, int gid, Vector2 pos, Vector2 size, int spriteID, bool solid,
-  bool animating) {
-  switch (type) {
-    case BlockType::Empty: {
-      blocks_.push_back(std::make_unique<EmptyBlock>(
-        gid, pos, size, spriteID, solid, animating));
-      break;
-    }
-    case BlockType::Solid: {
-      blocks_.push_back(std::make_unique<SolidBlock>(
-        gid, pos, size, spriteID, solid, animating));
-      break;
-    }
-    case BlockType::Question: {
-      blocks_.push_back(std::make_unique<QuestionBlock>(
-        gid, pos, size, spriteID, solid, animating));
-      break;
-    }
-    case BlockType::Music: {
-      blocks_.push_back(std::make_unique<MusicBlock>(
-        gid, pos, size, spriteID, solid, animating));
-      break;
-    }
-    case BlockType::Ground: {
-      blocks_.push_back(std::make_unique<GroundBlock>(
-        gid, pos, size, spriteID, solid, animating));
-      break;
-    }
-    case BlockType::Rock: {
-      blocks_.push_back(std::make_unique<RockBlock>(
-        gid, pos, size, spriteID, solid, animating));
-      break;
-    }
-    case BlockType::Pipe: {
-      blocks_.push_back(std::make_unique<PipeBlock>(
-        gid, pos, size, spriteID, solid, animating));
-      break;
-    }
-    default: {
-      throw std::invalid_argument("Unknown block type");
-      break;
-  }
-  }
-}
+/*void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
+  std::unique_ptr<Block> newBlock;
 
-void GameManaging::CreateEnemyFromType(EnemyType type, Vector2 pos, Vector2 size, Vector2 velo, int spriteID) {
-  switch (type) {
-    case EnemyType::Goomba: {
-      enemies_.push_back(std::make_unique<Goomba>(pos, size, velo, spriteID));
+  switch (tileType) {
+    case 1: // Solid block
+      /*newBlock = std::make_unique<StaticBlock>(
+        position, 32, 32, BlockType::Solid, tileType);
       break;
-    }
-    case EnemyType::Koopa: {
-      enemies_.push_back(std::make_unique<KoopaTroopa>(pos, size, velo, spriteID));
+    case 2: // Question block
+      /*newBlock = std::make_unique<QuestionBlock>(
+        position, PowerUpType::Coin, tileType);
       break;
-    }
-    case EnemyType::Piranha: {
-      enemies_.push_back(std::make_unique<Goomba>(pos,size, velo, spriteID));
+    case 3: // Brick block
+      /*newBlock = std::make_unique<StaticBlock>(
+        position, 32, 32, BlockType::Brick, tileType);
       break;
     }
      case EnemyType::Bowser: {
@@ -481,6 +653,31 @@ void GameManaging::CreateEnemyFromType(EnemyType type, Vector2 pos, Vector2 size
       break;
                            }
     default:
-      throw std::invalid_argument("Unknown enemy type");
+      return;
   }
+
+  if (newBlock) {
+    blocks_.push_back(std::move(newBlock));
+  }
+}*/
+
+/*void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
+  SpawnEnemy(static_cast<EnemyType>(enemyType), position);
+}
+
+bool GameManaging::IsBossDefeated() const {
+  if (enemyManager_) {
+    return !enemyManager_->HasBoss();
+  }
+  return true;
+}
+
+int GameManaging::GetBossHP() const {
+  if (enemyManager_ && enemyManager_->HasBoss()) {
+    Enemy* boss = enemyManager_->GetBoss();
+    if (boss) {
+      return (int)boss->GetHealth();
+    }
+  }
+  return 0;
 }

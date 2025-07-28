@@ -1,7 +1,8 @@
-#include "include/collision/collision_handler.hpp"
 #include <cmath>
 
-CollisionHandler::CollisionHandler(float width, float height)
+#include "include/collision/collision_handler.hpp"
+
+/*CollisionHandler::CollisionHandler(float width, float height)
     : cellSize_(16 * 4), projectile_list_(7, nullptr) {
   Reset(width, height);
 }
@@ -191,11 +192,11 @@ void CollisionHandler::UpdatePosition() {
     }
   }
 }
-        
+
 // Temporary implementation for collision checking
 void CollisionHandler::CheckCollision() {
   if (!character_) return;
-  
+
   UpdatePosition();
   CheckCollisionCharacter();
   CheckCollisionProjectile();
@@ -240,7 +241,7 @@ void CollisionHandler::CheckCollisionCharacter() {
       } else if (type == 4 && spawnedItems_) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
-          switch ((*spawnedItems_)[index]->GetType()) {
+          /*switch ((*spawnedItems_)[index]->GetType()) {
             case PowerUpType::Star:
               character_->ToStarman();
               break;
@@ -305,7 +306,7 @@ void CollisionHandler::CheckCollisionCharacter() {
       } else if (type == 4 && spawnedItems_) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
-          switch ((*spawnedItems_)[index]->GetType()) {
+          /*switch ((*spawnedItems_)[index]->GetType()) {
             case PowerUpType::Star:
               character_->ToStarman();
               break;
@@ -353,7 +354,8 @@ void CollisionHandler::CheckCollisionCharacter() {
                   rectangle = block_list_[index]->GetRect();
         Vector2 speed       = character_->GetSpeed();
 
-        if (rect.y + speed.y <= rectangle.y + rectangle.height && (rect.x + rect.width >= rectangle.x 
+        if (rect.y + speed.y <= rectangle.y + rectangle.height && (rect.x +
+rect.width >= rectangle.x
           && rect.x <= rectangle.x + rectangle.width)) {
           character_->StopY();
           block_list_[index]->OnHit();
@@ -370,7 +372,7 @@ void CollisionHandler::CheckCollisionCharacter() {
       } else if (type == 4 && spawnedItems_) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
-          switch ((*spawnedItems_)[index]->GetType()) {
+          /*switch ((*spawnedItems_)[index]->GetType()) {
             case PowerUpType::Star:
               character_->ToStarman();
               break;
@@ -418,7 +420,8 @@ void CollisionHandler::CheckCollisionCharacter() {
         Vector2 speed       = character_->GetSpeed();
 
         if (
-          rect.y + rect.height >= rectangle.y && (rect.x + rect.width >= rectangle.x 
+          rect.y + rect.height >= rectangle.y && (rect.x + rect.width >=
+rectangle.x
           && rect.x <= rectangle.x + rectangle.width)) {
           character_->StopY(rectangle.y);
         }
@@ -438,7 +441,7 @@ void CollisionHandler::CheckCollisionCharacter() {
       } else if (type == 4 && spawnedItems_) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
-          switch ((*spawnedItems_)[index]->GetType()) {
+          /*switch ((*spawnedItems_)[index]->GetType()) {
             case PowerUpType::Star:
               character_->ToStarman();
               break;
@@ -571,4 +574,4 @@ void CollisionHandler::CheckCollisionEnemy() {
       }
     }
   }
-}
+}*/

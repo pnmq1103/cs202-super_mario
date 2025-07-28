@@ -6,35 +6,6 @@
 #include <unordered_map>
 #include <map>
 #include <vector>
-#include <variant>
-#include "include/blocks/block.hpp"
-#include "include/external/tileson.hpp"
-#include <filesystem>
-//#include "include/core/file_handler.hpp"
-
-namespace fs = std::filesystem;
-
-struct TilesetInfo {
-  int firstGid, columns, margin, spacing;
-  Vector2 tileSize;
-};
-
-struct BlockInfo {
-  int gid;
-  Vector2 pos;
-  Vector2 size;
-  int type;
-  bool solid;
-  bool animating;
-};
-
-struct EnemyInfo {
-  int gid;
-  Vector2 pos;
-  Vector2 size;
-  Vector2 velocity;
-  int type;
-};
 
 class ResManager {
   std::unordered_map<std::string, Texture> textures_;

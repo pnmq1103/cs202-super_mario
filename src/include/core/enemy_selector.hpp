@@ -11,7 +11,7 @@ private:
 
   int &g_select_idx_ref_;
 
-  int first_gidx = 299;
+  int first_gidx = 300; // 299
 
   const Texture *sprite_sheet_ = {nullptr};
   // since the enemies do not equal in sizes
