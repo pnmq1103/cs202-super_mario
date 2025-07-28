@@ -41,8 +41,8 @@ void GameScene::Init() {
   // Create command handler with both characters (Mario starts as active)
   input_command_ = new Command(mario_character_, luigi_character_);
 
-  // Load level with enemies
-  game_manager_.LoadLevel("res/levels/level1.dat");
+  // Load level
+  game_manager_.LoadLevel("res/sprites/map/map1.tmj");
 }
 
 void GameScene::Update() {

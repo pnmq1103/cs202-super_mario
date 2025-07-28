@@ -279,3 +279,4 @@ void Enemy::Render(Texture &tex, const std::unordered_map<int, Rectangle> &sprit
     
     DrawRectangleRec(rect, color);
 }
+

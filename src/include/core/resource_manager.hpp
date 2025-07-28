@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
+#include <map>
 #include <vector>
 
 class ResManager {
@@ -57,15 +58,23 @@ class ResManager {
     "world_clear",
   };
 
-  // to store textures parsed from map
-  // std::map<int, Texture> tilesetMapStore;
+    private:
+ //to store textures parsed from map
+  std::map<int, Texture> tilesetMapStore;
+  //to store block info
+  std::vector<BlockInfo> blockInfoMapStore;
+  //to store backgrounds
+  Texture background;
+  //to store enemies
+  std::vector<EnemyInfo> enemyMapStore;
 
-private:
+  //load all textures, music, and sounds
   void LoadTextures();
   void LoadMusic();
   void LoadSounds();
 
-public:
+  public:
+
   ~ResManager();
   ResManager();
 
@@ -73,8 +82,9 @@ public:
 
   // SaveData LoadResourcesFromFile();
   // bool SaveResourcesToFile(const SaveData &data);
-  // bool LoadMap(const std::string &path, std::vector<Block *> &blockData);
 
+  
+  //getters for preloaded resources
   const Texture &GetMario(char type) const;
   const Texture &GetLuigi(char type) const;
   const Texture &GetEnemy() const;
@@ -85,4 +95,12 @@ public:
   const Texture &GetBackground() const;
   const Music &GetMusic(std::string key) const;
   const Sound &GetSound(std::string key) const;
+
+  //functions for a map from Tileson - backup code
+  // 
+  // void LoadMap(const std::string &path);
+ /* std::map<int, Texture> GetTilesetMap() const;
+  std::vector<BlockInfo> GetBlocksMap() const;
+  Texture GetBackgroundMap() const;
+  std::vector<EnemyInfo> GetEnemiesMap() const;*/
 };

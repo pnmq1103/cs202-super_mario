@@ -4,6 +4,14 @@
 #include <stdexcept>
 #include <cmath>
 
+
+#include "include/blocks/question_block.hpp"
+#include "include/blocks/music_block.hpp"
+#include "include/blocks/ground_block.hpp"
+#include "include/blocks/empty_block.hpp"
+#include "include/blocks/solid_block.hpp"
+#include "include/blocks/pipe_block.hpp"
+#include "include/blocks/rock_block.hpp"
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
 #include "include/core/resource_manager.hpp"
@@ -46,12 +54,68 @@ GameManaging::GameManaging() {
 GameManaging::~GameManaging() {
   UnloadLevel();
 }
+*/
 
 void GameManaging::LoadLevel(const std::string &filename) {
   // Clear previous level data
   UnloadLevel();
+  //load map
+   
+  //get block info
 
-  (void)filename; // Suppress unused parameter warning
+  for (auto& info : blocksInfo) {
+      //choose the suitable type
+    BlockType b;
+      switch (info.type) {
+        case 1:
+          b = BlockType::Empty;
+          break;
+        case 2:
+          b = BlockType::Solid;
+          break;
+        case 3:
+          b = BlockType::Question;
+          break;
+        case 4:
+          b = BlockType::Music;
+          break;
+        case 5:
+          b = BlockType::Ground;
+          break;
+        case 6:
+          b = BlockType::Rock;
+          break;
+        case 7:
+          b = BlockType::Pipe;
+          break;
+        default:
+          b = BlockType::Empty;
+      }
+
+    int blockID = info.gid - 1;
+
+  CreateBlockFromType(
+      b, info.gid, info.pos, info.size, blockID, info.solid, info.animating);
+  }
+  //get background
+  background_ = App.Resource().GetBackgroundMap();
+  //get enemies
+  auto enemies = App.Resource().GetEnemiesMap();
+  for (auto& enemy : enemies) {
+    EnemyType e;
+    switch (enemy.type) {
+      case 1:
+        e = EnemyType::Goomba;
+        break;
+      case 2:
+        e = EnemyType::Koopa;
+        break;
+      case 3:
+        e = EnemyType::Piranha;
+      default:
+        e = EnemyType::Bowser;
+        break;
+    }
 
   // Create comprehensive level based on current level number
   switch (currentLevel_) {
@@ -976,6 +1040,11 @@ void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
     case 3: // Brick block
       newBlock = std::make_unique<BrickBlock>(position, 4.0f);
       break;
+    }
+     case EnemyType::Bowser: {
+      enemies_.push_back(std::make_unique<Goomba>(pos, size, velo, spriteID));
+      break;
+                           }
     default:
       return;
   }

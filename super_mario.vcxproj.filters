@@ -27,6 +27,12 @@
     <ClCompile Include="src\characters\projectile_pool.cpp" />
     <ClCompile Include="src\collision\collision_handler.cpp" />
     <ClCompile Include="src\include\external\tinyfiledialogs.cpp" />
+    <ClCompile Include="src\blocks\empty_block.cpp" />
+    <ClCompile Include="src\blocks\music_block.cpp" />
+    <ClCompile Include="src\blocks\solid_block.cpp" />
+    <ClCompile Include="src\blocks\rock_block.cpp" />
+    <ClCompile Include="src\blocks\ground_block.cpp" />
+    <ClCompile Include="src\blocks\pipe_block.cpp" />
     <ClCompile Include="src\core\enemy_selector.cpp" />
     <ClCompile Include="src\core\map.cpp" />
     <ClCompile Include="src\core\utility.cpp" />
@@ -76,6 +82,13 @@
     <ClInclude Include="src\include\collision\collision_handler.hpp" />
     <ClInclude Include="src\include\external\json.hpp" />
     <ClInclude Include="src\include\external\tinyfiledialogs.h" />
+    <ClInclude Include="src\include\blocks\block_factory.hpp" />
+    <ClInclude Include="src\include\blocks\empty_block.hpp" />
+    <ClInclude Include="src\include\blocks\music_block.hpp" />
+    <ClInclude Include="src\include\blocks\solid_block.hpp" />
+    <ClInclude Include="src\include\blocks\rock_block.hpp" />
+    <ClInclude Include="src\include\blocks\ground_block.hpp" />
+    <ClInclude Include="src\include\blocks\pipe_block.hpp" />
     <ClInclude Include="src\include\external\tileson.hpp" />
     <ClInclude Include="src\include\core\enemy_selector.hpp" />
     <ClInclude Include="src\include\core\map.hpp" />
