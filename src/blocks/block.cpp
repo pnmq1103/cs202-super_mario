@@ -91,6 +91,6 @@ bool Block::CheckCollision(Rectangle other) const {
 }
 
     //game manager will get block gid via getGid() then extract the texture from resource manager
-void Block::Render(const Texture& texture) const {
-  DrawTexture(texture, position.x, position.y, RAYWHITE);
+void Block::Render(const Texture& texture, Rectangle rect) const {
+  DrawTextureRec(texture, rect, position, RAYWHITE);
 }

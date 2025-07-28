@@ -2,7 +2,7 @@
 #include <raylib.h>
 #include <stdexcept>
 
-#include "include/blocks/block_factory.hpp"
+
 #include "include/blocks/question_block.hpp"
 #include "include/blocks/music_block.hpp"
 #include "include/blocks/ground_block.hpp"
@@ -36,9 +36,9 @@ void GameManaging::LoadLevel(const std::string& path) {
   // Clear previous level data
   UnloadLevel();
   //load map
-  App.Resource().LoadMap(path);
+   
   //get block info
-  auto blocksInfo = App.Resource().GetBlocksMap();
+
   for (auto& info : blocksInfo) {
       //choose the suitable type
     BlockType b;

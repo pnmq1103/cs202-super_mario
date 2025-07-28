@@ -63,5 +63,5 @@ public:
 
   bool CheckCollision(Rectangle other) const;
 
-  virtual void Render(const Texture &texture) const;
+  virtual void Render(const Texture &texture, Rectangle rect) const;
 };

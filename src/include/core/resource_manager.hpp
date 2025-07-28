@@ -4,10 +4,12 @@
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
+#include <map>
 #include <vector>
 #include <variant>
-#include "tileson.hpp"
-#include "../blocks/block.hpp"
+#include "include/blocks/block.hpp"
+#include "include/external/tileson.hpp"
+#include <filesystem>
 //#include "include/core/file_handler.hpp"
 
 namespace fs = std::filesystem;
@@ -109,7 +111,7 @@ class ResManager {
 
   // SaveData LoadResourcesFromFile();
   // bool SaveResourcesToFile(const SaveData &data);
-  void LoadMap(const std::string &path);
+
   
   //getters for preloaded resources
   const Texture &GetMario(char type) const;
@@ -123,12 +125,11 @@ class ResManager {
   const Music &GetMusic(std::string key) const;
   const Sound &GetSound(std::string key) const;
 
-  //getters for maps
-  std::map<int, Texture> GetTilesetMap() const;
+  //functions for a map from Tileson - backup code
+  // 
+  // void LoadMap(const std::string &path);
+ /* std::map<int, Texture> GetTilesetMap() const;
   std::vector<BlockInfo> GetBlocksMap() const;
   Texture GetBackgroundMap() const;
-  std::vector<EnemyInfo> GetEnemiesMap() const;
-
-  bool LoadMap(const std::string &path);
-
+  std::vector<EnemyInfo> GetEnemiesMap() const;*/
 };
