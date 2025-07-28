@@ -58,7 +58,7 @@ Map LoadMapFromFile(const std::filesystem::path &path) {
   nlohmann::json j;
   fin >> j;
 
-  Map map(0, 0);
+  Map map;
   j.get_to(map);
 
   return map;

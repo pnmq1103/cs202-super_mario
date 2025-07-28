@@ -20,29 +20,33 @@ struct SpriteSheet {
   }
 };
 
+enum struct MapLayer {
+  Tile1,
+  Objects,
+  Tile2,
+};
+
 class Map {
 private:
-  int block_width_  = {50};
-  int block_height_ = {25};
   std::vector<SpriteSheet> sprite_sheets_;
-
-  std::vector<int> tile_layer_;
-  std::vector<int> enemy_layer_;
+  std::vector<std::vector<int>> layers_;
 
   friend struct nlohmann::adl_serializer<Map>;
 
 public:
-  Map(int block_width, int block_height);
+  Map();
   ~Map();
 
   void Init();
   void SetTile(int pos, int gidx);
   void SetEnemy(int pos, int gidx);
+  void SetPipe(int pos, int gidx);
   int GetTile(int pos) const;
   int GetEnemy(int pos) const;
+  int GetPipe(int pos) const;
   const Texture &FindTexture(std::string texture_key) const;
   const Texture &GetTexture(int gidx) const;
-  Rectangle GetInfo(int gidx);
+  Rectangle GetInfo(int gidx) const;
 };
 
 namespace nlohmann {
@@ -83,19 +87,14 @@ namespace nlohmann {
   struct adl_serializer<Map> {
     static void to_json(json &j, const Map &m) {
       j = json{
-        {"block_width", m.block_width_},
-        {"block_height", m.block_height_},
         {"sprite_sheets", m.sprite_sheets_},
-        {"tile_layer", m.tile_layer_},
-        {"enemy_layer", m.enemy_layer_}};
+        {"layers", m.layers_},
+      };
     }
 
     static void from_json(const json &j, Map &m) {
-      j.at("block_width").get_to(m.block_width_);
-      j.at("block_height").get_to(m.block_height_);
       j.at("sprite_sheets").get_to(m.sprite_sheets_);
-      j.at("tile_layer").get_to(m.tile_layer_);
-      j.at("enemy_layer").get_to(m.enemy_layer_);
+      j.at("layers").get_to(m.layers_);
     }
   };
 } // namespace nlohmann

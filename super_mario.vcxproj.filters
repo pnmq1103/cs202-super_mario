@@ -110,11 +110,11 @@
     <ClInclude Include="src\include\objects\fire_flower.hpp" />
     <ClInclude Include="src\include\objects\object_manager.hpp" />
     <ClInclude Include="src\include\managers\enemy_manager.hpp" />
+    <ClInclude Include="src\include\core\constants.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include=".gitignore" />
-    <None Include="ENEMY_SYSTEM_COMPLETE.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\sprites\characters\enemies.png" />

@@ -2,6 +2,7 @@
 #include <raymath.h>
 
 #include "include/core/application.hpp"
+#include "include/core/constants.hpp"
 #include "include/core/enemy_selector.hpp"
 #include "include/core/scene.hpp"
 #include "include/core/utility.hpp"
@@ -23,9 +24,9 @@ void EnemySelectorScene::Init() {
 
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
-  boundary_    = {0, blockSize * 2, width * 4, height * 4};
-  grid_cols_   = static_cast<int>(width / cellSize);
-  grid_rows_   = static_cast<int>(height / cellSize);
+  boundary_    = {0, constants::blockSize * 2, width * 4, height * 4};
+  grid_cols_   = static_cast<int>(width / constants::cellSize);
+  grid_rows_   = static_cast<int>(height / constants::cellSize);
 }
 
 void EnemySelectorScene::Update() {
@@ -48,7 +49,9 @@ void EnemySelectorScene::Draw() {
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
   DrawRectangleRec(
-    {blockSize * 2, blockSize / 2, blockSize * 5, blockSize}, GRAY);
+    {constants::blockSize * 2, constants::blockSize / 2,
+     constants::blockSize * 5, constants::blockSize},
+    GRAY);
   DrawTexturePro(
     *sprite_sheet_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
   EndMode2D();
@@ -73,20 +76,24 @@ void EnemySelectorScene::UpdateCamera() {
   camera_.target = Vector2Add(camera_.target, scroll_offset_);
 
   // Restrict camera
-  camera_.target.x
-    = Clamp(camera_.target.x, 0, boundary_.x + boundary_.width - screenWidth);
-  camera_.target.y
-    = Clamp(camera_.target.y, 0, boundary_.y + boundary_.height - screenHeight);
+  camera_.target.x = Clamp(
+    camera_.target.x, 0,
+    boundary_.x + boundary_.width - constants::screenWidth);
+  camera_.target.y = Clamp(
+    camera_.target.y, 0,
+    boundary_.y + boundary_.height - constants::screenHeight);
 }
 
 void EnemySelectorScene::ChooseTile() {
-  App.Media().PlaySound("beep");
-  mouse_world_pos_.y -= blockSize * 2; // Compensate for UI
+  if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    App.Media().PlaySound("beep");
+
+  mouse_world_pos_.y -= constants::blockSize * 2; // Compensate for UI
   // Because the display is scaled up 4 times
   mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
 
-  int col = static_cast<int>(mouse_world_pos_.x / cellSize);
-  int row = static_cast<int>(mouse_world_pos_.y / cellSize);
+  int col = static_cast<int>(mouse_world_pos_.x / constants::cellSize);
+  int row = static_cast<int>(mouse_world_pos_.y / constants::cellSize);
 
   if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_)
     g_select_idx_ref_ = first_gidx + row * grid_cols_ + col;

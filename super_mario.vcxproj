@@ -178,6 +178,7 @@
     <ClInclude Include="src\include\characters\projectile_pool.hpp" />
     <ClInclude Include="src\include\collision\collision_handler.hpp" />
     <ClInclude Include="src\include\core\application.hpp" />
+    <ClInclude Include="src\include\core\constants.hpp" />
     <ClInclude Include="src\include\core\credit.hpp" />
     <ClInclude Include="src\include\core\enemy_selector.hpp" />
     <ClInclude Include="src\include\core\map.hpp" />
@@ -227,7 +228,6 @@
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include=".gitignore" />
-    <None Include="ENEMY_SYSTEM_COMPLETE.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\sprites\characters\enemies.png" />

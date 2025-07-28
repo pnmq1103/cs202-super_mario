@@ -11,7 +11,7 @@ private:
 
   int &select_gidx_ref_;
 
-  int first_gidx = 11; // need to support more first gidx
+  int first_gidx = 1; // need to support more first gidx
 
   const Texture *sprite_sheet_ = {nullptr};
   Rectangle boundary_          = {};
@@ -35,7 +35,6 @@ public:
 
 private:
   void UpdateCamera();
-
   void ChooseTile();
 
   void CreateButtons();

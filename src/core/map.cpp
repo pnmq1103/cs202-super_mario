@@ -1,55 +1,59 @@
 #include <stdexcept>
 
 #include "include/core/application.hpp"
+#include "include/core/constants.hpp"
 #include "include/core/map.hpp"
 
-Map::Map(int block_width, int block_height)
-    : block_width_(block_width), block_height_(block_height) {
-  tile_layer_.resize(block_width_ * block_height_, 0);
-  enemy_layer_.resize(block_width_ * block_height_, 0);
-  sprite_sheets_.reserve(4);
+Map::Map() {
+  layers_.resize(3);
+  layers_[static_cast<size_t>(MapLayer::Tile1)].resize(
+    constants::mapWidth * constants::mapHeight, 0);
+  layers_[static_cast<size_t>(MapLayer::Objects)].resize(
+    constants::mapWidth * constants::mapHeight, 0);
+  layers_[static_cast<size_t>(MapLayer::Tile2)].resize(
+    constants::mapWidth * constants::mapHeight, 0);
+
+  sprite_sheets_.reserve(3);
 }
 
 Map::~Map() {}
 
 void Map::Init() {
   sprite_sheets_ = {
-    {1, 10, "backgrounds", "res/sprites/backgrounds/backgrounds.txt"},
-    {11, 144, "tileset_ground", "res/sprites/tilesets/tileset_ground.txt"},
-    {155, 144, "tileset_underground",
+    {1, 73, "tileset_ground", "res/sprites/tilesets/tileset_ground.txt"},
+    {74, 73, "tileset_underground",
      "res/sprites/tilesets/tileset_underground.txt"},
-    {299, 5, "enemies", "res/sprites/enemies/enemies.txt"}
-    // need to create another sprite
+    {147, 5, "enemies", "res/sprites/enemies/enemies.txt"}
+    // need to change name and load in resource manager
   };
 }
 
 void Map::SetTile(int pos, int gidx) {
-  if (pos < 0 || pos > block_width_ * block_height_)
-    throw std::out_of_range("invalid index");
-  tile_layer_.at(pos) = gidx;
+  layers_[static_cast<size_t>(MapLayer::Tile1)].at(pos) = gidx;
 }
 
 void Map::SetEnemy(int pos, int gidx) {
-  if (pos < 0 || pos > block_width_ * block_height_)
-    throw std::out_of_range("invalid index");
-  enemy_layer_.at(pos) = gidx;
+  layers_[static_cast<size_t>(MapLayer::Objects)].at(pos) = gidx;
+}
+
+void Map::SetPipe(int pos, int gidx) {
+  layers_[static_cast<size_t>(MapLayer::Tile2)].at(pos) = gidx;
 }
 
 int Map::GetTile(int pos) const {
-  if (pos < 0 || pos > block_width_ * block_height_)
-    throw std::out_of_range("invalid index");
-  return tile_layer_.at(pos);
+  return layers_[static_cast<size_t>(MapLayer::Tile1)].at(pos);
 }
 
 int Map::GetEnemy(int pos) const {
-  if (pos < 0 || pos > block_width_ * block_height_)
-    throw std::out_of_range("invalid index");
-  return enemy_layer_.at(pos);
+  return layers_[static_cast<size_t>(MapLayer::Objects)].at(pos);
+}
+
+int Map::GetPipe(int pos) const {
+  return layers_[static_cast<size_t>(MapLayer::Tile2)].at(pos);
 }
 
 const Texture &Map::FindTexture(std::string texture_key) const {
   std::unordered_map<std::string, const Texture *> mp;
-  mp["backgrounds"]         = &App.Resource().GetBackground();
   mp["tileset_ground"]      = &App.Resource().GetTileset('g');
   mp["tileset_underground"] = &App.Resource().GetTileset('u');
   mp["enemies"]             = &App.Resource().GetEnemy();
@@ -69,7 +73,7 @@ const Texture &Map::GetTexture(int gidx) const {
   throw std::out_of_range("global index not found");
 }
 
-Rectangle Map::GetInfo(int gidx) {
+Rectangle Map::GetInfo(int gidx) const {
   for (const auto &sheet : sprite_sheets_) {
     if (gidx >= sheet.first_gidx_ && gidx < sheet.first_gidx_ + sheet.count_) {
       return sheet.info.at(gidx - sheet.first_gidx_);

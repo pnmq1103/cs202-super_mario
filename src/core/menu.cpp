@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include "include/core/application.hpp"
+#include "include/core/constants.hpp"
 #include "include/core/credit.hpp"
 #include "include/core/editor.hpp"
 #include "include/core/game.hpp"
@@ -70,16 +71,16 @@ void MenuScene::Draw() {
   // Draw background
   timer_     += GetFrameTime();
   float t     = std::min(timer_ / duration_, 1.0f);
-  float end_x = (screenWidth - background_.width) / 2;
+  float end_x = (constants::screenWidth - background_.width) / 2;
 
   float start_x = end_x;
   if (App.PreviousScene() == SceneType::Setting)
-    start_x = screenWidth - background_.width;
+    start_x = constants::screenWidth - background_.width;
   else if (App.PreviousScene() == SceneType::Credit)
     start_x = 0;
 
   float ease  = 1 - powf(1 - t, 3);
-  float end_y = (screenHeight - background_.height) / 2;
+  float end_y = (constants::screenHeight - background_.height) / 2;
 
   DrawTextureV(
     background_, {start_x + (end_x - start_x) * ease, end_y}, RAYWHITE);
@@ -88,8 +89,8 @@ void MenuScene::Draw() {
   float font_sz     = 150;
   const char *title = "Mario";
   Vector2 title_sz  = MeasureTextEx(GetFontDefault(), title, font_sz, 1);
-  float x           = (screenWidth - title_sz.x) / 2;
-  float y           = (screenHeight - title_sz.y) / 6;
+  float x           = (constants::screenWidth - title_sz.x) / 2;
+  float y           = (constants::screenHeight - title_sz.y) / 6;
   DrawTextEx(GetFontDefault(), title, {x, y}, font_sz, 1, RAYWHITE);
 
   DrawOptions();
@@ -109,8 +110,8 @@ void MenuScene::DrawOptions() {
   for (size_t i = 0; i < menu_items_.size(); ++i) {
     const char *option  = menu_items_[i].c_str();
     Vector2 option_size = MeasureTextEx(GetFontDefault(), option, font_sz, 1);
-    float x             = (screenWidth - option_size.x) / 2;
-    float y             = (screenHeight - option_size.y) * (i + 12) / 16;
+    float x             = (constants::screenWidth - option_size.x) / 2;
+    float y = (constants::screenHeight - option_size.y) * (i + 12) / 16;
 
     double time   = GetTime();
     float wave    = static_cast<float>((sin(time * 3) + 1) * 0.5); // [0, 1]
@@ -146,7 +147,9 @@ void MenuScene::CreateButtons() {
       App.ChangeScene(std::make_unique<SettingScene>());
     },
     Rectangle{0, 0, 16, 16},
-    Rectangle{screenWidth - 64 * 2, screenHeight - 64 * 2, 64, 64},
+    Rectangle{
+      constants::screenWidth - 64 * 2, constants::screenHeight - 64 * 2, 64,
+      64},
     "res/sprites/buttons/setting.png");
 
   // Credit
@@ -155,7 +158,8 @@ void MenuScene::CreateButtons() {
     []() {
       App.ChangeScene(std::make_unique<CreditScene>());
     },
-    Rectangle{0, 0, 16, 16}, Rectangle{64, screenHeight - 64 * 2, 64, 64},
+    Rectangle{0, 0, 16, 16},
+    Rectangle{64, constants::screenHeight - 64 * 2, 64, 64},
     "res/sprites/buttons/credit.png");
 }
 

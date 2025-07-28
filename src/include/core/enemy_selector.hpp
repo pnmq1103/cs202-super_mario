@@ -11,10 +11,10 @@ private:
 
   int &g_select_idx_ref_;
 
-  int first_gidx = 300; // 299
+  int first_gidx = 148; // 147
 
   const Texture *sprite_sheet_ = {nullptr};
-  // since the enemies do not equal in sizes
+  // since the enemies are not equal in sizes
   std::unordered_map<int, Rectangle> sprite_sheet_info_;
   Rectangle boundary_ = {};
 
@@ -35,6 +35,5 @@ public:
 
 private:
   void UpdateCamera();
-
   void ChooseTile();
 };
