@@ -1,18 +1,22 @@
 #include "include/enemies/enemy.hpp"
 #include "include/enemies/movement_strategy.hpp"
+#include <raylib.h>
 #include <cmath>
-#include <algorithm>
 
-Enemy::Enemy(Vector2 pos, int w, int h, EnemyType type, int spriteId)
-    : position(pos), width(w), height(h), type(type), spriteId(spriteId),
-      alive(true), velocity({0, 0}), movementStrategy_(nullptr), 
-      health(1.0f), maxHealth(1.0f), stunTimer(0.0f), invulnerabilityTimer(0.0f),
-      facingLeft(true), detectionRange(80.0f), playerPosition(nullptr),
-      isAggressive(false), aggroRange(60.0f), attackCooldown(1.0f), attackTimer(0.0f),
-      state(EnemyState::Normal) {}
+Enemy::Enemy(Vector2 pos, int w, int h, EnemyType enemyType, int spriteId)
+    : position(pos), velocity({0.0f, 0.0f}), width(w), height(h), 
+      alive(true), spriteId(spriteId), type(enemyType), state(EnemyState::Normal),
+      movementStrategy_(nullptr), health(1.0f), maxHealth(1.0f), stunTimer(0.0f),
+      invulnerabilityTimer(0.0f), facingLeft(false), detectionRange(100.0f),
+      playerPosition(nullptr), isAggressive(false), aggroRange(120.0f),
+      attackCooldown(1.0f), attackTimer(0.0f) {
+}
 
 Enemy::~Enemy() {
-    delete movementStrategy_;
+    if (movementStrategy_) {
+        delete movementStrategy_;
+        movementStrategy_ = nullptr;
+    }
 }
 
 void Enemy::Update(float dt) {
@@ -24,7 +28,7 @@ void Enemy::Update(float dt) {
     // Update player detection
     UpdatePlayerDetection();
     
-    // Use strategy pattern for movement
+    // Update movement strategy
     UpdateMovement(dt);
     
     // Apply physics
@@ -33,20 +37,18 @@ void Enemy::Update(float dt) {
 }
 
 void Enemy::UpdateTimers(float deltaTime) {
-    if (stunTimer > 0) {
+    if (stunTimer > 0.0f) {
         stunTimer -= deltaTime;
-        if (stunTimer <= 0) {
-            if (state == EnemyState::Stunned) {
-                state = EnemyState::Normal;
-            }
+        if (stunTimer <= 0.0f) {
+            state = EnemyState::Normal;
         }
     }
     
-    if (invulnerabilityTimer > 0) {
+    if (invulnerabilityTimer > 0.0f) {
         invulnerabilityTimer -= deltaTime;
     }
     
-    if (attackTimer > 0) {
+    if (attackTimer > 0.0f) {
         attackTimer -= deltaTime;
     }
 }
@@ -63,15 +65,12 @@ void Enemy::UpdatePlayerDetection() {
         isAggressive = false;
         OnPlayerLost();
     }
-    
-    // Update facing direction based on player position
-    if (isAggressive && playerPosition) {
-        facingLeft = (playerPosition->x < position.x);
-    }
 }
 
 void Enemy::SetMovementStrategy(MovementStrategy* strategy) {
-    delete movementStrategy_;
+    if (movementStrategy_) {
+        delete movementStrategy_;
+    }
     movementStrategy_ = strategy;
 }
 
@@ -86,16 +85,14 @@ void Enemy::UpdateMovement(float dt) {
 }
 
 void Enemy::ApplyGravity(float deltaTime) {
-    const float gravity = 400.0f;
+    const float gravity = 980.0f; // pixels per second squared
     velocity.y += gravity * deltaTime;
 }
 
 void Enemy::HandleGroundCollision(float groundLevel) {
     if (position.y + height >= groundLevel) {
         position.y = groundLevel - height;
-        if (velocity.y > 0) {
-            velocity.y = 0;
-        }
+        velocity.y = 0.0f;
     }
 }
 
@@ -105,69 +102,71 @@ void Enemy::HandleWallCollision() {
 }
 
 void Enemy::ReverseDirection() {
-    velocity.x *= -1;
+    velocity.x = -velocity.x;
     facingLeft = !facingLeft;
+}
+
+bool Enemy::IsPlayerInRange(float range) const {
+    if (!playerPosition) return false;
+    return GetDistanceToPlayer() <= range;
+}
+
+Vector2 Enemy::GetDirectionToPlayer() const {
+    if (!playerPosition) return {0.0f, 0.0f};
     
-    // Also reverse strategy direction if it supports it
-    if (movementStrategy_) {
-        movementStrategy_->ReverseDirection();
+    Vector2 direction = {
+        playerPosition->x - position.x,
+        playerPosition->y - position.y
+    };
+    
+    // Normalize
+    float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
+    if (length > 0.0f) {
+        direction.x /= length;
+        direction.y /= length;
     }
+    
+    return direction;
+}
+
+float Enemy::GetDistanceToPlayer() const {
+    if (!playerPosition) return 9999.0f;
+    
+    float dx = playerPosition->x - position.x;
+    float dy = playerPosition->y - position.y;
+    return sqrtf(dx * dx + dy * dy);
 }
 
 void Enemy::OnCharacterInteraction(Vector2 characterPos, bool characterFalling) {
-    if (!alive || IsInvulnerable()) return;
+    if (invulnerabilityTimer > 0.0f) return;
     
-    Vector2 characterCenter = {characterPos.x, characterPos.y};
-    Vector2 enemyCenter = {position.x + width/2, position.y + height/2};
-    
-    // Determine collision type
-    float deltaY = characterCenter.y - enemyCenter.y;
-    
-    if (characterFalling && deltaY < -height/4) {
-        // Character hit from above
+    // Basic interaction - if character is falling and above enemy, stomp
+    if (characterFalling && characterPos.y < position.y) {
         OnHitFromAbove();
     } else {
-        // Character hit from side or below
         OnHitFromSide();
     }
 }
 
 void Enemy::OnProjectileHit(Vector2 projectilePos, int damage) {
-    if (!alive || IsInvulnerable()) return;
-    
-    DealDamage((float)damage);
-    invulnerabilityTimer = 0.5f; // Brief invulnerability
-    
-    // Knockback effect
-    Vector2 direction = {position.x - projectilePos.x, 0};
-    float distance = sqrt(direction.x * direction.x + direction.y * direction.y);
-    if (distance > 0) {
-        direction.x /= distance;
-        velocity.x += direction.x * 50.0f; // Knockback force
-    }
+    (void)projectilePos; // Suppress unused parameter warning
+    DealDamage(static_cast<float>(damage));
 }
 
 void Enemy::OnEnvironmentCollision(Vector2 collisionPoint) {
-    // Handle collision with environment objects
-    // This could trigger different behaviors based on what was hit
-    (void)collisionPoint; // Suppress unused parameter warning for now
-    
-    // Default behavior: reverse direction
-    if (ShouldReverseDirection()) {
-        ReverseDirection();
-    }
+    (void)collisionPoint; // Suppress unused parameter warning
+    // Default implementation - could be overridden for specific behaviors
 }
 
 void Enemy::Stun(float duration) {
     state = EnemyState::Stunned;
     stunTimer = duration;
-    velocity.x = 0; // Stop horizontal movement
+    velocity.x = 0.0f; // Stop horizontal movement
 }
 
 void Enemy::EnterAttackMode() {
-    if (state == EnemyState::Normal) {
+    if (state != EnemyState::Stunned) {
         state = EnemyState::Attacking;
-        attackTimer = attackCooldown;
     }
 }
 
@@ -177,50 +176,28 @@ void Enemy::ExitAttackMode() {
     }
 }
 
-bool Enemy::IsPlayerInRange(float range) const {
-    if (!playerPosition) return false;
-    return GetDistanceToPlayer() <= range;
-}
-
-Vector2 Enemy::GetDirectionToPlayer() const {
-    if (!playerPosition) return {0, 0};
-    
-    Vector2 direction = {playerPosition->x - position.x, playerPosition->y - position.y};
-    float distance = sqrt(direction.x * direction.x + direction.y * direction.y);
-    
-    if (distance > 0) {
-        direction.x /= distance;
-        direction.y /= distance;
-    }
-    
-    return direction;
-}
-
-float Enemy::GetDistanceToPlayer() const {
-    if (!playerPosition) return INFINITY;
-    
-    float dx = playerPosition->x - position.x;
-    float dy = playerPosition->y - position.y;
-    return sqrt(dx * dx + dy * dy);
-}
-
 void Enemy::DealDamage(float damage) {
+    if (invulnerabilityTimer > 0.0f) return;
+    
     health -= damage;
-    if (health <= 0) {
-        health = 0;
+    if (health <= 0.0f) {
+        health = 0.0f;
         alive = false;
         state = EnemyState::Dead;
+    } else {
+        // Become invulnerable briefly after taking damage
+        invulnerabilityTimer = 0.5f;
     }
 }
 
 bool Enemy::ShouldReverseDirection() const {
-    // Check if enemy should reverse direction due to obstacles
-    // This is a simplified check - in a full implementation, you'd check for walls/pits
-    return (position.x <= 50.0f || position.x >= 750.0f);
+    // Basic logic - could be enhanced with more sophisticated checks
+    return false;
 }
 
+// Getters and setters
 Rectangle Enemy::GetRect() const {
-    return {position.x, position.y, (float)width, (float)height};
+    return {position.x, position.y, static_cast<float>(width), static_cast<float>(height)};
 }
 
 Vector2 Enemy::GetPosition() const {
@@ -263,31 +240,42 @@ void Enemy::SetState(EnemyState newState) {
 }
 
 bool Enemy::CheckCollision(Rectangle other) const {
-    return CheckCollisionRecs(GetRect(), other);
+    Rectangle myRect = GetRect();
+    return CheckCollisionRecs(myRect, other);
 }
 
 void Enemy::Render(Texture &tex, const std::unordered_map<int, Rectangle> &spriteRects) const {
-    if (!alive) return;
+    (void)tex; // Suppress unused parameter warning
+    (void)spriteRects; // Suppress unused parameter warning
     
-    auto it = spriteRects.find(spriteId);
-    if (it != spriteRects.end()) {
-        Rectangle sourceRect = it->second;
-        
-        // Flip sprite based on facing direction
-        if (facingLeft) {
-            sourceRect.width = -abs(sourceRect.width);
-        } else {
-            sourceRect.width = abs(sourceRect.width);
-        }
-        
-        // Apply visual effects based on state
-        Color tint = WHITE;
-        if (state == EnemyState::Stunned) {
-            tint = GRAY;
-        } else if (IsInvulnerable()) {
-            tint = ColorAlpha(WHITE, 0.5f);
-        }
-        
-        DrawTextureRec(tex, sourceRect, position, tint);
+    // Default implementation - just draw a colored rectangle
+    Rectangle rect = GetRect();
+    Color color = RED;
+    
+    switch (type) {
+        case EnemyType::Goomba:
+            color = BROWN;
+            break;
+        case EnemyType::Koopa:
+            color = GREEN;
+            break;
+        case EnemyType::Piranha:
+            color = DARKGREEN;
+            break;
+        case EnemyType::Bowser:
+            color = ORANGE;
+            break;
+        default:
+            color = RED;
+            break;
     }
+    
+    // Apply visual effects based on state
+    if (state == EnemyState::Stunned) {
+        color = ColorAlpha(color, 0.7f);
+    } else if (IsInvulnerable()) {
+        color = ColorAlpha(color, 0.5f);
+    }
+    
+    DrawRectangleRec(rect, color);
 }

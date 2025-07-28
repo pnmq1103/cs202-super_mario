@@ -7,7 +7,7 @@
 #include "include/core/game.hpp"
 #include "include/core/game_managing.hpp"
 
-GameScene::GameScene() {}
+GameScene::GameScene() : game_manager_() {}
 
 GameScene::~GameScene() {
   // Set pointers to nullptr first to prevent further use
@@ -41,8 +41,8 @@ void GameScene::Init() {
   // Create command handler with both characters (Mario starts as active)
   input_command_ = new Command(mario_character_, luigi_character_);
 
-  // Load level
-  // game_manager_.LoadLevel("res/levels/level1.dat");
+  // Load level with enemies
+  game_manager_.LoadLevel("res/levels/level1.dat");
 }
 
 void GameScene::Update() {
@@ -65,13 +65,14 @@ void GameScene::Update() {
     active_character->SetFrameCount();
   }
 
-  // float dt = GetFrameTime();
-  // game_manager_.Update(dt, active_character);
+  // Update game manager with enemies
+  float dt = GetFrameTime();
+  game_manager_.Update(dt, active_character);
 }
 
 void GameScene::Draw() {
   // Draw level (background, blocks, enemies)
-  // game_manager_.DrawLevel();
+  game_manager_.DrawLevel();
 
   // Draw active character
   Character *active_character = input_command_->GetActiveCharacter();
@@ -80,9 +81,9 @@ void GameScene::Draw() {
   }
 
   // Draw stats (lives, points, time)
-  // game_manager_.DrawStats();
+  game_manager_.DrawStats();
 
-  int controlsStartY = 140;
+  int controlsStartY = 270; // Move controls lower to avoid overlapping with stats
   int lineSpacing    = 25;
 
   DrawText("Controls:", 10, controlsStartY + lineSpacing * 0, 20, DARKBLUE);

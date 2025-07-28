@@ -30,10 +30,23 @@
     <ClCompile Include="src\core\enemy_selector.cpp" />
     <ClCompile Include="src\core\map.cpp" />
     <ClCompile Include="src\core\utility.cpp" />
-    <ClCompile Include="src\managers\block_manager.cpp" />
-    <ClCompile Include="src\managers\enemy_manager.cpp" />
-    <ClCompile Include="src\managers\item_manager.cpp" />
     <ClCompile Include="src\enemies\movement_strategy.cpp" />
+    <ClCompile Include="src\enemies\piranha_plant.cpp" />
+    <ClCompile Include="src\objects\brick_block.cpp" />
+    <ClCompile Include="src\objects\coin.cpp" />
+    <ClCompile Include="src\objects\game_object.cpp" />
+    <ClCompile Include="src\objects\pipe_block.cpp" />
+    <ClCompile Include="src\objects\question_block.cpp" />
+    <ClCompile Include="src\objects\static_block.cpp" />
+    <ClCompile Include="src\objects\super_mushroom.cpp" />
+    <ClCompile Include="src\objects\fire_flower.cpp" />
+    <ClCompile Include="src\objects\object_manager.cpp" />
+    <ClCompile Include="src\objects\super_star.cpp" />
+    <ClCompile Include="src\managers\enemy_manager.cpp" />
+    <ClCompile Include="src\enemies\bowser.cpp" />
+    <ClCompile Include="src\enemies\enemy.cpp" />
+    <ClCompile Include="src\enemies\goomba.cpp" />
+    <ClCompile Include="src\enemies\koopa_troopa.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -67,10 +80,23 @@
     <ClInclude Include="src\include\core\enemy_selector.hpp" />
     <ClInclude Include="src\include\core\map.hpp" />
     <ClInclude Include="src\include\core\utility.hpp" />
-    <ClInclude Include="src\include\managers\block_manager.hpp" />
-    <ClInclude Include="src\include\managers\enemy_manager.hpp" />
-    <ClInclude Include="src\include\managers\item_manager.hpp" />
     <ClInclude Include="src\include\enemies\movement_strategy.hpp" />
+    <ClInclude Include="src\include\enemies\piranha_plant.hpp" />
+    <ClInclude Include="src\include\objects\brick_block.hpp" />
+    <ClInclude Include="src\include\objects\coin.hpp" />
+    <ClInclude Include="src\include\objects\game_object.hpp" />
+    <ClInclude Include="src\include\objects\pipe_block.hpp" />
+    <ClInclude Include="src\include\objects\question_block.hpp" />
+    <ClInclude Include="src\include\objects\static_block.hpp" />
+    <ClInclude Include="src\include\objects\super_mushroom.hpp" />
+    <ClInclude Include="src\include\enemies\bowser.hpp" />
+    <ClInclude Include="src\include\enemies\enemy.hpp" />
+    <ClInclude Include="src\include\enemies\goomba.hpp" />
+    <ClInclude Include="src\include\enemies\koopa_troopa.hpp" />
+    <ClInclude Include="src\include\objects\super_star.hpp" />
+    <ClInclude Include="src\include\objects\fire_flower.hpp" />
+    <ClInclude Include="src\include\objects\object_manager.hpp" />
+    <ClInclude Include="src\include\managers\enemy_manager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
