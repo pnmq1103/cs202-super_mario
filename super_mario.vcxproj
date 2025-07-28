@@ -152,19 +152,27 @@
     <ClCompile Include="src\core\menu.cpp" />
     <ClCompile Include="src\characters\luigi.cpp" />
     <ClCompile Include="src\characters\mario.cpp" />
+    <ClCompile Include="src\enemies\bowser.cpp" />
+    <ClCompile Include="src\enemies\enemy.cpp" />
+    <ClCompile Include="src\enemies\goomba.cpp" />
+    <ClCompile Include="src\enemies\koopa_troopa.cpp" />
     <ClCompile Include="src\enemies\movement_strategy.cpp" />
     <ClCompile Include="src\enemies\piranha_plant.cpp" />
     <ClCompile Include="src\characters\projectile.cpp" />
     <ClCompile Include="src\core\scene_stack.cpp" />
     <ClCompile Include="src\core\setting.cpp" />
     <ClCompile Include="src\include\external\tinyfiledialogs.cpp" />
+    <ClCompile Include="src\managers\enemy_manager.cpp" />
     <ClCompile Include="src\objects\brick_block.cpp" />
     <ClCompile Include="src\objects\coin.cpp" />
+    <ClCompile Include="src\objects\fire_flower.cpp" />
     <ClCompile Include="src\objects\game_object.cpp" />
+    <ClCompile Include="src\objects\object_manager.cpp" />
     <ClCompile Include="src\objects\pipe_block.cpp" />
     <ClCompile Include="src\objects\question_block.cpp" />
     <ClCompile Include="src\objects\static_block.cpp" />
     <ClCompile Include="src\objects\super_mushroom.cpp" />
+    <ClCompile Include="src\objects\super_star.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\characters\projectile_pool.hpp" />
@@ -191,6 +199,10 @@
     <ClInclude Include="src\include\core\load.hpp" />
     <ClInclude Include="src\include\core\menu.hpp" />
     <ClInclude Include="src\include\characters\mario.hpp" />
+    <ClInclude Include="src\include\enemies\bowser.hpp" />
+    <ClInclude Include="src\include\enemies\enemy.hpp" />
+    <ClInclude Include="src\include\enemies\goomba.hpp" />
+    <ClInclude Include="src\include\enemies\koopa_troopa.hpp" />
     <ClInclude Include="src\include\enemies\movement_strategy.hpp" />
     <ClInclude Include="src\include\enemies\piranha_plant.hpp" />
     <ClInclude Include="src\include\characters\projectile.hpp" />
@@ -200,13 +212,17 @@
     <ClInclude Include="src\include\external\json.hpp" />
     <ClInclude Include="src\include\external\tileson.hpp" />
     <ClInclude Include="src\include\external\tinyfiledialogs.h" />
+    <ClInclude Include="src\include\managers\enemy_manager.hpp" />
     <ClInclude Include="src\include\objects\brick_block.hpp" />
     <ClInclude Include="src\include\objects\coin.hpp" />
+    <ClInclude Include="src\include\objects\fire_flower.hpp" />
     <ClInclude Include="src\include\objects\game_object.hpp" />
+    <ClInclude Include="src\include\objects\object_manager.hpp" />
     <ClInclude Include="src\include\objects\pipe_block.hpp" />
     <ClInclude Include="src\include\objects\question_block.hpp" />
     <ClInclude Include="src\include\objects\static_block.hpp" />
     <ClInclude Include="src\include\objects\super_mushroom.hpp" />
+    <ClInclude Include="src\include\objects\super_star.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

@@ -2,108 +2,114 @@
 #include "include/enemies/movement_strategy.hpp"
 
 Bowser::Bowser(Vector2 pos, int spriteId)
-    : Enemy(pos, 48, 48, EnemyType::Bowser, spriteId), hp(5) {
-  // Set up boss movement strategy for complex behavior
-  SetMovementStrategy(new BossMovement(40.0f)); // Boss-specific movement
+    : Enemy(pos, 32, 48, EnemyType::Bowser, spriteId), hp(5), fireTimer(0.0f) {
+    // Set up boss movement pattern
+    SetMovementStrategy(new WalkingMovement(30.0f)); // Slower than other enemies
+    
+    // Boss-specific properties
+    health = 5.0f;
+    maxHealth = 5.0f;
+    hp = 5;
+    detectionRange = 150.0f;
+    aggroRange = 200.0f;
+    attackCooldown = 2.0f;
 }
 
 void Bowser::Update(float dt) {
-  if (!alive)
-    return;
+    if (!alive) return;
     
-  // Update fire timer for special attacks
-  fireTimer += dt;
-  
-  // Call base class update which handles strategy
-  Enemy::Update(dt);
-  
-  // Boss-specific update logic
-  if (fireTimer > 3.0f) {
-    // Could trigger special fire attack here
-    fireTimer = 0;
-    // This could spawn fire projectiles or change behavior
+    // Update fire timer
+    fireTimer += dt;
     
-    // Change movement pattern based on health for dynamic boss fight
-    if (hp <= 2) {
-      // Switch to more aggressive movement when low health
-      BossMovement* bossStrategy = dynamic_cast<BossMovement*>(movementStrategy_);
-      if (bossStrategy) {
-        // Boss becomes more aggressive at low health
-        // Could modify strategy parameters here
-      }
+    // Boss AI - more complex behavior
+    if (playerPosition && IsPlayerInRange(detectionRange)) {
+        // Face the player
+        bool shouldFaceLeft = (playerPosition->x < position.x);
+        SetFacing(shouldFaceLeft);
+        
+        // Attack periodically
+        if (fireTimer >= attackCooldown && attackTimer <= 0.0f) {
+            PerformSpecialAttack();
+            attackTimer = attackCooldown;
+            fireTimer = 0.0f;
+        }
     }
-  }
+    
+    // Call base enemy update
+    Enemy::Update(dt);
 }
 
 void Bowser::OnHitFromAbove() {
-  hp--;
-  
-  // Boss special reaction to being hit from above
-  if (hp > 0) {
-    // Flash or show damage indicator
-    // Could add invincibility frames here
+    // Boss is harder to defeat - takes multiple hits
+    DealDamage(1.0f);
+    hp--;
     
-    // Become more aggressive when hit
-    BossMovement* bossStrategy = dynamic_cast<BossMovement*>(movementStrategy_);
-    if (bossStrategy) {
-      // Could force a phase change or special attack
-      fireTimer = 2.9f; // Trigger attack soon
+    if (hp <= 0) {
+        alive = false;
+        state = EnemyState::Dead;
+    } else {
+        // Enter rage mode when low on health
+        if (hp <= 2) {
+            EnterRageMode();
+        }
+        
+        // Brief stun when hit
+        Stun(1.0f);
     }
-  } else {
-    alive = false;
-    // Boss death sequence could be added here
-  }
 }
 
 void Bowser::OnHitFromSide() {
-  hp--;
-  
-  if (hp > 0) {
-    // Boss reacts differently to side hits
-    ReverseDirection(); // Change direction when hit
+    // Bowser is resistant to side attacks, but still takes some damage
+    DealDamage(0.5f);
+    hp--;
     
-    // Trigger special behavior
-    fireTimer = 2.5f; // Trigger attack even sooner when hit from side
-  } else {
-    alive = false;
-    // Boss death sequence
-  }
+    if (hp <= 0) {
+        alive = false;
+        state = EnemyState::Dead;
+    }
 }
 
-Enemy *Bowser::Clone() const {
-  Bowser* clone = new Bowser(*this);
-  // Clone the movement strategy
-  if (movementStrategy_) {
-    clone->SetMovementStrategy(movementStrategy_->Clone());
-  }
-  return clone;
+Enemy* Bowser::Clone() const {
+    Bowser* clone = new Bowser(*this);
+    // Clone the movement strategy
+    if (movementStrategy_) {
+        clone->SetMovementStrategy(movementStrategy_->Clone());
+    }
+    return clone;
 }
 
 int Bowser::getHP() const {
-  return hp;
+    return hp;
 }
 
 bool Bowser::IsVulnerable() const {
-  // Boss might have invincibility frames after being hit
-  return hp > 0;
+    return invulnerabilityTimer <= 0.0f && state != EnemyState::Stunned;
 }
 
 void Bowser::EnterRageMode() {
-  // Special method to make boss more dangerous
-  if (hp <= 2) {
-    // Could change movement strategy to more aggressive one
-    SetMovementStrategy(new BossMovement(60.0f)); // Faster movement
-    fireTimer = 0; // Reset fire timer for immediate attack
-  }
+    // Increase speed and reduce attack cooldown when in rage mode
+    if (movementStrategy_) {
+        delete movementStrategy_;
+        SetMovementStrategy(new WalkingMovement(60.0f)); // Faster movement
+    }
+    attackCooldown = 1.0f; // Attack more frequently
+    
+    // Visual indicator
+    state = EnemyState::Attacking;
 }
 
 void Bowser::PerformSpecialAttack() {
-  // Boss special attack - could spawn multiple projectiles
-  // This would integrate with projectile system
-  fireTimer = 0; // Reset timer
+    // Boss special attack - could be fire breathing, ground pound, etc.
+    // For now, just enter attack mode briefly
+    EnterAttackMode();
+    
+    // Could spawn projectiles, create area effects, etc.
+    // This is a placeholder for more complex boss attacks
 }
 
 Vector2 Bowser::GetCenterPosition() const {
-  Vector2 pos = GetPosition();
-  return {pos.x + width/2.0f, pos.y + height/2.0f};
+    return {
+        position.x + width / 2.0f,
+        position.y + height / 2.0f
+    };
 }
