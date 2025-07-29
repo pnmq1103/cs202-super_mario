@@ -41,7 +41,8 @@ void ResManager::LoadTextures() {
   textures_["luigi_electric"]
     = LoadTexture("res/sprites/characters/luigi_electric.png");
 
-  textures_["enemies"] = LoadTexture("res/sprites/enemies/enemies.png");
+  textures_["enemies"] = LoadTexture("res/sprites/enemies/bowser.png");
+  textures_["enemies"] = LoadTexture("res/sprites/enemies/minions.png");
   textures_["icons"]   = LoadTexture("res/sprites/icons/icons.png");
   textures_["objects"] = LoadTexture("res/sprites/icons/objects.png");
   textures_["electric_shot"]
@@ -49,15 +50,15 @@ void ResManager::LoadTextures() {
 
   textures_["tileset_ground"]
     = LoadTexture("res/sprites/tilesets/tileset_ground.png");
-  textures_["tileset_sky"]
+ /* textures_["tileset_sky"]
     = LoadTexture("res/sprites/tilesets/tileset_sky.png");
   textures_["tileset_underground"]
     = LoadTexture("res/sprites/tilesets/tileset_underground.png");
   textures_["tileset_water"]
-    = LoadTexture("res/sprites/tilesets/tileset_underwater.png");
+    = LoadTexture("res/sprites/tilesets/tileset_underwater.png");*/
 
   textures_["backgrounds"]
-    = LoadTexture("res/sprites/backgrounds/backgrounds.png");
+    = LoadTexture("res/sprites/backgrounds/background_ground.png");
 }
 
 void ResManager::LoadMusic() {

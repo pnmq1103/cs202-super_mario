@@ -7,7 +7,7 @@ private:
   float fireTimer = 0;
 
 public:
-  Bowser(Vector2 pos, Vector2 size, Vector2 velo, int spriteId);
+  Bowser(Vector2 pos,int spriteId);
   void Update(float dt) override;
   void OnHitFromAbove() override;
   void OnHitFromSide() override;

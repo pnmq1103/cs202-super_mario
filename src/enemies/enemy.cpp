@@ -3,16 +3,34 @@
 #include <raylib.h>
 #include <cmath>
 
-Enemy::Enemy(Vector2 pos, int w, int h, EnemyType enemyType, int spriteId)
-    : position(pos), velocity({0.0f, 0.0f}), width(w), height(h), 
-      alive(true), spriteId(spriteId), type(enemyType), state(EnemyState::Normal),
-      movementStrategy_(nullptr), health(1.0f), maxHealth(1.0f), stunTimer(0.0f),
-      invulnerabilityTimer(0.0f), facingLeft(false), detectionRange(100.0f),
-      playerPosition(nullptr), isAggressive(false), aggroRange(120.0f),
-      attackCooldown(1.0f), attackTimer(0.0f) {
+Enemy::Enemy(
+    Vector2 pos, int w, int h, EnemyType enemyType, int spriteId, float health,
+    float maxHealth, float stunTimer, float invulnerabilityTimer, bool facingLeft,
+    float detectionRange)
+    : position(pos),
+      velocity({0.0f, 0.0f}),
+      width(w),
+      height(h),
+      alive(true),
+      spriteId(spriteId),
+      type(enemyType),
+      state(EnemyState::Normal),
+      movementStrategy_(nullptr),
+      health(health),
+      maxHealth(maxHealth),
+      stunTimer(stunTimer),
+      invulnerabilityTimer(invulnerabilityTimer),
+      facingLeft(facingLeft),
+      detectionRange(detectionRange),
+      playerPosition(nullptr),
+      isAggressive(false),
+      aggroRange(200.0f),
+      attackCooldown(1.0f),
+      attackTimer(0.0f)
+{
 }
-
-Enemy::~Enemy() {
+    
+ Enemy::~Enemy() {
     if (movementStrategy_) {
         delete movementStrategy_;
         movementStrategy_ = nullptr;

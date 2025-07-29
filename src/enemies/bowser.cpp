@@ -2,17 +2,9 @@
 #include "include/enemies/movement_strategy.hpp"
 
 Bowser::Bowser(Vector2 pos, int spriteId)
-    : Enemy(pos, 32, 48, EnemyType::Bowser, spriteId), hp(5), fireTimer(0.0f) {
+    : Enemy(pos, 32, 48, EnemyType::Bowser, spriteId, 5.0f, 5.0f, 5, 150.0f, 200.0f, 2.0f) {
     // Set up boss movement pattern
     SetMovementStrategy(new WalkingMovement(30.0f)); // Slower than other enemies
-    
-    // Boss-specific properties
-    health = 5.0f;
-    maxHealth = 5.0f;
-    hp = 5;
-    detectionRange = 150.0f;
-    aggroRange = 200.0f;
-    attackCooldown = 2.0f;
 }
 
 void Bowser::Update(float dt) {

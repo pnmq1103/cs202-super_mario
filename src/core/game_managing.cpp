@@ -4,14 +4,6 @@
 #include <stdexcept>
 #include <cmath>
 
-
-#include "include/blocks/question_block.hpp"
-#include "include/blocks/music_block.hpp"
-#include "include/blocks/ground_block.hpp"
-#include "include/blocks/empty_block.hpp"
-#include "include/blocks/solid_block.hpp"
-#include "include/blocks/pipe_block.hpp"
-#include "include/blocks/rock_block.hpp"
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
 #include "include/core/resource_manager.hpp"
@@ -20,6 +12,12 @@
 #include "include/enemies/piranha_plant.hpp"
 #include "include/enemies/bowser.hpp"
 #include "include/managers/enemy_manager.hpp"
+#include "include/external/json.hpp"
+#include "include/objects/object_manager.hpp"
+#include "include/core/map.hpp"
+#include "include/core/constants.hpp"
+
+using json = nlohmann::json;
 
 GameManaging::GameManaging() {
   lives_            = 3;
@@ -54,92 +52,87 @@ GameManaging::GameManaging() {
 GameManaging::~GameManaging() {
   UnloadLevel();
 }
-*/
 
 void GameManaging::LoadLevel(const std::string &filename) {
-  // Clear previous level data
-  UnloadLevel();
-  //load map
-   
-  //get block info
+    // Clear previous level data and reset block manager
+  try {
+    UnloadLevel();
+    ObjectManager::GetInstance().Reset(1);
 
-  for (auto& info : blocksInfo) {
-      //choose the suitable type
-    BlockType b;
-      switch (info.type) {
-        case 1:
-          b = BlockType::Empty;
-          break;
-        case 2:
-          b = BlockType::Solid;
-          break;
-        case 3:
-          b = BlockType::Question;
-          break;
-        case 4:
-          b = BlockType::Music;
-          break;
-        case 5:
-          b = BlockType::Ground;
-          break;
-        case 6:
-          b = BlockType::Rock;
-          break;
-        case 7:
-          b = BlockType::Pipe;
-          break;
-        default:
-          b = BlockType::Empty;
-      }
-
-    int blockID = info.gid - 1;
-
-  CreateBlockFromType(
-      b, info.gid, info.pos, info.size, blockID, info.solid, info.animating);
-  }
-  //get background
-  background_ = App.Resource().GetBackgroundMap();
-  //get enemies
-  auto enemies = App.Resource().GetEnemiesMap();
-  for (auto& enemy : enemies) {
-    EnemyType e;
-    switch (enemy.type) {
-      case 1:
-        e = EnemyType::Goomba;
-        break;
-      case 2:
-        e = EnemyType::Koopa;
-        break;
-      case 3:
-        e = EnemyType::Piranha;
-      default:
-        e = EnemyType::Bowser;
-        break;
+    // Open level file
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+      throw std::runtime_error("Failed to open level file: " + filename);
+    }
+    Map map;
+    json j;
+    // Load and parse map
+    try {
+      file >> j;
+      j.get_to(map);
+    } catch (const json::exception &e) {
+      throw std::runtime_error("JSON parsing error: " + std::string(e.what()));
     }
 
-  // Create comprehensive level based on current level number
-  switch (currentLevel_) {
-    case 1:
-      CreateLevel1();
-      break;
-    case 2:
-      CreateLevel2();
-      break;
-    case 3:
-      CreateLevel3();
-      break;
-    case 4:
-      CreateBossLevel();
-      break;
-    default:
-      CreateLevel1();
-      break;
+    int mapSize = constants::mapWidth * constants::mapHeight;
+
+    for (int i = 0; i < mapSize; i++) {
+      // Get tile and create block
+      int tileGid = map.GetTile(i);
+      Vector2 tilePosition = {
+                    (float)(i % constants::mapWidth) * 16.0f,
+                    (float)(i / constants::mapHeight) * 16.0f
+                };
+      CreateBlockFromType(tileGid, tilePosition);
+
+      // Get enemy and create enemy
+      int enemyGid = map.GetEnemy(i);
+      Vector2 enemyPosition = {
+        (float)(i % constants::mapWidth) * 16.0f,
+        (float)(i / constants::mapHeight) * 16.0f};
+      CreateEnemyFromType(enemyGid, enemyPosition);
+    }
+
+    // Set camera target to spawn point
+    camera_.target = spawnPoint_;
+    cameraTarget_  = spawnPoint_;
+  } catch (const json::exception &e) {
+    // Handle JSON parsing errors
+    std::cerr << "JSON error: " << e.what() << std::endl;
+  } catch (const std::runtime_error &e) {
+    // Handle file opening or other runtime errors
+    std::cerr << "Runtime error: " << e.what() << std::endl;
+  } catch (...) {
+    // Catch-all for any other exceptions
+    std::cerr << "An unexpected error occurred while loading the level." << std::endl;
   }
   
-  // Initialize camera for new level
+
+  // This function should load the level based on the filename, not premade levels?
+  //// Create comprehensive level based on current level number
+  //switch (currentLevel_) {
+  //  case 1:
+  //    CreateLevel1();
+  //    break;
+  //  case 2:
+  //    CreateLevel2();
+  //    break;
+  //  case 3:
+  //    CreateLevel3();
+  //    break;
+  //  case 4:
+  //    CreateBossLevel();
+  //    break;
+  //  default:
+  //    CreateLevel1();
+  //    break;
+  //}
+
+  // set camera target to spawn point
   camera_.target = spawnPoint_;
   cameraTarget_ = spawnPoint_;
 }
+
 
 void GameManaging::CreateLevel1() {
   // Ground terrain
@@ -1031,22 +1024,15 @@ void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
   std::unique_ptr<GameObject> newBlock;
 
   switch (tileType) {
-    case 1: // Solid block
-      newBlock = std::make_unique<StaticBlock>(position, 4.0f, 'g');
-      break;
-    case 2: // Question block
-      newBlock = std::make_unique<QuestionBlock>(position, 4.0f, QuestionBlockItem::coin);
-      break;
-    case 3: // Brick block
+    case 1: // Brick block
       newBlock = std::make_unique<BrickBlock>(position, 4.0f);
       break;
-    }
-     case EnemyType::Bowser: {
-      enemies_.push_back(std::make_unique<Goomba>(pos, size, velo, spriteID));
+    case 2: // Question block
+      newBlock = std::make_unique<QuestionBlock>(
+        position, 4.0f, QuestionBlockItem::coin);
       break;
-                           }
     default:
-      return;
+      newBlock = std::make_unique<StaticBlock>(position, 4.0f, 'g');
   }
 
   if (newBlock) {
@@ -1055,7 +1041,21 @@ void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
 }
 
 void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
-  SpawnEnemy(static_cast<EnemyType>(enemyType), position);
+    //switch according to gid in spritesheet
+  switch (enemyType) { 
+  case 90: // Goomba
+        SpawnEnemy(EnemyType::Goomba, position);
+      break;
+  case 95: // Piranha
+        SpawnEnemy(EnemyType::Piranha, position);
+    break;
+  case 99: // Koopa
+        SpawnEnemy(EnemyType::Koopa, position);
+    break;
+  default:
+    break;
+  }
+  //SpawnEnemy(static_cast<EnemyType>(enemyType), position);
 }
 
 bool GameManaging::IsBossDefeated() const {

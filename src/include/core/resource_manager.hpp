@@ -7,6 +7,22 @@
 #include <map>
 #include <vector>
 
+struct BlockInfo {
+  int gid;
+  Vector2 position; // Position in the map
+  Vector2 size;     // Size of the block
+  int type;
+  bool solid;
+  bool animating;
+};
+
+struct EnemyInfo {
+  int gid;
+  Vector2 position; 
+  Vector2 size; 
+  int type; 
+};  
+
 class ResManager {
   std::unordered_map<std::string, Texture> textures_;
 
@@ -59,14 +75,14 @@ class ResManager {
   };
 
     private:
- //to store textures parsed from map
-  std::map<int, Texture> tilesetMapStore;
-  //to store block info
-  std::vector<BlockInfo> blockInfoMapStore;
-  //to store backgrounds
-  Texture background;
-  //to store enemies
-  std::vector<EnemyInfo> enemyMapStore;
+ ////to store textures parsed from map
+ // std::map<int, Texture> tilesetMapStore;
+ // //to store block info
+ // std::vector<BlockInfo> blockInfoMapStore;
+ // //to store backgrounds
+ // Texture background;
+ // //to store enemies
+ // std::vector<EnemyInfo> enemyMapStore;
 
   //load all textures, music, and sounds
   void LoadTextures();

@@ -11,9 +11,10 @@ enum class EnemyType {
     Koopa,
     Piranha,
     Bowser,
-    Shy_Guy,
+  // havent got these enemies yet
+    /*Shy_Guy,
     Bullet_Bill,
-    Hammer_Bro
+    Hammer_Bro*/
 };
 
 enum class EnemyState {
@@ -52,7 +53,12 @@ protected:
     float attackTimer;
 
 public:
-    Enemy(Vector2 pos, int w, int h, EnemyType type, int spriteId = 0);
+    Enemy(
+      Vector2 pos, int w, int h, EnemyType type, int spriteId = 0,
+      float health = 1.0f, float maxHealth = 1.0f, float stunTimer = 0.0f,
+      float invulnerabilityTimer = 0.0f, bool facingLeft = false,
+      float detectionRange = 100.0f);
+
     virtual ~Enemy();
 
     // Core functionality
@@ -107,6 +113,7 @@ public:
     void SetAlive(bool status);
     void SetState(EnemyState newState);
     void SetFacing(bool left) { facingLeft = left; }
+
     
     // Utility methods
     bool CheckCollision(Rectangle other) const;
