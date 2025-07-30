@@ -1,10 +1,10 @@
 #pragma once
 #include <algorithm>
 #include <array>
+#include <map>
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
-#include <map>
 #include <vector>
 
 struct BlockInfo {
@@ -18,10 +18,10 @@ struct BlockInfo {
 
 struct EnemyInfo {
   int gid;
-  Vector2 position; 
-  Vector2 size; 
-  int type; 
-};  
+  Vector2 position;
+  Vector2 size;
+  int type;
+};
 
 class ResManager {
   std::unordered_map<std::string, Texture> textures_;
@@ -74,23 +74,12 @@ class ResManager {
     "world_clear",
   };
 
-    private:
- ////to store textures parsed from map
- // std::map<int, Texture> tilesetMapStore;
- // //to store block info
- // std::vector<BlockInfo> blockInfoMapStore;
- // //to store backgrounds
- // Texture background;
- // //to store enemies
- // std::vector<EnemyInfo> enemyMapStore;
-
-  //load all textures, music, and sounds
+private:
   void LoadTextures();
   void LoadMusic();
   void LoadSounds();
 
-  public:
-
+public:
   ~ResManager();
   ResManager();
 
@@ -99,11 +88,9 @@ class ResManager {
   // SaveData LoadResourcesFromFile();
   // bool SaveResourcesToFile(const SaveData &data);
 
-  
-  //getters for preloaded resources
   const Texture &GetMario(char type) const;
   const Texture &GetLuigi(char type) const;
-  const Texture &GetEnemy() const;
+  const Texture &GetEnemy(char type) const;
   const Texture &GetTileset(char type) const;
   const Texture &GetIcon() const;
   const Texture &GetObject() const;
@@ -112,11 +99,11 @@ class ResManager {
   const Music &GetMusic(std::string key) const;
   const Sound &GetSound(std::string key) const;
 
-  //functions for a map from Tileson - backup code
-  // 
-  // void LoadMap(const std::string &path);
- /* std::map<int, Texture> GetTilesetMap() const;
-  std::vector<BlockInfo> GetBlocksMap() const;
-  Texture GetBackgroundMap() const;
-  std::vector<EnemyInfo> GetEnemiesMap() const;*/
+  // functions for a map from Tileson - backup code
+  //
+  //  void LoadMap(const std::string &path);
+  /* std::map<int, Texture> GetTilesetMap() const;
+   std::vector<BlockInfo> GetBlocksMap() const;
+   Texture GetBackgroundMap() const;
+   std::vector<EnemyInfo> GetEnemiesMap() const;*/
 };

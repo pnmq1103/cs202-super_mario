@@ -25,11 +25,10 @@ void Map::Init() {
     sprite_sheets_ = {
       {1, 73, "tileset_ground", "res/sprites/tilesets/tileset_ground.txt"},
       // unprocessed tileset_underground
-      //{74, 73, "tileset_underground", "res/sprites/tilesets/tileset_underground.txt"},
-      {74, 16, "boss", "res/sprites/enemies/bowser.txt"},
-      {90, 23, "minions", "res/sprites/enemies/minions.txt"}
-      // need to change name and load in resource manager
-    };
+      //{74, 73, "tileset_underground",
+      //"res/sprites/tilesets/tileset_underground.txt"},
+      {74, 16, "bowser", "res/sprites/enemies/bowser.txt"},
+      {90, 23, "minions", "res/sprites/enemies/minions.txt"}};
   } catch (const std::exception &e) {
     std::cerr << "Error in Map::Init: " << e.what() << std::endl;
     throw;
@@ -63,8 +62,8 @@ int Map::GetPipe(int pos) const {
 const Texture &Map::FindTexture(std::string texture_key) const {
   std::unordered_map<std::string, const Texture *> mp;
   mp["tileset_ground"]      = &App.Resource().GetTileset('g');
-  //mp["tileset_underground"] = &App.Resource().GetTileset('u');
-  mp["enemies"]             = &App.Resource().GetEnemy();
+  mp["tileset_underground"] = &App.Resource().GetTileset('u');
+  mp["enemies"]             = &App.Resource().GetEnemy('i');
 
   for (const auto &[key, texture] : mp) {
     if (key == texture_key)

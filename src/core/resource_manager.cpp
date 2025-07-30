@@ -1,6 +1,6 @@
-﻿#include <array>
+﻿#include "include/core/resource_manager.hpp"
+#include <array>
 #include <stdexcept>
-#include "include/core/resource_manager.hpp"
 
 ResManager::~ResManager() {
   for (auto &texture : textures_)
@@ -21,7 +21,7 @@ void ResManager::Init() {
   LoadTextures();
   LoadSounds();
   LoadMusic();
-  //LoadMap("res/sprite/map/map1.tmj");
+  // LoadMap("res/sprite/map/map1.tmj");
 }
 
 void ResManager::LoadTextures() {
@@ -41,8 +41,11 @@ void ResManager::LoadTextures() {
   textures_["luigi_electric"]
     = LoadTexture("res/sprites/characters/luigi_electric.png");
 
-  textures_["enemies"] = LoadTexture("res/sprites/enemies/bowser.png");
-  textures_["enemies"] = LoadTexture("res/sprites/enemies/minions.png");
+  textures_["bowser"]  = LoadTexture("res/sprites/enemies/bowser.png");
+  textures_["minions"] = LoadTexture("res/sprites/enemies/minions.png");
+  textures_["enemies_icon"]
+    = LoadTexture("res/sprites/enemies/enemies_icon.png");
+
   textures_["icons"]   = LoadTexture("res/sprites/icons/icons.png");
   textures_["objects"] = LoadTexture("res/sprites/icons/objects.png");
   textures_["electric_shot"]
@@ -50,12 +53,8 @@ void ResManager::LoadTextures() {
 
   textures_["tileset_ground"]
     = LoadTexture("res/sprites/tilesets/tileset_ground.png");
- /* textures_["tileset_sky"]
-    = LoadTexture("res/sprites/tilesets/tileset_sky.png");
   textures_["tileset_underground"]
     = LoadTexture("res/sprites/tilesets/tileset_underground.png");
-  textures_["tileset_water"]
-    = LoadTexture("res/sprites/tilesets/tileset_underwater.png");*/
 
   textures_["backgrounds"]
     = LoadTexture("res/sprites/backgrounds/background_ground.png");
@@ -129,18 +128,23 @@ const Texture &ResManager::GetLuigi(char type) const {
   }
 }
 
-const Texture &ResManager::GetEnemy() const {
-  return textures_.at("enemies");
+const Texture &ResManager::GetEnemy(char type) const {
+  switch (type) {
+    case 'b':
+      return textures_.at("bowser");
+    case 'm':
+      return textures_.at("minions");
+    case 'i':
+      return textures_.at("enemies_icon");
+    default:
+      throw std::runtime_error("Invalid enemy type");
+  }
 }
 
 const Texture &ResManager::GetTileset(char type) const {
   switch (type) {
     case 'g':
       return textures_.at("tileset_ground");
-    case 's':
-      return textures_.at("tileset_sky");
-    case 'w':
-      return textures_.at("tileset_water");
     case 'u':
       return textures_.at("tileset_underground");
     default:
@@ -178,58 +182,25 @@ const Sound &ResManager::GetSound(std::string key) const {
   return it->second;
 }
 
-/*
-  // call this function before exiting game to clean up everything
-void ResManager::Shutdown() {
-  // lambda for unloading unordered_maps
-  auto unloadAll = [&](auto &mp) {
-    for (auto &p : mp)
-      UnloadTexture(p.second);
-    mp.clear();
-  };
-  unloadAll(mario_normal);
-  unloadAll(mario_star);
-  unloadAll(mario_fire);
-  unloadAll(luigi_normal);
-  unloadAll(luigi_star);
-  unloadAll(luigi_fire);
-  unloadAll(luigi_electric);
-  unloadAll(enemies);
-  unloadAll(icons);
-  unloadAll(tileset);
-  unloadAll(backgrounds);
-
-  for (auto &p : sounds) {
-    UnloadSound(p.second);
-  }
-  sounds.clear();
-  for (auto &p : musics) {
-    StopMusicStream(p.second);
-    UnloadMusicStream(p.second);
-  }
-  musics.clear();
-}
-*/
-
 // functions to load the map from a file using Tileson library - backup code
-// 
+//
 // //std::map<int, Texture> ResManager::GetTilesetMap() const {
 //  return tilesetMapStore;
 //}
 //
-//std::vector<BlockInfo> ResManager::GetBlocksMap() const {
+// std::vector<BlockInfo> ResManager::GetBlocksMap() const {
 //  return blockInfoMapStore;
 //}
 //
-//std::vector<EnemyInfo> ResManager::GetEnemiesMap() const {
+// std::vector<EnemyInfo> ResManager::GetEnemiesMap() const {
 //  return enemyMapStore;
-//} 
+//}
 //
-//Texture ResManager::GetBackgroundMap() const {
+// Texture ResManager::GetBackgroundMap() const {
 //  return background;
 //}
-// 
-//void ResManager::LoadMap(const std::string &path) {
+//
+// void ResManager::LoadMap(const std::string &path) {
 //  tson::Tileson t;
 //  const auto baseDir = std::filesystem::path(path).parent_path();
 //  auto mapPtr        = t.parse(path);
@@ -252,7 +223,8 @@ void ResManager::Shutdown() {
 //    //store tilesets according to their gid
 //    tilesetMapStore[ts.getFirstgid()] = tex;
 //    tsi.push_back(
-//      {ts.getFirstgid(), cols, margin, spacing, {float(tileW), float(tileH)}});
+//      {ts.getFirstgid(), cols, margin, spacing, {float(tileW),
+//      float(tileH)}});
 //  }
 //  //sort the tileset map
 //  std::sort(tsi.begin(), tsi.end(), [](auto &a, auto &b) {
@@ -272,8 +244,10 @@ void ResManager::Shutdown() {
 //          tson::Tile *tile = kv.second;
 //          BlockInfo info;
 //          info.gid   = tile->getGid();
-//          info.pos  = {tile->getPosition(kv.first).x, tile->getPosition(kv.first).y};
-//          info.size = {static_cast<float>(tile->getTileSize().x), static_cast<float>(tile->getTileSize().y)};
+//          info.pos  = {tile->getPosition(kv.first).x,
+//          tile->getPosition(kv.first).y}; info.size =
+//          {static_cast<float>(tile->getTileSize().x),
+//          static_cast<float>(tile->getTileSize().y)};
 //          // add exception handling for properties
 //          auto *propType = tile->getProp("type");
 //          if (!propType)
@@ -299,7 +273,8 @@ void ResManager::Shutdown() {
 //          if (auto p = std::any_cast<bool>(&propAnim->getValue())) {
 //            info.animating = *p;
 //          } else {
-//            throw std::runtime_error("Tile property 'animating' is not a bool");
+//            throw std::runtime_error("Tile property 'animating' is not a
+//            bool");
 //          }
 //
 //          blockInfoMapStore.push_back(info);
@@ -321,7 +296,7 @@ void ResManager::Shutdown() {
 //          EnemyInfo e;
 //          e.gid = obj.getGid();
 //          e.pos = {
-//              static_cast<float>(obj.getPosition().x), 
+//              static_cast<float>(obj.getPosition().x),
 //              static_cast<float>(obj.getPosition().y)};
 //          e.size = {
 //            static_cast<float>(obj.getSize().x),

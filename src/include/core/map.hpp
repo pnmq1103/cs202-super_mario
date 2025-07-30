@@ -1,8 +1,8 @@
 #pragma once
 #include <raylib.h>
+#include <stdexcept>
 #include <unordered_map>
 #include <vector>
-#include <stdexcept>
 
 #include "include/core/utility.hpp"
 #include "include/external/json.hpp"
@@ -59,14 +59,10 @@ namespace nlohmann {
     }
 
     static void from_json(const json &j, Rectangle &r) {
-      try {
-        j.at("x").get_to(r.x);
-        j.at("y").get_to(r.y);
-        j.at("width").get_to(r.width);
-        j.at("height").get_to(r.height);
-      } catch (const std::exception &e) {
-        throw std::runtime_error(std::string("Rectangle deserialization error: ") + e.what());
-      }
+      j.at("x").get_to(r.x);
+      j.at("y").get_to(r.y);
+      j.at("width").get_to(r.width);
+      j.at("height").get_to(r.height);
     }
   };
 
@@ -81,14 +77,10 @@ namespace nlohmann {
     }
 
     static void from_json(const json &j, SpriteSheet &s) {
-      try {
-        j.at("first_gidx").get_to(s.first_gidx_);
-        j.at("count").get_to(s.count_);
-        j.at("texture_key").get_to(s.texture_key_);
-        j.at("info").get_to(s.info);
-      } catch (const std::exception &e) {
-        throw std::runtime_error(std::string("SpriteSheet deserialization error: ") + e.what());
-      }
+      j.at("first_gidx").get_to(s.first_gidx_);
+      j.at("count").get_to(s.count_);
+      j.at("texture_key").get_to(s.texture_key_);
+      j.at("info").get_to(s.info);
     }
   };
 
@@ -102,12 +94,8 @@ namespace nlohmann {
     }
 
     static void from_json(const json &j, Map &m) {
-      try {
-        j.at("sprite_sheets").get_to(m.sprite_sheets_);
-        j.at("layers").get_to(m.layers_);
-      } catch (const std::exception &e) {
-        throw std::runtime_error(std::string("Map deserialization error: ") + e.what());
-      }
+      j.at("sprite_sheets").get_to(m.sprite_sheets_);
+      j.at("layers").get_to(m.layers_);
     }
   };
 } // namespace nlohmann

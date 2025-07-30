@@ -18,9 +18,9 @@ EnemySelectorScene::EnemySelectorScene(int &g_select_idx)
 EnemySelectorScene::~EnemySelectorScene() {}
 
 void EnemySelectorScene::Init() {
-  sprite_sheet_ = &App.Resource().GetEnemy();
+  sprite_sheet_ = &App.Resource().GetEnemy('i');
   utility::ReadSpriteInfo(
-    "res/sprites/enemies/enemies.txt", sprite_sheet_info_);
+    "res/sprites/enemies/enemies_icon.txt", sprite_sheet_info_);
 
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
@@ -49,9 +49,7 @@ void EnemySelectorScene::Draw() {
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
   DrawRectangleRec(
-    {constants::blockSize * 2, constants::blockSize / 2,
-     constants::blockSize * 5, constants::blockSize},
-    GRAY);
+    {0, 0, constants::blockSize * 5, constants::blockSize}, GRAY);
   DrawTexturePro(
     *sprite_sheet_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
   EndMode2D();
@@ -76,12 +74,18 @@ void EnemySelectorScene::UpdateCamera() {
   camera_.target = Vector2Add(camera_.target, scroll_offset_);
 
   // Restrict camera
-  camera_.target.x = Clamp(
-    camera_.target.x, 0,
-    boundary_.x + boundary_.width - constants::screenWidth);
-  camera_.target.y = Clamp(
-    camera_.target.y, 0,
-    boundary_.y + boundary_.height - constants::screenHeight);
+  float world_width  = boundary_.x + boundary_.width;
+  float world_height = boundary_.y + boundary_.height;
+  if (constants::screenWidth > world_width)
+    camera_.target.x = (world_width - constants::screenWidth) / 2.0f;
+  else
+    camera_.target.x
+      = Clamp(camera_.target.x, 0, world_width - constants::screenWidth);
+  if (constants::screenHeight > world_height)
+    camera_.target.y = (world_height - constants::screenHeight) / 2.0f;
+  else
+    camera_.target.y
+      = Clamp(camera_.target.y, 0, world_height - constants::screenHeight);
 }
 
 void EnemySelectorScene::ChooseTile() {
