@@ -10,4 +10,5 @@ public:
   ~SuperStar();
   void OnHit();
   void Draw();
+  ObjectType GetType();
 };

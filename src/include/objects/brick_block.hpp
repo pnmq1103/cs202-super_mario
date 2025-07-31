@@ -6,4 +6,5 @@ public:
   BrickBlock(Vector2 Nposition, float Nscale);
   ~BrickBlock();
   void OnHit();
+  ObjectType GetType();
 };

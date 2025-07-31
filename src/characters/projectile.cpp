@@ -1,4 +1,5 @@
 #include "include/characters/projectile.hpp"
+#include <cmath>
 
 Projectile::Projectile(float Nscale, Vector2 Nvelocity) : scale(Nscale) {
   velocity   = Nvelocity;
@@ -53,6 +54,8 @@ void Projectile::Renew(Vector2 Nposition, bool to_left) {
   is_destroy                   = false;
   time                         = 0;
   if (to_left)
-    velocity.x *= -1;
+    velocity.x = -fabs(velocity.x);
+  else
+    velocity.x = fabs(velocity.x);
   time = 0;
 }

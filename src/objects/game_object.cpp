@@ -44,7 +44,7 @@ GameObject::GameObject(Vector2 Nposition, float Nscale)
 GameObject::~GameObject() {}
 
 Rectangle GameObject::GetRectangle() {
-  return {position.x, position.y, frame.width, frame.height};
+  return {position.x, position.y, frame.width * scale, frame.height * scale};
 }
 
 void GameObject::SetFrameCount() {

@@ -22,3 +22,7 @@ void SuperStar::Draw() {
       color_set_[(time / 5) % 7]);
   }
 }
+
+ObjectType SuperStar::GetType() {
+  return ObjectType::SuperStar;
+}

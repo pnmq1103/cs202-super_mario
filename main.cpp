@@ -1,4 +1,4 @@
-#include "include/core/application.hpp"
+/*#include "include/core/application.hpp"
 #include <raylib.h>
 
 int main() {
@@ -14,7 +14,7 @@ int main() {
 
   CloseWindow();
   return 0;
-}
+}*/
 
 /*#include "include/characters/character.hpp"
 #include "include/characters/projectile_pool.hpp"
@@ -564,3 +564,79 @@ speed.y), GetScreenWidth() - 200, 190, 10, WHITE);
   CloseWindow();
   return 0;
 }*/
+#include "include/characters/character.hpp"
+#include "include/characters/projectile_pool.hpp"
+#include "include/core/application.hpp"
+#include "include/core/command.hpp"
+#include "include/enemies/bowser.hpp"
+#include "include/enemies/goomba.hpp"
+#include "include/enemies/koopa_troopa.hpp"
+#include "include/enemies/piranha_plant.hpp"
+#include "include/managers/enemy_manager.hpp"
+#include "include/objects/brick_block.hpp"
+#include "include/objects/coin.hpp"
+#include "include/objects/fire_flower.hpp"
+#include "include/objects/object_manager.hpp"
+#include "include/objects/pipe_block.hpp"
+#include "include/objects/question_block.hpp"
+#include "include/objects/static_block.hpp"
+#include "include/objects/super_mushroom.hpp"
+#include "include/objects/super_star.hpp"
+int main() {
+  SetTargetFPS(60);
+  InitWindow(3000, 1000, "Hello Raylib");
+  App.Resource().Init();
+  Character character(4);
+  character.SetCharacter(MARIO, {100, 100});
+  CollisionHandler collision(3000, 1000);
+  collision.AddCharacter(&character);
+  ObjectManager &block = ObjectManager::GetInstance();
+  block.Reset(4, &collision);
+  block.AddBrickBlock({500, 100});
+  for (int i = 0; i < 750; ++i) {
+    float x = 16 * 4 * i;
+    block.AddStaticBlock({x, 500}, 'g');
+  }
+  block.AddStaticBlock({1000, 500 - 16 * 4}, 'g');
+  block.AddQuestionBlock({600, 100}, coin);
+  block.AddFireFlower({1000, 500 - 16 * 4 * 2});
+
+  ProjectilePool pool(&collision);
+
+  while (!WindowShouldClose()) {
+    BeginDrawing();
+    ClearBackground(BLACK);
+    Rectangle rect = character.GetRectangle();
+    // std::cout << rect.y + rect.height << '\n';
+    /*if (rect.y + rect.height >= 500)
+      character.StopY(500);*/
+    collision.CheckCollision();
+    character.SetFrameCount();
+    character.Update();
+    character.Draw();
+    block.SetFrameCount();
+    block.Update();
+    block.Draw();
+    pool.SetFrameCount();
+    pool.Update();
+    pool.Draw();
+    if (IsKeyDown(KEY_LEFT))
+      character.Run(true);
+    else if (IsKeyDown(KEY_RIGHT))
+      character.Run(false);
+    if (IsKeyDown(KEY_UP))
+      character.Jump();
+    if (IsKeyDown(KEY_E))
+      character.Evolve();
+    if (IsKeyDown(KEY_S))
+      character.ToStarman();
+    if (IsKeyDown(KEY_LEFT_SHIFT)) {
+      Rectangle rect = character.GetRectangle();
+      pool.ShootElectricBall({rect.x, rect.y}, character.IsToLeft());
+    }
+    EndDrawing();
+  }
+
+  CloseWindow();
+  return 0;
+}

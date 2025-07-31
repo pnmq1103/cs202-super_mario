@@ -1,5 +1,6 @@
 #pragma once
 
+#include "include/collision/collision_handler.hpp"
 #include "include/objects/brick_block.hpp"
 #include "include/objects/coin.hpp"
 #include "include/objects/fire_flower.hpp"
@@ -13,6 +14,7 @@ class ObjectManager {
 private:
   std::vector<GameObject *> object_list_;
   float scale_;
+  CollisionHandler *collision_;
 
   ObjectManager();
   ObjectManager(const ObjectManager &)            = delete;
@@ -22,7 +24,7 @@ public:
   static ObjectManager &GetInstance();
   ~ObjectManager();
 
-  void Reset(int Nscale);
+  void Reset(int Nscale, CollisionHandler *Ncollision);
   void DeleteObject(int index);
   void AddBrickBlock(Vector2 position);
   void AddCoin(Vector2 position);

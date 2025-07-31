@@ -9,4 +9,5 @@ public:
   void OnHit();
   void Update();
   void Draw();
+  ObjectType GetType();
 };

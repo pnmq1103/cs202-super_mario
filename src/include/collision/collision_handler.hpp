@@ -1,4 +1,4 @@
-/*#pragma once
+#pragma once
 #include <iostream>
 #include <list>
 #include <unordered_map>
@@ -7,14 +7,15 @@
 
 #include "include/characters/character.hpp"
 #include "include/characters/fireball.hpp"
+#include "include/enemies/enemy.hpp"
+#include "include/objects/game_object.hpp"
 
 class CollisionHandler {
 private:
   Character *character_;
   std::vector<Projectile *> projectile_list_;
-  std::vector<Block *> block_list_;
+  std::vector<GameObject *> object_list_;
   std::vector<Enemy *> enemy_list_;
-  std::vector<class PowerUp *> *spawnedItems_;
 
   std::vector<std::vector<std::list<std::pair<int, int>>>> grid_;
   std::unordered_map<std::string, std::vector<int>> previous_position_;
@@ -36,12 +37,13 @@ public:
   CollisionHandler(float width, float height);
   ~CollisionHandler() = default;
   void Reset(float width, float height);
+
   void AddCharacter(Character *character);
   void AddProjectile(Projectile *projectile);
-  void AddBlock(Block *block);
+  void AddObject(GameObject *object);
   void AddEnemy(Enemy *enemy);
-  void AddSpawnItem(std::vector<class PowerUp *> *spawnedItems);
-  void RemoveBlock(int index);
+
+  void RemoveObject(int index);
   void RemoveEnemy(int index);
   void CheckCollision();
-};*/
+};

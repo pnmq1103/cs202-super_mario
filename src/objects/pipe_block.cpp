@@ -129,3 +129,7 @@ void PipeBlock::Draw() {
     }
   }
 }
+
+ObjectType PipeBlock::GetType() {
+  return ObjectType::Block;
+}

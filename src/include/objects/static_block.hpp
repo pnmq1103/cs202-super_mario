@@ -8,4 +8,5 @@ public:
   // g for ground, s for sky, u for underground , w for underwater
   ~StaticBlock();
   void OnHit();
+  ObjectType GetType();
 };

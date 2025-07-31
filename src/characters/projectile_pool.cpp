@@ -1,11 +1,16 @@
 #include "include/characters/projectile_pool.hpp"
 
-ProjectilePool::ProjectilePool() : projectile_list_(7, nullptr) {
+ProjectilePool::ProjectilePool(CollisionHandler *Ncollision)
+    : projectile_list_(7, nullptr) {
+  collision_ = Ncollision;
   for (int i = 0; i < 3; ++i) {
     projectile_list_[i]     = new MarioFireball();
     projectile_list_[i + 3] = new EnemyFireball();
+    collision_->AddProjectile(projectile_list_[i]);
+    collision_->AddProjectile(projectile_list_[i + 3]);
   }
   projectile_list_[6] = new ElectricBall();
+  collision_->AddProjectile(projectile_list_[6]);
 }
 ProjectilePool::~ProjectilePool() {
   for (int i = 0; i < 7; ++i)

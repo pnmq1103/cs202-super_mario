@@ -1,3 +1,4 @@
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <raylib.h>
@@ -106,6 +107,7 @@ void CharacterState::Jump() {
     y_before_jump = position.y;
     velocity_y    = -4.0 * jumpHeight / jumpTime;
     is_jump       = true;
+    position.y   -= 10;
   }
 }
 
@@ -146,7 +148,7 @@ void CharacterState::StopY(float Ny) {
   position.y = Ny - frame_list[0].height * scale;
   frame      = frame_list[0];
   if (to_left) {
-    frame.width = -frame.width;
+    frame.width = -fabs(frame.width);
   }
 }
 void CharacterState::StopY() {

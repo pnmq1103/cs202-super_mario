@@ -2,7 +2,7 @@
 
 #include "include/collision/collision_handler.hpp"
 
-/*CollisionHandler::CollisionHandler(float width, float height)
+CollisionHandler::CollisionHandler(float width, float height)
     : cellSize_(16 * 4), projectile_list_(7, nullptr) {
   Reset(width, height);
 }
@@ -14,9 +14,8 @@ void CollisionHandler::Reset(float width, float height) {
   character_ = nullptr;
   for (int i = 0; i < 7; ++i)
     projectile_list_[i] = nullptr;
-  block_list_.clear();
+  object_list_.clear();
   enemy_list_.clear();
-  spawnedItems_ = nullptr;
 
   grid_.resize(row_);
   for (int i = 0; i < grid_.size(); ++i) {
@@ -130,10 +129,10 @@ void CollisionHandler::AddProjectile(Projectile *projectile) {
   }
 }
 
-void CollisionHandler::AddBlock(Block *block) {
-  if (!block)
+void CollisionHandler::AddObject(GameObject *object) {
+  if (!object)
     return;
-  block_list_.push_back(block);
+  object_list_.push_back(object);
 }
 
 void CollisionHandler::AddEnemy(Enemy *enemy) {
@@ -142,16 +141,9 @@ void CollisionHandler::AddEnemy(Enemy *enemy) {
   enemy_list_.push_back(enemy);
 }
 
-void
-CollisionHandler::AddSpawnItem(std::vector<class PowerUp *> *spawnedItems) {
-  if (!spawnedItems_ && spawnedItems) {
-    spawnedItems_ = spawnedItems;
-  }
-}
-
-void CollisionHandler::RemoveBlock(int index) {
-  block_list_[index] = nullptr;
-  std::string s      = MakeID(2, index);
+void CollisionHandler::RemoveObject(int index) {
+  object_list_[index] = nullptr;
+  std::string s       = MakeID(2, index);
   if (previous_position_.find(s) != previous_position_.end()) {
     RemoveFromGrid(2, index, previous_position_[s]);
     previous_position_.erase(s);
@@ -174,9 +166,9 @@ void CollisionHandler::UpdatePosition() {
       UpdateToGrid(1, i, projectile_list_[i]->GetRectangle());
     }
   }
-  for (int i = 0; i < block_list_.size(); ++i) {
-    if (block_list_[i] && block_list_[i]->IsSolid()) {
-      UpdateToGrid(2, i, block_list_[i]->GetRect());
+  for (int i = 0; i < object_list_.size(); ++i) {
+    if (object_list_[i] && !object_list_[i]->IsDestroyed()) {
+      UpdateToGrid(2, i, object_list_[i]->GetRectangle());
     }
   }
   for (int i = 0; i < enemy_list_.size(); ++i) {
@@ -184,18 +176,11 @@ void CollisionHandler::UpdatePosition() {
       UpdateToGrid(3, i, enemy_list_[i]->GetRect());
     }
   }
-  if (spawnedItems_) {
-    for (int i = 0; i < spawnedItems_->size(); ++i) {
-      if ((*spawnedItems_)[i] && (*spawnedItems_)[i]->IsActive()) {
-        UpdateToGrid(4, i, (*spawnedItems_)[i]->GetRect());
-      }
-    }
-  }
 }
 
-// Temporary implementation for collision checking
 void CollisionHandler::CheckCollision() {
-  if (!character_) return;
+  if (!character_)
+    return;
 
   UpdatePosition();
   CheckCollisionCharacter();
@@ -219,17 +204,50 @@ void CollisionHandler::CheckCollisionCharacter() {
             character_->Die();
         }
       } else if (type == 2) {
-        Rectangle rect      = character_->GetRectangle(),
-                  rectangle = block_list_[index]->GetRect();
-        Vector2 speed       = character_->GetSpeed();
+        if (object_list_[index]->GetType() == ObjectType::Block) {
+          Rectangle rect      = character_->GetRectangle(),
+                    rectangle = object_list_[index]->GetRectangle();
+          Vector2 speed       = character_->GetSpeed();
 
-        if (
-          rect.x + speed.x <= rectangle.x + rectangle.width
-          && !(
-            rect.y >= rectangle.y + rectangle.height
-            || rect.y + rect.height <= rectangle.y)) {
-          character_->StopX();
+          if (
+            rect.x + speed.x <= rectangle.x + rectangle.width
+            && !(
+              rect.y >= rectangle.y + rectangle.height
+              || rect.y + rect.height <= rectangle.y)) {
+            character_->StopX();
+          }
+        } else {
+          if (CheckCollisionRecs(
+                character_->GetRectangle(),
+                object_list_[index]->GetRectangle())) {
+            object_list_[index]->OnHit();
+            switch (object_list_[index]->GetType()) {
+              case ObjectType::SuperStar:
+                character_->ToStarman();
+                break;
+              case ObjectType::SuperMushroom:
+                if (character_->GetState() == 0) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+
+              case ObjectType::FireFlower:
+                if (character_->GetState() <= 1) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+              case ObjectType::Coin:
+                break;
+            }
+          }
         }
+
       } else if (type == 3) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), enemy_list_[index]->GetRect())) {
@@ -237,35 +255,6 @@ void CollisionHandler::CheckCollisionCharacter() {
             enemy_list_[index]->OnHitFromSide();
           else
             character_->Die();
-        }
-      } else if (type == 4 && spawnedItems_) {
-        if (CheckCollisionRecs(
-              character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
-          /*switch ((*spawnedItems_)[index]->GetType()) {
-            case PowerUpType::Star:
-              character_->ToStarman();
-              break;
-            case PowerUpType::SuperMushroom:
-              if (character_->GetState() == 0) {
-                bool isStarman = character_->IsStarman();
-                character_->Evolve();
-                if (isStarman)
-                  character_->IsStarman();
-              }
-              break;
-
-            case PowerUpType::FireFlower:
-              if (character_->GetState() <= 1) {
-                bool isStarman = character_->IsStarman();
-                character_->Evolve();
-                if (isStarman)
-                  character_->IsStarman();
-              }
-              break;
-            case PowerUpType::Coin:
-              break;
-          }
-          (*spawnedItems_)[index]->ApplyEffect();
         }
       }
       ++it;
@@ -284,17 +273,50 @@ void CollisionHandler::CheckCollisionCharacter() {
             character_->Die();
         }
       } else if (type == 2) {
-        Rectangle rect      = character_->GetRectangle(),
-                  rectangle = block_list_[index]->GetRect();
-        Vector2 speed       = character_->GetSpeed();
+        if (object_list_[index]->GetType() == ObjectType::Block) {
+          Rectangle rect      = character_->GetRectangle(),
+                    rectangle = object_list_[index]->GetRectangle();
+          Vector2 speed       = character_->GetSpeed();
 
-        if (
-          rect.x + rect.width + speed.x >= rectangle.x
-          && !(
-            rect.y >= rectangle.y + rectangle.height
-            || rect.y + rect.height <= rectangle.y)) {
-          character_->StopX();
+          if (
+            rect.x + rect.width + speed.x >= rectangle.x
+            && !(
+              rect.y >= rectangle.y + rectangle.height
+              || rect.y + rect.height <= rectangle.y)) {
+            character_->StopX();
+          }
+        } else {
+          if (CheckCollisionRecs(
+                character_->GetRectangle(),
+                object_list_[index]->GetRectangle())) {
+            object_list_[index]->OnHit();
+            switch (object_list_[index]->GetType()) {
+              case ObjectType::SuperStar:
+                character_->ToStarman();
+                break;
+              case ObjectType::SuperMushroom:
+                if (character_->GetState() == 0) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+
+              case ObjectType::FireFlower:
+                if (character_->GetState() <= 1) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+              case ObjectType::Coin:
+                break;
+            }
+          }
         }
+
       } else if (type == 3) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), enemy_list_[index]->GetRect())) {
@@ -302,35 +324,6 @@ void CollisionHandler::CheckCollisionCharacter() {
             enemy_list_[index]->OnHitFromSide();
           else
             character_->Die();
-        }
-      } else if (type == 4 && spawnedItems_) {
-        if (CheckCollisionRecs(
-              character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
-          /*switch ((*spawnedItems_)[index]->GetType()) {
-            case PowerUpType::Star:
-              character_->ToStarman();
-              break;
-            case PowerUpType::SuperMushroom:
-              if (character_->GetState() == 0) {
-                bool isStarman = character_->IsStarman();
-                character_->Evolve();
-                if (isStarman)
-                  character_->IsStarman();
-              }
-              break;
-
-            case PowerUpType::FireFlower:
-              if (character_->GetState() <= 1) {
-                bool isStarman = character_->IsStarman();
-                character_->Evolve();
-                if (isStarman)
-                  character_->IsStarman();
-              }
-              break;
-            case PowerUpType::Coin:
-              break;
-          }
-          (*spawnedItems_)[index]->ApplyEffect();
         }
       }
       ++it;
@@ -350,17 +343,46 @@ void CollisionHandler::CheckCollisionCharacter() {
             character_->Die();
         }
       } else if (type == 2) {
-        Rectangle rect      = character_->GetRectangle(),
-                  rectangle = block_list_[index]->GetRect();
-        Vector2 speed       = character_->GetSpeed();
+        if (object_list_[index]->GetType() == ObjectType::Block) {
+          Rectangle rect      = character_->GetRectangle(),
+                    rectangle = object_list_[index]->GetRectangle();
+          Vector2 speed       = character_->GetSpeed();
 
-        if (rect.y + speed.y <= rectangle.y + rectangle.height && (rect.x +
-rect.width >= rectangle.x
-          && rect.x <= rectangle.x + rectangle.width)) {
-          character_->StopY();
-          block_list_[index]->OnHit();
+          if (rect.y + speed.y <= rectangle.y + rectangle.height && (rect.x +rect.width >= rectangle.x && rect.x <= rectangle.x + rectangle.width)) {
+            character_->StopY();
+            object_list_[index]->OnHit();
+          }
+        } else {
+          if (CheckCollisionRecs(
+                character_->GetRectangle(),
+                object_list_[index]->GetRectangle())) {
+            object_list_[index]->OnHit();
+            switch (object_list_[index]->GetType()) {
+              case ObjectType::SuperStar:
+                character_->ToStarman();
+                break;
+              case ObjectType::SuperMushroom:
+                if (character_->GetState() == 0) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+
+              case ObjectType::FireFlower:
+                if (character_->GetState() <= 1) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+              case ObjectType::Coin:
+                break;
+            }
+          }
         }
-
       } else if (type == 3) {
         if (CheckCollisionRecs(
               character_->GetRectangle(), enemy_list_[index]->GetRect())) {
@@ -368,35 +390,6 @@ rect.width >= rectangle.x
             enemy_list_[index]->OnHitFromSide();
           else
             character_->Die();
-        }
-      } else if (type == 4 && spawnedItems_) {
-        if (CheckCollisionRecs(
-              character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
-          /*switch ((*spawnedItems_)[index]->GetType()) {
-            case PowerUpType::Star:
-              character_->ToStarman();
-              break;
-            case PowerUpType::SuperMushroom:
-              if (character_->GetState() == 0) {
-                bool isStarman = character_->IsStarman();
-                character_->Evolve();
-                if (isStarman)
-                  character_->IsStarman();
-              }
-              break;
-
-            case PowerUpType::FireFlower:
-              if (character_->GetState() <= 1) {
-                bool isStarman = character_->IsStarman();
-                character_->Evolve();
-                if (isStarman)
-                  character_->IsStarman();
-              }
-              break;
-            case PowerUpType::Coin:
-              break;
-          }
-          (*spawnedItems_)[index]->ApplyEffect();
         }
       }
       ++it;
@@ -415,15 +408,46 @@ rect.width >= rectangle.x
             character_->Die();
         }
       } else if (type == 2) {
-        Rectangle rect      = character_->GetRectangle(),
-                  rectangle = block_list_[index]->GetRect();
-        Vector2 speed       = character_->GetSpeed();
+        if (object_list_[index]->GetType() == ObjectType::Block) {
+          Rectangle rect      = character_->GetRectangle(),
+                    rectangle = object_list_[index]->GetRectangle();
+          Vector2 speed       = character_->GetSpeed();
 
-        if (
-          rect.y + rect.height >= rectangle.y && (rect.x + rect.width >=
-rectangle.x
+          if (
+          rect.y + rect.height >= rectangle.y && (rect.x + rect.width >=rectangle.x
           && rect.x <= rectangle.x + rectangle.width)) {
-          character_->StopY(rectangle.y);
+            character_->StopY(rectangle.y);
+          }
+        } else {
+          if (CheckCollisionRecs(
+                character_->GetRectangle(),
+                object_list_[index]->GetRectangle())) {
+            object_list_[index]->OnHit();
+            switch (object_list_[index]->GetType()) {
+              case ObjectType::SuperStar:
+                character_->ToStarman();
+                break;
+              case ObjectType::SuperMushroom:
+                if (character_->GetState() == 0) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+
+              case ObjectType::FireFlower:
+                if (character_->GetState() <= 1) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+              case ObjectType::Coin:
+                break;
+            }
+          }
         }
       } else if (type == 3) {
         if (CheckCollisionRecs(
@@ -438,36 +462,8 @@ rectangle.x
               character_->Bounce();
           }
         }
-      } else if (type == 4 && spawnedItems_) {
-        if (CheckCollisionRecs(
-              character_->GetRectangle(), (*spawnedItems_)[index]->GetRect())) {
-          /*switch ((*spawnedItems_)[index]->GetType()) {
-            case PowerUpType::Star:
-              character_->ToStarman();
-              break;
-            case PowerUpType::SuperMushroom:
-              if (character_->GetState() == 0) {
-                bool isStarman = character_->IsStarman();
-                character_->Evolve();
-                if (isStarman)
-                  character_->IsStarman();
-              }
-              break;
-
-            case PowerUpType::FireFlower:
-              if (character_->GetState() <= 1) {
-                bool isStarman = character_->IsStarman();
-                character_->Evolve();
-                if (isStarman)
-                  character_->IsStarman();
-              }
-              break;
-            case PowerUpType::Coin:
-              break;
-          }
-          (*spawnedItems_)[index]->ApplyEffect();
-        }
       }
+
       ++it;
     }
   }
@@ -483,7 +479,7 @@ void CollisionHandler::CheckCollisionProjectile() {
         while (it != grid_[j][position[2]].end()) {
           int type = it->first, index = it->second;
           if (type == 2) {
-            if (CheckCollisionRecs(rect, block_list_[index]->GetRect()))
+            if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
               projectile_list_[i]->Destroy();
           }
           ++it;
@@ -493,7 +489,7 @@ void CollisionHandler::CheckCollisionProjectile() {
         while (it != grid_[j][position[3]].end()) {
           int type = it->first, index = it->second;
           if (type == 2) {
-            if (CheckCollisionRecs(rect, block_list_[index]->GetRect()))
+            if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
               projectile_list_[i]->Destroy();
           }
           ++it;
@@ -508,7 +504,7 @@ void CollisionHandler::CheckCollisionProjectile() {
           while (it != grid_[position[0]][j].end()) {
             int type = it->first, index = it->second;
             if (type == 2) {
-              if (CheckCollisionRecs(rect, block_list_[index]->GetRect()))
+              if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
                 stop_upper = true;
             }
             ++it;
@@ -518,7 +514,7 @@ void CollisionHandler::CheckCollisionProjectile() {
           while (it != grid_[position[1]][j].end()) {
             int type = it->first, index = it->second;
             if (type == 2) {
-              if (CheckCollisionRecs(rect, block_list_[index]->GetRect()))
+              if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
                 stop_lower = true;
             }
             ++it;
@@ -550,7 +546,7 @@ void CollisionHandler::CheckCollisionEnemy() {
               projectile_list_[index]->Destroy();
             }
           } else if (type == 2) {
-            if (CheckCollisionRecs(rect, block_list_[index]->GetRect()))
+            if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
               enemy_list_[i]->ReverseDirection();
           }
         }
@@ -567,11 +563,11 @@ void CollisionHandler::CheckCollisionEnemy() {
               projectile_list_[index]->Destroy();
             }
           } else if (type == 2) {
-            if (CheckCollisionRecs(rect, block_list_[index]->GetRect()))
+            if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
               enemy_list_[i]->ReverseDirection();
           }
         }
       }
     }
   }
-}*/
+}

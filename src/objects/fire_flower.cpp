@@ -18,3 +18,7 @@ void FireFlower::Draw() {
   if (!is_destroyed)
     GameObject::Draw();
 }
+
+ObjectType FireFlower::GetType() {
+  return ObjectType::FireFlower;
+}

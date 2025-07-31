@@ -12,4 +12,5 @@ public:
   void Update();
   void Draw();
   void StopY(float Ny);
+  ObjectType GetType();
 };

@@ -32,3 +32,7 @@ void SuperMushroom::StopY(float Ny) {
   velocity.y = -gravity;
   position.y = Ny - frame.height;
 }
+
+ObjectType SuperMushroom::GetType() {
+  return ObjectType::SuperMushroom;
+}

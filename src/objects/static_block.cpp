@@ -27,3 +27,7 @@ StaticBlock::StaticBlock(Vector2 Nposition, float Nscale, char theme)
 StaticBlock::~StaticBlock() {}
 
 void StaticBlock::OnHit() {}
+
+ObjectType StaticBlock::GetType() {
+  return ObjectType::Block;
+}

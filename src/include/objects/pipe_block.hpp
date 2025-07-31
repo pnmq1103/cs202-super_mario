@@ -16,4 +16,5 @@ public:
   Rectangle GetRectangle();
   void OnHit();
   void Draw();
+  ObjectType GetType();
 };

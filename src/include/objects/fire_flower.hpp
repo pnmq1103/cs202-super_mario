@@ -8,4 +8,5 @@ public:
   ~FireFlower();
   void OnHit();
   void Draw();
+  ObjectType GetType();
 };

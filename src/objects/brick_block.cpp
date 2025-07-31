@@ -13,3 +13,6 @@ void BrickBlock::OnHit() {
   is_destroyed = true;
   Bounce();
 }
+ObjectType BrickBlock::GetType() {
+  return ObjectType::Block;
+}

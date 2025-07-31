@@ -18,4 +18,5 @@ public:
   ~QuestionBlock();
   void OnHit();
   void Update();
+  ObjectType GetType();
 };

@@ -51,3 +51,7 @@ void QuestionBlock::Update() {
 
   GameObject::Update();
 }
+
+ObjectType QuestionBlock::GetType() {
+  return ObjectType::Block;
+}

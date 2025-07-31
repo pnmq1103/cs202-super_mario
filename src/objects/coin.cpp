@@ -22,3 +22,7 @@ void Coin::Draw() {
   if (!is_destroyed)
     GameObject::Draw();
 }
+
+ObjectType Coin::GetType() {
+  return ObjectType::Coin;
+}

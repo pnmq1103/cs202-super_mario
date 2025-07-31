@@ -6,6 +6,14 @@
 #include <raylib.h>
 #include <vector>
 
+enum class ObjectType {
+  SuperMushroom,
+  Coin,
+  FireFlower,
+  SuperStar,
+  Block,
+};
+
 class GameObject {
 private:
   static int object_count_;
@@ -27,6 +35,7 @@ protected:
 
   Rectangle MakeDestRect(Rectangle rect);
   void LoadFrameList(std::string address);
+  void Bounce();
 
 public:
   static void SetFrameCount();
@@ -36,10 +45,10 @@ public:
   virtual ~GameObject();
   virtual Rectangle GetRectangle();
   bool IsDestroyed();
-  void Bounce();
   virtual void OnHit() = 0;
   virtual void Update();
   virtual void Draw();
   void ReverseDirection();
   virtual void StopY(float Ny);
+  virtual ObjectType GetType() = 0;
 };
