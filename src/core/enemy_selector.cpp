@@ -65,9 +65,8 @@ void EnemySelectorScene::UpdateCamera() {
   }
 
   // Scroll
-  Vector2 scroll_offset_
-    = Vector2Scale(GetMouseWheelMoveV(), -1 * scroll_speed_);
-  camera_.target = Vector2Add(camera_.target, scroll_offset_);
+  Vector2 scroll_offset_ = Vector2Scale(GetMouseWheelMoveV(), -1 * 20);
+  camera_.target         = Vector2Add(camera_.target, scroll_offset_);
 
   // Restrict camera
   float world_width  = boundary_.x + boundary_.width;
@@ -91,7 +90,7 @@ void EnemySelectorScene::ChooseTile() {
   mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
   for (const auto &[local_idx, bounds] : sprite_sheet_info_) {
     if (CheckCollisionPointRec(mouse_world_pos_, bounds)) {
-      gidx_ref_ = local_idx + first_gidx;
+      gidx_ref_ = first_gidx + local_idx;
       break;
     }
   }

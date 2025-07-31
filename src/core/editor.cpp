@@ -1,9 +1,9 @@
 #include <cmath>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <raylib.h>
 #include <raymath.h>
-#include <stdexcept>
 
 #include "include/core/application.hpp"
 #include "include/core/constants.hpp"
@@ -39,29 +39,30 @@ void EditorScene::Update() {
     return;
   }
 
+  UpdateShortkeys();
   UpdateCamera();
   UpdateMouse();
   UpdateButtons();
   if (button_clicked_ == false)
     PlaceBlock();
-  UpdateShortkeys();
 
-  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && IsKeyDown(KEY_SPACE)) {
-    float col = std::floor(mouse_world_pos_.x / constants::blockSize);
-    float row = std::floor(mouse_world_pos_.y / constants::blockSize);
-    if (Vector2Equals(drag_delta_, {0, 0}) == false) {
-      drag_delta_ = Vector2Subtract({col, row}, drag_delta_);
-      int dx      = static_cast<int>(drag_delta_.x);
-      int dy      = static_cast<int>(drag_delta_.y);
-      int grid_cols
-        = static_cast<int>(map_.GetTexture(1).width / constants::cellSize);
-      int idx = static_cast<int>(dy * grid_cols + dx);
+  // To be considered
+  // if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && IsKeyDown(KEY_SPACE)) {
+  //   float col = std::floor(mouse_world_pos_.x / constants::blockSize);
+  //   float row = std::floor(mouse_world_pos_.y / constants::blockSize);
+  //   if (Vector2Equals(drag_delta_, {0, 0}) == false) {
+  //     drag_delta_ = Vector2Subtract({col, row}, drag_delta_);
+  //     int dx      = static_cast<int>(drag_delta_.x);
+  //     int dy      = static_cast<int>(drag_delta_.y);
+  //     int grid_cols
+  //       = static_cast<int>(map_.GetTexture(1).width / constants::cellSize);
+  //     int idx = static_cast<int>(dy * grid_cols + dx);
 
-      select_gidx_ += idx;
-    }
-    drag_delta_ = {col, row};
-  } else if (IsKeyUp(KEY_SPACE))
-    drag_delta_ = {0, 0};
+  //    select_gidx_ += idx;
+  //  }
+  //  drag_delta_ = {col, row};
+  //} else if (IsKeyUp(KEY_SPACE))
+  //  drag_delta_ = {0, 0};
 }
 
 void EditorScene::Draw() {
@@ -71,6 +72,22 @@ void EditorScene::Draw() {
   DrawPipe();
   DrawCursor();
   DrawButtons();
+
+  std::string layer_name = "";
+  switch (cur_layer_) {
+    case MapLayer::Tile1:
+      layer_name = "Tile1";
+      break;
+    case MapLayer::Objects:
+      layer_name = "Objects";
+      break;
+    case MapLayer::Tile2:
+      layer_name = "Tile2";
+      break;
+    default:
+      layer_name = "Unknown";
+  }
+  DrawText(("Layer: " + layer_name).c_str(), 50, 50, 20, RED);
 }
 
 void EditorScene::Resume() {
@@ -81,8 +98,18 @@ SceneType EditorScene::Type() {
   return type_;
 }
 
+void EditorScene::LoadMap() {
+  std::filesystem::path load_path(FileHandler::OpenFile());
+
+  if (load_path.empty() == false) {
+    FileHandler::LoadMapFromFile(load_path, map_);
+  } else
+    std::cout << "No valid file selected\n";
+}
+
 void EditorScene::CreateButtons() {
-  buttons_.reserve(3);
+  buttons_.reserve(4);
+
   Rectangle source = {0, 0, 16, 16};
   Rectangle dest   = {100, 100, 64, 64};
   float spacing    = 40;
@@ -110,6 +137,14 @@ void EditorScene::CreateButtons() {
     "Save",
     [this] {
       FileHandler::SaveMapToFile(map_);
+    },
+    source, dest, "res/sprites/buttons/save.png");
+
+  dest = {100 + 3 * (64 + spacing), 100, 64, 64};
+  buttons_.emplace_back(
+    "Load Map",
+    [this] {
+      LoadMap();
     },
     source, dest, "res/sprites/buttons/save.png");
 }
@@ -197,24 +232,27 @@ void EditorScene::PlaceBlock() {
   }
 }
 
-// Need to fix the optimization
 void EditorScene::DrawGrid() {
-  Vector2 camera_topleft = {
-    camera_.target.x - camera_.offset.x, camera_.target.y - camera_.offset.y};
+  float zoom = camera_.zoom;
+
+  Vector2 topleft = {
+    camera_.target.x - camera_.offset.x / zoom,
+    camera_.target.y - camera_.offset.y / zoom};
+
+  float visible_width  = constants::screenWidth / zoom;
+  float visible_height = constants::screenHeight / zoom;
 
   int start_x
-    = static_cast<int>(std::max(0.0f, camera_topleft.x / constants::blockSize));
+    = static_cast<int>(std::max(0.0f, topleft.x / constants::blockSize));
   int end_x = static_cast<int>(Clamp(
-    std::ceil(
-      (camera_topleft.x + constants::screenWidth) / constants::blockSize),
-    0, static_cast<float>(constants::mapWidth)));
+    std::ceil((topleft.x + visible_width) / constants::blockSize), 0,
+    static_cast<float>(constants::mapWidth)));
 
   int start_y
-    = static_cast<int>(std::max(0.0f, camera_topleft.y / constants::blockSize));
+    = static_cast<int>(std::max(0.0f, topleft.y / constants::blockSize));
   int end_y = static_cast<int>(Clamp(
-    std::ceil(
-      (camera_topleft.y + constants::screenHeight) / constants::blockSize),
-    0, static_cast<float>(constants::mapHeight)));
+    std::ceil((topleft.y + visible_height) / constants::blockSize), 0,
+    static_cast<float>(constants::mapHeight)));
 
   BeginMode2D(camera_);
   // Draw vertical

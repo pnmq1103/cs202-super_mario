@@ -20,12 +20,14 @@ TileSelectorScene::TileSelectorScene(int &select_gidx)
 TileSelectorScene::~TileSelectorScene() {}
 
 void TileSelectorScene::Init() {
-  sprite_sheet_ = &App.Resource().GetTileset('g');
-  utility::ReadSpriteInfo(
-    "res/sprites/tilesets/tileset_ground.txt", sprite_sheet_info_);
+  sprite_sheets_ = {
+    {1, 73, "tileset_ground", "res/sprites/tilesets/tileset_ground.txt"},
+    {74, 71, "tileset_underground",
+     "res/sprites/tilesets/tileset_underground.txt"}};
 
-  float width  = static_cast<float>(sprite_sheet_->width);
-  float height = static_cast<float>(sprite_sheet_->height);
+  cur_texture_ = &FindTexture(sprite_sheets_[cur_sheet_].texture_key);
+  float width  = static_cast<float>(cur_texture_->width);
+  float height = static_cast<float>(cur_texture_->height);
   boundary_    = {0, 0, width * 4, height * 4};
 }
 
@@ -33,6 +35,15 @@ void TileSelectorScene::Update() {
   if (IsKeyDown(KEY_ESCAPE)) {
     App.ChangeScene(nullptr);
     return;
+  }
+
+  if (IsKeyPressed(KEY_TAB)) {
+    cur_sheet_ = (cur_sheet_ + 1) % sprite_sheets_.size();
+
+    cur_texture_ = &FindTexture(sprite_sheets_[cur_sheet_].texture_key);
+    float width  = static_cast<float>(cur_texture_->width);
+    float height = static_cast<float>(cur_texture_->height);
+    boundary_    = {0, 0, width * 4, height * 4};
   }
 
   UpdateCamera();
@@ -46,10 +57,10 @@ void TileSelectorScene::Update() {
 
 void TileSelectorScene::Draw() {
   BeginMode2D(camera_);
-  float width  = static_cast<float>(sprite_sheet_->width);
-  float height = static_cast<float>(sprite_sheet_->height);
+  float width  = static_cast<float>(cur_texture_->width);
+  float height = static_cast<float>(cur_texture_->height);
   DrawTexturePro(
-    *sprite_sheet_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
+    *cur_texture_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
   EndMode2D();
 }
 
@@ -67,9 +78,8 @@ void TileSelectorScene::UpdateCamera() {
   }
 
   // Scroll
-  Vector2 scroll_offset_
-    = Vector2Scale(GetMouseWheelMoveV(), -1 * scroll_speed_);
-  camera_.target = Vector2Add(camera_.target, scroll_offset_);
+  Vector2 scroll_offset_ = Vector2Scale(GetMouseWheelMoveV(), -1 * 30);
+  camera_.target         = Vector2Add(camera_.target, scroll_offset_);
 
   // Restrict camera
   float world_width  = boundary_.x + boundary_.width;
@@ -86,6 +96,21 @@ void TileSelectorScene::UpdateCamera() {
       = Clamp(camera_.target.y, 0.0f, world_height - constants::screenHeight);
 }
 
+const Texture &TileSelectorScene::FindTexture(std::string texture_key) const {
+  std::unordered_map<std::string, const Texture *> mp;
+  mp["tileset_ground"]      = &App.Resource().GetTileset('g');
+  mp["tileset_underground"] = &App.Resource().GetTileset('u');
+  mp["bowser"]              = &App.Resource().GetEnemy('b');
+  mp["minions"]             = &App.Resource().GetEnemy('m');
+  mp["enemies_icon"]        = &App.Resource().GetEnemy('i');
+
+  for (const auto &[key, texture] : mp) {
+    if (key == texture_key)
+      return *mp[key];
+  }
+  throw std::out_of_range("texture not found");
+}
+
 void TileSelectorScene::ChooseTile() {
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     App.Media().PlaySound("beep");
@@ -93,9 +118,10 @@ void TileSelectorScene::ChooseTile() {
   //  Because the display is scaled up 4 times
   mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
 
-  for (const auto &[local_idx, bounds] : sprite_sheet_info_) {
+  const auto &sheet = sprite_sheets_[cur_sheet_];
+  for (const auto &[local_idx, bounds] : sheet.info) {
     if (CheckCollisionPointRec(mouse_world_pos_, bounds)) {
-      gidx_ref_ = local_idx + first_gidx;
+      gidx_ref_ = sheet.first_gidx + local_idx;
       break;
     }
   }

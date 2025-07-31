@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "include/core/button.hpp"
+#include "include/core/map.hpp"
 #include "include/core/scene.hpp"
 
 class TileSelectorScene : public Scene {
@@ -11,14 +12,11 @@ private:
 
   int &gidx_ref_;
 
-  int first_gidx = 1; // need to support more first gidx
+  int cur_sheet_              = {0};
+  const Texture *cur_texture_ = {nullptr};
+  std::vector<SpriteSheet> sprite_sheets_;
 
-  const Texture *sprite_sheet_ = {nullptr};
-  std::unordered_map<int, Rectangle> sprite_sheet_info_;
   Rectangle boundary_ = {};
-
-  float scroll_speed_ = {30};
-
   std::vector<Button> buttons_;
 
 public:
@@ -34,6 +32,7 @@ public:
 private:
   void UpdateCamera();
 
+  const Texture &FindTexture(std::string texture_key) const;
   void ChooseTile();
 
   void CreateButtons();

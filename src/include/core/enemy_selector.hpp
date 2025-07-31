@@ -17,8 +17,6 @@ private:
   std::unordered_map<int, Rectangle> sprite_sheet_info_;
   Rectangle boundary_ = {};
 
-  float scroll_speed_ = {20};
-
 public:
   EnemySelectorScene(int &g_select_idx);
   ~EnemySelectorScene();

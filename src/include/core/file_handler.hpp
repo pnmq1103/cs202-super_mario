@@ -12,10 +12,9 @@ public:
   FileHandler()  = default;
   ~FileHandler() = default;
 
-  static std::string OpenFilePath();
-  static std::string
-  OpenSavePath(const std::string &default_name = "untitled.bin");
+  static std::string OpenFile();
+  static std::string SaveFile();
 
   static void SaveMapToFile(const Map &map);
-  static Map LoadMapFromFile(const std::filesystem::path &path);
+  static void LoadMapFromFile(const std::filesystem::path &path, Map &map);
 };

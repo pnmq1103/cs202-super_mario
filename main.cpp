@@ -1,4 +1,4 @@
-/*#include "include/core/application.hpp"
+#include "include/core/application.hpp"
 #include <raylib.h>
 
 int main() {
@@ -14,7 +14,7 @@ int main() {
 
   CloseWindow();
   return 0;
-}*/
+}
 
 /*#include "include/characters/character.hpp"
 #include "include/characters/projectile_pool.hpp"
@@ -564,7 +564,8 @@ speed.y), GetScreenWidth() - 200, 190, 10, WHITE);
   CloseWindow();
   return 0;
 }*/
-#include "include/characters/character.hpp"
+
+/*#include "include/characters/character.hpp"
 #include "include/characters/projectile_pool.hpp"
 #include "include/core/application.hpp"
 #include "include/core/command.hpp"
@@ -608,35 +609,36 @@ int main() {
     ClearBackground(BLACK);
     Rectangle rect = character.GetRectangle();
     // std::cout << rect.y + rect.height << '\n';
-    /*if (rect.y + rect.height >= 500)
-      character.StopY(500);*/
-    collision.CheckCollision();
-    character.SetFrameCount();
-    character.Update();
-    character.Draw();
-    block.SetFrameCount();
-    block.Update();
-    block.Draw();
-    pool.SetFrameCount();
-    pool.Update();
-    pool.Draw();
-    if (IsKeyDown(KEY_LEFT))
-      character.Run(true);
-    else if (IsKeyDown(KEY_RIGHT))
-      character.Run(false);
-    if (IsKeyDown(KEY_UP))
-      character.Jump();
-    if (IsKeyDown(KEY_E))
-      character.Evolve();
-    if (IsKeyDown(KEY_S))
-      character.ToStarman();
-    if (IsKeyDown(KEY_LEFT_SHIFT)) {
-      Rectangle rect = character.GetRectangle();
-      pool.ShootElectricBall({rect.x, rect.y}, character.IsToLeft());
-    }
-    EndDrawing();
-  }
-
-  CloseWindow();
-  return 0;
+    if (rect.y + rect.height >= 500)
+      character.StopY(500);
+collision.CheckCollision();
+character.SetFrameCount();
+character.Update();
+character.Draw();
+block.SetFrameCount();
+block.Update();
+block.Draw();
+pool.SetFrameCount();
+pool.Update();
+pool.Draw();
+if (IsKeyDown(KEY_LEFT))
+  character.Run(true);
+else if (IsKeyDown(KEY_RIGHT))
+  character.Run(false);
+if (IsKeyDown(KEY_UP))
+  character.Jump();
+if (IsKeyDown(KEY_E))
+  character.Evolve();
+if (IsKeyDown(KEY_S))
+  character.ToStarman();
+if (IsKeyDown(KEY_LEFT_SHIFT)) {
+  Rectangle rect = character.GetRectangle();
+  pool.ShootElectricBall({rect.x, rect.y}, character.IsToLeft());
 }
+EndDrawing();
+}
+
+CloseWindow();
+return 0;
+}
+*/

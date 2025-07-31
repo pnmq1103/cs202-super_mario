@@ -12,7 +12,7 @@ private:
 
   Vector2 snap_       = {0, 0};
   Rectangle boundary_ = {};
-  Vector2 drag_delta_ = {0, 0};
+  // Vector2 drag_delta_ = {0, 0};
 
   int select_gidx_ = {0};
   Map map_;
@@ -31,6 +31,7 @@ public:
   void Resume() override;
   SceneType Type() override;
 
+  void LoadMap();
   void CreateButtons();
 
   void UpdateCamera();

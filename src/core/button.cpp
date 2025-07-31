@@ -12,9 +12,9 @@ Button::~Button() {
 }
 
 Button::Button(
-  std::string label, std::function<void()> action, Rectangle source,
-  Rectangle bounds, const std::string &path)
-    : label_(label), action_(action), dest_(source), bounds_(bounds) {
+  std::string label, std::function<void()> action, Rectangle src, Rectangle dst,
+  const std::string &path)
+    : label_(label), action_(action), src_(src), dst_(dst) {
   icon_ = LoadTexture(path.c_str());
 }
 
@@ -28,10 +28,10 @@ void Button::Update() {
 }
 
 void Button::Draw() {
-  DrawTexturePro(icon_, dest_, bounds_, {0, 0}, 0, WHITE);
+  DrawTexturePro(icon_, src_, dst_, {0, 0}, 0, WHITE);
 }
 
 bool Button::Clicked() {
   return IsMouseButtonPressed(MOUSE_BUTTON_LEFT)
-         && CheckCollisionPointRec(GetMousePosition(), bounds_);
+         && CheckCollisionPointRec(GetMousePosition(), dst_);
 }
