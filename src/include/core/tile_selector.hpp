@@ -9,15 +9,13 @@ class TileSelectorScene : public Scene {
 private:
   SceneType type_ = {TileSelector};
 
-  int &select_gidx_ref_;
+  int &gidx_ref_;
 
   int first_gidx = 1; // need to support more first gidx
 
   const Texture *sprite_sheet_ = {nullptr};
-  Rectangle boundary_          = {};
-
-  int grid_rows_ = {0};
-  int grid_cols_ = {0};
+  std::unordered_map<int, Rectangle> sprite_sheet_info_;
+  Rectangle boundary_ = {};
 
   float scroll_speed_ = {30};
 
@@ -35,6 +33,7 @@ public:
 
 private:
   void UpdateCamera();
+
   void ChooseTile();
 
   void CreateButtons();

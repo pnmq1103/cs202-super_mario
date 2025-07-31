@@ -8,7 +8,7 @@
 #include "include/core/utility.hpp"
 
 EnemySelectorScene::EnemySelectorScene(int &g_select_idx)
-    : g_select_idx_ref_(g_select_idx) {
+    : gidx_ref_(g_select_idx) {
   camera_.target   = {0, 0};
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
@@ -24,9 +24,7 @@ void EnemySelectorScene::Init() {
 
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
-  boundary_    = {0, constants::blockSize * 2, width * 4, height * 4};
-  grid_cols_   = static_cast<int>(width / constants::cellSize);
-  grid_rows_   = static_cast<int>(height / constants::cellSize);
+  boundary_    = {0, 0, width * 4, height * 4};
 }
 
 void EnemySelectorScene::Update() {
@@ -48,8 +46,6 @@ void EnemySelectorScene::Draw() {
   BeginMode2D(camera_);
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
-  DrawRectangleRec(
-    {0, 0, constants::blockSize * 5, constants::blockSize}, GRAY);
   DrawTexturePro(
     *sprite_sheet_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
   EndMode2D();
@@ -92,13 +88,11 @@ void EnemySelectorScene::ChooseTile() {
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     App.Media().PlaySound("beep");
 
-  mouse_world_pos_.y -= constants::blockSize * 2; // Compensate for UI
-  // Because the display is scaled up 4 times
   mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
-
-  int col = static_cast<int>(mouse_world_pos_.x / constants::cellSize);
-  int row = static_cast<int>(mouse_world_pos_.y / constants::cellSize);
-
-  if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_)
-    g_select_idx_ref_ = first_gidx + row * grid_cols_ + col;
+  for (const auto &[local_idx, bounds] : sprite_sheet_info_) {
+    if (CheckCollisionPointRec(mouse_world_pos_, bounds)) {
+      gidx_ref_ = local_idx + first_gidx;
+      break;
+    }
+  }
 }

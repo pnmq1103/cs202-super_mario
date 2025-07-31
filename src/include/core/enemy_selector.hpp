@@ -9,17 +9,13 @@ class EnemySelectorScene : public Scene {
 private:
   SceneType type_ = {EnemySelector};
 
-  int &g_select_idx_ref_;
+  int &gidx_ref_;
 
-  int first_gidx = 148; // 147
+  int first_gidx = 184;
 
   const Texture *sprite_sheet_ = {nullptr};
-  // since the enemies are not equal in sizes
   std::unordered_map<int, Rectangle> sprite_sheet_info_;
   Rectangle boundary_ = {};
-
-  int grid_rows_ = {0};
-  int grid_cols_ = {0};
 
   float scroll_speed_ = {20};
 

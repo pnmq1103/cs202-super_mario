@@ -14,10 +14,9 @@ private:
   Rectangle boundary_ = {};
   Vector2 drag_delta_ = {0, 0};
 
-  Texture crosshair_ = {};
-
   int select_gidx_ = {0};
   Map map_;
+  MapLayer cur_layer_ = MapLayer::Tile1;
 
   std::vector<Button> buttons_;
   bool button_clicked_ = {false};
@@ -32,15 +31,21 @@ public:
   void Resume() override;
   SceneType Type() override;
 
+  void CreateButtons();
+
+  void UpdateCamera();
+  void UpdateMouse();
+  void UpdateButtons();
+  void UpdateShortkeys();
+
   void PlaceBlock();
 
   void DrawGrid();
-  void DrawCursor();
   void DrawMap();
-
-  void CreateButtons();
-  void UpdateButtons();
+  void DrawObjects();
+  void DrawPipe();
   void DrawButtons();
+  void DrawCursor();
 };
 
 // Since the original game's resolution is 256x240 pixels

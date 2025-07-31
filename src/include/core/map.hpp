@@ -8,23 +8,23 @@
 #include "include/external/json.hpp"
 
 struct SpriteSheet {
-  int first_gidx_ = {0};
-  int count_      = {0};
-  std::string texture_key_;
+  int first_gidx = {0};
+  int count      = {0};
+  std::string texture_key;
   std::unordered_map<int, Rectangle> info;
 
   SpriteSheet() = default;
-  SpriteSheet(
-    int first_gidx, int count, std::string texture_key, std::string path)
-      : first_gidx_(first_gidx), count_(count), texture_key_(texture_key) {
+  SpriteSheet(int gidx, int c, std::string key, std::string path)
+      : first_gidx(gidx), count(c), texture_key(key) {
     utility::ReadSpriteInfo(path, info);
   }
 };
 
 enum struct MapLayer {
-  Tile1,
+  Tile1 = 0,
   Objects,
   Tile2,
+  Count,
 };
 
 class Map {
@@ -70,16 +70,16 @@ namespace nlohmann {
   struct adl_serializer<SpriteSheet> {
     static void to_json(json &j, const SpriteSheet &s) {
       j = json{
-        {"first_gidx", s.first_gidx_},
-        {"count", s.count_},
-        {"texture_key", s.texture_key_},
+        {"first_gidx", s.first_gidx},
+        {"count", s.count},
+        {"texture_key", s.texture_key},
         {"info", s.info}};
     }
 
     static void from_json(const json &j, SpriteSheet &s) {
-      j.at("first_gidx").get_to(s.first_gidx_);
-      j.at("count").get_to(s.count_);
-      j.at("texture_key").get_to(s.texture_key_);
+      j.at("first_gidx").get_to(s.first_gidx);
+      j.at("count").get_to(s.count);
+      j.at("texture_key").get_to(s.texture_key);
       j.at("info").get_to(s.info);
     }
   };

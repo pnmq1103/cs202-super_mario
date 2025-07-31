@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdexcept>
 
 #include "include/core/application.hpp"
@@ -13,22 +14,20 @@ Map::Map() {
   layers_[static_cast<size_t>(MapLayer::Tile2)].resize(
     constants::mapWidth * constants::mapHeight, 0);
 
-  sprite_sheets_.reserve(3);
+  sprite_sheets_.reserve(5);
 }
 
 Map::~Map() {}
-
-#include <iostream>
 
 void Map::Init() {
   try {
     sprite_sheets_ = {
       {1, 73, "tileset_ground", "res/sprites/tilesets/tileset_ground.txt"},
-      // unprocessed tileset_underground
-      //{74, 73, "tileset_underground",
-      //"res/sprites/tilesets/tileset_underground.txt"},
-      {74, 16, "bowser", "res/sprites/enemies/bowser.txt"},
-      {90, 23, "minions", "res/sprites/enemies/minions.txt"}};
+      {74, 71, "tileset_underground",
+       "res/sprites/tilesets/tileset_underground.txt"},
+      {145, 16, "bowser", "res/sprites/enemies/bowser.txt"},
+      {161, 23, "minions", "res/sprites/enemies/minions.txt"},
+      {184, 4, "enemies_icon", "res/sprites/enemies/enemies_icon.txt"}};
   } catch (const std::exception &e) {
     std::cerr << "Error in Map::Init: " << e.what() << std::endl;
     throw;
@@ -63,7 +62,9 @@ const Texture &Map::FindTexture(std::string texture_key) const {
   std::unordered_map<std::string, const Texture *> mp;
   mp["tileset_ground"]      = &App.Resource().GetTileset('g');
   mp["tileset_underground"] = &App.Resource().GetTileset('u');
-  mp["enemies"]             = &App.Resource().GetEnemy('i');
+  mp["bowser"]              = &App.Resource().GetEnemy('b');
+  mp["minions"]             = &App.Resource().GetEnemy('m');
+  mp["enemies_icon"]        = &App.Resource().GetEnemy('i');
 
   for (const auto &[key, texture] : mp) {
     if (key == texture_key)
@@ -74,16 +75,16 @@ const Texture &Map::FindTexture(std::string texture_key) const {
 
 const Texture &Map::GetTexture(int gidx) const {
   for (const auto &sheet : sprite_sheets_) {
-    if (gidx >= sheet.first_gidx_ && gidx < sheet.first_gidx_ + sheet.count_)
-      return FindTexture(sheet.texture_key_);
+    if (gidx >= sheet.first_gidx && gidx < sheet.first_gidx + sheet.count)
+      return FindTexture(sheet.texture_key);
   }
   throw std::out_of_range("global index not found");
 }
 
 Rectangle Map::GetInfo(int gidx) const {
   for (const auto &sheet : sprite_sheets_) {
-    if (gidx >= sheet.first_gidx_ && gidx < sheet.first_gidx_ + sheet.count_) {
-      return sheet.info.at(gidx - sheet.first_gidx_);
+    if (gidx >= sheet.first_gidx && gidx < sheet.first_gidx + sheet.count) {
+      return sheet.info.at(gidx - sheet.first_gidx);
     }
   }
   throw std::out_of_range("global index not found");

@@ -5,9 +5,10 @@
 #include "include/core/constants.hpp"
 #include "include/core/scene.hpp"
 #include "include/core/tile_selector.hpp"
+#include "include/core/utility.hpp"
 
 TileSelectorScene::TileSelectorScene(int &select_gidx)
-    : select_gidx_ref_(select_gidx) {
+    : gidx_ref_(select_gidx) {
   camera_.target   = {0, 0};
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
@@ -20,12 +21,12 @@ TileSelectorScene::~TileSelectorScene() {}
 
 void TileSelectorScene::Init() {
   sprite_sheet_ = &App.Resource().GetTileset('g');
+  utility::ReadSpriteInfo(
+    "res/sprites/tilesets/tileset_ground.txt", sprite_sheet_info_);
 
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
   boundary_    = {0, 0, width * 4, height * 4};
-  grid_cols_   = static_cast<int>(width / constants::cellSize);
-  grid_rows_   = static_cast<int>(height / constants::cellSize);
 }
 
 void TileSelectorScene::Update() {
@@ -77,12 +78,12 @@ void TileSelectorScene::UpdateCamera() {
     camera_.target.x = (world_width - constants::screenWidth) / 2.0f;
   else
     camera_.target.x
-      = Clamp(camera_.target.x, 0.0f, constants::screenWidth - world_width);
+      = Clamp(camera_.target.x, 0.0f, world_width - constants::screenWidth);
   if (constants::screenHeight > world_height)
     camera_.target.y = (world_height - constants::screenHeight) / 2.0f;
   else
     camera_.target.y
-      = Clamp(camera_.target.y, 0.0f, constants::screenHeight - world_height);
+      = Clamp(camera_.target.y, 0.0f, world_height - constants::screenHeight);
 }
 
 void TileSelectorScene::ChooseTile() {
@@ -92,9 +93,10 @@ void TileSelectorScene::ChooseTile() {
   //  Because the display is scaled up 4 times
   mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
 
-  int col = static_cast<int>(mouse_world_pos_.x / constants::cellSize);
-  int row = static_cast<int>(mouse_world_pos_.y / constants::cellSize);
-
-  if (row >= 0 && row < grid_rows_ && col >= 0 && col < grid_cols_)
-    select_gidx_ref_ = first_gidx + row * grid_cols_ + col;
+  for (const auto &[local_idx, bounds] : sprite_sheet_info_) {
+    if (CheckCollisionPointRec(mouse_world_pos_, bounds)) {
+      gidx_ref_ = local_idx + first_gidx;
+      break;
+    }
+  }
 }
