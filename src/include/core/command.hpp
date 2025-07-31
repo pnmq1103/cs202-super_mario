@@ -2,6 +2,7 @@
 #include <raylib.h>
 
 #include "include/characters/character.hpp"
+#include "include/core/button.hpp"
 
 // Forward declaration
 class ProjectilePool;
@@ -13,6 +14,11 @@ private:
   Character *active_character_ = {nullptr};
   bool fireball_active_        = {false}; // Only allow one fireball at a time
   ProjectilePool *projectile_pool_ = {nullptr}; // Reference to projectile pool
+  
+  // Instructions system
+  bool show_instructions_      = {false};
+  Button instructions_button_;
+  bool instructions_initialized_ = {false};
 
 public:
   Command(Character *mario = nullptr, Character *luigi = nullptr);
@@ -44,4 +50,12 @@ public:
   // Fireball state management
   void SetFireballActive(bool active);
   bool IsFireballActive() const;
+  
+  // Instructions system
+  void InitializeInstructionsButton();
+  void UpdateInstructionsButton();
+  void DrawInstructionsButton();
+  void DrawInstructionsPanel();
+  bool IsShowingInstructions() const;
+  void ToggleInstructions();
 };

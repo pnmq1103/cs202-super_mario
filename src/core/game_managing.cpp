@@ -20,31 +20,34 @@
 using json = nlohmann::json;
 
 GameManaging::GameManaging() {
-  lives_            = 3;
-  gameTime_         = 0.0f;
-  points_           = 0;
+  lives_ = 3;
+  gameTime_ = 0.0f;
+  points_ = 0;
   countdownSeconds_ = 300;
-  backgroundType_   = 0;
-  currentLevel_     = 1;
-  levelComplete_    = false;
-  gameOver_         = false;
-  spawnPoint_       = {100.0f, 500.0f};
-  enemyManager_     = std::make_unique<EnemyManager>();
-  updateCounter_    = 0;
+  backgroundType_ = 0;
+  currentLevel_ = 1;
+  levelComplete_ = false;
+  gameOver_ = false;
+  spawnPoint_ = {100.0f, 500.0f};
+  enemyManager_ = std::make_unique<EnemyManager>();
+  updateCounter_ = 0;
 
   // Camera initialization
-  camera_.target   = {100.0f, 300.0f};
-  camera_.offset   = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
+  camera_.target = {100.0f, 300.0f};
+  camera_.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
   camera_.rotation = 0.0f;
-  camera_.zoom     = 1.0f;
-  cameraTarget_    = {100.0f, 300.0f};
-  cameraOffsetX_   = 0.0f;
-  cameraOffsetY_   = 0.0f;
+  camera_.zoom = 1.0f;
+  cameraTarget_ = {100.0f, 300.0f};
+  cameraOffsetX_ = 0.0f;
+  cameraOffsetY_ = 0.0f;
 
   // Level boundaries
-  levelWidth_  = 3200.0f; // Large level width
+  levelWidth_ = 3200.0f;
   levelHeight_ = 800.0f;
   groundLevel_ = 600.0f;
+
+  // Initialize collision system with default world size
+  InitializeCollisionSystem(levelWidth_, levelHeight_);
 
   LoadResources();
 }
@@ -53,84 +56,100 @@ GameManaging::~GameManaging() {
   UnloadLevel();
 }
 
+void GameManaging::InitializeCollisionSystem(float worldWidth, float worldHeight) {
+  // Create the collision handler with proper world dimensions
+  collisionHandler_ = std::make_unique<CollisionHandler>(worldWidth, worldHeight);
+}
+
+void GameManaging::RegisterCharacterWithCollision(Character *character) {
+  if (collisionHandler_ && character) {
+    collisionHandler_->AddCharacter(character);
+  }
+}
+
+void GameManaging::RegisterEnemyWithCollision(Enemy *enemy) {
+  if (collisionHandler_ && enemy) {
+    collisionHandler_->AddEnemy(enemy);
+  }
+}
+
+void GameManaging::UpdateCollisionSystem() {
+  if (collisionHandler_) {
+    // Register all current blocks with collision system
+    for (size_t i = 0; i < blocks_.size(); ++i) {
+      if (blocks_[i] && !blocks_[i]->IsDestroyed()) {
+        collisionHandler_->AddObject(blocks_[i].get());
+      }
+    }
+
+    // Register all enemies with collision system
+    if (enemyManager_) {
+      for (Enemy* enemy : enemyManager_->GetEnemies()) {
+        if (enemy && enemy->IsAlive()) {
+          collisionHandler_->AddEnemy(enemy);
+        }
+      }
+    }
+
+    // Run collision detection
+    collisionHandler_->CheckCollision();
+  }
+}
+
 void GameManaging::LoadLevel(const std::string &filename) {
-  // Clear previous level data and reset block manager
   try {
     UnloadLevel();
-    // ObjectManager::GetInstance().Reset(1);
 
-    // Open level file
+    // Reset collision system for new level
+    if (collisionHandler_) {
+      collisionHandler_->Reset(levelWidth_, levelHeight_);
+    }
+
+    // Try to load from file first
     std::ifstream file(filename);
-    if (!file.is_open()) {
-      throw std::runtime_error("Failed to open level file: " + filename);
-    }
-    Map map;
-    json j;
-    // Load and parse map
-    try {
-      file >> j;
-      j.get_to(map);
-    } catch (const json::exception &e) {
-      throw std::runtime_error("JSON parsing error: " + std::string(e.what()));
-    }
+    if (file.is_open()) {
+      Map map;
+      json j;
+      try {
+        file >> j;
+        j.get_to(map);
 
-    int mapSize = constants::mapWidth * constants::mapHeight;
+        int mapSize = constants::mapWidth * constants::mapHeight;
+        for (int i = 0; i < mapSize; i++) {
+          // Get tile and create block
+          int tileGid = map.GetTile(i);
+          Vector2 tilePosition = {
+            (float)(i % constants::mapWidth) * 16.0f,
+            (float)(i / constants::mapHeight) * 16.0f};
+          CreateBlockFromType(tileGid, tilePosition);
 
-    for (int i = 0; i < mapSize; i++) {
-      // Get tile and create block
-      int tileGid          = map.GetTile(i);
-      Vector2 tilePosition = {
-        (float)(i % constants::mapWidth) * 16.0f,
-        (float)(i / constants::mapHeight) * 16.0f};
-      CreateBlockFromType(tileGid, tilePosition);
-
-      // Get enemy and create enemy
-      int enemyGid          = map.GetEnemy(i);
-      Vector2 enemyPosition = {
-        (float)(i % constants::mapWidth) * 16.0f,
-        (float)(i / constants::mapHeight) * 16.0f};
-      CreateEnemyFromType(enemyGid, enemyPosition);
+          // Get enemy and create enemy
+          int enemyGid = map.GetEnemy(i);
+          Vector2 enemyPosition = {
+            (float)(i % constants::mapWidth) * 16.0f,
+            (float)(i / constants::mapHeight) * 16.0f};
+          CreateEnemyFromType(enemyGid, enemyPosition);
+        }
+      } catch (const json::exception &e) {
+        std::cerr << "JSON parsing error: " << e.what() << std::endl;
+        // Fall back to creating default level
+        CreateLevel1();
+      }
+    } else {
+      // File doesn't exist or can't be opened, create default level
+      std::cout << "Level file not found, creating default level..." << std::endl;
+      CreateLevel1();
     }
 
     // Set camera target to spawn point
     camera_.target = spawnPoint_;
-    cameraTarget_  = spawnPoint_;
-  } catch (const json::exception &e) {
-    // Handle JSON parsing errors
-    std::cerr << "JSON error: " << e.what() << std::endl;
-  } catch (const std::runtime_error &e) {
-    // Handle file opening or other runtime errors
-    std::cerr << "Runtime error: " << e.what() << std::endl;
-  } catch (...) {
-    // Catch-all for any other exceptions
-    std::cerr << "An unexpected error occurred while loading the level."
-              << std::endl;
+    cameraTarget_ = spawnPoint_;
+    
+  } catch (const std::exception &e) {
+    std::cerr << "Error loading level: " << e.what() << std::endl;
+    // Fall back to creating a basic level
+    CreateLevel1();
   }
-
-  // This function should load the level based on the filename, not premade
-  // levels?
-  //// Create comprehensive level based on current level number
-  // switch (currentLevel_) {
-  //   case 1:
-  //     CreateLevel1();
-  //     break;
-  //   case 2:
-  //     CreateLevel2();
-  //     break;
-  //   case 3:
-  //     CreateLevel3();
-  //     break;
-  //   case 4:
-  //     CreateBossLevel();
-  //     break;
-  //   default:
-  //     CreateLevel1();
-  //     break;
-  // }
-
-  // set camera target to spawn point
-  camera_.target = spawnPoint_;
-  cameraTarget_  = spawnPoint_;
 }
 
 void GameManaging::CreateLevel1() {
@@ -138,30 +157,18 @@ void GameManaging::CreateLevel1() {
   CreatePlatform({0, groundLevel_}, {levelWidth_, groundLevel_}, 1);
 
   // Question blocks with power-ups
-  CreateBlockFromType(2, {300.0f, groundLevel_ - 150.0f}); // Question block
-  CreateBlockFromType(
-    2, {500.0f, groundLevel_ - 200.0f}); // Higher question block
-  CreateBlockFromType(
-    2, {800.0f, groundLevel_ - 150.0f}); // Another question block
+  CreateBlockFromType(2, {300.0f, groundLevel_ - 150.0f});
+  CreateBlockFromType(2, {500.0f, groundLevel_ - 200.0f});
+  CreateBlockFromType(2, {800.0f, groundLevel_ - 150.0f});
 
   // Brick blocks
-  CreateBlockFromType(3, {350.0f, groundLevel_ - 150.0f}); // Brick block
-  CreateBlockFromType(3, {400.0f, groundLevel_ - 150.0f}); // Brick block
-  CreateBlockFromType(3, {450.0f, groundLevel_ - 150.0f}); // Brick block
+  CreateBlockFromType(1, {350.0f, groundLevel_ - 150.0f});
+  CreateBlockFromType(1, {400.0f, groundLevel_ - 150.0f});
+  CreateBlockFromType(1, {450.0f, groundLevel_ - 150.0f});
 
   // Floating platforms
-  CreatePlatform(
-    {600.0f, groundLevel_ - 250.0f}, {750.0f, groundLevel_ - 250.0f}, 1);
-  CreatePlatform(
-    {900.0f, groundLevel_ - 300.0f}, {1050.0f, groundLevel_ - 300.0f}, 1);
-
-  // Stairs
-  CreateStairs({1200.0f, groundLevel_}, 5, true);
-  CreateStairs({1500.0f, groundLevel_ - 160.0f}, 3, false);
-
-  // Pipes
-  CreatePipe({1800.0f, groundLevel_}, 3);
-  CreatePipe({2200.0f, groundLevel_}, 4);
+  CreatePlatform({600.0f, groundLevel_ - 250.0f}, {750.0f, groundLevel_ - 250.0f}, 1);
+  CreatePlatform({900.0f, groundLevel_ - 300.0f}, {1050.0f, groundLevel_ - 300.0f}, 1);
 
   // Spawn enemies for Level 1
   SpawnLevelEnemies(1);
@@ -174,22 +181,8 @@ void GameManaging::CreateLevel2() {
   CreatePlatform({0, groundLevel_}, {levelWidth_, groundLevel_}, 1);
 
   // More complex platform layout
-  CreatePlatform(
-    {200.0f, groundLevel_ - 100.0f}, {400.0f, groundLevel_ - 100.0f}, 1);
-  CreatePlatform(
-    {600.0f, groundLevel_ - 200.0f}, {800.0f, groundLevel_ - 200.0f}, 1);
-  CreatePlatform(
-    {1000.0f, groundLevel_ - 150.0f}, {1200.0f, groundLevel_ - 150.0f}, 1);
-
-  // Question blocks with different rewards
-  CreateBlockFromType(2, {300.0f, groundLevel_ - 200.0f});
-  CreateBlockFromType(2, {700.0f, groundLevel_ - 300.0f});
-  CreateBlockFromType(2, {1100.0f, groundLevel_ - 250.0f});
-
-  // Multiple brick formations
-  for (int i = 0; i < 5; i++) {
-    CreateBlockFromType(3, {500.0f + i * 32.0f, groundLevel_ - 150.0f});
-  }
+  CreatePlatform({200.0f, groundLevel_ - 100.0f}, {400.0f, groundLevel_ - 100.0f}, 1);
+  CreatePlatform({600.0f, groundLevel_ - 200.0f}, {800.0f, groundLevel_ - 200.0f}, 1);
 
   SpawnLevelEnemies(2);
   backgroundType_ = 1; // Underground
@@ -200,23 +193,8 @@ void GameManaging::CreateLevel3() {
   CreatePlatform({0, groundLevel_}, {levelWidth_, groundLevel_}, 1);
 
   // Moving platform simulation with gaps
-  CreatePlatform(
-    {200.0f, groundLevel_ - 100.0f}, {350.0f, groundLevel_ - 100.0f}, 1);
-  // Gap
-  CreatePlatform(
-    {450.0f, groundLevel_ - 150.0f}, {600.0f, groundLevel_ - 150.0f}, 1);
-  // Gap
-  CreatePlatform(
-    {700.0f, groundLevel_ - 200.0f}, {850.0f, groundLevel_ - 200.0f}, 1);
-
-  // Complex stair system
-  CreateStairs({1000.0f, groundLevel_}, 8, true);
-  CreateStairs({1300.0f, groundLevel_ - 256.0f}, 5, false);
-
-  // Hidden blocks and secrets
-  CreateBlockFromType(
-    2, {250.0f, groundLevel_ - 200.0f}); // Hidden above platform
-  CreateBlockFromType(2, {550.0f, groundLevel_ - 250.0f}); // Hard to reach
+  CreatePlatform({200.0f, groundLevel_ - 100.0f}, {350.0f, groundLevel_ - 100.0f}, 1);
+  CreatePlatform({450.0f, groundLevel_ - 150.0f}, {600.0f, groundLevel_ - 150.0f}, 1);
 
   SpawnLevelEnemies(3);
   backgroundType_ = 0; // Overworld
@@ -226,19 +204,6 @@ void GameManaging::CreateBossLevel() {
   // Boss arena
   CreatePlatform({0, groundLevel_}, {1200.0f, groundLevel_}, 1);
 
-  // Boss arena walls
-  CreatePlatform({0, groundLevel_ - 400.0f}, {0, groundLevel_}, 1); // Left wall
-  CreatePlatform(
-    {1200.0f, groundLevel_ - 400.0f}, {1200.0f, groundLevel_}, 1); // Right wall
-
-  // Some platforms for strategy
-  CreatePlatform(
-    {200.0f, groundLevel_ - 150.0f}, {300.0f, groundLevel_ - 150.0f}, 1);
-  CreatePlatform(
-    {500.0f, groundLevel_ - 200.0f}, {600.0f, groundLevel_ - 200.0f}, 1);
-  CreatePlatform(
-    {900.0f, groundLevel_ - 150.0f}, {1000.0f, groundLevel_ - 150.0f}, 1);
-
   // Spawn boss
   SpawnBoss({600.0f, groundLevel_ - 50.0f});
 
@@ -246,51 +211,28 @@ void GameManaging::CreateBossLevel() {
 }
 
 void GameManaging::SpawnLevelEnemies(int levelNumber) {
-  if (!enemyManager_)
-    return;
+  if (!enemyManager_) return;
 
   switch (levelNumber) {
     case 1:
       // Level 1: Basic enemies
-      enemyManager_->SpawnEnemy(
-        EnemyType::Goomba, {400.0f, groundLevel_ - 20.0f});
-      enemyManager_->SpawnEnemy(
-        EnemyType::Goomba, {600.0f, groundLevel_ - 20.0f});
-      enemyManager_->SpawnEnemy(
-        EnemyType::Koopa, {800.0f, groundLevel_ - 30.0f});
-      enemyManager_->SpawnEnemy(
-        EnemyType::Piranha, {1850.0f, groundLevel_ - 50.0f}); // In pipe
+      enemyManager_->SpawnEnemy(EnemyType::Goomba, {400.0f, groundLevel_ - 20.0f});
+      enemyManager_->SpawnEnemy(EnemyType::Goomba, {600.0f, groundLevel_ - 20.0f});
+      enemyManager_->SpawnEnemy(EnemyType::Koopa, {800.0f, groundLevel_ - 30.0f});
       break;
 
     case 2:
-      // Level 2: More enemies, some patterns
+      // Level 2: More enemies
       for (int i = 0; i < 3; i++) {
-        enemyManager_->SpawnEnemy(
-          EnemyType::Goomba, {300.0f + i * 150.0f, groundLevel_ - 20.0f});
+        enemyManager_->SpawnEnemy(EnemyType::Goomba, {300.0f + i * 150.0f, groundLevel_ - 20.0f});
       }
-      enemyManager_->SpawnEnemy(
-        EnemyType::Koopa, {700.0f, groundLevel_ - 30.0f});
-      enemyManager_->SpawnEnemy(
-        EnemyType::Koopa, {1100.0f, groundLevel_ - 30.0f});
-      enemyManager_->SpawnPatrolGroup(
-        EnemyType::Goomba, {200.0f, groundLevel_ - 20.0f},
-        {400.0f, groundLevel_ - 20.0f}, 2);
+      enemyManager_->SpawnEnemy(EnemyType::Koopa, {700.0f, groundLevel_ - 30.0f});
       break;
 
     case 3:
       // Level 3: Challenging enemy placement
-      enemyManager_->SpawnEnemy(
-        EnemyType::Koopa, {250.0f, groundLevel_ - 120.0f}); // On platform
-      enemyManager_->SpawnEnemy(
-        EnemyType::Goomba, {500.0f, groundLevel_ - 170.0f}); // On platform
-      enemyManager_->SpawnEnemy(
-        EnemyType::Koopa, {750.0f, groundLevel_ - 220.0f}); // On platform
-
-      // Ground enemies
-      for (int i = 0; i < 4; i++) {
-        enemyManager_->SpawnEnemy(
-          EnemyType::Goomba, {900.0f + i * 100.0f, groundLevel_ - 20.0f});
-      }
+      enemyManager_->SpawnEnemy(EnemyType::Koopa, {250.0f, groundLevel_ - 120.0f});
+      enemyManager_->SpawnEnemy(EnemyType::Goomba, {500.0f, groundLevel_ - 170.0f});
       break;
   }
 }
@@ -308,30 +250,32 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
 
   // Update all blocks
   for (auto &block : blocks_) {
-    block->Update();
+    if (block && !block->IsDestroyed()) {
+      block->Update();
+    }
   }
 
   // Update physics and particles
   UpdatePhysics(deltaTime);
   UpdateParticles(deltaTime);
 
-  // Enhanced enemy management with full functionality
+  // Enhanced enemy management
   if (enemyManager_) {
     // Set character references for enemy AI
     if (activeCharacter) {
       Rectangle charRect = activeCharacter->GetRectangle();
-      Vector2 charPos    = {charRect.x, charRect.y};
+      Vector2 charPos = {charRect.x, charRect.y};
       static Vector2 characterPosition;
       characterPosition = charPos;
       enemyManager_->SetCharacterReferences(
         &characterPosition, &characterPosition, &characterPosition);
     }
 
-    // Update all enemies with enhanced AI
+    // Update all enemies
     enemyManager_->UpdateAll(deltaTime);
     HandleEnemyAI(deltaTime);
 
-    // Handle character interactions
+    // Handle character interactions through enemy manager
     if (activeCharacter) {
       enemyManager_->HandleCharacterInteractions(activeCharacter);
     }
@@ -347,23 +291,10 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
     }
   }
 
-  // Update legacy enemies if any
-  if (updateCounter_ % 2 == 0) {
-    for (auto &enemy : enemies_) {
-      if (enemy->IsAlive()) {
-        enemy->Update(deltaTime);
-      }
-    }
-  }
+  // Use the existing collision system instead of our own
+  UpdateCollisionSystem();
 
-  // Enhanced collision detection
-  if (activeCharacter) {
-    CheckAdvancedCollisions(activeCharacter);
-    CheckPowerUpCollisions(activeCharacter);
-    CheckEnemyCollisions(activeCharacter);
-  }
-
-  // Clean up dead enemies less frequently
+  // Clean up dead enemies and particles less frequently
   if (updateCounter_ % 20 == 0) {
     RemoveDeadEnemies();
     CleanupDeadParticles();
@@ -377,15 +308,13 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
 }
 
 void GameManaging::UpdateCamera(Character *character) {
-  if (!character)
-    return;
+  if (!character) return;
 
   Rectangle charRect = character->GetRectangle();
-  Vector2 charPos
-    = {charRect.x + charRect.width / 2, charRect.y + charRect.height / 2};
+  Vector2 charPos = {charRect.x + charRect.width / 2, charRect.y + charRect.height / 2};
 
   // Smooth camera following
-  float smoothing = 0.05f;
+  float smoothing = 0.08f; // Slightly faster for better responsiveness
   cameraTarget_.x = charPos.x;
   cameraTarget_.y = charPos.y - 100.0f; // Offset camera up a bit
 
@@ -393,160 +322,32 @@ void GameManaging::UpdateCamera(Character *character) {
   camera_.target.y += (cameraTarget_.y - camera_.target.y) * smoothing;
 
   // Keep camera within level bounds
-  float halfScreenWidth  = GetScreenWidth() / 2.0f / camera_.zoom;
+  float halfScreenWidth = GetScreenWidth() / 2.0f / camera_.zoom;
   float halfScreenHeight = GetScreenHeight() / 2.0f / camera_.zoom;
 
-  camera_.target.x = fmaxf(
-    halfScreenWidth, fminf(camera_.target.x, levelWidth_ - halfScreenWidth));
-  camera_.target.y = fmaxf(
-    halfScreenHeight, fminf(camera_.target.y, levelHeight_ - halfScreenHeight));
-}
-
-void GameManaging::CheckAdvancedCollisions(Character *character) {
-  if (!character)
-    return;
-
-  Rectangle characterRect = character->GetRectangle();
-
-  // Enhanced block collision with better response
-  for (auto &block : blocks_) {
-    if (!block->IsDestroyed()) {
-      Rectangle blockRect = GetBlockCollisionRect(block.get());
-
-      if (CheckCollisionRecs(characterRect, blockRect)) {
-        // Determine collision direction more accurately
-        Vector2 charCenter = {
-          characterRect.x + characterRect.width / 2,
-          characterRect.y + characterRect.height / 2};
-        Vector2 blockCenter = {
-          blockRect.x + blockRect.width / 2,
-          blockRect.y + blockRect.height / 2};
-
-        float overlapLeft
-          = (characterRect.x + characterRect.width) - blockRect.x;
-        float overlapRight = (blockRect.x + blockRect.width) - characterRect.x;
-        float overlapTop
-          = (characterRect.y + characterRect.height) - blockRect.y;
-        float overlapBottom
-          = (blockRect.y + blockRect.height) - characterRect.y;
-
-        bool wasOnGround = IsOnGround(character);
-
-        // Find minimum overlap to determine collision direction
-        float minOverlap = fminf(
-          fminf(overlapLeft, overlapRight), fminf(overlapTop, overlapBottom));
-
-        if (minOverlap == overlapTop && character->GetSpeed().y > 0) {
-          // Hit from above (character lands on block)
-          HandleVerticalCollision(character, block.get());
-          character->StopY(blockRect.y - characterRect.height);
-
-          // Particle effect for landing
-          if (!wasOnGround) {
-            SpawnParticle({charCenter.x, blockRect.y}, BROWN);
-          }
-        } else if (minOverlap == overlapBottom && character->GetSpeed().y < 0) {
-          // Hit from below (character hits block from underneath)
-          character->StopY();
-          HitBlock(block.get(), character);
-
-          // Particle effect for hitting block
-          SpawnParticle({charCenter.x, blockRect.y + blockRect.height}, YELLOW);
-        } else if (minOverlap == overlapLeft || minOverlap == overlapRight) {
-          // Horizontal collision
-          HandleHorizontalCollision(character, block.get());
-          character->StopX();
-        }
-      }
-    }
-  }
-}
-
-void GameManaging::CheckPowerUpCollisions(Character *character) {
-  // This would handle power-up collections
-  // Implementation depends on your power-up system
-  (void)character; // Suppress unused parameter warning for now
-}
-
-void GameManaging::CheckEnemyCollisions(Character *character) {
-  // Enhanced enemy collision handling
-  if (!character || !enemyManager_)
-    return;
-
-  Rectangle characterRect = character->GetRectangle();
-
-  for (Enemy *enemy : enemyManager_->GetEnemies()) {
-    if (enemy && enemy->IsAlive()) {
-      Rectangle enemyRect = enemy->GetRect();
-
-      if (CheckCollisionRecs(characterRect, enemyRect)) {
-        Vector2 charCenter = {
-          characterRect.x + characterRect.width / 2,
-          characterRect.y + characterRect.height / 2};
-        Vector2 enemyCenter = {
-          enemyRect.x + enemyRect.width / 2,
-          enemyRect.y + enemyRect.height / 2};
-
-        // Determine interaction type
-        float deltaY = charCenter.y - enemyCenter.y;
-        bool characterFromAbove
-          = (deltaY < -enemyRect.height / 4) && character->IsFalling();
-
-        if (characterFromAbove) {
-          // Character stomped enemy
-          enemy->OnHitFromAbove();
-          character->Bounce();
-
-          // Add points based on enemy type
-          int points = 100;
-          switch (enemy->GetType()) {
-            case EnemyType::Goomba:
-              points = 100;
-              break;
-            case EnemyType::Koopa:
-              points = 200;
-              break;
-            case EnemyType::Piranha:
-              points = 300;
-              break;
-            case EnemyType::Bowser:
-              points = 1000;
-              break;
-          }
-          AddPoints(points);
-
-          // Spawn particle effect
-          SpawnParticle(enemyCenter, YELLOW, {0, -50});
-          PlaySoundEffect("enemy_defeat");
-
-        } else {
-          // Enemy hit character
-          if (character->IsStarman()) {
-            // Star power destroys enemy
-            enemy->OnHitFromSide();
-            AddPoints(200);
-            SpawnParticle(enemyCenter, GOLD, {10, -30});
-            PlaySoundEffect("star_defeat");
-          } else {
-            // Character takes damage
-            character->Die();
-            PlaySoundEffect("player_hurt");
-
-            // Respawn character at spawn point if has lives
-            if (lives_ > 0) {
-              Vector2 respawnPos = spawnPoint_;
-              camera_.target     = respawnPos;
-            }
-          }
-        }
-      }
-    }
-  }
+  camera_.target.x = fmaxf(halfScreenWidth, fminf(camera_.target.x, levelWidth_ - halfScreenWidth));
+  camera_.target.y = fmaxf(halfScreenHeight, fminf(camera_.target.y, levelHeight_ - halfScreenHeight));
 }
 
 void GameManaging::UpdatePhysics(float deltaTime) {
-  // Enhanced physics updates
-  (void)deltaTime; // Placeholder
+  // Enhanced physics updates - ground collision for enemies
+  if (enemyManager_) {
+    for (Enemy* enemy : enemyManager_->GetEnemies()) {
+      if (enemy && enemy->IsAlive()) {
+        Rectangle enemyRect = enemy->GetRect();
+        // Simple ground collision
+        if (enemyRect.y + enemyRect.height >= groundLevel_) {
+          Vector2 pos = enemy->GetPosition();
+          pos.y = groundLevel_ - enemyRect.height;
+          enemy->SetPosition(pos);
+          
+          Vector2 vel = enemy->GetVelocity();
+          vel.y = 0.0f;
+          enemy->SetVelocity(vel);
+        }
+      }
+    }
+  }
 }
 
 void GameManaging::UpdateParticles(float deltaTime) {
@@ -555,10 +356,10 @@ void GameManaging::UpdateParticles(float deltaTime) {
     particle.position.x += particle.velocity.x * deltaTime;
     particle.position.y += particle.velocity.y * deltaTime;
     particle.velocity.y += 200.0f * deltaTime; // Gravity
-    particle.life       -= deltaTime;
+    particle.life -= deltaTime;
 
     // Fade out over time
-    float alpha      = particle.life / particle.maxLife;
+    float alpha = particle.life / particle.maxLife;
     particle.color.a = (unsigned char)(255 * alpha);
   }
 }
@@ -577,30 +378,9 @@ void GameManaging::CheckLevelComplete() {
         PlaySoundEffect("level_complete");
         SpawnParticle({400, 300}, GOLD);
       }
-    } else {
-      // For regular levels, check if player reached end (simplified)
-      // This could be expanded to check for keys, coins, etc.
     }
   }
 }
-
-void GameManaging::LoadNextLevel() {
-  if (levelComplete_) {
-    currentLevel_++;
-    levelComplete_ = false;
-    LoadLevel(""); // Reload with new level
-  }
-}
-
-bool GameManaging::IsLevelComplete() const {
-  return levelComplete_;
-}
-
-bool GameManaging::IsGameOver() const {
-  return gameOver_ || lives_ <= 0;
-}
-
-// ... (continue with remaining methods following the same pattern)
 
 void GameManaging::DrawLevel() {
   BeginMode2D(camera_);
@@ -609,7 +389,7 @@ void GameManaging::DrawLevel() {
 
   // Draw all blocks
   for (const auto &block : blocks_) {
-    if (!block->IsDestroyed()) {
+    if (block && !block->IsDestroyed()) {
       DrawBlock(block.get());
     }
   }
@@ -621,7 +401,7 @@ void GameManaging::DrawLevel() {
 
   // Draw legacy enemies
   for (const auto &enemy : enemies_) {
-    if (enemy->IsAlive()) {
+    if (enemy && enemy->IsAlive()) {
       DrawEnemy(enemy.get());
     }
   }
@@ -642,49 +422,39 @@ void GameManaging::DrawLevel() {
 void GameManaging::DrawStats() const {
   DrawText(TextFormat("Lives: %d", lives_), 10, 10, 24, WHITE);
   DrawText(TextFormat("Points: %d", points_), 10, 40, 24, YELLOW);
-  DrawText(
-    TextFormat("Time: %d", countdownSeconds_ - (int)gameTime_), 10, 70, 24,
-    GREEN);
+  DrawText(TextFormat("Time: %d", countdownSeconds_ - (int)gameTime_), 10, 70, 24, GREEN);
   DrawText(TextFormat("Level: %d", currentLevel_), 10, 100, 20, WHITE);
 
   // Enhanced enemy stats display
   if (enemyManager_) {
     size_t aliveEnemies = enemyManager_->GetAliveEnemyCount();
     size_t totalEnemies = enemyManager_->GetEnemyCount();
-    DrawText(
-      TextFormat("Enemies: %zu/%zu", aliveEnemies, totalEnemies), 10, 130, 16,
-      WHITE);
+    DrawText(TextFormat("Enemies: %zu/%zu", aliveEnemies, totalEnemies), 10, 130, 16, WHITE);
 
     // Boss status
     if (enemyManager_->HasBoss()) {
       Enemy *boss = enemyManager_->GetBoss();
       if (boss) {
         float healthPercentage = boss->GetHealth() / boss->GetMaxHealth();
-        DrawText(
-          TextFormat("Boss HP: %.0f%%", healthPercentage * 100), 10, 150, 20,
-          RED);
-        DrawText("Boss Phase: Active", 10, 170, 16, ORANGE);
+        DrawText(TextFormat("Boss HP: %.0f%%", healthPercentage * 100), 10, 150, 20, RED);
       }
     }
   }
 
   if (levelComplete_) {
-    DrawText(
-      "LEVEL COMPLETE!", GetScreenWidth() / 2 - 100, GetScreenHeight() / 2, 24,
-      GOLD);
+    DrawText("LEVEL COMPLETE!", GetScreenWidth() / 2 - 100, GetScreenHeight() / 2, 24, GOLD);
   }
 
   if (IsGameOver()) {
-    DrawText(
-      "GAME OVER", GetScreenWidth() / 2 - 80, GetScreenHeight() / 2, 28, RED);
+    DrawText("GAME OVER", GetScreenWidth() / 2 - 80, GetScreenHeight() / 2, 28, RED);
   }
 }
 
 void GameManaging::DrawMiniMap() const {
   // Simple minimap in top-right corner
-  int mapX      = GetScreenWidth() - 200;
-  int mapY      = 10;
-  int mapWidth  = 180;
+  int mapX = GetScreenWidth() - 200;
+  int mapY = 10;
+  int mapWidth = 180;
   int mapHeight = 60;
 
   DrawRectangle(mapX, mapY, mapWidth, mapHeight, ColorAlpha(BLACK, 0.5f));
@@ -696,9 +466,8 @@ void GameManaging::DrawMiniMap() const {
 
   // Draw blocks on minimap
   for (const auto &block : blocks_) {
-    if (!block->IsDestroyed()) {
-      Rectangle blockRect
-        = const_cast<GameObject *>(block.get())->GetRectangle();
+    if (block && !block->IsDestroyed()) {
+      Rectangle blockRect = const_cast<GameObject *>(block.get())->GetRectangle();
       int miniX = mapX + (int)(blockRect.x * scaleX);
       int miniY = mapY + (int)(blockRect.y * scaleY);
       DrawPixel(miniX, miniY, GRAY);
@@ -714,16 +483,10 @@ void GameManaging::DrawMiniMap() const {
 void GameManaging::DrawLevelInfo() const {
   // Draw level-specific information
   const char *levelNames[] = {"Plains", "Underground", "Sky", "Castle"};
-  const char *currentLevelName
-    = (currentLevel_ <= 4) ? levelNames[currentLevel_ - 1] : "Unknown";
+  const char *currentLevelName = (currentLevel_ <= 4) ? levelNames[currentLevel_ - 1] : "Unknown";
 
-  DrawText(
-    TextFormat("Area: %s", currentLevelName), GetScreenWidth() - 150,
-    GetScreenHeight() - 30, 16, WHITE);
+  DrawText(TextFormat("Area: %s", currentLevelName), GetScreenWidth() - 150, GetScreenHeight() - 30, 16, WHITE);
 }
-
-// Continue with all the other existing methods but with improvements...
-// (The rest of the methods follow the same enhanced pattern)
 
 // Helper implementations
 void GameManaging::CreatePlatform(Vector2 start, Vector2 end, int blockType) {
@@ -761,47 +524,37 @@ void GameManaging::CreatePipe(Vector2 position, int height) {
 
   for (int i = 0; i < height; i++) {
     CreateBlockFromType(1, {position.x, position.y - i * blockSize});
-    CreateBlockFromType(
-      1, {position.x + blockSize, position.y - i * blockSize});
+    CreateBlockFromType(1, {position.x + blockSize, position.y - i * blockSize});
   }
 }
 
-void
-GameManaging::SpawnParticle(Vector2 position, Color color, Vector2 velocity) {
+void GameManaging::SpawnParticle(Vector2 position, Color color, Vector2 velocity) {
   Particle particle;
   particle.position = position;
   particle.velocity = velocity;
-  particle.color    = color;
-  particle.life     = 1.0f;
-  particle.maxLife  = 1.0f;
+  particle.color = color;
+  particle.life = 1.0f;
+  particle.maxLife = 1.0f;
   particles_.push_back(particle);
 }
 
 void GameManaging::CleanupDeadParticles() {
   particles_.erase(
-    std::remove_if(
-      particles_.begin(), particles_.end(),
-      [](const Particle &p) {
-        return p.life <= 0;
-      }),
+    std::remove_if(particles_.begin(), particles_.end(),
+      [](const Particle &p) { return p.life <= 0; }),
     particles_.end());
 }
 
 Rectangle GameManaging::GetBlockCollisionRect(const GameObject *block) const {
-  // Cast away const since GetRectangle is not const in GameObject
   return const_cast<GameObject *>(block)->GetRectangle();
 }
 
 bool GameManaging::IsOnGround(Character *character) const {
-  // Check if character is standing on something
   Rectangle charRect = character->GetRectangle();
-  Rectangle groundCheck
-    = {charRect.x, charRect.y + charRect.height, charRect.width, 5};
+  Rectangle groundCheck = {charRect.x, charRect.y + charRect.height, charRect.width, 5};
 
   for (const auto &block : blocks_) {
-    if (
-      !block->IsDestroyed()
-      && CheckCollisionRecs(groundCheck, block->GetRectangle())) {
+    if (block && !block->IsDestroyed() && CheckCollisionRecs(groundCheck, block->GetRectangle())) {
       return true;
     }
   }
@@ -809,14 +562,12 @@ bool GameManaging::IsOnGround(Character *character) const {
   return charRect.y + charRect.height >= groundLevel_;
 }
 
-void GameManaging::HandleVerticalCollision(
-  Character *character, const GameObject *block) {
+void GameManaging::HandleVerticalCollision(Character *character, const GameObject *block) {
   (void)character;
   (void)block; // Implementation placeholder
 }
 
-void GameManaging::HandleHorizontalCollision(
-  Character *character, const GameObject *block) {
+void GameManaging::HandleHorizontalCollision(Character *character, const GameObject *block) {
   (void)character;
   (void)block; // Implementation placeholder
 }
@@ -829,23 +580,16 @@ void GameManaging::UpdateBackgroundMusic() {
   // Background music management placeholder
 }
 
-// Include all other existing methods with similar improvements...
-// (For brevity, I'm showing the pattern - you would apply similar enhancements
-// to all remaining methods)
-
 void GameManaging::DrawBackground() {
   switch (backgroundType_) {
     case 0: // Overworld
       ClearBackground(SKYBLUE);
-      // Could add clouds, hills, etc.
       break;
     case 1: // Underground
       ClearBackground(BLACK);
-      // Could add cave details
       break;
     case 2: // Castle (for boss fights)
       ClearBackground(DARKGRAY);
-      // Could add castle details
       break;
     default:
       ClearBackground(SKYBLUE);
@@ -854,11 +598,11 @@ void GameManaging::DrawBackground() {
 }
 
 void GameManaging::DrawEnemiesAdvanced() {
-  // Draw enemies with enhanced visual effects and state indicators
+  // Draw enemies with enhanced visual effects
   for (Enemy *enemy : enemyManager_->GetEnemies()) {
     if (enemy && enemy->IsAlive()) {
       Rectangle rect = enemy->GetRect();
-      Color color    = RED;
+      Color color = RED;
 
       // Color based on enemy type
       switch (enemy->GetType()) {
@@ -872,8 +616,8 @@ void GameManaging::DrawEnemiesAdvanced() {
           color = DARKGREEN;
           break;
         case EnemyType::Bowser:
-          color        = ORANGE;
-          rect.width  *= 1.5f;
+          color = ORANGE;
+          rect.width *= 1.5f;
           rect.height *= 1.5f;
           break;
       }
@@ -893,7 +637,6 @@ void GameManaging::DrawEnemiesAdvanced() {
           break;
       }
 
-      // Apply invulnerability flashing
       if (enemy->IsInvulnerable()) {
         color = ColorAlpha(color, 0.5f);
       }
@@ -903,34 +646,24 @@ void GameManaging::DrawEnemiesAdvanced() {
       // Draw type indicator
       const char *typeName = "";
       switch (enemy->GetType()) {
-        case EnemyType::Goomba:
-          typeName = "G";
-          break;
-        case EnemyType::Koopa:
-          typeName = "K";
-          break;
-        case EnemyType::Piranha:
-          typeName = "P";
-          break;
-        case EnemyType::Bowser:
-          typeName = "B";
-          break;
+        case EnemyType::Goomba: typeName = "G"; break;
+        case EnemyType::Koopa: typeName = "K"; break;
+        case EnemyType::Piranha: typeName = "P"; break;
+        case EnemyType::Bowser: typeName = "B"; break;
       }
       DrawText(typeName, (int)rect.x + 2, (int)rect.y + 2, 12, WHITE);
 
       // Draw state indicators
       if (enemy->GetState() == EnemyState::Stunned) {
-        DrawText(
-          "!", (int)rect.x + (int)rect.width - 8, (int)rect.y - 10, 12, YELLOW);
+        DrawText("!", (int)rect.x + (int)rect.width - 8, (int)rect.y - 10, 12, YELLOW);
       } else if (enemy->GetState() == EnemyState::Attacking) {
-        DrawText(
-          "*", (int)rect.x + (int)rect.width - 8, (int)rect.y - 10, 12, RED);
+        DrawText("*", (int)rect.x + (int)rect.width - 8, (int)rect.y - 10, 12, RED);
       }
 
       // Draw health bar for bosses
       if (enemy->GetType() == EnemyType::Bowser) {
         float healthPercentage = enemy->GetHealth() / enemy->GetMaxHealth();
-        Rectangle healthBar    = {rect.x, rect.y - 20, rect.width, 6};
+        Rectangle healthBar = {rect.x, rect.y - 20, rect.width, 6};
         DrawRectangleRec(healthBar, RED);
         healthBar.width *= healthPercentage;
         DrawRectangleRec(healthBar, GREEN);
@@ -940,87 +673,41 @@ void GameManaging::DrawEnemiesAdvanced() {
 }
 
 void GameManaging::DrawEnemiesSimple() {
-  // Fallback simple rendering (kept for compatibility)
+  // Fallback simple rendering
   for (Enemy *enemy : enemyManager_->GetEnemies()) {
     if (enemy && enemy->IsAlive()) {
       Rectangle rect = enemy->GetRect();
-      Color color    = RED;
+      Color color = RED;
 
       switch (enemy->GetType()) {
-        case EnemyType::Goomba:
-          color = BROWN;
-          break;
-        case EnemyType::Koopa:
-          color = GREEN;
-          break;
-        case EnemyType::Piranha:
-          color = DARKGREEN;
-          break;
-        case EnemyType::Bowser:
-          color = ORANGE;
-          break;
+        case EnemyType::Goomba: color = BROWN; break;
+        case EnemyType::Koopa: color = GREEN; break;
+        case EnemyType::Piranha: color = DARKGREEN; break;
+        case EnemyType::Bowser: color = ORANGE; break;
       }
 
       DrawRectangleRec(rect, color);
-
-      const char *typeName = "";
-      switch (enemy->GetType()) {
-        case EnemyType::Goomba:
-          typeName = "G";
-          break;
-        case EnemyType::Koopa:
-          typeName = "K";
-          break;
-        case EnemyType::Piranha:
-          typeName = "P";
-          break;
-        case EnemyType::Bowser:
-          typeName = "B";
-          break;
-      }
-      DrawText(typeName, (int)rect.x + 2, (int)rect.y + 2, 12, WHITE);
     }
   }
 }
 
 void GameManaging::DrawBlock(const GameObject *block) {
-  if (!block)
-    return;
+  if (!block) return;
   const_cast<GameObject *>(block)->Draw();
 }
 
 void GameManaging::DrawEnemy(const Enemy *enemy) {
-  if (!enemy)
-    return;
+  if (!enemy) return;
 
   Rectangle rect = enemy->GetRect();
-  Color color    = RED;
+  Color color = RED;
   switch (enemy->GetType()) {
-    case EnemyType::Goomba:
-      color = BROWN;
-      break;
-    case EnemyType::Koopa:
-      color = GREEN;
-      break;
-    case EnemyType::Piranha:
-      color = DARKGREEN;
-      break;
-    case EnemyType::Bowser:
-      color = ORANGE;
-      break;
+    case EnemyType::Goomba: color = BROWN; break;
+    case EnemyType::Koopa: color = GREEN; break;
+    case EnemyType::Piranha: color = DARKGREEN; break;
+    case EnemyType::Bowser: color = ORANGE; break;
   }
   DrawRectangleRec(rect, color);
-}
-
-void GameManaging::InitializeCollisionSystem(Character *character) {
-  if (enemyManager_ && character) {
-    Rectangle charRect = character->GetRectangle();
-    Vector2 charPos    = {charRect.x, charRect.y};
-    static Vector2 characterPosition;
-    characterPosition = charPos;
-    enemyManager_->SetCharacterReferences(
-      &characterPosition, &characterPosition, &characterPosition);
-  }
 }
 
 void GameManaging::HitBlock(GameObject *block, Character *character) {
@@ -1037,27 +724,6 @@ void GameManaging::HitBlock(GameObject *block, Character *character) {
 void GameManaging::SpawnEnemy(EnemyType type, Vector2 position) {
   if (enemyManager_) {
     enemyManager_->SpawnEnemy(type, position, 0);
-  } else {
-    std::unique_ptr<Enemy> newEnemy;
-    switch (type) {
-      case EnemyType::Goomba:
-        newEnemy = std::make_unique<Goomba>(position, 0);
-        break;
-      case EnemyType::Koopa:
-        newEnemy = std::make_unique<KoopaTroopa>(position, 0);
-        break;
-      case EnemyType::Piranha:
-        newEnemy = std::make_unique<PiranhaPlant>(position, 0);
-        break;
-      case EnemyType::Bowser:
-        newEnemy = std::make_unique<Bowser>(position, 0);
-        break;
-      default:
-        return;
-    }
-    if (newEnemy) {
-      enemies_.push_back(std::move(newEnemy));
-    }
   }
 }
 
@@ -1065,8 +731,6 @@ void GameManaging::SpawnBoss(Vector2 position) {
   backgroundType_ = 2;
   if (enemyManager_) {
     enemyManager_->SpawnBoss(EnemyType::Bowser, position);
-  } else {
-    SpawnEnemy(EnemyType::Bowser, position);
   }
 }
 
@@ -1096,17 +760,14 @@ void GameManaging::ActivateBossRageMode() {
 
 void GameManaging::RemoveDeadEnemies() {
   enemies_.erase(
-    std::remove_if(
-      enemies_.begin(), enemies_.end(),
-      [](const std::unique_ptr<Enemy> &enemy) {
-        return !enemy->IsAlive();
-      }),
+    std::remove_if(enemies_.begin(), enemies_.end(),
+      [](const std::unique_ptr<Enemy> &enemy) { return !enemy->IsAlive(); }),
     enemies_.end());
 }
 
 void GameManaging::UpdateTime() {
   float delta = GetFrameTime();
-  gameTime_  += delta;
+  gameTime_ += delta;
   if (countdownSeconds_ - (int)gameTime_ <= 0) {
     DecreaseLife();
     gameTime_ = 0;
@@ -1125,14 +786,14 @@ void GameManaging::AddPoints(int points) {
 }
 
 void GameManaging::ResetGame() {
-  lives_          = 3;
-  points_         = 0;
-  gameTime_       = 0.0f;
-  currentLevel_   = 1;
-  levelComplete_  = false;
-  gameOver_       = false;
+  lives_ = 3;
+  points_ = 0;
+  gameTime_ = 0.0f;
+  currentLevel_ = 1;
+  levelComplete_ = false;
+  gameOver_ = false;
   backgroundType_ = 0;
-  spawnPoint_     = {100.0f, 500.0f};
+  spawnPoint_ = {100.0f, 500.0f};
   UnloadLevel();
 }
 
@@ -1142,6 +803,9 @@ void GameManaging::UnloadLevel() {
   particles_.clear();
   if (enemyManager_) {
     enemyManager_->ClearAllEnemies();
+  }
+  if (collisionHandler_) {
+    collisionHandler_->Reset(levelWidth_, levelHeight_);
   }
 }
 
@@ -1157,11 +821,11 @@ void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
       newBlock = std::make_unique<BrickBlock>(position, 4.0f);
       break;
     case 2: // Question block
-      newBlock = std::make_unique<QuestionBlock>(
-        position, 4.0f, QuestionBlockItem::coin);
+      newBlock = std::make_unique<QuestionBlock>(position, 4.0f, QuestionBlockItem::coin);
       break;
     default:
       newBlock = std::make_unique<StaticBlock>(position, 4.0f, 'g');
+      break;
   }
 
   if (newBlock) {
@@ -1170,7 +834,6 @@ void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
 }
 
 void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
-  // switch according to gid in spritesheet
   switch (enemyType) {
     case 90: // Goomba
       SpawnEnemy(EnemyType::Goomba, position);
@@ -1184,7 +847,6 @@ void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
     default:
       break;
   }
-  // SpawnEnemy(static_cast<EnemyType>(enemyType), position);
 }
 
 bool GameManaging::IsBossDefeated() const {
@@ -1205,45 +867,18 @@ int GameManaging::GetBossHP() const {
 }
 
 void GameManaging::SpawnEnemyFormation() {
-  if (!enemyManager_)
-    return;
+  if (!enemyManager_) return;
 
-  // Spawn a variety of enemies to showcase the system
   enemyManager_->SpawnEnemy(EnemyType::Goomba, {400.0f, groundLevel_ - 20.0f});
   enemyManager_->SpawnEnemy(EnemyType::Koopa, {500.0f, groundLevel_ - 30.0f});
   enemyManager_->SpawnEnemy(EnemyType::Piranha, {600.0f, groundLevel_ - 50.0f});
-
-  // Spawn a patrol group
-  enemyManager_->SpawnPatrolGroup(
-    EnemyType::Goomba, {150.0f, groundLevel_ - 20.0f},
-    {350.0f, groundLevel_ - 20.0f}, 2);
-
-  // Spawn jumping enemy
-  enemyManager_->SpawnEnemy(EnemyType::Koopa, {700.0f, groundLevel_ - 30.0f});
-  Enemy *jumpingKoopa = nullptr;
-  for (Enemy *enemy : enemyManager_->GetEnemies()) {
-    if (enemy->GetPosition().x == 700.0f) {
-      jumpingKoopa = enemy;
-      break;
-    }
-  }
-  if (jumpingKoopa) {
-    enemyManager_->MakeEnemyJump(jumpingKoopa, 3.0f, 150.0f);
-  }
-}
-
-void GameManaging::CheckSimpleCollisions(Character *character) {
-  CheckAdvancedCollisions(character); // Use the enhanced version
 }
 
 void GameManaging::SpawnEnemyWave(int waveNumber) {
-  if (!enemyManager_)
-    return;
+  if (!enemyManager_) return;
 
-  // Spawn waves of enemies based on wave number
   for (int i = 0; i < waveNumber; i++) {
-    enemyManager_->SpawnEnemy(
-      EnemyType::Goomba, {200.0f + i * 100.0f, groundLevel_ - 20.0f});
+    enemyManager_->SpawnEnemy(EnemyType::Goomba, {200.0f + i * 100.0f, groundLevel_ - 20.0f});
   }
 }
 
@@ -1257,11 +892,24 @@ void GameManaging::HandleSpecialBlocks(Character *character) {
 }
 
 void GameManaging::SpawnBossEffects() {
-  // Boss spawn effects
   for (int i = 0; i < 10; i++) {
-    Vector2 pos
-      = {600.0f + (rand() % 100 - 50), groundLevel_ - 100.0f + (rand() % 50)};
-    SpawnParticle(
-      pos, ORANGE, {(float)(rand() % 40 - 20), (float)(rand() % 40 - 20)});
+    Vector2 pos = {600.0f + (rand() % 100 - 50), groundLevel_ - 100.0f + (rand() % 50)};
+    SpawnParticle(pos, ORANGE, {(float)(rand() % 40 - 20), (float)(rand() % 40 - 20)});
   }
+}
+
+void GameManaging::LoadNextLevel() {
+  if (levelComplete_) {
+    currentLevel_++;
+    levelComplete_ = false;
+    LoadLevel("");
+  }
+}
+
+bool GameManaging::IsLevelComplete() const {
+  return levelComplete_;
+}
+
+bool GameManaging::IsGameOver() const {
+  return gameOver_ || lives_ <= 0;
 }
