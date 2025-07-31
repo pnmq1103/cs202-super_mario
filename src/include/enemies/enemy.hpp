@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 // Forward declaration
 class MovementStrategy;
@@ -11,10 +12,6 @@ enum class EnemyType {
     Koopa,
     Piranha,
     Bowser,
-  // havent got these enemies yet
-    /*Shy_Guy,
-    Bullet_Bill,
-    Hammer_Bro*/
 };
 
 enum class EnemyState {
@@ -44,6 +41,11 @@ protected:
     float invulnerabilityTimer;
     bool facingLeft;
     float detectionRange;
+    
+    // Sprite and animation properties
+    std::vector<Rectangle> frameList;
+    float animationTimer;
+    int currentFrame;
     
     // Interaction properties
     Vector2* playerPosition; // Reference to Mario/Luigi position
@@ -94,6 +96,10 @@ public:
     bool IsPlayerInRange(float range) const;
     Vector2 GetDirectionToPlayer() const;
     float GetDistanceToPlayer() const;
+    
+    // Sprite and animation methods
+    void LoadEnemyFrames();
+    virtual int GetCurrentFrameIndex() const;
     
     // Getters and setters
     Rectangle GetRect() const;

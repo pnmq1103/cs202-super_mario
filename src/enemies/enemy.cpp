@@ -2,6 +2,8 @@
 #include "include/enemies/movement_strategy.hpp"
 #include <raylib.h>
 #include <cmath>
+#include <fstream>
+#include <iostream>
 
 Enemy::Enemy(
     Vector2 pos, int w, int h, EnemyType enemyType, int spriteId, float health,
@@ -26,8 +28,11 @@ Enemy::Enemy(
       isAggressive(false),
       aggroRange(200.0f),
       attackCooldown(1.0f),
-      attackTimer(0.0f)
+      attackTimer(0.0f),
+      animationTimer(0.0f),
+      currentFrame(0)
 {
+    LoadEnemyFrames();
 }
     
  Enemy::~Enemy() {
@@ -37,11 +42,54 @@ Enemy::Enemy(
     }
 }
 
+void Enemy::LoadEnemyFrames() {
+    frameList.clear();
+    std::string filename;
+    
+    switch (type) {
+        case EnemyType::Goomba:
+        case EnemyType::Koopa:
+        case EnemyType::Piranha:
+            filename = "res/sprites/enemies/minions.txt";
+            break;
+        case EnemyType::Bowser:
+            filename = "res/sprites/enemies/bowser.txt";
+            break;
+        default:
+            return;
+    }
+    
+    std::ifstream fin(filename);
+    if (!fin.is_open()) {
+        std::cerr << "Cannot open enemy sprite file: " << filename << std::endl;
+        return;
+    }
+    
+    while (!fin.eof()) {
+        Rectangle rect;
+        float n;
+        if (!(fin >> n)) break; // Index (not used)
+        if (!(fin >> n)) break; 
+        rect.x = n;
+        if (!(fin >> n)) break;
+        rect.y = n;
+        if (!(fin >> n)) break;
+        rect.width = n;
+        if (!(fin >> n)) break;
+        rect.height = n;
+        frameList.push_back(rect);
+    }
+    fin.close();
+}
+
 void Enemy::Update(float dt) {
     if (!alive) return;
     
     // Update timers
     UpdateTimers(dt);
+    
+    // Update animation timer
+    animationTimer += dt;
     
     // Update player detection
     UpdatePlayerDetection();
@@ -263,38 +311,92 @@ bool Enemy::CheckCollision(Rectangle other) const {
 }
 
 void Enemy::Render(Texture &tex, const std::unordered_map<int, Rectangle> &spriteRects) const {
-    (void)tex; // Suppress unused parameter warning
-    (void)spriteRects; // Suppress unused parameter warning
+    if (!alive || frameList.empty()) {
+        // Fallback to colored rectangle if no sprites available
+        Rectangle rect = GetRect();
+        Color color = RED;
+        
+        switch (type) {
+            case EnemyType::Goomba:
+                color = BROWN;
+                break;
+            case EnemyType::Koopa:
+                color = GREEN;
+                break;
+            case EnemyType::Piranha:
+                color = DARKGREEN;
+                break;
+            case EnemyType::Bowser:
+                color = ORANGE;
+                break;
+            default:
+                color = RED;
+                break;
+        }
+        
+        // Apply visual effects based on state
+        if (state == EnemyState::Stunned) {
+            color = ColorAlpha(color, 0.7f);
+        } else if (IsInvulnerable()) {
+            color = ColorAlpha(color, 0.5f);
+        }
+        
+        DrawRectangleRec(rect, color);
+        return;
+    }
     
-    // Default implementation - just draw a colored rectangle
-    Rectangle rect = GetRect();
-    Color color = RED;
+    // Get the appropriate frame based on enemy type and animation
+    int frameIndex = GetCurrentFrameIndex();
+    if (frameIndex >= 0 && frameIndex < static_cast<int>(frameList.size())) {
+        Rectangle sourceRect = frameList[frameIndex];
+        Rectangle destRect = GetRect();
+        
+        // Apply visual effects based on state
+        Color tint = WHITE;
+        if (state == EnemyState::Stunned) {
+            tint = ColorAlpha(WHITE, 0.7f);
+        } else if (IsInvulnerable()) {
+            tint = ColorAlpha(WHITE, 0.5f);
+        }
+        
+        // Flip sprite if facing left
+        if (facingLeft) {
+            sourceRect.width = -sourceRect.width;
+        }
+        
+        // Draw the sprite
+        DrawTexturePro(tex, sourceRect, destRect, {0, 0}, 0.0f, tint);
+    }
+}
+
+int Enemy::GetCurrentFrameIndex() const {
+    // Default frame selection logic - can be overridden by derived classes
+    int baseFrame = 0;
     
     switch (type) {
         case EnemyType::Goomba:
-            color = BROWN;
+            // Goomba uses frames 0-1 for walking animation
+            baseFrame = static_cast<int>(animationTimer * 4) % 2; // 4 FPS animation
             break;
         case EnemyType::Koopa:
-            color = GREEN;
+            if (state == EnemyState::Shell) {
+                baseFrame = 4; // Shell frame
+            } else {
+                baseFrame = 2 + (static_cast<int>(animationTimer * 4) % 2); // Frames 2-3
+            }
             break;
         case EnemyType::Piranha:
-            color = DARKGREEN;
+            baseFrame = 5 + (static_cast<int>(animationTimer * 4) % 2); // Frames 5-6
             break;
         case EnemyType::Bowser:
-            color = ORANGE;
-            break;
-        default:
-            color = RED;
+            if (state == EnemyState::Attacking) {
+                baseFrame = 1; // Attack frame
+            } else {
+                baseFrame = static_cast<int>(animationTimer * 2) % 2; // Frames 0-1
+            }
             break;
     }
     
-    // Apply visual effects based on state
-    if (state == EnemyState::Stunned) {
-        color = ColorAlpha(color, 0.7f);
-    } else if (IsInvulnerable()) {
-        color = ColorAlpha(color, 0.5f);
-    }
-    
-    DrawRectangleRec(rect, color);
+    return baseFrame;
 }
 
