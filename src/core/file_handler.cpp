@@ -12,22 +12,22 @@ const std::filesystem::path FileHandler::base_path = "res/saves";
 
 std::string FileHandler::OpenFile() {
   const char *filter[] = {"*.json"};
-  const char *fn       = tinyfd_openFileDialog(
+  const char *filename = tinyfd_openFileDialog(
     "Select file", base_path.string().c_str(), 1, filter, "(*.json)", 0);
 
-  if (fn != nullptr)
-    return fn;
+  if (filename != nullptr)
+    return filename;
   return {};
 }
 
 std::string FileHandler::SaveFile() {
   const char *filter[] = {"*.json"};
-  const char *fn       = tinyfd_saveFileDialog(
+  const char *filename = tinyfd_saveFileDialog(
     "Save file as", (base_path / "untitled.json").string().c_str(), 1, filter,
     "(*.json)");
 
-  if (fn != nullptr)
-    return fn;
+  if (filename != nullptr)
+    return filename;
   return {};
 }
 
@@ -41,12 +41,13 @@ void FileHandler::SaveMapToFile(const Map &map) {
   std::filesystem::path full_path = base_path / filename.str();
 
   std::ofstream fout(full_path);
-  if (!fout.is_open())
+  if (fout.is_open() == false)
     throw std::runtime_error("failed to create file");
 
   nlohmann::json j = map;
   fout << j.dump();
 }
+
 void FileHandler::LoadMapFromFile(const std::filesystem::path &path, Map &map) {
   if (std::filesystem::exists(path) == false)
     throw std::runtime_error("file not found");

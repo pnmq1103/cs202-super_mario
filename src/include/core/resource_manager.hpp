@@ -7,22 +7,6 @@
 #include <unordered_map>
 #include <vector>
 
-struct BlockInfo {
-  int gid;
-  Vector2 position; // Position in the map
-  Vector2 size;     // Size of the block
-  int type;
-  bool solid;
-  bool animating;
-};
-
-struct EnemyInfo {
-  int gid;
-  Vector2 position;
-  Vector2 size;
-  int type;
-};
-
 class ResManager {
   std::unordered_map<std::string, Texture> textures_;
 
@@ -81,12 +65,9 @@ private:
 
 public:
   ~ResManager();
-  ResManager();
+  ResManager() = default;
 
   void Init();
-
-  // SaveData LoadResourcesFromFile();
-  // bool SaveResourcesToFile(const SaveData &data);
 
   const Texture &GetMario(char type) const;
   const Texture &GetLuigi(char type) const;
@@ -98,12 +79,4 @@ public:
   const Texture &GetBackground() const;
   const Music &GetMusic(std::string key) const;
   const Sound &GetSound(std::string key) const;
-
-  // functions for a map from Tileson - backup code
-  //
-  //  void LoadMap(const std::string &path);
-  /* std::map<int, Texture> GetTilesetMap() const;
-   std::vector<BlockInfo> GetBlocksMap() const;
-   Texture GetBackgroundMap() const;
-   std::vector<EnemyInfo> GetEnemiesMap() const;*/
 };

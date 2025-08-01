@@ -12,7 +12,6 @@ private:
 
   Vector2 snap_       = {0, 0};
   Rectangle boundary_ = {};
-  // Vector2 drag_delta_ = {0, 0};
 
   int select_gidx_ = {0};
   Map map_;

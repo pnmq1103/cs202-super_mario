@@ -23,4 +23,5 @@ public:
   virtual void Draw();
 
   bool Clicked();
+  bool Hovered();
 };

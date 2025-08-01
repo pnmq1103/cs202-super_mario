@@ -1,6 +1,5 @@
 #include <memory>
 #include <stdexcept>
-#include <utility>
 
 #include "include/core/scene.hpp"
 #include "include/core/scene_stack.hpp"

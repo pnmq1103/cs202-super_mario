@@ -32,7 +32,7 @@ void TileSelectorScene::Init() {
 }
 
 void TileSelectorScene::Update() {
-  if (IsKeyDown(KEY_ESCAPE)) {
+  if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_T)) {
     App.ChangeScene(nullptr);
     return;
   }
@@ -85,15 +85,15 @@ void TileSelectorScene::UpdateCamera() {
   float world_width  = boundary_.x + boundary_.width;
   float world_height = boundary_.y + boundary_.height;
   if (constants::screenWidth > world_width)
-    camera_.target.x = (world_width - constants::screenWidth) / 2.0f;
+    camera_.target.x = (world_width - constants::screenWidth) / 2;
   else
     camera_.target.x
-      = Clamp(camera_.target.x, 0.0f, world_width - constants::screenWidth);
+      = Clamp(camera_.target.x, 0, world_width - constants::screenWidth);
   if (constants::screenHeight > world_height)
-    camera_.target.y = (world_height - constants::screenHeight) / 2.0f;
+    camera_.target.y = (world_height - constants::screenHeight) / 2;
   else
     camera_.target.y
-      = Clamp(camera_.target.y, 0.0f, world_height - constants::screenHeight);
+      = Clamp(camera_.target.y, 0, world_height - constants::screenHeight);
 }
 
 const Texture &TileSelectorScene::FindTexture(std::string texture_key) const {

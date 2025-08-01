@@ -10,41 +10,39 @@
 
 class Application {
 private:
-  static constexpr int screenWidth  = {256 * 4};
-  static constexpr int screenHeight = {240 * 4};
+  ResManager res_manager_;
+  Media media_;
+  Image icon_image_ = {};
 
   SceneStack scene_manager_;
   SceneType previous_scene_ = {Exit};
-
-  Image icon_image_ = {};
-  Media media_;
 
   Texture cursor_texture_ = {};
   bool cursor_hidden_     = {false}; // Custom cursor
 
   bool exit_window_ = {false};
 
-  ResManager res_manager_;
-
 private:
   Application(); // Singleton constructor should be private
 
 public:
   ~Application();
+  void Run();
 
+  // These will stay public for now for testing purposes
   void Init();
   void Update();
   void Draw();
+  bool ShouldClose();
 
   static Application &Instance();
-  static void ChangeScene(std::unique_ptr<Scene> new_scene);
-  static void Close();
-  static void ToggleCustomCursor();
   static SceneType PreviousScene();
-
-  Media &Media();
   ResManager &Resource();
-  bool ShouldClose();
+  Media &Media();
+
+  static void ChangeScene(std::unique_ptr<Scene> new_scene);
+  static void ToggleCustomCursor();
+  static void Close();
 };
 
 extern Application &App;

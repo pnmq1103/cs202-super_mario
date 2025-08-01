@@ -125,12 +125,11 @@ void MenuScene::DrawOptions() {
       color = {245, 245, 245, static_cast<unsigned char>(255 * opacity)};
 
       // Draw arrow
-      float space  = 20;
-      float length = option_size.y * scale;
-      float angle  = static_cast<float>(cos(PI / 6));
-      Vector2 a    = {x - space, y + length / 2};
-      Vector2 b    = {x - space - length * angle, y};
-      Vector2 c    = {x - space - length * angle, y + length};
+      float spacing = 20;
+      float length  = option_size.y * scale;
+      Vector2 a     = {x - spacing, y + length / 2};
+      Vector2 b     = {x - spacing - length * cosf(PI / 6), y};
+      Vector2 c     = {x - spacing - length * cosf(PI / 6), y + length};
 
       DrawTriangle(a, b, c, color);
     }

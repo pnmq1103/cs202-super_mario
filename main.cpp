@@ -2,17 +2,7 @@
 #include <raylib.h>
 
 int main() {
-  App.Init();
-
-  while (!WindowShouldClose() && !App.ShouldClose()) {
-    App.Update();
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-    App.Draw();
-    EndDrawing();
-  }
-
-  CloseWindow();
+  App.Run();
   return 0;
 }
 

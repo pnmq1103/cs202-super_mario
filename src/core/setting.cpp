@@ -61,7 +61,7 @@ void SettingScene::DrawButtons() {
 
 void SettingScene::CreateSliders() {
   sliders_.emplace_back(
-    "Music Volume",
+    "Music",
     [this]() {
       App.Media().SetMusicVolume(volume_);
     },

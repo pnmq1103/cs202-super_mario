@@ -29,8 +29,7 @@ void Map::Init() {
       {161, 23, "minions", "res/sprites/enemies/minions.txt"},
       {184, 4, "enemies_icon", "res/sprites/enemies/enemies_icon.txt"}};
   } catch (const std::exception &e) {
-    std::cerr << "Error in Map::Init: " << e.what() << std::endl;
-    throw;
+    std::cerr << "Map::Init: " << e.what() << std::endl;
   }
 }
 

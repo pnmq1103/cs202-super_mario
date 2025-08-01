@@ -7,8 +7,7 @@
 #include "include/core/scene.hpp"
 #include "include/core/utility.hpp"
 
-EnemySelectorScene::EnemySelectorScene(int &g_select_idx)
-    : gidx_ref_(g_select_idx) {
+EnemySelectorScene::EnemySelectorScene(int &gidx) : gidx_ref_(gidx) {
   camera_.target   = {0, 0};
   camera_.offset   = {0, 0};
   camera_.rotation = 0;
@@ -19,8 +18,7 @@ EnemySelectorScene::~EnemySelectorScene() {}
 
 void EnemySelectorScene::Init() {
   sprite_sheet_ = &App.Resource().GetEnemy('i');
-  utility::ReadSpriteInfo(
-    "res/sprites/enemies/enemies_icon.txt", sprite_sheet_info_);
+  utility::ReadSpriteInfo("res/sprites/enemies/enemies_icon.txt", sprite_info_);
 
   float width  = static_cast<float>(sprite_sheet_->width);
   float height = static_cast<float>(sprite_sheet_->height);
@@ -28,7 +26,7 @@ void EnemySelectorScene::Init() {
 }
 
 void EnemySelectorScene::Update() {
-  if (IsKeyDown(KEY_ESCAPE)) {
+  if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_E)) {
     App.ChangeScene(nullptr);
     return;
   }
@@ -65,19 +63,19 @@ void EnemySelectorScene::UpdateCamera() {
   }
 
   // Scroll
-  Vector2 scroll_offset_ = Vector2Scale(GetMouseWheelMoveV(), -1 * 20);
+  Vector2 scroll_offset_ = Vector2Scale(GetMouseWheelMoveV(), -20);
   camera_.target         = Vector2Add(camera_.target, scroll_offset_);
 
   // Restrict camera
   float world_width  = boundary_.x + boundary_.width;
   float world_height = boundary_.y + boundary_.height;
   if (constants::screenWidth > world_width)
-    camera_.target.x = (world_width - constants::screenWidth) / 2.0f;
+    camera_.target.x = (world_width - constants::screenWidth) / 2;
   else
     camera_.target.x
       = Clamp(camera_.target.x, 0, world_width - constants::screenWidth);
   if (constants::screenHeight > world_height)
-    camera_.target.y = (world_height - constants::screenHeight) / 2.0f;
+    camera_.target.y = (world_height - constants::screenHeight) / 2;
   else
     camera_.target.y
       = Clamp(camera_.target.y, 0, world_height - constants::screenHeight);
@@ -88,7 +86,7 @@ void EnemySelectorScene::ChooseTile() {
     App.Media().PlaySound("beep");
 
   mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
-  for (const auto &[local_idx, bounds] : sprite_sheet_info_) {
+  for (const auto &[local_idx, bounds] : sprite_info_) {
     if (CheckCollisionPointRec(mouse_world_pos_, bounds)) {
       gidx_ref_ = first_gidx + local_idx;
       break;

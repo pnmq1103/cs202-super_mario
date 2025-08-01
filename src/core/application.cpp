@@ -23,17 +23,29 @@ Application::~Application() {
   CloseWindow();
 }
 
+void Application::Run() {
+  App.Init();
+  while (!WindowShouldClose() && !ShouldClose()) {
+    App.Update();
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    App.Draw();
+    EndDrawing();
+  }
+  CloseWindow();
+}
+
 void Application::Init() {
-  InitWindow(screenWidth, screenHeight, "Mario");
+  InitWindow(256 * 4, 240 * 4, "Mario");
   SetExitKey(KEY_ZERO);
   InitAudioDevice();
   icon_image_ = LoadImage("res/app_icon.png");
   SetWindowIcon(icon_image_);
   cursor_texture_ = LoadTexture("res/sprites/cursors/hand_point.png");
   HideCursor();
+  res_manager_.Init();
   media_.Init();
   scene_manager_.Init();
-  res_manager_.Init();
 }
 
 void Application::Update() {

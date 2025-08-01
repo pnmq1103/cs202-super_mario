@@ -9,7 +9,6 @@
 class TileSelectorScene : public Scene {
 private:
   SceneType type_ = {TileSelector};
-
   int &gidx_ref_;
 
   int cur_sheet_              = {0};

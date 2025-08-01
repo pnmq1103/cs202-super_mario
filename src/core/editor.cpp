@@ -24,6 +24,8 @@ EditorScene::EditorScene() {
     0 + buffer, 0 + buffer,
     constants::blockSize * constants::mapWidth - 2 * buffer,
     constants::blockSize * constants::mapHeight - 2 * buffer};
+
+  buttons_.reserve(4);
 }
 
 EditorScene::~EditorScene() {}
@@ -45,24 +47,6 @@ void EditorScene::Update() {
   UpdateButtons();
   if (button_clicked_ == false)
     PlaceBlock();
-
-  // To be considered
-  // if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && IsKeyDown(KEY_SPACE)) {
-  //   float col = std::floor(mouse_world_pos_.x / constants::blockSize);
-  //   float row = std::floor(mouse_world_pos_.y / constants::blockSize);
-  //   if (Vector2Equals(drag_delta_, {0, 0}) == false) {
-  //     drag_delta_ = Vector2Subtract({col, row}, drag_delta_);
-  //     int dx      = static_cast<int>(drag_delta_.x);
-  //     int dy      = static_cast<int>(drag_delta_.y);
-  //     int grid_cols
-  //       = static_cast<int>(map_.GetTexture(1).width / constants::cellSize);
-  //     int idx = static_cast<int>(dy * grid_cols + dx);
-
-  //    select_gidx_ += idx;
-  //  }
-  //  drag_delta_ = {col, row};
-  //} else if (IsKeyUp(KEY_SPACE))
-  //  drag_delta_ = {0, 0};
 }
 
 void EditorScene::Draw() {
@@ -101,18 +85,17 @@ SceneType EditorScene::Type() {
 void EditorScene::LoadMap() {
   std::filesystem::path load_path(FileHandler::OpenFile());
 
-  if (load_path.empty() == false) {
+  if (load_path.empty() == false && std::filesystem::exists(load_path)) {
     FileHandler::LoadMapFromFile(load_path, map_);
   } else
     std::cout << "No valid file selected\n";
 }
 
 void EditorScene::CreateButtons() {
-  buttons_.reserve(4);
 
-  Rectangle source = {0, 0, 16, 16};
-  Rectangle dest   = {100, 100, 64, 64};
-  float spacing    = 40;
+  Rectangle src = {0, 0, 16, 16};
+  Rectangle dst = {100, 100, 64, 64};
+  float spacing = 40;
 
   // Choose tile
   buttons_.emplace_back(
@@ -120,33 +103,34 @@ void EditorScene::CreateButtons() {
     [this] {
       App.ChangeScene(std::make_unique<TileSelectorScene>(select_gidx_));
     },
-    source, dest, "res/sprites/buttons/choose_ground_tile.png");
+    src, dst, "res/sprites/buttons/choose_ground_tile.png");
 
   // Choose enemy
-  dest = {100 + 64 + spacing, 100, 64, 64};
+  dst = {100 + 64 + spacing, 100, 64, 64};
   buttons_.emplace_back(
     "Enemy",
     [this] {
       App.ChangeScene(std::make_unique<EnemySelectorScene>(select_gidx_));
     },
-    source, dest, "res/sprites/buttons/choose_enemy.png");
+    src, dst, "res/sprites/buttons/choose_enemy.png");
 
   // Save
-  dest = {100 + 2 * (64 + spacing), 100, 64, 64};
+  dst = {100 + 2 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
     "Save",
     [this] {
       FileHandler::SaveMapToFile(map_);
     },
-    source, dest, "res/sprites/buttons/save.png");
+    src, dst, "res/sprites/buttons/save.png");
 
-  dest = {100 + 3 * (64 + spacing), 100, 64, 64};
+  // Load saved file
+  dst = {100 + 3 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
-    "Load Map",
+    "Load",
     [this] {
       LoadMap();
     },
-    source, dest, "res/sprites/buttons/save.png");
+    src, dst, "res/sprites/buttons/load.png");
 }
 
 void EditorScene::UpdateCamera() {
