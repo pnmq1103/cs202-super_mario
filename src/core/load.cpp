@@ -19,7 +19,7 @@ void LoadScene::Init() {}
 
 void LoadScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    App.ChangeScene(nullptr);
+    App.RemoveScene();
     return;
   }
   // int selectedSlot    = 0;

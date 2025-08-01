@@ -1,11 +1,9 @@
-#include <memory>
 #include <raylib.h>
-#include <utility>
+#include <stdexcept>
 
 #include "include/core/application.hpp"
 #include "include/core/media.hpp"
 #include "include/core/menu.hpp"
-#include "include/core/scene.hpp"
 #include "include/core/sprite_manager.hpp"
 
 Application &App = Application::Instance();
@@ -20,18 +18,6 @@ Application::~Application() {
   UnloadTexture(cursor_texture_);
   UnloadImage(icon_image_);
   CloseAudioDevice();
-  CloseWindow();
-}
-
-void Application::Run() {
-  Init();
-  while (!WindowShouldClose() && !ShouldClose()) {
-    Update();
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-    Draw();
-    EndDrawing();
-  }
   CloseWindow();
 }
 
@@ -60,48 +46,70 @@ void Application::Draw() {
     DrawTextureRec(cursor_texture_, {0, 0, 64, 64}, GetMousePosition(), WHITE);
 }
 
+bool Application::ShouldClose() {
+  return exit_window_;
+}
+
 Application &Application::Instance() {
   static Application instance;
   return instance;
 }
 
-void Application::ChangeScene(std::unique_ptr<Scene> new_scene) {
-
-  if (new_scene != nullptr) {
-    App.Media().SaveMusicState();
-    App.Media().StopMusic();
-    App.scene_manager_.Push(std::move(new_scene));
-    App.scene_manager_.Init();
-  } else {
-    App.Media().StopMusic();
-    App.previous_scene_ = App.scene_manager_.Top().Type();
-    App.scene_manager_.Pop();
-    if (App.scene_manager_.Size() == App.Media().MusicStateSize())
-      App.Media().LoadMusicState();
-    App.scene_manager_.Top().Resume();
+void Application::Run() {
+  Init();
+  while (!WindowShouldClose() && !ShouldClose()) {
+    Update();
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    Draw();
+    EndDrawing();
   }
-}
-
-void Application::Close() {
-  App.exit_window_ = true;
-}
-
-void Application::ToggleCustomCursor() {
-  App.cursor_hidden_ = !App.cursor_hidden_;
+  CloseWindow();
 }
 
 SceneType Application::PreviousScene() {
   return App.previous_scene_;
 }
 
-Media &Application::Media() {
-  return media_;
-}
-
 SpriteManager &Application::Resource() {
   return res_manager_;
 }
 
-bool Application::ShouldClose() {
-  return exit_window_;
+Media &Application::Media() {
+  return media_;
+}
+
+void Application::AddScene(std::unique_ptr<Scene> new_scene, bool hide_prev) {
+  if (new_scene == nullptr)
+    throw std::runtime_error("add invalid scene");
+
+  App.Media().SaveMusicState();
+  App.Media().StopMusic();
+  if (hide_prev)
+    App.scene_manager_.Top().SetVisible(false);
+  App.scene_manager_.Push(std::move(new_scene));
+  App.scene_manager_.Init();
+}
+
+void Application::RemoveScene(size_t count) {
+  if (count > App.scene_manager_.Size())
+    throw std::runtime_error("pop count exceeds list size");
+
+  App.Media().StopMusic();
+  for (size_t i = 0; i < count; ++i) {
+    App.previous_scene_ = App.scene_manager_.Top().Type();
+    App.scene_manager_.Pop();
+    if (App.scene_manager_.Size() == App.Media().MusicStateSize())
+      App.Media().LoadMusicState();
+  }
+  App.scene_manager_.Top().SetVisible(true);
+  App.scene_manager_.Top().Resume();
+}
+
+void Application::ToggleCustomCursor() {
+  App.cursor_hidden_ = !App.cursor_hidden_;
+}
+
+void Application::Close() {
+  App.exit_window_ = true;
 }

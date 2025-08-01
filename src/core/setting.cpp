@@ -20,7 +20,7 @@ void SettingScene::Init() {
 
 void SettingScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    App.ChangeScene(nullptr);
+    App.RemoveScene();
     return;
   }
 

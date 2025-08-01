@@ -33,28 +33,12 @@ void Map::Init() {
   }
 }
 
-void Map::SetTile(int pos, int gidx) {
-  layers_[static_cast<size_t>(MapLayer::Tile1)].at(pos) = gidx;
+void Map::SetCell(MapLayer layer, int pos, int gidx) {
+  layers_[static_cast<size_t>(layer)].at(pos) = gidx;
 }
 
-void Map::SetEnemy(int pos, int gidx) {
-  layers_[static_cast<size_t>(MapLayer::Objects)].at(pos) = gidx;
-}
-
-void Map::SetPipe(int pos, int gidx) {
-  layers_[static_cast<size_t>(MapLayer::Tile2)].at(pos) = gidx;
-}
-
-int Map::GetTile(int pos) const {
-  return layers_[static_cast<size_t>(MapLayer::Tile1)].at(pos);
-}
-
-int Map::GetEnemy(int pos) const {
-  return layers_[static_cast<size_t>(MapLayer::Objects)].at(pos);
-}
-
-int Map::GetPipe(int pos) const {
-  return layers_[static_cast<size_t>(MapLayer::Tile2)].at(pos);
+int Map::GetCell(MapLayer layer, int pos) const {
+  return layers_[static_cast<size_t>(layer)].at(pos);
 }
 
 const Texture &Map::FindTexture(std::string texture_key) const {

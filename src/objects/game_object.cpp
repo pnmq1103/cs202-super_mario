@@ -17,14 +17,7 @@ void GameObject::LoadFrameList(std::string address) {
     Rectangle rect;
     float n;
     fin >> n;
-    fin >> n;
-    rect.x = n;
-    fin >> n;
-    rect.y = n;
-    fin >> n;
-    rect.width = n;
-    fin >> n;
-    rect.height = n;
+    fin >> rect.x >> rect.y >> rect.width >> rect.height;
     frame_list.push_back(rect);
   }
   fin.close();

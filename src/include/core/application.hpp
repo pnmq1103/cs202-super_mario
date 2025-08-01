@@ -4,8 +4,7 @@
 #include <stack>
 
 #include "include/core/media.hpp"
-#include "include/core/scene.hpp"
-#include "include/core/scene_stack.hpp"
+#include "include/core/scene_list.hpp"
 #include "include/core/sprite_manager.hpp"
 
 class Application {
@@ -40,7 +39,8 @@ public:
   SpriteManager &Resource();
   Media &Media();
 
-  static void ChangeScene(std::unique_ptr<Scene> new_scene);
+  static void AddScene(std::unique_ptr<Scene> new_scene, bool hide_prev = true);
+  static void RemoveScene(size_t count = 1);
   static void ToggleCustomCursor();
   static void Close();
 };

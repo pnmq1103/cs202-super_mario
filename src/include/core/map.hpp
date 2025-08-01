@@ -39,12 +39,8 @@ public:
   ~Map();
 
   void Init();
-  void SetTile(int pos, int gidx);
-  void SetEnemy(int pos, int gidx);
-  void SetPipe(int pos, int gidx);
-  int GetTile(int pos) const;
-  int GetEnemy(int pos) const;
-  int GetPipe(int pos) const;
+  void SetCell(MapLayer layer, int pos, int gidx);
+  int GetCell(MapLayer layer, int pos) const;
   const Texture &FindTexture(std::string texture_key) const;
   const Texture &GetTexture(int gidx) const;
   Rectangle GetInfo(int gidx) const;

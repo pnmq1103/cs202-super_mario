@@ -27,7 +27,7 @@ void EnemySelectorScene::Init() {
 
 void EnemySelectorScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_E)) {
-    App.ChangeScene(nullptr);
+    App.RemoveScene();
     return;
   }
 

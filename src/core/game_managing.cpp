@@ -118,14 +118,14 @@ void GameManaging::LoadLevel(const std::string &filename) {
         int mapSize = constants::mapWidth * constants::mapHeight;
         for (int i = 0; i < mapSize; i++) {
           // Get tile and create block
-          int tileGid          = map.GetTile(i);
+          int tileGid          = map.GetCell(MapLayer::Tile1, i);
           Vector2 tilePosition = {
             (float)(i % constants::mapWidth) * 16.0f,
             (float)(i / constants::mapHeight) * 16.0f};
           CreateBlockFromType(tileGid, tilePosition);
 
           // Get enemy and create enemy
-          int enemyGid          = map.GetEnemy(i);
+          int enemyGid          = map.GetCell(MapLayer::Objects, i);
           Vector2 enemyPosition = {
             (float)(i % constants::mapWidth) * 16.0f,
             (float)(i / constants::mapHeight) * 16.0f};

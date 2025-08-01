@@ -34,56 +34,73 @@ void Media::LoadSounds() {
 }
 
 void Media::PlaySound(const std::string &name) {
-  if (sounds_.find(name) != sounds_.end())
-    RAYLIB_H::PlaySound(sounds_[name]);
+  if (sounds_.find(name) == sounds_.end())
+    return;
+
+  RAYLIB_H::PlaySound(sounds_.at(name));
 }
 
 void Media::SetSoundVolume(float volume) {
-  for (const auto &[_, sound] : sounds_)
+  for (auto &[_, sound] : sounds_)
     RAYLIB_H::SetSoundVolume(sound, volume);
 }
 
 void Media::PlayMusic(const std::string &name) {
-  if (musics_.find(name) != musics_.end() && IsMusicValid(musics_[name])) {
-    PlayMusicStream(musics_[name]);
+  if (musics_.find(name) == musics_.end())
+    return;
+
+  if (IsMusicValid(musics_[name])) {
+    PlayMusicStream(musics_.at(name));
     cur_music_ = name;
   }
 }
 
 void Media::UpdateMusic() {
-  if (musics_.find(cur_music_) != musics_.end())
-    UpdateMusicStream(musics_[cur_music_]);
+  if (musics_.find(cur_music_) == musics_.end())
+    return;
+
+  UpdateMusicStream(musics_.at(cur_music_));
 }
 
 void Media::TogglePauseMusic() {
-  if (IsMusicStreamPlaying(musics_[cur_music_]))
-    PauseMusicStream(musics_[cur_music_]);
+  if (musics_.find(cur_music_) == musics_.end())
+    return;
+
+  if (IsMusicStreamPlaying(musics_.at(cur_music_)))
+    PauseMusicStream(musics_.at(cur_music_));
   else
-    ResumeMusicStream(musics_[cur_music_]);
+    ResumeMusicStream(musics_.at(cur_music_));
 }
 
 void Media::StopMusic() {
-  if (IsMusicStreamPlaying(musics_[cur_music_])) {
-    StopMusicStream(musics_[cur_music_]);
+  if (musics_.find(cur_music_) == musics_.end())
+    return;
+
+  if (IsMusicStreamPlaying(musics_.at(cur_music_))) {
+    StopMusicStream(musics_.at(cur_music_));
     cur_music_ = "";
   }
 }
 
 void Media::SetMusicVolume(float volume) {
-  for (const auto &[_, music] : musics_)
+  for (auto &[_, music] : musics_)
     RAYLIB_H::SetMusicVolume(music, volume);
 }
 
 void Media::SaveMusicState() {
-  if (IsMusicStreamPlaying(musics_[cur_music_]))
-    music_state_.push({cur_music_, GetMusicTimePlayed(musics_[cur_music_])});
+  if (musics_.find(cur_music_) == musics_.end())
+    return;
+
+  if (IsMusicStreamPlaying(musics_.at(cur_music_)))
+    music_state_.emplace(
+      cur_music_, GetMusicTimePlayed(musics_.at(cur_music_)));
 }
 
 void Media::LoadMusicState() {
   if (!music_state_.empty()) {
     auto [name, time] = music_state_.top();
     music_state_.pop();
-    SeekMusicStream(musics_[name], time);
+    SeekMusicStream(musics_.at(name), time);
     PlayMusic(name);
   }
 }

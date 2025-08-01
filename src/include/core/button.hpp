@@ -11,6 +11,7 @@ public:
   Rectangle src_     = {};
   Rectangle dst_     = {};
   Texture icon_      = {};
+  Color tint_        = {Fade(LIGHTGRAY, 0.9f)};
 
 public:
   ~Button();

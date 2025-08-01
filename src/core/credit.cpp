@@ -14,7 +14,7 @@ void CreditScene::Init() {
 
 void CreditScene::Update() {
   if (IsKeyDown(KEY_ESCAPE)) {
-    App.ChangeScene(nullptr);
+    App.RemoveScene();
     return;
   }
 }

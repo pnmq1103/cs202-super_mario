@@ -30,7 +30,7 @@ GameScene::~GameScene() {
 
 void GameScene::Init() {
   App.Media().PlayMusic("ground_theme");
-  
+
   // Create Mario character
   mario_character_ = new Character(4.0f);
   mario_character_->SetCharacter(CharacterType::MARIO, {100.0f, 500.0f});
@@ -55,11 +55,12 @@ void GameScene::Init() {
 
 void GameScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    App.ChangeScene(nullptr);
+    App.RemoveScene();
     return;
   }
 
-  // Handle character input through command system (includes instructions handling)
+  // Handle character input through command system (includes instructions
+  // handling)
   if (input_command_) {
     input_command_->HandleInput();
   }
@@ -120,12 +121,17 @@ void GameScene::Draw() {
     // Draw minimal UI when instructions are hidden
     // Character status
     if (active_character) {
-      const char* charName = (active_character == mario_character_) ? "Mario" : "Luigi";
-      const char* stateNames[] = {"Small", "Big", "Fire/Electric"};
-      
-      DrawText(TextFormat("Active: %s", charName), GetScreenWidth() - 200, 200, 16, YELLOW);
-      DrawText(TextFormat("State: %s", stateNames[active_character->GetState()]), GetScreenWidth() - 200, 220, 14, WHITE);
-      
+      const char *charName
+        = (active_character == mario_character_) ? "Mario" : "Luigi";
+      const char *stateNames[] = {"Small", "Big", "Fire/Electric"};
+
+      DrawText(
+        TextFormat("Active: %s", charName), GetScreenWidth() - 200, 200, 16,
+        YELLOW);
+      DrawText(
+        TextFormat("State: %s", stateNames[active_character->GetState()]),
+        GetScreenWidth() - 200, 220, 14, WHITE);
+
       if (active_character->IsStarman()) {
         DrawText("STAR POWER!", GetScreenWidth() - 200, 240, 14, GOLD);
       }
@@ -137,20 +143,28 @@ void GameScene::Draw() {
 
   // Game over/level complete overlays
   if (game_manager_.IsGameOver()) {
-    DrawText("GAME OVER", GetScreenWidth() / 2 - 80, GetScreenHeight() / 2 - 40, 28, RED);
-    DrawText("Press R to restart or ESC to exit", GetScreenWidth() / 2 - 150, GetScreenHeight() / 2, 16, WHITE);
+    DrawText(
+      "GAME OVER", GetScreenWidth() / 2 - 80, GetScreenHeight() / 2 - 40, 28,
+      RED);
+    DrawText(
+      "Press R to restart or ESC to exit", GetScreenWidth() / 2 - 150,
+      GetScreenHeight() / 2, 16, WHITE);
   }
 
   if (game_manager_.IsLevelComplete()) {
-    DrawText("LEVEL COMPLETE!", GetScreenWidth() / 2 - 100, GetScreenHeight() / 2 - 40, 24, GOLD);
-    DrawText("Press ENTER for next level", GetScreenWidth() / 2 - 120, GetScreenHeight() / 2, 16, WHITE);
+    DrawText(
+      "LEVEL COMPLETE!", GetScreenWidth() / 2 - 100, GetScreenHeight() / 2 - 40,
+      24, GOLD);
+    DrawText(
+      "Press ENTER for next level", GetScreenWidth() / 2 - 120,
+      GetScreenHeight() / 2, 16, WHITE);
   }
 }
 
 void GameScene::Resume() {
   // Resume any paused systems
   game_manager_.ResumeEnemies();
-  
+
   // Resume background music if it was paused
   App.Media().PlayMusic("ground_theme");
 }

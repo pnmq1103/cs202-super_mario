@@ -25,13 +25,10 @@ void Button::Update() {
     else
       throw std::invalid_argument("nullptr");
   }
-}
-
-void Button::Draw() {
-  Color tint = Hovered() ? WHITE : Fade(LIGHTGRAY, 0.9f);
-  DrawTexturePro(icon_, src_, dst_, {0, 0}, 0, tint);
 
   if (Hovered()) {
+    tint_ = WHITE;
+
     Font font         = GetFontDefault();
     const char *text  = label_.c_str();
     float font_size   = 20;
@@ -47,22 +44,26 @@ void Button::Draw() {
     Rectangle rec   = {
       pos.x - padding.x, pos.y - padding.y, text_size.x + padding.x * 2,
       text_size.y + padding.y * 2};
-    float round = 0.7f;
-    int seg     = 20;
-    DrawRectangleRounded(rec, round, seg, BLACK);
-    DrawRectangleRoundedLinesEx(rec, round, seg, 1, GRAY);
+    float rounded = 0.7f;
+    int seg       = 20;
+    DrawRectangleRounded(rec, rounded, seg, BLACK);
+    DrawRectangleRoundedLinesEx(rec, rounded, seg, 1, GRAY);
 
     // Triangle
-    float length = padding.y * 2;
-    float mid    = rec.x + rec.width / 2;
-    Vector2 a    = {mid, rec.y - length};
-    Vector2 b    = {mid - length * cosf(PI / 6), rec.y};
-    Vector2 c    = {mid + length * cosf(PI / 6), rec.y};
+    float length   = padding.y * 2;
+    float center_x = rec.x + rec.width / 2;
+    Vector2 a      = {center_x, rec.y - length};
+    Vector2 b      = {center_x - length * cosf(PI / 6), rec.y};
+    Vector2 c      = {center_x + length * cosf(PI / 6), rec.y};
     DrawTriangle(a, b, c, BLACK);
 
     // Draw text
     DrawTextEx(font, text, pos, font_size, spacing, WHITE);
   }
+}
+
+void Button::Draw() {
+  DrawTexturePro(icon_, src_, dst_, {0, 0}, 0, tint_);
 }
 
 bool Button::Clicked() {

@@ -21,7 +21,7 @@
     <ClCompile Include="src\characters\luigi.cpp" />
     <ClCompile Include="src\characters\mario.cpp" />
     <ClCompile Include="src\characters\projectile.cpp" />
-    <ClCompile Include="src\core\scene_stack.cpp" />
+    <ClCompile Include="src\core\scene_list.cpp" />
     <ClCompile Include="src\core\setting.cpp" />
     <ClCompile Include="src\core\slider.cpp" />
     <ClCompile Include="src\characters\projectile_pool.cpp" />
@@ -47,6 +47,8 @@
     <ClCompile Include="src\enemies\enemy.cpp" />
     <ClCompile Include="src\enemies\goomba.cpp" />
     <ClCompile Include="src\enemies\koopa_troopa.cpp" />
+    <ClCompile Include="src\core\scene.cpp" />
+    <ClCompile Include="src\core\pause.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -69,7 +71,7 @@
     <ClInclude Include="src\include\characters\mario.hpp" />
     <ClInclude Include="src\include\characters\projectile.hpp" />
     <ClInclude Include="src\include\core\scene.hpp" />
-    <ClInclude Include="src\include\core\scene_stack.hpp" />
+    <ClInclude Include="src\include\core\scene_list.hpp" />
     <ClInclude Include="src\include\core\setting.hpp" />
     <ClInclude Include="src\include\core\slider.hpp" />
     <ClInclude Include="src\include\characters\projectile_pool.hpp" />
@@ -98,6 +100,7 @@
     <ClInclude Include="src\include\objects\object_manager.hpp" />
     <ClInclude Include="src\include\managers\enemy_manager.hpp" />
     <ClInclude Include="src\include\core\constants.hpp" />
+    <ClInclude Include="src\include\core\pause.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

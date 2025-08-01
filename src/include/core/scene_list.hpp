@@ -1,21 +1,20 @@
 #pragma once
 #include <memory>
-#include <stack>
+#include <vector>
 
 #include "include/core/scene.hpp"
 
 class SceneStack {
 private:
-  std::stack<std::unique_ptr<Scene>> scenes_;
+  std::vector<std::unique_ptr<Scene>> scenes_;
 
 public:
-  bool Push(std::unique_ptr<Scene> scene);
-  bool Pop();
+  void Push(std::unique_ptr<Scene> scene);
+  void Pop();
   Scene &Top();
+  size_t Size();
 
   void Init();
   void Update();
   void Draw();
-
-  size_t Size();
 };

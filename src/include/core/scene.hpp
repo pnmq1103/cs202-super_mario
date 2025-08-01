@@ -1,7 +1,5 @@
 #pragma once
 #include <raylib.h>
-#include <string>
-#include <unordered_map>
 
 enum SceneType {
   Game,
@@ -13,12 +11,14 @@ enum SceneType {
   Credit,
   TileSelector,
   EnemySelector,
+  Pause,
 };
 
 class Scene {
 protected:
   Camera2D camera_         = {};
   Vector2 mouse_world_pos_ = {0, 0};
+  bool visible_            = {true};
 
 public:
   virtual ~Scene() = default;
@@ -28,7 +28,9 @@ public:
   virtual void Draw()      = 0;
   virtual void Resume()    = 0;
   virtual SceneType Type() = 0;
+
+  void SetVisible(bool visible);
+  bool IsVisible() const;
 };
 
 // Constructor should be used to initialize members only
-// Resources such as textures, musics, etc should be loaded in Init()

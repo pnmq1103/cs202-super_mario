@@ -30,7 +30,7 @@ void TileSelectorScene::Init() {
 
 void TileSelectorScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_T)) {
-    App.ChangeScene(nullptr);
+    App.RemoveScene();
     return;
   }
 

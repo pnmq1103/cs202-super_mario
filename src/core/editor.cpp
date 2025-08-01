@@ -10,6 +10,7 @@
 #include "include/core/editor.hpp"
 #include "include/core/enemy_selector.hpp"
 #include "include/core/file_handler.hpp"
+#include "include/core/pause.hpp"
 #include "include/core/tile_selector.hpp"
 
 EditorScene::EditorScene() {
@@ -37,7 +38,7 @@ void EditorScene::Init() {
 
 void EditorScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    App.ChangeScene(nullptr);
+    App.AddScene(std::make_unique<PauseScene>(), false);
     return;
   }
 
@@ -109,24 +110,21 @@ void EditorScene::CreateButtons() {
   Rectangle dst = {100, 100, 64, 64};
   float spacing = 40;
 
-  // Choose tile
   buttons_.emplace_back(
     "Tilset",
     [this] {
-      App.ChangeScene(std::make_unique<TileSelectorScene>(select_gidx_));
+      App.AddScene(std::make_unique<TileSelectorScene>(select_gidx_));
     },
     src, dst, "res/sprites/buttons/choose_ground_tile.png");
 
-  // Choose enemy
   dst = {100 + 64 + spacing, 100, 64, 64};
   buttons_.emplace_back(
     "Enemy",
     [this] {
-      App.ChangeScene(std::make_unique<EnemySelectorScene>(select_gidx_));
+      App.AddScene(std::make_unique<EnemySelectorScene>(select_gidx_));
     },
     src, dst, "res/sprites/buttons/choose_enemy.png");
 
-  // Save
   dst = {100 + 2 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
     "Save",
@@ -135,7 +133,6 @@ void EditorScene::CreateButtons() {
     },
     src, dst, "res/sprites/buttons/save.png");
 
-  // Save as
   dst = {100 + 3 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
     "Save as",
@@ -144,7 +141,6 @@ void EditorScene::CreateButtons() {
     },
     src, dst, "res/sprites/buttons/load.png");
 
-  // Load saved file
   dst = {100 + 4 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
     "Load",
@@ -188,9 +184,9 @@ void EditorScene::UpdateButtons() {
 
 void EditorScene::UpdateShortkeys() {
   if (IsKeyPressed(KEY_T))
-    App.ChangeScene(std::make_unique<TileSelectorScene>(select_gidx_));
+    App.AddScene(std::make_unique<TileSelectorScene>(select_gidx_));
   else if (IsKeyPressed(KEY_E))
-    App.ChangeScene(std::make_unique<EnemySelectorScene>(select_gidx_));
+    App.AddScene(std::make_unique<EnemySelectorScene>(select_gidx_));
 
   if (IsKeyPressed(KEY_TAB)) {
     int layer_idx
@@ -209,31 +205,11 @@ void EditorScene::PlaceBlock() {
       if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         App.Media().PlaySound("beep");
 
-      switch (cur_layer_) {
-        case MapLayer::Tile1:
-          map_.SetTile(pos, select_gidx_);
-          break;
-        case MapLayer::Objects:
-          map_.SetEnemy(pos, select_gidx_);
-          break;
-        case MapLayer::Tile2:
-          map_.SetPipe(pos, select_gidx_);
-          break;
-      }
+      map_.SetCell(cur_layer_, pos, select_gidx_);
     }
   } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     if (CheckCollisionPointRec(mouse_world_pos_, boundary_))
-      switch (cur_layer_) {
-        case MapLayer::Tile1:
-          map_.SetTile(pos, 0);
-          break;
-        case MapLayer::Objects:
-          map_.SetEnemy(pos, 0);
-          break;
-        case MapLayer::Tile2:
-          map_.SetPipe(pos, 0);
-          break;
-      }
+      map_.SetCell(cur_layer_, pos, 0);
   }
 }
 
@@ -277,7 +253,7 @@ void EditorScene::DrawMap() {
   BeginMode2D(camera_);
   for (int y = 0; y < constants::mapHeight; ++y) {
     for (int x = 0; x < constants::mapWidth; ++x) {
-      int gidx = map_.GetTile(y * constants::mapWidth + x);
+      int gidx = map_.GetCell(MapLayer::Tile1, y * constants::mapWidth + x);
       if (gidx != 0)
         DrawTexturePro(
           map_.GetTexture(gidx), map_.GetInfo(gidx),
@@ -293,7 +269,7 @@ void EditorScene::DrawObjects() {
   BeginMode2D(camera_);
   for (int y = 0; y < constants::mapHeight; ++y) {
     for (int x = 0; x < constants::mapWidth; ++x) {
-      int gidx = map_.GetEnemy(y * constants::mapWidth + x);
+      int gidx = map_.GetCell(MapLayer::Objects, y * constants::mapWidth + x);
       if (gidx != 0) {
         Rectangle src       = map_.GetInfo(gidx);
         float scaled_width  = src.width * 4;
@@ -313,7 +289,7 @@ void EditorScene::DrawPipe() {
   BeginMode2D(camera_);
   for (int y = 0; y < constants::mapHeight; ++y) {
     for (int x = 0; x < constants::mapWidth; ++x) {
-      int gidx = map_.GetPipe(y * constants::mapWidth + x);
+      int gidx = map_.GetCell(MapLayer::Tile2, y * constants::mapWidth + x);
       if (gidx != 0)
         DrawTexturePro(
           map_.GetTexture(gidx), map_.GetInfo(gidx),

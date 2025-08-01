@@ -46,13 +46,13 @@ void MenuScene::Update() {
 
       switch (selected_idx_) {
         case SceneType::Game:
-          App.ChangeScene(std::make_unique<GameScene>());
+          App.AddScene(std::make_unique<GameScene>());
           break;
         case SceneType::Load:
-          App.ChangeScene(std::make_unique<LoadScene>());
+          App.AddScene(std::make_unique<LoadScene>());
           break;
         case SceneType::Editor:
-          App.ChangeScene(std::make_unique<EditorScene>());
+          App.AddScene(std::make_unique<EditorScene>());
           break;
         case SceneType::Exit:
           App.Close();
@@ -143,7 +143,7 @@ void MenuScene::CreateButtons() {
   buttons_.emplace_back(
     "Setting",
     []() {
-      App.ChangeScene(std::make_unique<SettingScene>());
+      App.AddScene(std::make_unique<SettingScene>());
     },
     Rectangle{0, 0, 16, 16},
     Rectangle{
@@ -155,7 +155,7 @@ void MenuScene::CreateButtons() {
   buttons_.emplace_back(
     "Credit",
     []() {
-      App.ChangeScene(std::make_unique<CreditScene>());
+      App.AddScene(std::make_unique<CreditScene>());
     },
     Rectangle{0, 0, 16, 16},
     Rectangle{64, constants::screenHeight - 64 * 2, 64, 64},
