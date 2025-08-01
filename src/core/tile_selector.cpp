@@ -25,10 +25,7 @@ void TileSelectorScene::Init() {
     {74, 71, "tileset_underground",
      "res/sprites/tilesets/tileset_underground.txt"}};
 
-  cur_texture_ = &FindTexture(sprite_sheets_[cur_sheet_].texture_key);
-  float width  = static_cast<float>(cur_texture_->width);
-  float height = static_cast<float>(cur_texture_->height);
-  boundary_    = {0, 0, width * 4, height * 4};
+  UpdateTextureParameters();
 }
 
 void TileSelectorScene::Update() {
@@ -39,11 +36,7 @@ void TileSelectorScene::Update() {
 
   if (IsKeyPressed(KEY_TAB)) {
     cur_sheet_ = (cur_sheet_ + 1) % sprite_sheets_.size();
-
-    cur_texture_ = &FindTexture(sprite_sheets_[cur_sheet_].texture_key);
-    float width  = static_cast<float>(cur_texture_->width);
-    float height = static_cast<float>(cur_texture_->height);
-    boundary_    = {0, 0, width * 4, height * 4};
+    UpdateTextureParameters();
   }
 
   UpdateCamera();
@@ -61,6 +54,7 @@ void TileSelectorScene::Draw() {
   float height = static_cast<float>(cur_texture_->height);
   DrawTexturePro(
     *cur_texture_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
+  DrawRectangleLinesEx(boundary_, 2, BLACK);
   EndMode2D();
 }
 
@@ -94,6 +88,13 @@ void TileSelectorScene::UpdateCamera() {
   else
     camera_.target.y
       = Clamp(camera_.target.y, 0, world_height - constants::screenHeight);
+}
+
+void TileSelectorScene::UpdateTextureParameters() {
+  cur_texture_ = &FindTexture(sprite_sheets_[cur_sheet_].texture_key);
+  float width  = static_cast<float>(cur_texture_->width);
+  float height = static_cast<float>(cur_texture_->height);
+  boundary_    = {0, 0, width * 4, height * 4};
 }
 
 const Texture &TileSelectorScene::FindTexture(std::string texture_key) const {

@@ -1,27 +1,13 @@
-﻿#include "include/core/resource_manager.hpp"
+﻿#include "include/core/sprite_manager.hpp"
 #include <array>
 #include <stdexcept>
 
-ResManager::~ResManager() {
-  for (auto &texture : textures_)
-    UnloadTexture(texture.second);
-
-  for (auto &sound : sounds)
-    UnloadSound(sound.second);
-
-  for (auto &music : musics) {
-    StopMusicStream(music.second);
-    UnloadMusicStream(music.second);
-  }
+SpriteManager::~SpriteManager() {
+  for (auto &[_, texture] : textures_)
+    UnloadTexture(texture);
 }
 
-void ResManager::Init() {
-  LoadTextures();
-  LoadSounds();
-  LoadMusic();
-}
-
-void ResManager::LoadTextures() {
+void SpriteManager::Init() {
   textures_["mario_normal"]
     = LoadTexture("res/sprites/characters/mario_normal.png");
   textures_["mario_star"]
@@ -57,25 +43,7 @@ void ResManager::LoadTextures() {
     = LoadTexture("res/sprites/backgrounds/background_ground.png");
 }
 
-void ResManager::LoadMusic() {
-  auto Load = [this](const std::string &name) {
-    musics[name] = LoadMusicStream(("res/musics/" + name + ".ogg").c_str());
-  };
-
-  for (const auto &music : music_names)
-    Load(music);
-}
-
-void ResManager::LoadSounds() {
-  auto Load = [this](const std::string &name) {
-    sounds[name] = LoadSound(("res/sounds/" + name + ".wav").c_str());
-  };
-
-  for (const auto &sound : sound_names)
-    Load(sound);
-}
-
-const Texture &ResManager::GetMario(char type) const {
+const Texture &SpriteManager::GetMario(char type) const {
   switch (type) {
     case 'n':
       return textures_.at("mario_normal");
@@ -88,7 +56,7 @@ const Texture &ResManager::GetMario(char type) const {
   }
 }
 
-const Texture &ResManager::GetLuigi(char type) const {
+const Texture &SpriteManager::GetLuigi(char type) const {
   switch (type) {
     case 'n':
       return textures_.at("luigi_normal");
@@ -103,7 +71,7 @@ const Texture &ResManager::GetLuigi(char type) const {
   }
 }
 
-const Texture &ResManager::GetEnemy(char type) const {
+const Texture &SpriteManager::GetEnemy(char type) const {
   switch (type) {
     case 'b':
       return textures_.at("bowser");
@@ -116,7 +84,7 @@ const Texture &ResManager::GetEnemy(char type) const {
   }
 }
 
-const Texture &ResManager::GetTileset(char type) const {
+const Texture &SpriteManager::GetTileset(char type) const {
   switch (type) {
     case 'g':
       return textures_.at("tileset_ground");
@@ -127,32 +95,18 @@ const Texture &ResManager::GetTileset(char type) const {
   }
 }
 
-const Texture &ResManager::GetIcon() const {
+const Texture &SpriteManager::GetIcon() const {
   return textures_.at("icons");
 }
 
-const Texture &ResManager::GetObject() const {
+const Texture &SpriteManager::GetObject() const {
   return textures_.at("objects");
 }
 
-const Texture &ResManager::GetElectricShot() const {
+const Texture &SpriteManager::GetElectricShot() const {
   return textures_.at("electric_shot");
 }
 
-const Texture &ResManager::GetBackground() const {
+const Texture &SpriteManager::GetBackground() const {
   return textures_.at("backgrounds");
-}
-
-const Music &ResManager::GetMusic(std::string key) const {
-  auto it = musics.find(key);
-  if (it == musics.end())
-    throw std::out_of_range("Missing music");
-  return it->second;
-}
-
-const Sound &ResManager::GetSound(std::string key) const {
-  auto it = sounds.find(key);
-  if (it == sounds.end())
-    throw std::out_of_range("Missing sound");
-  return it->second;
 }

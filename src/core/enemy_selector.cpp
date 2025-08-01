@@ -46,6 +46,7 @@ void EnemySelectorScene::Draw() {
   float height = static_cast<float>(sprite_sheet_->height);
   DrawTexturePro(
     *sprite_sheet_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
+  DrawRectangleLinesEx(boundary_, 2, BLACK);
   EndMode2D();
 }
 

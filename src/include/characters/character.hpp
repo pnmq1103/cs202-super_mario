@@ -1,5 +1,5 @@
 #pragma once
-#include "include/core/resource_manager.hpp"
+#include "include/core/sprite_manager.hpp"
 #include <raylib.h>
 
 enum CharacterType {

@@ -134,7 +134,7 @@
     <ClCompile Include="src\core\credit.cpp" />
     <ClCompile Include="src\core\enemy_selector.cpp" />
     <ClCompile Include="src\core\map.cpp" />
-    <ClCompile Include="src\core\resource_manager.cpp" />
+    <ClCompile Include="src\core\sprite_manager.cpp" />
     <ClCompile Include="src\core\slider.cpp" />
     <ClCompile Include="src\core\tile_selector.cpp" />
     <ClCompile Include="src\core\utility.cpp" />
@@ -182,7 +182,7 @@
     <ClInclude Include="src\include\core\credit.hpp" />
     <ClInclude Include="src\include\core\enemy_selector.hpp" />
     <ClInclude Include="src\include\core\map.hpp" />
-    <ClInclude Include="src\include\core\resource_manager.hpp" />
+    <ClInclude Include="src\include\core\sprite_manager.hpp" />
     <ClInclude Include="src\include\core\slider.hpp" />
     <ClInclude Include="src\include\core\tile_selector.hpp" />
     <ClInclude Include="src\include\core\utility.hpp" />

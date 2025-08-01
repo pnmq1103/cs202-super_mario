@@ -31,6 +31,8 @@ public:
   SceneType Type() override;
 
   void LoadMap();
+  void SaveMap();
+  void SaveMapAs();
   void CreateButtons();
 
   void UpdateCamera();
@@ -47,7 +49,3 @@ public:
   void DrawButtons();
   void DrawCursor();
 };
-
-// Since the original game's resolution is 256x240 pixels
-// and each block is 16x16 pixels.
-// The default map should be 16x15 blocks.

@@ -5,8 +5,8 @@
 #include "include/core/application.hpp"
 #include "include/core/media.hpp"
 #include "include/core/menu.hpp"
-#include "include/core/resource_manager.hpp"
 #include "include/core/scene.hpp"
+#include "include/core/sprite_manager.hpp"
 
 Application &App = Application::Instance();
 
@@ -24,12 +24,12 @@ Application::~Application() {
 }
 
 void Application::Run() {
-  App.Init();
+  Init();
   while (!WindowShouldClose() && !ShouldClose()) {
-    App.Update();
+    Update();
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    App.Draw();
+    Draw();
     EndDrawing();
   }
   CloseWindow();
@@ -98,7 +98,7 @@ Media &Application::Media() {
   return media_;
 }
 
-ResManager &Application::Resource() {
+SpriteManager &Application::Resource() {
   return res_manager_;
 }
 

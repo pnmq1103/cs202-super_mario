@@ -25,7 +25,7 @@ EditorScene::EditorScene() {
     constants::blockSize * constants::mapWidth - 2 * buffer,
     constants::blockSize * constants::mapHeight - 2 * buffer};
 
-  buttons_.reserve(4);
+  buttons_.reserve(5);
 }
 
 EditorScene::~EditorScene() {}
@@ -85,14 +85,26 @@ SceneType EditorScene::Type() {
 void EditorScene::LoadMap() {
   std::filesystem::path load_path(FileHandler::OpenFile());
 
-  if (load_path.empty() == false && std::filesystem::exists(load_path)) {
-    FileHandler::LoadMapFromFile(load_path, map_);
-  } else
+  if (load_path.empty() == false && std::filesystem::exists(load_path))
+    FileHandler::LoadMapFromFile(map_, load_path);
+  else
+    std::cout << "No valid file selected\n";
+}
+
+void EditorScene::SaveMap() {
+  FileHandler::SaveMapToFile(map_);
+}
+
+void EditorScene::SaveMapAs() {
+  std::filesystem::path save_path(FileHandler::SaveFile());
+
+  if (save_path.empty() == false)
+    FileHandler::SaveMapToFile(map_, save_path);
+  else
     std::cout << "No valid file selected\n";
 }
 
 void EditorScene::CreateButtons() {
-
   Rectangle src = {0, 0, 16, 16};
   Rectangle dst = {100, 100, 64, 64};
   float spacing = 40;
@@ -119,12 +131,21 @@ void EditorScene::CreateButtons() {
   buttons_.emplace_back(
     "Save",
     [this] {
-      FileHandler::SaveMapToFile(map_);
+      SaveMap();
     },
     src, dst, "res/sprites/buttons/save.png");
 
-  // Load saved file
+  // Save as
   dst = {100 + 3 * (64 + spacing), 100, 64, 64};
+  buttons_.emplace_back(
+    "Save as",
+    [this] {
+      SaveMapAs();
+    },
+    src, dst, "res/sprites/buttons/load.png");
+
+  // Load saved file
+  dst = {100 + 4 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
     "Load",
     [this] {

@@ -4,13 +4,13 @@
 #include <stack>
 
 #include "include/core/media.hpp"
-#include "include/core/resource_manager.hpp"
 #include "include/core/scene.hpp"
 #include "include/core/scene_stack.hpp"
+#include "include/core/sprite_manager.hpp"
 
 class Application {
 private:
-  ResManager res_manager_;
+  SpriteManager res_manager_;
   Media media_;
   Image icon_image_ = {};
 
@@ -37,7 +37,7 @@ public:
 
   static Application &Instance();
   static SceneType PreviousScene();
-  ResManager &Resource();
+  SpriteManager &Resource();
   Media &Media();
 
   static void ChangeScene(std::unique_ptr<Scene> new_scene);

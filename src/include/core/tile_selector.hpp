@@ -30,6 +30,7 @@ public:
 
 private:
   void UpdateCamera();
+  void UpdateTextureParameters();
 
   const Texture &FindTexture(std::string texture_key) const;
   void ChooseTile();

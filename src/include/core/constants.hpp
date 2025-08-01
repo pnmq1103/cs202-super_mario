@@ -1,5 +1,9 @@
 #pragma once
 
+// Since the original game's resolution is 256x240 pixels
+// and each block is 16x16 pixels.
+// Thus the default screen size is 16x15 blocks.
+
 namespace constants {
   // The scale factor for the whole program is 4x
   inline constexpr float scale        = 4.0f;

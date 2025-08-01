@@ -31,14 +31,21 @@ std::string FileHandler::SaveFile() {
   return {};
 }
 
-void FileHandler::SaveMapToFile(const Map &map) {
-  std::filesystem::create_directories(base_path);
+void
+FileHandler::SaveMapToFile(const Map &map, const std::filesystem::path &path) {
+  std::filesystem::path full_path;
+  if (path.empty() == false) {
+    std::filesystem::create_directories(path.parent_path());
+    full_path = path;
+  } else {
+    std::filesystem::create_directories(base_path);
 
-  std::ostringstream filename;
-  filename << "map_" << std::setw(2) << std::setfill('0') << count << ".json";
-  ++count;
+    std::ostringstream filename;
+    filename << "map_" << std::setw(2) << std::setfill('0') << count << ".json";
+    ++count;
 
-  std::filesystem::path full_path = base_path / filename.str();
+    full_path = base_path / filename.str();
+  }
 
   std::ofstream fout(full_path);
   if (fout.is_open() == false)
@@ -48,7 +55,7 @@ void FileHandler::SaveMapToFile(const Map &map) {
   fout << j.dump();
 }
 
-void FileHandler::LoadMapFromFile(const std::filesystem::path &path, Map &map) {
+void FileHandler::LoadMapFromFile(Map &map, const std::filesystem::path &path) {
   if (std::filesystem::exists(path) == false)
     throw std::runtime_error("file not found");
 

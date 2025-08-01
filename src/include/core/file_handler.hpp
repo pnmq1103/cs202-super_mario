@@ -15,6 +15,7 @@ public:
   static std::string OpenFile();
   static std::string SaveFile();
 
-  static void SaveMapToFile(const Map &map);
-  static void LoadMapFromFile(const std::filesystem::path &path, Map &map);
+  static void
+  SaveMapToFile(const Map &map, const std::filesystem::path &path = "");
+  static void LoadMapFromFile(Map &map, const std::filesystem::path &path);
 };

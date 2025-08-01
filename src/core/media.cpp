@@ -4,20 +4,33 @@
 #include "include/core/media.hpp"
 
 Media::~Media() {
-  for (const auto &[_, sound] : sounds_)
+  for (auto &[_, sound] : sounds_)
     UnloadSound(sound);
-  for (const auto &[_, music] : musics_)
+  for (auto &[_, music] : musics_) {
+    StopMusicStream(music);
     UnloadMusicStream(music);
+  }
 }
 
 void Media::Init() {
-  // Load Music
-  musics_["title"]        = LoadMusicStream("res/musics/title.ogg");
-  musics_["ground_theme"] = LoadMusicStream("res/musics/ground_theme.ogg");
-  musics_["castle_theme"] = LoadMusicStream("res/musics/castle_theme.ogg");
+  LoadMusic();
+  LoadSounds();
+}
 
-  // Load Sound
-  sounds_["beep"] = LoadSound("res/sounds/beep.wav");
+void Media::LoadMusic() {
+  auto Load = [this](const std::string &name) {
+    musics_[name] = LoadMusicStream(("res/musics/" + name + ".ogg").c_str());
+  };
+  for (const auto &music : music_names_)
+    Load(music);
+}
+
+void Media::LoadSounds() {
+  auto Load = [this](const std::string &name) {
+    sounds_[name] = LoadSound(("res/sounds/" + name + ".wav").c_str());
+  };
+  for (const auto &sound : sound_names_)
+    Load(sound);
 }
 
 void Media::PlaySound(const std::string &name) {
@@ -62,9 +75,8 @@ void Media::SetMusicVolume(float volume) {
 }
 
 void Media::SaveMusicState() {
-  if (IsMusicStreamPlaying(musics_[cur_music_])) {
+  if (IsMusicStreamPlaying(musics_[cur_music_]))
     music_state_.push({cur_music_, GetMusicTimePlayed(musics_[cur_music_])});
-  }
 }
 
 void Media::LoadMusicState() {
