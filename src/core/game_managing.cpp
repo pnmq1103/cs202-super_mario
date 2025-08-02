@@ -32,8 +32,8 @@ GameManaging::GameManaging() {
   updateCounter_    = 0;
 
   // Camera initialization
-  camera_.target   = {100.0f, 300.0f};
-  camera_.offset   = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
+  camera_.target   = {0.0, 0.0};
+  camera_.offset   = {0.0, 0.0};
   camera_.rotation = 0.0f;
   camera_.zoom     = 1.0f;
   cameraTarget_    = {100.0f, 300.0f};
@@ -98,14 +98,12 @@ void GameManaging::UpdateCollisionSystem() {
 }
 
 void GameManaging::LoadLevel(const std::string &filename) {
-  try {
     UnloadLevel();
-
+    ObjectManager::GetInstance().SetFrameCount();
     // Reset collision system for new level
     if (collisionHandler_) {
       collisionHandler_->Reset(levelWidth_, levelHeight_);
     }
-
     // Try to load from file first
     std::ifstream file(filename);
     if (file.is_open()) {
@@ -114,22 +112,37 @@ void GameManaging::LoadLevel(const std::string &filename) {
       try {
         file >> j;
         j.get_to(map);
-
+        ObjectManager::GetInstance().Reset(
+          constants::scale, collisionHandler_.get());
+       
         int mapSize = constants::mapWidth * constants::mapHeight;
         for (int i = 0; i < mapSize; i++) {
           // Get tile and create block
           int tileGid          = map.GetCell(MapLayer::Tile1, i);
+          if (tileGid != 0)
+            std::cout << "Tile GID: " << tileGid << std::endl;
           Vector2 tilePosition = {
-            (float)(i % constants::mapWidth) * 16.0f,
-            (float)(i / constants::mapHeight) * 16.0f};
-          CreateBlockFromType(tileGid, tilePosition);
+            (float)(i % constants::mapWidth) * constants::blockSize,
+            (float)(i / constants::mapWidth) * constants::blockSize};
+          switch (tileGid) {
+            case 1:
+              ObjectManager::GetInstance().AddBrickBlock(tilePosition);
+              break;
+            case 2:
+                ObjectManager::GetInstance().AddQuestionBlock(
+                tilePosition, QuestionBlockItem::coin);
+              break;
+            default:
+        
+              break;
+          }
 
-          // Get enemy and create enemy
-          int enemyGid          = map.GetCell(MapLayer::Objects, i);
-          Vector2 enemyPosition = {
-            (float)(i % constants::mapWidth) * 16.0f,
-            (float)(i / constants::mapHeight) * 16.0f};
-          CreateEnemyFromType(enemyGid, enemyPosition);
+          //// Get enemy and create enemy
+          //int enemyGid          = map.GetCell(MapLayer::Objects, i);
+          //Vector2 enemyPosition = {
+          //  (float)(i % constants::mapWidth) * 16.0f,
+          //  (float)(i / constants::mapHeight) * 16.0f};
+          //CreateEnemyFromType(enemyGid, enemyPosition);
         }
       } catch (const json::exception &e) {
         std::cerr << "JSON parsing error: " << e.what() << std::endl;
@@ -147,11 +160,6 @@ void GameManaging::LoadLevel(const std::string &filename) {
     camera_.target = spawnPoint_;
     cameraTarget_  = spawnPoint_;
 
-  } catch (const std::exception &e) {
-    std::cerr << "Error loading level: " << e.what() << std::endl;
-    // Fall back to creating a basic level
-    CreateLevel1();
-  }
 }
 
 void GameManaging::CreateLevel1() {
@@ -406,13 +414,9 @@ void GameManaging::DrawLevel() {
   BeginMode2D(camera_);
 
   DrawBackground();
-
-  // Draw all blocks
-  for (const auto &block : blocks_) {
-    if (block && !block->IsDestroyed()) {
-      DrawBlock(block.get());
-    }
-  }
+  ObjectManager::GetInstance().SetFrameCount();
+  ObjectManager::GetInstance().Update();
+  ObjectManager::GetInstance().Draw();
 
   // Enhanced enemy rendering
   if (enemyManager_) {
