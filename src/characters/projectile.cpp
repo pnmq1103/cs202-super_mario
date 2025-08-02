@@ -59,3 +59,6 @@ void Projectile::Renew(Vector2 Nposition, bool to_left) {
     velocity.x = fabs(velocity.x);
   time = 0;
 }
+Vector2 Projectile::GetSpeed() {
+  return velocity;
+}

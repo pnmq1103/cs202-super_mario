@@ -1,11 +1,12 @@
 #include "include/characters/fireball.hpp"
+#include <cmath>
 
 //+----------------------------------------------------------+
 //|                       Mario Fireball                     |
 //+----------------------------------------------------------+
-MarioFireball::MarioFireball() : Projectile(5, {10, 0}) {
+MarioFireball::MarioFireball() : Projectile(5, {20, 0}) {
   gravity_            = 5;
-  bounce_coefficient_ = 1;
+  bounce_coefficient_ = 0.9f;
   range_              = 1000;
 
   LoadFrameList("res/sprites/icons/objects.txt");
@@ -19,27 +20,36 @@ void MarioFireball::Update() {
   frame = frame_list[(time / 15) % 3 + 133];
 
   if (velocity.x > 0) {
-    if (position.x >= original_position.x + range_)
+    if (position.x >= original_position.x + range_) {
       is_destroy = true;
+    }
+
   } else {
-    if (position.x <= original_position.x - range_)
+    if (position.x <= original_position.x - range_) {
       is_destroy = true;
+    }
   }
-  velocity.y += gravity_;
   position.x += velocity.x;
   position.y += velocity.y;
+  velocity.y += gravity_;
 }
 void MarioFireball::Draw() {
   if (is_destroy)
     return;
   Projectile::Draw();
 }
+
+void MarioFireball::Renew(Vector2 Nposition, bool to_left) {
+  velocity = {20, 0};
+  Projectile::Renew(Nposition, to_left);
+}
+
 void MarioFireball::StopY(bool stop_upper, bool stop_lower) {
   if (stop_upper) {
     velocity.y = 0;
   }
   if (stop_lower)
-    velocity.y *= -bounce_coefficient_;
+    velocity.y = -bounce_coefficient_ * fabs(velocity.y);
 }
 
 ProjectileType MarioFireball::GetType() {

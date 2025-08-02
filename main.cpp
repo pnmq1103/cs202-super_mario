@@ -575,11 +575,11 @@ speed.y), GetScreenWidth() - 200, 190, 10, WHITE);
 #include "include/objects/super_star.hpp"
 int main() {
   SetTargetFPS(60);
-  InitWindow(3000, 1000, "Hello Raylib");
+  InitWindow(1000, 1000, "Hello Raylib");
   App.Resource().Init();
   Character character(4);
   character.SetCharacter(MARIO, {100, 100});
-  CollisionHandler collision(3000, 1000);
+  CollisionHandler collision(1000, 1000);
   collision.AddCharacter(&character);
   ObjectManager &block = ObjectManager::GetInstance();
   block.Reset(4, &collision);
@@ -593,10 +593,13 @@ int main() {
   block.AddFireFlower({1000, 500 - 16 * 4 * 2});
 
   ProjectilePool pool(&collision);
+  int t = 0, mark = -10;
 
   while (!WindowShouldClose()) {
+    ++t;
     BeginDrawing();
     ClearBackground(BLACK);
+<<<<<<< Updated upstream
     Rectangle rect = character.GetRectangle();
     // std::cout << rect.y + rect.height << '\n';
     if (rect.y + rect.height >= 500)
@@ -632,3 +635,40 @@ CloseWindow();
 return 0;
 }
 */
+=======
+
+    collision.CheckCollision();
+    character.SetFrameCount();
+    character.Update();
+    character.Draw();
+    block.SetFrameCount();
+    block.Update();
+    block.Draw();
+    pool.SetFrameCount();
+    pool.Update();
+    pool.Draw();
+
+    if (IsKeyDown(KEY_LEFT))
+      character.Run(true);
+    else if (IsKeyDown(KEY_RIGHT))
+      character.Run(false);
+    if (IsKeyDown(KEY_UP))
+      character.Jump();
+    if (IsKeyDown(KEY_E))
+      character.Evolve();
+    if (IsKeyDown(KEY_S))
+      character.ToStarman();
+    if (IsKeyDown(KEY_A)) {
+      if (t - mark >= 10) {
+        mark           = t;
+        Rectangle rect = character.GetRectangle();
+        pool.ShootElectricBall({rect.x, rect.y}, character.IsToLeft());
+      }
+    }
+    EndDrawing();
+  }
+
+  CloseWindow();
+  return 0;
+}*/
+>>>>>>> Stashed changes

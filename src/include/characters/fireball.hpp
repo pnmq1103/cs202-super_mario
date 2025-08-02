@@ -10,6 +10,7 @@ public:
   ~MarioFireball();
   void Update();
   void Draw();
+  void Renew(Vector2 Nposition, bool to_left);
   void StopY(bool stop_upper, bool stop_lower);
   ProjectileType GetType();
 };
