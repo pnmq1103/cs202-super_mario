@@ -9,15 +9,20 @@ enum class KoopaState {
 
 class KoopaTroopa : public Enemy {
 private:
-  KoopaState state;
-  float shellTimer = 0;
+  KoopaState koopa_state;
+  float shell_timer;
 
 public:
-  KoopaTroopa(Vector2 pos, int spriteId);
-  void Update(float dt) override;
+  KoopaTroopa(Vector2 pos, float Nscale);
+  ~KoopaTroopa();
+  
+  void OnHit() override;
+  void Update() override;
   void OnHitFromAbove() override;
   void OnHitFromSide() override;
+  EnemyType GetType() override;
   Enemy *Clone() const override;
 
-  KoopaState GetState() const;
+  KoopaState GetKoopaState() const;
+  void KickShell(bool kick_left); // New method for manual shell kicking
 };

@@ -5,16 +5,24 @@
 #include "include/enemies/enemy.hpp"
 
 class Character; // Forward declaration
+class CollisionHandler; // Forward declaration
+class ProjectilePool; // Forward declaration
 
 class EnemyManager {
 private:
     std::vector<Enemy*> enemies;
     std::unordered_map<Enemy*, MovementStrategy*> pausedStrategies_;
     
-    // Character references for interaction
+    // Character references for AI only (not collision)
     Vector2* marioPosition_;
     Vector2* luigiPosition_;
     Vector2* activeCharacterPosition_;
+    
+    // Collision system reference
+    CollisionHandler* collisionHandler_;
+    
+    // Projectile system for enemy shooting
+    static ProjectilePool* projectilePool_;
     
     // Game state
     float difficultyMultiplier_;
@@ -23,42 +31,47 @@ private:
     
     // Boss management
     Enemy* currentBoss_;
-    
-    // Interaction tracking
-    float interactionCooldown_;
-    std::unordered_map<Enemy*, float> enemyInteractionTimers_;
+
+    // Singleton pattern implementation
+    EnemyManager();
+    EnemyManager(const EnemyManager&) = delete;
+    EnemyManager& operator=(const EnemyManager&) = delete;
 
 public:
-    EnemyManager();
+    // Singleton access method
+    static EnemyManager& GetInstance();
     ~EnemyManager();
 
-    // Core management functions
+    // Core management functions (like ObjectManager)
+    void SetCollisionHandler(CollisionHandler* handler);
     void AddEnemy(Enemy* enemy);
     void SpawnEnemy(EnemyType type, Vector2 position, int spriteId = 0);
     void RemoveEnemy(Enemy* enemy);
     void ClearAllEnemies();
     void ClearDeadEnemies();
 
-    // Update and rendering
+    // Update and rendering (like ObjectManager)
+    void SetFrameCount();
     void UpdateAll(float deltaTime);
-    void RenderAll(Texture& enemyTexture, const std::unordered_map<int, Rectangle>& spriteRects);
+    void Draw();
     
-    // Character interaction system
+    // Character reference for AI (not collision)
     void SetCharacterReferences(Vector2* mario, Vector2* luigi, Vector2* active);
-    void HandleCharacterInteractions(Character* activeCharacter);
-    void CheckCollisionWithCharacter(Character* character);
     
-    // Movement and behavior control
-    void HandleWallCollisions();
+    // Projectile system
+    static void SetProjectilePool(ProjectilePool* pool) { projectilePool_ = pool; }
+    static ProjectilePool* GetProjectilePool() { return projectilePool_; }
+    
+    // AI and behavior control (non-collision)
     void UpdateEnemyBehaviors(float deltaTime);
     void UpdateEnemyAI(float deltaTime);
+    void UpdateBossAI(float deltaTime);
     
-    // Advanced enemy management
+    // Game state management
     void SetDifficulty(float difficultyMultiplier);
     void SetGlobalSpeedMultiplier(float multiplier);
     void PauseAllEnemies();
     void ResumeAllEnemies();
-    void StunAllEnemiesInRadius(Vector2 center, float radius, float duration = 2.0f);
     
     // Boss management
     void SpawnBoss(EnemyType bossType, Vector2 position);
@@ -66,17 +79,12 @@ public:
     bool HasBoss() const { return currentBoss_ != nullptr && currentBoss_->IsAlive(); }
     void SetBossRageMode();
     
-    // Enemy interaction and combat
-    void DamageEnemiesInRadius(Vector2 center, float radius, int damage = 1);
-    void KnockbackEnemiesInRadius(Vector2 center, float radius, float force = 100.0f);
-    void HandleProjectileCollisions(Vector2 projectilePos, float projectileRadius, int damage = 1);
-    
-    // Enemy spawning and formation
+    // Enemy spawning utilities
     void SpawnFormation(EnemyType type, Vector2 startPos, int count, float spacing = 50.0f);
     void SpawnWave(const std::vector<std::pair<EnemyType, Vector2>>& wave);
     void SpawnPatrolGroup(EnemyType type, Vector2 pointA, Vector2 pointB, int count = 2);
     
-    // AI and behavior systems
+    // AI behavior modification
     void EnableAggressiveMode(bool aggressive = true);
     void SetEnemyTarget(Enemy* enemy, Vector2* target);
     void MakeEnemyFollow(Enemy* enemy, Vector2* target, float speed = 60.0f);
@@ -97,7 +105,12 @@ public:
     Enemy* GetNearestEnemyToPosition(Vector2 position) const;
     Enemy* GetFarthestEnemyFromPosition(Vector2 position) const;
     
-    // Special effects and interactions
+    // Special effects for gameplay
+    void DamageEnemiesInRadius(Vector2 center, float radius, int damage = 1);
+    void KnockbackEnemiesInRadius(Vector2 center, float radius, float force = 100.0f);
+    void StunAllEnemiesInRadius(Vector2 center, float radius, float duration = 2.0f);
+    void HandleProjectileCollisions(Vector2 projectilePos, float projectileRadius, int damage = 1);
+    
     void ApplyStunEffect(Vector2 center, float radius, float duration = 2.0f);
     void ApplyKnockbackEffect(Vector2 center, float radius, float force = 100.0f);
     void ApplySlowEffect(float duration = 3.0f, float speedMultiplier = 0.5f);
@@ -108,11 +121,6 @@ public:
     void ModifyEnemyAggression(Enemy* enemy, bool aggressive);
     void ModifyEnemyDetectionRange(Enemy* enemy, float newRange);
     
-    // Environmental interactions
-    void HandleEnvironmentalHazards(float deltaTime);
-    void CheckGroundCollisions(float groundLevel = 600.0f);
-    void CheckWallCollisions(float leftWall = 0.0f, float rightWall = 800.0f);
-    
     // Debug and development
     void DebugDrawEnemyInfo() const;
     void PrintEnemyStates() const;
@@ -120,13 +128,7 @@ public:
 private:
     // Helper methods
     Enemy* CreateEnemyByType(EnemyType type, Vector2 position, int spriteId);
-    void UpdateInteractionTimers(float deltaTime);
     void CleanupDeadEnemies();
-    bool CanInteractWithCharacter(Enemy* enemy) const;
-    void ProcessEnemyCharacterCollision(Enemy* enemy, Character* character);
-    
-    // AI helper methods
     void UpdateEnemyTargeting(Enemy* enemy);
     void UpdateEnemyFormations(float deltaTime);
-    void UpdateBossAI(float deltaTime);
 };

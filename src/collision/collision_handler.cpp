@@ -540,6 +540,45 @@ void CollisionHandler::CheckCollisionEnemy() {
     if (enemy_list_[i] && enemy_list_[i]->IsAlive()) {
       Rectangle rect            = enemy_list_[i]->GetRect();
       std::vector<int> position = SearchLocation(rect);
+      
+      // ===== BOUNDARY CHECKING =====
+      float mapWidth = column_ * cellSize_;
+      float mapHeight = row_ * cellSize_;
+      
+      // Check if enemy is outside map boundaries
+      bool outOfBounds = false;
+      
+      // Check horizontal boundaries (left/right)
+      if (rect.x < 0 || rect.x + rect.width > mapWidth) {
+        if (enemy_list_[i]->GetType() == EnemyType::Bowser) {
+          enemy_list_[i]->ReverseDirection();
+          // Correct position to keep Bowser in bounds
+          if (rect.x < 0) {
+            Vector2 pos = enemy_list_[i]->GetPosition();
+            enemy_list_[i]->SetPosition({0, pos.y});
+          } else if (rect.x + rect.width > mapWidth) {
+            Vector2 pos = enemy_list_[i]->GetPosition();
+            enemy_list_[i]->SetPosition({mapWidth - rect.width, pos.y});
+          }
+        } else {
+          // Goomba/Koopa/Piranha: remove when out of map horizontally
+          outOfBounds = true;
+        }
+      }
+      
+      // Check vertical boundary (fall off bottom)
+      if (rect.y > mapHeight) {
+        outOfBounds = true;
+      }
+      
+      // Remove enemy if out of bounds
+      if (outOfBounds) {
+        RemoveEnemy(i);
+        continue; // Skip collision checking for removed enemy
+      }
+      // ===== END BOUNDARY CHECKING =====
+      
+      // Existing collision logic with blocks and projectiles (Same)
       for (int j = position[0]; j <= position[1]; ++j) {
 
         auto it = grid_[j][position[2]].begin();
@@ -557,6 +596,7 @@ void CollisionHandler::CheckCollisionEnemy() {
             if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
               enemy_list_[i]->ReverseDirection();
           }
+          ++it;
         }
 
         it = grid_[j][position[3]].begin();
@@ -574,6 +614,7 @@ void CollisionHandler::CheckCollisionEnemy() {
             if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
               enemy_list_[i]->ReverseDirection();
           }
+          ++it;
         }
       }
     }

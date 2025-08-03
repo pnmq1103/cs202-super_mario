@@ -234,9 +234,15 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\sprites\characters\enemies.png" />
+    <Image Include="res\sprites\enemies\bowser.png" />
+    <Image Include="res\sprites\enemies\enemies_icon.png" />
+    <Image Include="res\sprites\enemies\minions.png" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\sprites\characters\enemies.txt" />
+    <Text Include="res\sprites\enemies\bowser.txt" />
+    <Text Include="res\sprites\enemies\enemies_icon.txt" />
+    <Text Include="res\sprites\enemies\minions.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,9 +3,13 @@
 
 class Goomba : public Enemy {
 public:
-  Goomba(Vector2 pos, int spriteId);
-  void Update(float dt) override;
+  Goomba(Vector2 pos, float Nscale);
+  ~Goomba();
+  
+  void OnHit() override;
+  void Update() override;
   void OnHitFromAbove() override;
   void OnHitFromSide() override;
+  EnemyType GetType() override;
   Enemy *Clone() const override;
 };

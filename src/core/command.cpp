@@ -2,6 +2,7 @@
 
 #include "include/characters/character.hpp"
 #include "include/characters/projectile_pool.hpp"
+#include "include/collision/collision_handler.hpp"
 #include "include/core/command.hpp"
 
 Command::Command(Character *mario, Character *luigi)
@@ -10,7 +11,31 @@ Command::Command(Character *mario, Character *luigi)
   active_character_ = mario_ ? mario_ : luigi_;
 }
 
-Command::~Command() {}
+Command::~Command() {
+  if (projectile_pool_) {
+    delete projectile_pool_;
+    projectile_pool_ = nullptr;
+  }
+}
+
+void Command::InitializeProjectilePool(CollisionHandler* collision_handler) {
+  if (!projectile_pool_ && collision_handler) {
+    projectile_pool_ = new ProjectilePool(collision_handler);
+  }
+}
+
+void Command::UpdateProjectiles() {
+  if (projectile_pool_) {
+    projectile_pool_->SetFrameCount();
+    projectile_pool_->Update();
+  }
+}
+
+void Command::DrawProjectiles() {
+  if (projectile_pool_) {
+    projectile_pool_->Draw();
+  }
+}
 
 void Command::SetMario(Character *mario) {
   mario_ = mario;
@@ -24,24 +49,12 @@ void Command::SetLuigi(Character *luigi) {
     active_character_ = luigi_;
 }
 
-void Command::SetProjectilePool(ProjectilePool *projectile_pool) {
-  projectile_pool_ = projectile_pool;
-}
-
 void Command::SetActiveCharacter(Character *character) {
   active_character_ = character;
 }
 
 Character *Command::GetActiveCharacter() const {
   return active_character_;
-}
-
-void Command::SwitchCharacter() {
-  if (active_character_ == mario_ && luigi_) {
-    active_character_ = luigi_;
-  } else if (active_character_ == luigi_ && mario_) {
-    active_character_ = mario_;
-  }
 }
 
 void Command::InitializeInstructionsButton() {
@@ -95,28 +108,41 @@ void Command::HandleInput() {
     }
   }
 
-  // --- Handle Character Switch ---
   if (IsKeyPressed(KEY_TAB)) {
     SwitchCharacter();
   }
 
-  // --- Handle Movement (ONLY Arrow Keys) ---
+  
   bool is_moving = false;
   if (IsKeyDown(KEY_LEFT)) {
-    MoveCharacter(true); // Move left
+    MoveCharacter(true); 
     is_moving = true;
   }
   if (IsKeyDown(KEY_RIGHT)) {
-    MoveCharacter(false); // Move right
+    MoveCharacter(false); 
     is_moving = true;
   }
   if (!is_moving) {
     StopCharacter();
   }
 
-  // --- Handle Jump (UP Arrow Key Only) ---
   if (IsKeyPressed(KEY_UP)) {
     JumpCharacter();
+  }
+
+  if (IsKeyPressed(KEY_E)) {
+    active_character_->Evolve();
+  }
+
+  if (IsKeyPressed(KEY_S)) {
+    active_character_->ToStarman();
+  }
+
+  // --- CHEAT: Mario Invincibility (K Key) ---
+  if (IsKeyPressed(KEY_K)) {
+    if (mario_) {
+      mario_->ToStarman();
+    }
   }
 
   // --- Handle Fireball (Shift Key) ---
@@ -164,7 +190,7 @@ void Command::DrawInstructionsPanel() {
   int leftCol = GetScreenWidth() / 2 - 380;
   int rightCol = GetScreenWidth() / 2 + 20;
   
-  // Left column - Basic Controls
+
   DrawText("=== BASIC CONTROLS ===", leftCol, startY, 16, DARKGREEN);
   DrawText("LEFT/RIGHT Arrows: Move", leftCol, startY + lineSpacing * 1, 12, BLACK);
   DrawText("UP Arrow: Jump", leftCol, startY + lineSpacing * 2, 12, BLACK);
@@ -179,24 +205,28 @@ void Command::DrawInstructionsPanel() {
   DrawText("=== GAME CONTROLS ===", leftCol, startY + lineSpacing * 11, 16, PURPLE);
   DrawText("ESC: Exit to Menu", leftCol, startY + lineSpacing * 12, 12, BLACK);
   
+  DrawText("=== CHEAT CODES ===", leftCol, startY + lineSpacing * 14, 16, RED);
+  DrawText("K: Mario Invincibility (Star Power)", leftCol, startY + lineSpacing * 15, 12, RED);
+  
   // Right column - Gameplay Tips
   DrawText("=== GAMEPLAY TIPS ===", rightCol, startY, 16, DARKGREEN);
   DrawText("• Jump on enemies to defeat them", rightCol, startY + lineSpacing * 1, 12, BLACK);
   DrawText("• Avoid touching enemies from the side", rightCol, startY + lineSpacing * 2, 12, BLACK);
   DrawText("• Hit blocks from below to get items", rightCol, startY + lineSpacing * 3, 12, BLACK);
   DrawText("• Collect power-ups to grow stronger", rightCol, startY + lineSpacing * 4, 12, BLACK);
+  DrawText("• Use TAB to switch between characters", rightCol, startY + lineSpacing * 5, 12, BLACK);
   
-  DrawText("=== CHARACTER STATES ===", rightCol, startY + lineSpacing * 6, 16, MAROON);
-  DrawText("• Small: Default state", rightCol, startY + lineSpacing * 7, 12, BLACK);
-  DrawText("• Super: Can break blocks", rightCol, startY + lineSpacing * 8, 12, BLACK);
-  DrawText("• Fire: Shoots fireballs", rightCol, startY + lineSpacing * 9, 12, BLACK);
-  DrawText("• Star: Temporary invincibility", rightCol, startY + lineSpacing * 10, 12, BLACK);
+  DrawText("=== CHARACTER STATES ===", rightCol, startY + lineSpacing * 7, 16, MAROON);
+  DrawText("• Small: Default state", rightCol, startY + lineSpacing * 8, 12, BLACK);
+  DrawText("• Super: Can break blocks", rightCol, startY + lineSpacing * 9, 12, BLACK);
+  DrawText("• Fire: Shoots fireballs", rightCol, startY + lineSpacing * 10, 12, BLACK);
+  DrawText("• Star: Temporary invincibility", rightCol, startY + lineSpacing * 11, 12, BLACK);
   
-  DrawText("=== ENEMY TYPES ===", rightCol, startY + lineSpacing * 12, 16, PURPLE);
-  DrawText("• Goomba: Brown mushroom enemies", rightCol, startY + lineSpacing * 13, 12, BLACK);
-  DrawText("• Koopa: Green turtle enemies", rightCol, startY + lineSpacing * 14, 12, BLACK);
-  DrawText("• Piranha Plant: Dangerous pipe plants", rightCol, startY + lineSpacing * 15, 12, BLACK);
-  DrawText("• Bowser: Final boss with multiple hits", rightCol, startY + lineSpacing * 16, 12, BLACK);
+  DrawText("=== ENEMY TYPES ===", rightCol, startY + lineSpacing * 13, 16, PURPLE);
+  DrawText("• Goomba: Brown mushroom enemies", rightCol, startY + lineSpacing * 14, 12, BLACK);
+  DrawText("• Koopa: Green turtle enemies", rightCol, startY + lineSpacing * 15, 12, BLACK);
+  DrawText("• Piranha Plant: Dangerous pipe plants", rightCol, startY + lineSpacing * 16, 12, BLACK);
+  DrawText("• Bowser: Final boss with multiple hits", rightCol, startY + lineSpacing * 17, 12, BLACK);
   
   // Close instructions note
   DrawText("Press 'I' key or click the Help button again to close", 
@@ -261,4 +291,12 @@ void Command::SetFireballActive(bool active) {
 
 bool Command::IsFireballActive() const {
   return fireball_active_;
+}
+
+void Command::SwitchCharacter() {
+  if (active_character_ == mario_ && luigi_) {
+    active_character_ = luigi_;
+  } else if (active_character_ == luigi_ && mario_) {
+    active_character_ = mario_;
+  }
 }

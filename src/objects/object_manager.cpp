@@ -102,5 +102,7 @@ void ObjectManager::Draw() {
 }
 
 void ObjectManager::OnHit(int index) {
-  object_list_[index]->OnHit();
+  if (index >= 0 && index < object_list_.size() && object_list_[index]) {
+    object_list_[index]->OnHit();
+  }
 }

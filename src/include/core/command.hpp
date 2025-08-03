@@ -4,7 +4,6 @@
 #include "include/characters/character.hpp"
 #include "include/core/button.hpp"
 
-// Forward declaration
 class ProjectilePool;
 
 class Command {
@@ -13,7 +12,7 @@ private:
   Character *luigi_            = {nullptr};
   Character *active_character_ = {nullptr};
   bool fireball_active_        = {false}; // Only allow one fireball at a time
-  ProjectilePool *projectile_pool_ = {nullptr}; // Reference to projectile pool
+  ProjectilePool *projectile_pool_ = {nullptr}; // Own projectile pool
   
   // Instructions system
   bool show_instructions_      = {false};
@@ -28,8 +27,11 @@ public:
   void SetMario(Character *mario);
   void SetLuigi(Character *luigi);
 
-  // Set the projectile pool reference
-  void SetProjectilePool(ProjectilePool *projectile_pool);
+  // Initialize projectile pool with collision handler
+  void InitializeProjectilePool(class CollisionHandler* collision_handler);
+  
+  // Get projectile pool for drawing/updating externally if needed
+  ProjectilePool* GetProjectilePool() const { return projectile_pool_; }
 
   // Set the active character to control
   void SetActiveCharacter(Character *character);
@@ -38,13 +40,17 @@ public:
   // Switch between Mario and Luigi
   void SwitchCharacter();
 
-  // Main input handling method
+
   void HandleInput();
 
-  // Individual command methods - ARROW KEYS ONLY
+  // Update and draw projectiles (called from Command)
+  void UpdateProjectiles();
+  void DrawProjectiles();
+
+  // Individual command methods
   void MoveCharacter(bool left);
   void StopCharacter();
-  void JumpCharacter(); // Added back for UP arrow key
+  void JumpCharacter();
   void ShootFireball();
 
   // Fireball state management

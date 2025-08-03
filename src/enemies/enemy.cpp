@@ -1,164 +1,423 @@
 #include "include/enemies/enemy.hpp"
 #include "include/enemies/movement_strategy.hpp"
+#include "include/core/application.hpp"
+#include "include/managers/enemy_manager.hpp"
 #include <raylib.h>
 #include <cmath>
 #include <fstream>
 #include <iostream>
 
-Enemy::Enemy(
-    Vector2 pos, int w, int h, EnemyType enemyType, int spriteId, float health,
-    float maxHealth, float stunTimer, float invulnerabilityTimer, bool facingLeft,
-    float detectionRange)
-    : position(pos),
-      velocity({0.0f, 0.0f}),
-      width(w),
-      height(h),
-      alive(true),
-      spriteId(spriteId),
-      type(enemyType),
-      state(EnemyState::Normal),
-      movementStrategy_(nullptr),
-      health(health),
-      maxHealth(maxHealth),
-      stunTimer(stunTimer),
-      invulnerabilityTimer(invulnerabilityTimer),
-      facingLeft(facingLeft),
-      detectionRange(detectionRange),
-      playerPosition(nullptr),
-      isAggressive(false),
-      aggroRange(200.0f),
-      attackCooldown(1.0f),
-      attackTimer(0.0f),
-      animationTimer(0.0f),
-      currentFrame(0)
-{
-    LoadEnemyFrames();
-}
-    
- Enemy::~Enemy() {
-    if (movementStrategy_) {
-        delete movementStrategy_;
-        movementStrategy_ = nullptr;
-    }
+// Static member initialization following GameObject pattern
+int Enemy::enemy_count_ = 0;
+int Enemy::time = 0;
+
+Rectangle Enemy::MakeDestRect(Rectangle rect) {
+    return {position.x, position.y, rect.width * scale, rect.height * scale};
 }
 
-void Enemy::LoadEnemyFrames() {
-    frameList.clear();
-    std::string filename;
+void Enemy::LoadFrameList(std::string address) {
+    std::ifstream fin;
+    fin.open(address);
+    if (!fin.is_open())
+        throw std::runtime_error("Cannot open enemy sprite file: " + address);
     
-    switch (type) {
-        case EnemyType::Goomba:
-        case EnemyType::Koopa:
-        case EnemyType::Piranha:
-            filename = "res/sprites/enemies/minions.txt";
-            break;
-        case EnemyType::Bowser:
-            filename = "res/sprites/enemies/bowser.txt";
-            break;
-        default:
-            return;
-    }
-    
-    std::ifstream fin(filename);
-    if (!fin.is_open()) {
-        std::cerr << "Cannot open enemy sprite file: " << filename << std::endl;
-        return;
-    }
-    
+    frame_list.clear();
     while (!fin.eof()) {
         Rectangle rect;
         float n;
         if (!(fin >> n)) break; // Index (not used)
-        if (!(fin >> n)) break; 
-        rect.x = n;
-        if (!(fin >> n)) break;
-        rect.y = n;
-        if (!(fin >> n)) break;
-        rect.width = n;
-        if (!(fin >> n)) break;
-        rect.height = n;
-        frameList.push_back(rect);
+        if (!(fin >> rect.x >> rect.y >> rect.width >> rect.height)) break;
+        frame_list.push_back(rect);
     }
     fin.close();
 }
 
-void Enemy::Update(float dt) {
-    if (!alive) return;
-    
-    // Update timers
-    UpdateTimers(dt);
-    
-    // Update animation timer
-    animationTimer += dt;
-    
-    // Update player detection
-    UpdatePlayerDetection();
-    
-    // Update movement strategy
-    UpdateMovement(dt);
-    
-    // Apply physics
-    ApplyGravity(dt);
-    HandleGroundCollision();
+void Enemy::SetFrameCount() {
+    ++time;
 }
 
-void Enemy::UpdateTimers(float deltaTime) {
-    if (stunTimer > 0.0f) {
-        stunTimer -= deltaTime;
-        if (stunTimer <= 0.0f) {
-            state = EnemyState::Normal;
+void Enemy::Reset() {
+    time = 0;
+    enemy_count_ = 0;
+}
+
+Enemy::Enemy(Vector2 Nposition, float Nscale, EnemyType enemy_type)
+    : scale(Nscale), gravity(5.0f), type(enemy_type)
+{
+    index_ = enemy_count_;
+    ++enemy_count_;
+    
+    position = Nposition;
+    alive = true;
+    state = EnemyState::Normal;
+    time = 0;
+    velocity = {0, 0};
+    
+    // Set ground level based on enemy type
+    float ground_level = 500.0f; // Default ground level
+    y_mark = ground_level; // Set ground reference
+    
+    // Enemy-specific initialization
+    health = 1.0f;
+    max_health = 1.0f;
+    stun_timer = 0.0f;
+    invulnerability_timer = 0.0f;
+    facing_left = false;
+    detection_range = 100.0f;
+    movement_strategy_ = nullptr;
+    player_position = nullptr;
+    
+    // Initialize frame with safe default before loading sprites
+    frame = {0, 0, 32, 32}; // Safe default 32x32 frame
+    
+    // Set appropriate texture based on enemy type
+    switch (type) {
+        case EnemyType::Bowser:
+            texture = &App.Resource().GetEnemy('b');
+            try {
+                LoadFrameList("res/sprites/enemies/bowser.txt");
+            } catch (const std::exception& e) {
+                std::cerr << "Failed to load Bowser sprites: " << e.what() << std::endl;
+            }
+            break;
+        case EnemyType::Goomba:
+        case EnemyType::Koopa:
+        case EnemyType::Piranha:
+        default:
+            texture = &App.Resource().GetEnemy('m');
+            try {
+                LoadFrameList("res/sprites/enemies/minions.txt");
+            } catch (const std::exception& e) {
+                std::cerr << "Failed to load minion sprites: " << e.what() << std::endl;
+            }
+            break;
+    }
+    
+    // Initialize frame after loading frame list
+    if (!frame_list.empty()) {
+        UpdateAnimationFrame();
+    }
+    
+    // Adjust spawn position to be on ground (after frame is set)
+    if (!frame_list.empty() && frame.height > 0) {
+        position.y = y_mark - frame.height * scale; // Place on ground
+    } else {
+        position.y = y_mark - 32.0f * scale; // Use default height
+    }
+}
+    
+Enemy::~Enemy() {
+    if (movement_strategy_) {
+        delete movement_strategy_;
+        movement_strategy_ = nullptr;
+    }
+}
+
+Rectangle Enemy::GetRectangle() const {
+    
+    if (frame_list.empty()) {
+        // Return default rectangle if frame list is not loaded
+        return {position.x, position.y, 32.0f * scale, 32.0f * scale};
+    }
+    
+    // Check if current frame has valid dimensions
+    if (frame.width <= 0 || frame.height <= 0 || 
+        frame.width > 1000 || frame.height > 1000) { // Sanity check for corruption
+        // Frame is corrupted or invalid, use first frame from list as fallback
+        if (!frame_list.empty() && 
+            frame_list[0].width > 0 && frame_list[0].height > 0 &&
+            frame_list[0].width <= 1000 && frame_list[0].height <= 1000) {
+            return {position.x, position.y, frame_list[0].width * scale, frame_list[0].height * scale};
+        } else {
+            // Even first frame is bad, use safe default
+            return {position.x, position.y, 32.0f * scale, 32.0f * scale};
         }
     }
     
-    if (invulnerabilityTimer > 0.0f) {
-        invulnerabilityTimer -= deltaTime;
-    }
+    // Frame seems valid, use it
+    return {position.x, position.y, frame.width * scale, frame.height * scale};
+}
+
+Rectangle Enemy::GetRect() const {
+    return GetRectangle();
+}
+
+bool Enemy::IsAlive() const {
+    return alive;
+}
+
+void Enemy::Update() {
+    if (!alive) return;
     
-    if (attackTimer > 0.0f) {
-        attackTimer -= deltaTime;
+    try {
+        // Update timers
+        if (stun_timer > 0.0f) {
+            stun_timer -= GetFrameTime();
+            if (stun_timer <= 0.0f) {
+                state = EnemyState::Normal;
+            }
+        }
+        
+        if (invulnerability_timer > 0.0f) {
+            invulnerability_timer -= GetFrameTime();
+        }
+        
+        // Update movement strategy if not stunned (with safe null check)
+        if (alive && state != EnemyState::Stunned && movement_strategy_) {
+            movement_strategy_->Update(this, GetFrameTime());
+        }
+        
+        // Apply physics similar to GameObject
+        velocity.y += gravity;
+        position.x += velocity.x * GetFrameTime();
+        position.y += velocity.y * GetFrameTime();
+        
+        // ===== ENHANCED WALL COLLISION DETECTION =====
+        // Check for wall collision before collision_handler removes enemies
+        CheckAndHandleWallCollision();
+        
+        // Ground collision
+        if (position.y >= y_mark && alive) {
+            position.y = y_mark;
+            velocity.y = 0;
+        }
+        
+        // Update animation frame based on enemy type and state
+        UpdateAnimationFrame();
+        
+        // Remove dead enemies (similar to GameObject destroy mechanism)
+        if (!alive && position.y > 1000) {
+            EnemyManager::GetInstance().RemoveEnemy(this);
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error in Enemy::Update(): " << e.what() << std::endl;
+        // Fallback: mark as dead to prevent further crashes
+        alive = false;
+        state = EnemyState::Dead;
+        velocity = {0.0f, 0.0f};
     }
 }
 
-void Enemy::UpdatePlayerDetection() {
-    if (!playerPosition) return;
-    
-    float distanceToPlayer = GetDistanceToPlayer();
-    
-    if (distanceToPlayer <= detectionRange && !isAggressive) {
-        isAggressive = true;
-        OnPlayerDetected();
-    } else if (distanceToPlayer > aggroRange && isAggressive) {
-        isAggressive = false;
-        OnPlayerLost();
+void Enemy::UpdateAnimationFrame() {
+    if (frame_list.empty()) {
+        // Set default frame if no frame list loaded
+        frame = {0, 0, 32, 32}; // Default 32x32 sprite as per minions.txt
+        return;
     }
+    
+    int frame_index = 0;
+    
+    // Frame selection logic based on exact sprite mapping provided
+    switch (type) {
+        case EnemyType::Goomba:
+            // Goomba: ID 0-4 (5 frames for walking animation)
+            frame_index = (time / 8) % 5; // Use all 5 frames for smoother animation
+            break;
+            
+        case EnemyType::Koopa:
+            if (state == EnemyState::Shell) {
+                // Shell state: use ID 11-16 
+                frame_index = 11 + ((time / 5) % 6); // Shell animation
+            } else {
+                // Normal Koopa walking - use facing_left instead of velocity
+                if (!facing_left) {
+                    // Moving right: use ID 9-10 
+                    frame_index = 9 + ((time / 10) % 2);
+                } else {
+                    // Moving left or stationary: use ID 17-21 
+                    frame_index = 17 + ((time / 10) % 5);
+                }
+            }
+            break;
+            
+        case EnemyType::Piranha:
+            // Piranha Plant: ID 5-8 (4 frames)
+            frame_index = 5 + ((time / 15) % 4); // Slower animation for piranha
+            break;
+            
+        case EnemyType::Bowser:
+            if (state == EnemyState::Attacking) {
+                // Preparing to shoot: ID 11-15
+                frame_index = 11 + ((time / 5) % 5); // Attack preparation animation
+            } else {
+                // Normal movement based on facing_left instead of velocity
+                if (!facing_left) {
+                    // Facing right: ID 9-10 
+                    frame_index = 9 + ((time / 20) % 2);
+                } else if (facing_left) {
+                    // Facing left: ID 0-6 
+                    frame_index = (time / 20) % 7;
+                } else {
+                    // Default/idle: ID 7-8 
+                    frame_index = 7 + ((time / 25) % 2);
+                }
+            }
+            break;
+    }
+    
+    // Ensure frame_index is within bounds with extra safety
+    if (frame_index < 0) frame_index = 0;
+    if (frame_index >= static_cast<int>(frame_list.size())) {
+        frame_index = static_cast<int>(frame_list.size()) - 1;
+    }
+    
+    // Additional bounds check before accessing frame_list
+    if (frame_index >= 0 && frame_index < static_cast<int>(frame_list.size())) {
+        Rectangle selected_frame = frame_list[frame_index];
+        
+        // Validate frame dimensions before assigning
+        if (selected_frame.width > 0 && selected_frame.height > 0 && 
+            selected_frame.width <= 1000 && selected_frame.height <= 1000) {
+            frame = selected_frame;
+        } else {
+            // Invalid frame detected - use first frame as fallback
+            if (!frame_list.empty() && 
+                frame_list[0].width > 0 && frame_list[0].height > 0 &&
+                frame_list[0].width <= 1000 && frame_list[0].height <= 1000) {
+                frame = frame_list[0];
+            } else {
+                // Last resort default frame
+                frame = {0, 0, 32, 32};
+            }
+        }
+    } else {
+        // Fallback to first frame or default
+        if (!frame_list.empty() && 
+            frame_list[0].width > 0 && frame_list[0].height > 0 &&
+            frame_list[0].width <= 1000 && frame_list[0].height <= 1000) {
+            frame = frame_list[0];
+        } else {
+            frame = {0, 0, 32, 32};
+        }
+    }
+}
+
+void Enemy::Draw() {
+    if (!alive || !texture) return;
+    
+    // Additional safety check for frame before drawing
+    if (frame.width <= 0 || frame.height <= 0 || 
+        frame.width > 1000 || frame.height > 1000) {
+        // Frame is corrupted, skip drawing to prevent crash
+        return;
+    }
+    
+    // Apply visual effects based on state
+    Color tint = WHITE;
+    if (state == EnemyState::Stunned) {
+        tint = ColorAlpha(WHITE, 0.7f);
+    } else if (IsInvulnerable()) {
+        tint = ColorAlpha(WHITE, 0.5f);
+    }
+    
+    // Handle sprite flipping for direction - FIXED LOGIC
+    Rectangle source_rect = frame;
+    
+    // Fix sprite direction: flip based on facing direction AND velocity
+    bool shouldFlipSprite = false;
+    
+    switch (type) {
+        case EnemyType::Goomba:
+        case EnemyType::Koopa:
+        case EnemyType::Bowser:
+            // These enemies should face the direction they're moving
+            // If moving left (velocity.x < 0), show left-facing sprite
+            // If moving right (velocity.x > 0), show right-facing sprite
+            shouldFlipSprite = (velocity.x < 0); // Flip when moving left
+            break;
+        case EnemyType::Piranha:
+            // Piranha doesn't move horizontally, use facing_left only
+            shouldFlipSprite = facing_left;
+            break;
+    }
+    
+    if (shouldFlipSprite) {
+        source_rect.width = -abs(source_rect.width); // Flip horizontally
+    } else {
+        source_rect.width = abs(source_rect.width); // Normal direction
+    }
+    
+    // Additional safety check for MakeDestRect
+    Rectangle dest_rect = MakeDestRect(frame);
+    if (dest_rect.width <= 0 || dest_rect.height <= 0) {
+        // Skip drawing if destination rectangle is invalid
+        return;
+    }
+    
+    DrawTexturePro(*texture, source_rect, dest_rect, {0, 0}, 0.0f, tint);
+}
+
+void Enemy::Bounce() {
+    velocity.y = -20.0f;
+}
+
+void Enemy::ReverseDirection() {
+    // Store old direction for logging
+    bool was_facing_left = facing_left;
+    float old_velocity = velocity.x;
+    
+    // Reverse direction
+    velocity.x = -velocity.x;
+    
+    // Update facing direction to match new velocity - FIXED LOGIC
+    if (velocity.x > 0) {
+        facing_left = false; // Moving right, face right
+    } else if (velocity.x < 0) {
+        facing_left = true;  // Moving left, face left
+    }
+    // If velocity.x == 0, keep current facing direction
+    
+    // Debug logging
+    std::cout << "Enemy (Type: " << static_cast<int>(type) << ") reversed direction: "
+              << "velocity " << old_velocity << " -> " << velocity.x
+              << ", facing " << (was_facing_left ? "left" : "right") 
+              << " -> " << (facing_left ? "left" : "right") << std::endl;
+    
+    // Update animation frame immediately to reflect direction change
+    UpdateAnimationFrame();
 }
 
 void Enemy::SetMovementStrategy(MovementStrategy* strategy) {
-    if (movementStrategy_) {
-        delete movementStrategy_;
+    if (movement_strategy_) {
+        delete movement_strategy_;
+        movement_strategy_ = nullptr; // Ensure pointer is nullified after deletion
     }
-    movementStrategy_ = strategy;
-}
-
-MovementStrategy* Enemy::GetMovementStrategy() const {
-    return movementStrategy_;
+    movement_strategy_ = strategy;
 }
 
 void Enemy::UpdateMovement(float dt) {
-    if (movementStrategy_ && state != EnemyState::Stunned) {
-        movementStrategy_->Update(this, dt);
+    // Added safe null check before using movement_strategy_
+    if (movement_strategy_ && state != EnemyState::Stunned && alive) {
+        movement_strategy_->Update(this, dt);
     }
 }
 
-void Enemy::ApplyGravity(float deltaTime) {
-    const float gravity = 980.0f; // pixels per second squared
-    velocity.y += gravity * deltaTime;
+MovementStrategy* Enemy::GetMovementStrategy() const {
+    return movement_strategy_;
 }
 
-void Enemy::HandleGroundCollision(float groundLevel) {
-    if (position.y + height >= groundLevel) {
-        position.y = groundLevel - height;
+void Enemy::StopY(float Ny) {
+    position.y = Ny;
+    velocity.y = 0;
+    y_mark = Ny;
+}
+
+void Enemy::HandleGroundCollision(float ground_level) {
+    // Add safety check for frame before using it
+    if (frame.width <= 0 || frame.height <= 0) {
+        // Frame is corrupted, use default dimensions
+        if (position.y >= ground_level) {
+            position.y = ground_level - 32.0f * scale; // Use default height
+            velocity.y = 0.0f;
+            y_mark = position.y;
+        }
+        return;
+    }
+    
+    if (position.y + frame.height * scale >= ground_level) {
+        position.y = ground_level - frame.height * scale;
         velocity.y = 0.0f;
+        y_mark = position.y;
     }
 }
 
@@ -167,67 +426,8 @@ void Enemy::HandleWallCollision() {
     ReverseDirection();
 }
 
-void Enemy::ReverseDirection() {
-    velocity.x = -velocity.x;
-    facingLeft = !facingLeft;
-}
-
-bool Enemy::IsPlayerInRange(float range) const {
-    if (!playerPosition) return false;
-    return GetDistanceToPlayer() <= range;
-}
-
-Vector2 Enemy::GetDirectionToPlayer() const {
-    if (!playerPosition) return {0.0f, 0.0f};
-    
-    Vector2 direction = {
-        playerPosition->x - position.x,
-        playerPosition->y - position.y
-    };
-    
-    // Normalize
-    float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
-    if (length > 0.0f) {
-        direction.x /= length;
-        direction.y /= length;
-    }
-    
-    return direction;
-}
-
-float Enemy::GetDistanceToPlayer() const {
-    if (!playerPosition) return 9999.0f;
-    
-    float dx = playerPosition->x - position.x;
-    float dy = playerPosition->y - position.y;
-    return sqrtf(dx * dx + dy * dy);
-}
-
-void Enemy::OnCharacterInteraction(Vector2 characterPos, bool characterFalling) {
-    if (invulnerabilityTimer > 0.0f) return;
-    
-    // Basic interaction - if character is falling and above enemy, stomp
-    if (characterFalling && characterPos.y < position.y) {
-        OnHitFromAbove();
-    } else {
-        OnHitFromSide();
-    }
-}
-
-void Enemy::OnProjectileHit(Vector2 projectilePos, int damage) {
-    (void)projectilePos; // Suppress unused parameter warning
-    DealDamage(static_cast<float>(damage));
-}
-
-void Enemy::OnEnvironmentCollision(Vector2 collisionPoint) {
-    (void)collisionPoint; // Suppress unused parameter warning
-    // Default implementation - could be overridden for specific behaviors
-}
-
-void Enemy::Stun(float duration) {
-    state = EnemyState::Stunned;
-    stunTimer = duration;
-    velocity.x = 0.0f; // Stop horizontal movement
+bool Enemy::CanAttack() const {
+    return state == EnemyState::Normal && invulnerability_timer <= 0.0f;
 }
 
 void Enemy::EnterAttackMode() {
@@ -236,36 +436,143 @@ void Enemy::EnterAttackMode() {
     }
 }
 
-void Enemy::ExitAttackMode() {
-    if (state == EnemyState::Attacking) {
-        state = EnemyState::Normal;
-    }
+void Enemy::PerformAttack() {
+    // Default attack behavior - can be overridden by subclasses
+    // For now, just stay in attack mode briefly
+    state = EnemyState::Attacking;
 }
 
-void Enemy::DealDamage(float damage) {
-    if (invulnerabilityTimer > 0.0f) return;
-    
-    health -= damage;
-    if (health <= 0.0f) {
-        health = 0.0f;
+void Enemy::OnProjectileHit(Vector2 projectile_pos, int damage) {
+    (void)projectile_pos; // Suppress unused parameter warning
+    try {
+        DealDamage(static_cast<float>(damage));
+    } catch (const std::exception& e) {
+        std::cerr << "Error in Enemy::OnProjectileHit(): " << e.what() << std::endl;
+        // Fallback: mark as dead
         alive = false;
         state = EnemyState::Dead;
-    } else {
-        // Become invulnerable briefly after taking damage
-        invulnerabilityTimer = 0.5f;
     }
 }
 
-bool Enemy::ShouldReverseDirection() const {
-    // Basic logic - could be enhanced with more sophisticated checks
-    return false;
+// Safe wrapper methods for virtual functions
+void Enemy::SafeOnHitFromAbove() {
+    try {
+        OnHitFromAbove();
+    } catch (const std::exception& e) {
+        std::cerr << "Error in OnHitFromAbove(): " << e.what() << std::endl;
+        // Fallback: just mark as dead
+        alive = false;
+        state = EnemyState::Dead;
+    }
+}
+
+void Enemy::SafeOnHitFromSide() {
+    try {
+        OnHitFromSide();
+    } catch (const std::exception& e) {
+        std::cerr << "Error in OnHitFromSide(): " << e.what() << std::endl;
+        // Fallback: just mark as dead
+        alive = false;
+        state = EnemyState::Dead;
+    }
+}
+
+// Enhanced collision detection with proper direction checking
+bool Enemy::IsHitFromAbove(const Rectangle& characterRect) const {
+    Rectangle enemyRect = GetRectangle();
+    
+    // Calculate collision overlap
+    float overlapX = std::min(characterRect.x + characterRect.width, enemyRect.x + enemyRect.width) - 
+                     std::max(characterRect.x, enemyRect.x);
+    float overlapY = std::min(characterRect.y + characterRect.height, enemyRect.y + enemyRect.height) - 
+                     std::max(characterRect.y, enemyRect.y);
+    
+    // Character is hitting from above if:
+    // 1. Character's bottom is close to enemy's top
+    // 2. Most of the overlap is vertical
+    float charBottom = characterRect.y + characterRect.height;
+    float enemyTop = enemyRect.y;
+    
+    return (charBottom <= enemyTop + enemyRect.height * 0.3f) && (overlapY < overlapX);
+}
+
+// Improved Bowser AI integration
+void Enemy::UpdateBowserAI() {
+    if (type != EnemyType::Bowser || !alive) return;
+    
+    // This is just a placeholder for future boss AI expansions
+    // Bowser-specific AI updates are handled in Bowser::Update()
+}
+
+// Enhanced wall collision detection
+void Enemy::CheckAndHandleWallCollision() {
+    // Get current rectangle for collision checking
+    Rectangle rect = GetRectangle();
+    
+    // Define map boundaries (should match collision_handler boundaries)
+    float leftWall = 0.0f;
+    float rightWall = 3200.0f; // Default map width - can be made configurable
+    
+    // Check if enemy is approaching or touching walls
+    bool shouldReverseLeft = false;
+    bool shouldReverseRight = false;
+    
+    // Left wall collision detection
+    if (rect.x <= leftWall + 5.0f && velocity.x < 0) {
+        shouldReverseLeft = true;
+    }
+    
+    // Right wall collision detection  
+    if (rect.x + rect.width >= rightWall - 5.0f && velocity.x > 0) {
+        shouldReverseRight = true;
+    }
+    
+    // Handle wall collision based on enemy type
+    if (shouldReverseLeft || shouldReverseRight) {
+        switch (type) {
+            case EnemyType::Goomba:
+            case EnemyType::Koopa:
+                // Normal enemies turn around when hitting walls
+                std::cout << "WALL COLLISION DETECTED! Enemy (Type: " << static_cast<int>(type) 
+                          << ") at position " << rect.x << " hitting " 
+                          << (shouldReverseLeft ? "LEFT" : "RIGHT") << " wall" << std::endl;
+                
+                ReverseDirection();
+                
+                // Adjust position to prevent getting stuck in wall
+                if (shouldReverseLeft) {
+                    position.x = leftWall + 1.0f;
+                } else if (shouldReverseRight) {
+                    position.x = rightWall - rect.width - 1.0f;
+                }
+                
+                std::cout << "Enemy repositioned to: " << position.x << ", new velocity: " << velocity.x << std::endl;
+                break;
+                
+            case EnemyType::Piranha:
+                // Piranha plants don't move horizontally, so no wall collision
+                break;
+                
+            case EnemyType::Bowser:
+                // Bowser also reverses direction at walls
+                std::cout << "BOWSER WALL COLLISION! At position " << rect.x 
+                          << " hitting " << (shouldReverseLeft ? "LEFT" : "RIGHT") << " wall" << std::endl;
+                
+                ReverseDirection();
+                
+                if (shouldReverseLeft) {
+                    position.x = leftWall + 1.0f;
+                } else if (shouldReverseRight) {
+                    position.x = rightWall - rect.width - 1.0f;
+                }
+                
+                std::cout << "Bowser repositioned to: " << position.x << ", new velocity: " << velocity.x << std::endl;
+                break;
+        }
+    }
 }
 
 // Getters and setters
-Rectangle Enemy::GetRect() const {
-    return {position.x, position.y, static_cast<float>(width), static_cast<float>(height)};
-}
-
 Vector2 Enemy::GetPosition() const {
     return position;
 }
@@ -274,16 +581,16 @@ Vector2 Enemy::GetVelocity() const {
     return velocity;
 }
 
-EnemyType Enemy::GetType() const {
-    return type;
-}
-
 EnemyState Enemy::GetState() const {
     return state;
 }
 
-bool Enemy::IsAlive() const {
-    return alive;
+float Enemy::GetHealth() const {
+    return health;
+}
+
+float Enemy::GetMaxHealth() const {
+    return max_health;
 }
 
 void Enemy::SetPosition(Vector2 pos) {
@@ -294,109 +601,77 @@ void Enemy::SetVelocity(Vector2 vel) {
     velocity = vel;
 }
 
-void Enemy::SetAlive(bool status) {
-    alive = status;
-    if (!alive) {
+void Enemy::SetPlayerReference(Vector2* player_pos) {
+    player_position = player_pos;
+}
+
+// Utility methods
+float Enemy::GetDistanceToPlayer() const {
+    if (!player_position) return 9999.0f;
+    
+    float dx = player_position->x - position.x;
+    float dy = player_position->y - position.y;
+    return sqrtf(dx * dx + dy * dy);
+}
+
+bool Enemy::IsPlayerInRange(float range) const {
+    return GetDistanceToPlayer() <= range;
+}
+
+void Enemy::Stun(float duration) {
+    state = EnemyState::Stunned;
+    stun_timer = duration;
+    velocity.x = 0.0f; // Stop horizontal movement
+}
+
+void Enemy::DealDamage(float damage) {
+    if (IsInvulnerable()) return;
+    
+    try {
+        health -= damage;
+        if (health <= 0.0f) {
+            health = 0.0f;
+            alive = false;
+            state = EnemyState::Dead;
+            
+            // Debug log
+            std::cout << "Enemy died from damage. Type: " << static_cast<int>(type) << std::endl;
+        } else {
+            // Become invulnerable briefly after taking damage
+            invulnerability_timer = 0.5f;
+            
+            // Debug log
+            std::cout << "Enemy took " << damage << " damage. Health: " << health << std::endl;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error in Enemy::DealDamage(): " << e.what() << std::endl;
+        // Fallback: mark as dead
+        alive = false;
         state = EnemyState::Dead;
     }
 }
 
-void Enemy::SetState(EnemyState newState) {
-    state = newState;
+bool Enemy::IsInvulnerable() const {
+    return invulnerability_timer > 0.0f;
 }
 
+bool Enemy::IsFacingLeft() const {
+    return facing_left;
+}
+
+void Enemy::SetFacing(bool left) {
+    facing_left = left;
+}
+
+// Legacy compatibility methods - DEPRECATED
+// Use CollisionHandler instead of these methods
 bool Enemy::CheckCollision(Rectangle other) const {
-    Rectangle myRect = GetRect();
-    return CheckCollisionRecs(myRect, other);
+    Rectangle my_rect = GetRectangle();
+    return CheckCollisionRecs(my_rect, other);
 }
 
-void Enemy::Render(Texture &tex, const std::unordered_map<int, Rectangle> &spriteRects) const {
-    if (!alive || frameList.empty()) {
-        // Fallback to colored rectangle if no sprites available
-        Rectangle rect = GetRect();
-        Color color = RED;
-        
-        switch (type) {
-            case EnemyType::Goomba:
-                color = BROWN;
-                break;
-            case EnemyType::Koopa:
-                color = GREEN;
-                break;
-            case EnemyType::Piranha:
-                color = DARKGREEN;
-                break;
-            case EnemyType::Bowser:
-                color = ORANGE;
-                break;
-            default:
-                color = RED;
-                break;
-        }
-        
-        // Apply visual effects based on state
-        if (state == EnemyState::Stunned) {
-            color = ColorAlpha(color, 0.7f);
-        } else if (IsInvulnerable()) {
-            color = ColorAlpha(color, 0.5f);
-        }
-        
-        DrawRectangleRec(rect, color);
-        return;
-    }
-    
-    // Get the appropriate frame based on enemy type and animation
-    int frameIndex = GetCurrentFrameIndex();
-    if (frameIndex >= 0 && frameIndex < static_cast<int>(frameList.size())) {
-        Rectangle sourceRect = frameList[frameIndex];
-        Rectangle destRect = GetRect();
-        
-        // Apply visual effects based on state
-        Color tint = WHITE;
-        if (state == EnemyState::Stunned) {
-            tint = ColorAlpha(WHITE, 0.7f);
-        } else if (IsInvulnerable()) {
-            tint = ColorAlpha(WHITE, 0.5f);
-        }
-        
-        // Flip sprite if facing left
-        if (facingLeft) {
-            sourceRect.width = -sourceRect.width;
-        }
-        
-        // Draw the sprite
-        DrawTexturePro(tex, sourceRect, destRect, {0, 0}, 0.0f, tint);
-    }
-}
-
-int Enemy::GetCurrentFrameIndex() const {
-    // Default frame selection logic - can be overridden by derived classes
-    int baseFrame = 0;
-    
-    switch (type) {
-        case EnemyType::Goomba:
-            // Goomba uses frames 0-1 for walking animation
-            baseFrame = static_cast<int>(animationTimer * 4) % 2; // 4 FPS animation
-            break;
-        case EnemyType::Koopa:
-            if (state == EnemyState::Shell) {
-                baseFrame = 4; // Shell frame
-            } else {
-                baseFrame = 2 + (static_cast<int>(animationTimer * 4) % 2); // Frames 2-3
-            }
-            break;
-        case EnemyType::Piranha:
-            baseFrame = 5 + (static_cast<int>(animationTimer * 4) % 2); // Frames 5-6
-            break;
-        case EnemyType::Bowser:
-            if (state == EnemyState::Attacking) {
-                baseFrame = 1; // Attack frame
-            } else {
-                baseFrame = static_cast<int>(animationTimer * 2) % 2; // Frames 0-1
-            }
-            break;
-    }
-    
-    return baseFrame;
+void Enemy::Render(Texture &tex, const std::unordered_map<int, Rectangle> &sprite_rects) const {
+    // Legacy method - use Draw() instead
+    const_cast<Enemy*>(this)->Draw();
 }
 

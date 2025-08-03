@@ -15,8 +15,8 @@ PipeBlock::PipeBlock(
   has_head_    = Nhas_head;
   has_tail_    = Nhas_tail;
 
-  texture = &App.Resource().GetTileset('w');
-  LoadFrameList("res/sprites/tilesets/tileset_underwater.txt");
+ /* texture = &App.Resource().GetTileset('w');
+  LoadFrameList("res/sprites/tilesets/tileset_underwater.txt");*/
 }
 
 PipeBlock::~PipeBlock() {}
@@ -48,6 +48,11 @@ Rectangle PipeBlock::GetRectangle() {
 void PipeBlock::OnHit() {}
 
 void PipeBlock::Draw() {
+  // Check if frame_list has enough elements before accessing
+  if (frame_list.size() < 44) {
+    return; // Not enough frames loaded, skip drawing
+  }
+
   if (is_vertical_) {
 
     if (has_head_) {
