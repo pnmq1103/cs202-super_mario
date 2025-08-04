@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include "include/collision/collision_handler.hpp"
+#include "include/managers/enemy_manager.hpp"
 
 CollisionHandler::CollisionHandler(float width, float height)
     : cellSize_(16 * 4), projectile_list_(7, nullptr) {
@@ -190,145 +191,7 @@ void CollisionHandler::CheckCollision() {
 
 void CollisionHandler::CheckCollisionCharacter() {
   std::vector<int> position = SearchLocation(character_->GetRectangle());
-  for (int i = position[0]; i <= position[1]; ++i) {
-    auto it = grid_[i][position[2]].begin();
-    while (it != grid_[i][position[2]].end()) {
-      int type = it->first, index = it->second;
-      if (type == 1) {
-        if (projectile_list_[index]->GetType() == enemy_fireball) {
-          if (
-            CheckCollisionRecs(
-              character_->GetRectangle(),
-              projectile_list_[index]->GetRectangle())
-            && !character_->IsStarman())
-            character_->Die();
-        }
-      } else if (type == 2) {
-        if (object_list_[index]->GetType() == ObjectType::Block) {
-          Rectangle rect      = character_->GetRectangle(),
-                    rectangle = object_list_[index]->GetRectangle();
-          Vector2 speed       = character_->GetSpeed();
 
-          if (
-            rect.x + speed.x <= rectangle.x + rectangle.width
-            && !(
-              rect.y >= rectangle.y + rectangle.height
-              || rect.y + rect.height <= rectangle.y)) {
-            character_->StopX();
-          }
-        } else {
-          if (CheckCollisionRecs(
-                character_->GetRectangle(),
-                object_list_[index]->GetRectangle())) {
-            object_list_[index]->OnHit();
-            switch (object_list_[index]->GetType()) {
-              case ObjectType::SuperStar:
-                character_->ToStarman();
-                break;
-              case ObjectType::SuperMushroom:
-                if (character_->GetState() == 0) {
-                  bool isStarman = character_->IsStarman();
-                  character_->Evolve();
-                  if (isStarman)
-                    character_->ToStarman();
-                }
-                break;
-
-              case ObjectType::FireFlower:
-                if (character_->GetState() <= 1) {
-                  bool isStarman = character_->IsStarman();
-                  character_->Evolve();
-                  if (isStarman)
-                    character_->ToStarman();
-                }
-                break;
-              case ObjectType::Coin:
-                break;
-            }
-          }
-        }
-
-      } else if (type == 3) {
-        if (CheckCollisionRecs(
-              character_->GetRectangle(), enemy_list_[index]->GetRect())) {
-          if (character_->IsStarman())
-            enemy_list_[index]->OnHitFromSide();
-          else
-            character_->Die();
-        }
-      }
-      ++it;
-    }
-
-    it = grid_[i][position[3]].begin();
-    while (it != grid_[i][position[3]].end()) {
-      int type = it->first, index = it->second;
-      if (type == 1) {
-        if (projectile_list_[index]->GetType() == enemy_fireball) {
-          if (
-            CheckCollisionRecs(
-              character_->GetRectangle(),
-              projectile_list_[index]->GetRectangle())
-            && !character_->IsStarman())
-            character_->Die();
-        }
-      } else if (type == 2) {
-        if (object_list_[index]->GetType() == ObjectType::Block) {
-          Rectangle rect      = character_->GetRectangle(),
-                    rectangle = object_list_[index]->GetRectangle();
-          Vector2 speed       = character_->GetSpeed();
-
-          if (
-            rect.x + rect.width + speed.x >= rectangle.x
-            && !(
-              rect.y >= rectangle.y + rectangle.height
-              || rect.y + rect.height <= rectangle.y)) {
-            character_->StopX();
-          }
-        } else {
-          if (CheckCollisionRecs(
-                character_->GetRectangle(),
-                object_list_[index]->GetRectangle())) {
-            object_list_[index]->OnHit();
-            switch (object_list_[index]->GetType()) {
-              case ObjectType::SuperStar:
-                character_->ToStarman();
-                break;
-              case ObjectType::SuperMushroom:
-                if (character_->GetState() == 0) {
-                  bool isStarman = character_->IsStarman();
-                  character_->Evolve();
-                  if (isStarman)
-                    character_->ToStarman();
-                }
-                break;
-
-              case ObjectType::FireFlower:
-                if (character_->GetState() <= 1) {
-                  bool isStarman = character_->IsStarman();
-                  character_->Evolve();
-                  if (isStarman)
-                    character_->ToStarman();
-                }
-                break;
-              case ObjectType::Coin:
-                break;
-            }
-          }
-        }
-
-      } else if (type == 3) {
-        if (CheckCollisionRecs(
-              character_->GetRectangle(), enemy_list_[index]->GetRect())) {
-          if (character_->IsStarman())
-            enemy_list_[index]->OnHitFromSide();
-          else
-            character_->Die();
-        }
-      }
-      ++it;
-    }
-  }
   for (int i = position[2]; i <= position[3]; ++i) {
     auto it = grid_[position[0]][i].begin();
     while (it != grid_[position[0]][i].end()) {
@@ -343,14 +206,20 @@ void CollisionHandler::CheckCollisionCharacter() {
             character_->Die();
         }
       } else if (type == 2) {
-        if (object_list_[index]->GetType() == ObjectType::Block) {
+        if (
+          object_list_[index]->GetType() == ObjectType::Block
+          || object_list_[index]->GetType() == ObjectType::BrickBlock) {
           Rectangle rect      = character_->GetRectangle(),
                     rectangle = object_list_[index]->GetRectangle();
           Vector2 speed       = character_->GetSpeed();
 
           if (rect.y + speed.y <= rectangle.y + rectangle.height && (rect.x +rect.width >= rectangle.x && rect.x <= rectangle.x + rectangle.width)) {
             character_->StopY();
-            object_list_[index]->OnHit();
+            if (object_list_[index]->GetType() == ObjectType::BrickBlock) {
+              if (character_->GetState() > 0)
+                object_list_[index]->OnHit();
+            } else
+              object_list_[index]->OnHit();
           }
         } else {
           if (CheckCollisionRecs(
@@ -408,7 +277,9 @@ void CollisionHandler::CheckCollisionCharacter() {
             character_->Die();
         }
       } else if (type == 2) {
-        if (object_list_[index]->GetType() == ObjectType::Block) {
+        if (
+          object_list_[index]->GetType() == ObjectType::Block
+          || object_list_[index]->GetType() == ObjectType::BrickBlock) {
           Rectangle rect      = character_->GetRectangle(),
                     rectangle = object_list_[index]->GetRectangle();
           Vector2 speed       = character_->GetSpeed();
@@ -464,6 +335,152 @@ void CollisionHandler::CheckCollisionCharacter() {
         }
       }
 
+      ++it;
+    }
+  }
+
+  for (int i = position[0]; i <= position[1]; ++i) {
+    auto it = grid_[i][position[2]].begin();
+    while (it != grid_[i][position[2]].end()) {
+      int type = it->first, index = it->second;
+      if (type == 1) {
+        if (projectile_list_[index]->GetType() == enemy_fireball) {
+          if (
+            CheckCollisionRecs(
+              character_->GetRectangle(),
+              projectile_list_[index]->GetRectangle())
+            && !character_->IsStarman())
+            character_->Die();
+        }
+      } else if (type == 2) {
+        if (
+          object_list_[index]->GetType() == ObjectType::Block
+          || object_list_[index]->GetType() == ObjectType::BrickBlock) {
+          Rectangle rect      = character_->GetRectangle(),
+                    rectangle = object_list_[index]->GetRectangle();
+          Vector2 speed       = character_->GetSpeed();
+
+          if (
+            rect.x + speed.x <= rectangle.x + rectangle.width
+            && rect.x > rectangle.x + rectangle.width
+            && !(
+              rect.y >= rectangle.y + rectangle.height
+              || rect.y + rect.height <= rectangle.y)) {
+            character_->StopX();
+          }
+        } else {
+          if (CheckCollisionRecs(
+                character_->GetRectangle(),
+                object_list_[index]->GetRectangle())) {
+            object_list_[index]->OnHit();
+            switch (object_list_[index]->GetType()) {
+              case ObjectType::SuperStar:
+                character_->ToStarman();
+                break;
+              case ObjectType::SuperMushroom:
+                if (character_->GetState() == 0) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+
+              case ObjectType::FireFlower:
+                if (character_->GetState() <= 1) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+              case ObjectType::Coin:
+                break;
+            }
+          }
+        }
+
+      } else if (type == 3) {
+        if (CheckCollisionRecs(
+              character_->GetRectangle(), enemy_list_[index]->GetRect())) {
+          if (character_->IsStarman())
+            enemy_list_[index]->OnHitFromSide();
+          // else
+          // character_->Die();
+        }
+      }
+      ++it;
+    }
+
+    it = grid_[i][position[3]].begin();
+    while (it != grid_[i][position[3]].end()) {
+      int type = it->first, index = it->second;
+      if (type == 1) {
+        if (projectile_list_[index]->GetType() == enemy_fireball) {
+          if (
+            CheckCollisionRecs(
+              character_->GetRectangle(),
+              projectile_list_[index]->GetRectangle())
+            && !character_->IsStarman())
+            character_->Die();
+        }
+      } else if (type == 2) {
+        if (
+          object_list_[index]->GetType() == ObjectType::Block
+          || object_list_[index]->GetType() == ObjectType::BrickBlock) {
+          Rectangle rect      = character_->GetRectangle(),
+                    rectangle = object_list_[index]->GetRectangle();
+          Vector2 speed       = character_->GetSpeed();
+
+          if (
+            rect.x + rect.width + speed.x >= rectangle.x
+            && rect.x + rect.width < rectangle.x
+            && !(
+              rect.y >= rectangle.y + rectangle.height
+              || rect.y + rect.height <= rectangle.y)) {
+            character_->StopX();
+          }
+        } else {
+          if (CheckCollisionRecs(
+                character_->GetRectangle(),
+                object_list_[index]->GetRectangle())) {
+            object_list_[index]->OnHit();
+            switch (object_list_[index]->GetType()) {
+              case ObjectType::SuperStar:
+                character_->ToStarman();
+                break;
+              case ObjectType::SuperMushroom:
+                if (character_->GetState() == 0) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+
+              case ObjectType::FireFlower:
+                if (character_->GetState() <= 1) {
+                  bool isStarman = character_->IsStarman();
+                  character_->Evolve();
+                  if (isStarman)
+                    character_->ToStarman();
+                }
+                break;
+              case ObjectType::Coin:
+                break;
+            }
+          }
+        }
+
+      } else if (type == 3) {
+        if (CheckCollisionRecs(
+              character_->GetRectangle(), enemy_list_[index]->GetRect())) {
+          if (character_->IsStarman())
+            enemy_list_[index]->OnHitFromSide();
+          // else
+          // character_->Die();
+        }
+      }
       ++it;
     }
   }
@@ -536,49 +553,64 @@ void CollisionHandler::CheckCollisionProjectile() {
 }
 
 void CollisionHandler::CheckCollisionEnemy() {
+
   for (int i = 0; i < enemy_list_.size(); ++i) {
     if (enemy_list_[i] && enemy_list_[i]->IsAlive()) {
       Rectangle rect            = enemy_list_[i]->GetRect();
       std::vector<int> position = SearchLocation(rect);
-      
+      Vector2 speed             = enemy_list_[i]->GetVelocity();
+
       // ===== BOUNDARY CHECKING =====
-      float mapWidth = column_ * cellSize_;
+      float mapWidth  = column_ * cellSize_;
       float mapHeight = row_ * cellSize_;
-      
+
       // Check if enemy is outside map boundaries
       bool outOfBounds = false;
-      
+
       // Check horizontal boundaries (left/right)
-      if (rect.x < 0 || rect.x + rect.width > mapWidth) {
+      if (rect.x + rect.width + speed.x < 0 || rect.x + speed.x > mapWidth) {
         if (enemy_list_[i]->GetType() == EnemyType::Bowser) {
           enemy_list_[i]->ReverseDirection();
-          // Correct position to keep Bowser in bounds
-          if (rect.x < 0) {
-            Vector2 pos = enemy_list_[i]->GetPosition();
-            enemy_list_[i]->SetPosition({0, pos.y});
-          } else if (rect.x + rect.width > mapWidth) {
-            Vector2 pos = enemy_list_[i]->GetPosition();
-            enemy_list_[i]->SetPosition({mapWidth - rect.width, pos.y});
-          }
         } else {
           // Goomba/Koopa/Piranha: remove when out of map horizontally
           outOfBounds = true;
         }
       }
-      
+
       // Check vertical boundary (fall off bottom)
       if (rect.y > mapHeight) {
         outOfBounds = true;
       }
-      
+
       // Remove enemy if out of bounds
       if (outOfBounds) {
-        RemoveEnemy(i);
-        continue; // Skip collision checking for removed enemy
+        EnemyManager::GetInstance().RemoveEnemy(i);
+        return;
       }
       // ===== END BOUNDARY CHECKING =====
-      
+
       // Existing collision logic with blocks and projectiles (Same)
+
+      for (int j = position[2]; j <= position[3]; ++j) {
+
+        auto it = grid_[position[1]][j].begin();
+
+        while (it != grid_[position[1]][j].end()) {
+          int type = it->first, index = it->second;
+          if (type == 2) {
+            Rectangle rectangle = object_list_[index]->GetRectangle();
+
+            if (
+          rect.y + rect.height >= rectangle.y && (rect.x + rect.width
+      >=rectangle.x
+          && rect.x <= rectangle.x + rectangle.width)) {
+              enemy_list_[i]->StopY(rectangle.y);
+            }
+          }
+          ++it;
+        }
+      }
+
       for (int j = position[0]; j <= position[1]; ++j) {
 
         auto it = grid_[j][position[2]].begin();
@@ -593,8 +625,17 @@ void CollisionHandler::CheckCollisionEnemy() {
               projectile_list_[index]->Destroy();
             }
           } else if (type == 2) {
-            if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
+            Rectangle rect      = enemy_list_[i]->GetRectangle(),
+                      rectangle = object_list_[index]->GetRectangle();
+            Vector2 speed       = enemy_list_[i]->GetVelocity();
+            if (
+              rect.x + speed.x <= rectangle.x + rectangle.width
+              && rect.x > rectangle.x + rectangle.width
+              && !(
+                rect.y >= rectangle.y + rectangle.height
+                || rect.y + rect.height <= rectangle.y)) {
               enemy_list_[i]->ReverseDirection();
+            }
           }
           ++it;
         }
@@ -611,8 +652,17 @@ void CollisionHandler::CheckCollisionEnemy() {
               projectile_list_[index]->Destroy();
             }
           } else if (type == 2) {
-            if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
+            Rectangle rect      = enemy_list_[i]->GetRectangle(),
+                      rectangle = object_list_[index]->GetRectangle();
+            Vector2 speed       = enemy_list_[i]->GetVelocity();
+            if (
+              rect.x + rect.width + speed.x >= rectangle.x
+              && rect.x + rect.width < rectangle.x
+              && !(
+                rect.y >= rectangle.y + rectangle.height
+                || rect.y + rect.height <= rectangle.y)) {
               enemy_list_[i]->ReverseDirection();
+            }
           }
           ++it;
         }

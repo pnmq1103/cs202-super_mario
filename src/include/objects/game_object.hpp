@@ -12,6 +12,7 @@ enum class ObjectType {
   FireFlower,
   SuperStar,
   Block,
+  BrickBlock,
 };
 
 class GameObject {

@@ -21,6 +21,7 @@ void Character::SetCharacter(CharacterType Ntype, Vector2 position) {
 }
 
 void Character::SetState(int state, bool is_evolving) {
+  state_           = state;
   Vector2 position = {INT_MIN, INT_MIN};
   Rectangle rect   = {0, 0, 0, 0};
   bool left        = false;

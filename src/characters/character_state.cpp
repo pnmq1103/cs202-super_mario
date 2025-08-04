@@ -120,6 +120,9 @@ void CharacterState::Run(bool to_left) {
   }
 }
 void CharacterState::StopX() {
+  if (is_die)
+    return;
+  std::cout << stop_direction << '\n';
   int n;
   if (to_left)
     n = -1;
@@ -152,6 +155,8 @@ void CharacterState::StopY(float Ny) {
   }
 }
 void CharacterState::StopY() {
+  if (is_die)
+    return;
   velocity_y = 0;
   is_fall    = true;
 }
@@ -209,6 +214,8 @@ bool CharacterState::IsStarman() {
     return true;
 }
 void CharacterState::Bounce() {
+  if (is_die)
+    return;
   if (IsStarman()) {
     velocity_y = -2;
   } else if (IsFalling())

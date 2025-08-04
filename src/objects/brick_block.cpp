@@ -14,5 +14,5 @@ void BrickBlock::OnHit() {
   Bounce();
 }
 ObjectType BrickBlock::GetType() {
-  return ObjectType::Block;
+  return ObjectType::BrickBlock;
 }
