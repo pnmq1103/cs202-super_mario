@@ -10,7 +10,7 @@ private:
   SceneType type_ = {EnemySelector};
   int &gidx_ref_;
 
-  int first_gidx = 184;
+  int first_gidx = 77;
 
   const Texture *sprite_sheet_ = {nullptr};
   std::unordered_map<int, Rectangle> sprite_info_;

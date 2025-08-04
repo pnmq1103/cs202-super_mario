@@ -22,12 +22,10 @@ Map::~Map() {}
 void Map::Init() {
   try {
     sprite_sheets_ = {
-      {1, 73, "tileset_ground", "res/sprites/tilesets/tileset_ground.txt"},
-      {74, 71, "tileset_underground",
-       "res/sprites/tilesets/tileset_underground.txt"},
-      {145, 16, "bowser", "res/sprites/enemies/bowser.txt"},
-      {161, 23, "minions", "res/sprites/enemies/minions.txt"},
-      {184, 4, "enemies_icon", "res/sprites/enemies/enemies_icon.txt"}};
+      {1, 37, "tileset_minimal", "res/sprites/tilesets/tileset_minimal.txt"},
+      {38, 18, "bowser", "res/sprites/enemies/bowser.txt"},
+      {56, 23, "minions", "res/sprites/enemies/minions.txt"},
+      {79, 4, "enemies_icon", "res/sprites/enemies/enemies_icon.txt"}};
   } catch (const std::exception &e) {
     std::cerr << "Map::Init: " << e.what() << std::endl;
   }
@@ -45,6 +43,7 @@ const Texture &Map::FindTexture(std::string texture_key) const {
   std::unordered_map<std::string, const Texture *> mp;
   mp["tileset_ground"]      = &App.Resource().GetTileset('g');
   mp["tileset_underground"] = &App.Resource().GetTileset('u');
+  mp["tileset_minimal"]     = &App.Resource().GetTileset('m');
   mp["bowser"]              = &App.Resource().GetEnemy('b');
   mp["minions"]             = &App.Resource().GetEnemy('m');
   mp["enemies_icon"]        = &App.Resource().GetEnemy('i');
@@ -61,7 +60,8 @@ const Texture &Map::GetTexture(int gidx) const {
     if (gidx >= sheet.first_gidx && gidx < sheet.first_gidx + sheet.count)
       return FindTexture(sheet.texture_key);
   }
-  throw std::out_of_range("global index not found");
+  throw std::out_of_range(
+    "global index at" + std::to_string(gidx) + "not found");
 }
 
 Rectangle Map::GetInfo(int gidx) const {
@@ -70,5 +70,5 @@ Rectangle Map::GetInfo(int gidx) const {
       return sheet.info.at(gidx - sheet.first_gidx);
     }
   }
-  throw std::out_of_range("global index not found");
+    throw std::out_of_range(" get info global index at" + std::to_string(gidx) + "not found");
 }

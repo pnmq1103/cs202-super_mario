@@ -75,9 +75,10 @@ void GameScene::Init() {
   // Register characters with collision system
   game_manager_.RegisterCharacterWithCollision(mario_character_);
   game_manager_.RegisterCharacterWithCollision(luigi_character_);
-
-  // Create a simple test level instead of trying to load JSON
-  CreateSimpleTestLevel();
+  
+  //// Create a simple test level instead of trying to load JSON
+  //CreateSimpleTestLevel(); 
+  game_manager_.LoadLevel("res/saves/map_00.json");
 }
 
 void GameScene::CreateSimpleTestLevel() {
@@ -90,12 +91,12 @@ void GameScene::CreateSimpleTestLevel() {
 
   // Create ground - extended for a proper level
   for (int x = 0; x < 200; x += 64) {
-    objectManager.AddStaticBlock({(float)x, 600.0f}, 'g'); // Ground blocks
+    objectManager.AddStaticBlockByTheme({(float)x, 600.0f}, 'g'); // Ground blocks
   }
   
   // Add some platforms
   for (int x = 300; x < 500; x += 64) {
-    objectManager.AddStaticBlock({(float)x, 400.0f}, 'g'); // Platform
+    objectManager.AddStaticBlockByTheme({(float)x, 400.0f}, 'g'); // Platform
   }
   
   // Add some blocks and power-ups
@@ -105,8 +106,8 @@ void GameScene::CreateSimpleTestLevel() {
   
   // Add some walls for collision testing
   for (int i = 0; i < 10; i++) {
-    objectManager.AddStaticBlock({0.0f, 600.0f - 64.0f * (float)i}, 'g'); // Left wall
-    objectManager.AddStaticBlock({3136.0f, 600.0f - 64.0f * (float)i}, 'g'); // Right wall at map edge
+    objectManager.AddStaticBlockByTheme({0.0f, 600.0f - 64.0f * (float)i}, 'g'); // Left wall
+    objectManager.AddStaticBlockByTheme({3136.0f, 600.0f - 64.0f * (float)i}, 'g'); // Right wall at map edge
   }
 
   // Spawn some enemies for testing

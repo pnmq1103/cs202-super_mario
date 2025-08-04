@@ -61,6 +61,8 @@ void GameObject::Reset() {
 }
 
 void GameObject::Draw() {
+  if (!texture)
+    throw "texture does not exist.";
   DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
 }
 

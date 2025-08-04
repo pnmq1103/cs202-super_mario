@@ -120,14 +120,28 @@ void GameManaging::LoadLevel(const std::string &filename) {
     for (int i = 0; i < mapSize; i++) {
       // Create blocks from Tile1 layer
       int tileGid = map.GetCell(MapLayer::Tile1, i);
+      int pipeGid        = map.GetCell(MapLayer::Tile2, i);
+      Rectangle tileRect = {0, 0, 0, 0}; // Initialize tile rectangle
       if (tileGid != 0) {
+        tileRect   = map.GetInfo(tileGid);
         Vector2 tilePosition = {
           (float)(i % constants::mapWidth) * constants::blockSize,
-          (float)(i / constants::mapWidth) * constants::blockSize
-        };
-        CreateBlockFromType(tileGid, tilePosition);
+          (float)(i / constants::mapWidth) * constants::blockSize};
+        if (tileGid == 1) {
+          ObjectManager::GetInstance().AddBrickBlock(tilePosition);
+        } else if (tileGid == 2) {
+          ObjectManager::GetInstance().AddQuestionBlock(
+            tilePosition, QuestionBlockItem::coin);
+        } else if (tileGid >= 17 && tileGid <= 36) { //using the minimal tileset
+          ObjectManager::GetInstance().AddStaticBlockByGid(tilePosition, tileRect); //add by gid instead of theme's default block
+        } else {
+            // fallback for debugging
+          std::cout << "Unknown tile GID: " << tileGid << " at index " << i
+                    << std::endl;
+            ObjectManager::GetInstance().AddStaticBlockByTheme(
+              tilePosition, 'g'); // default to ground block
+        }
       }
-
       // Create enemies from Objects layer
       int enemyGid = map.GetCell(MapLayer::Objects, i);
       if (enemyGid != 0) {
@@ -138,16 +152,25 @@ void GameManaging::LoadLevel(const std::string &filename) {
         CreateEnemyFromType(enemyGid, enemyPosition);
         totalEnemies_++; // Count enemies for completion tracking
       }
-      
+
+      // draw the pipes last so they are on top of the piranha plants
+      if (pipeGid != 0) {
+        Vector2 pipePosition = {
+          (float)(i % constants::mapWidth) * constants::blockSize,
+          (float)(i / constants::mapWidth) * constants::blockSize};
+        // hard-code pipe blocks; all pipes in map will be the same size
+        ObjectManager::GetInstance().AddPipeBlock(
+          pipePosition, constants::blockSize * 3, true, true, false);
+      }
       // Handle special objects from Tile2 layer (spawn points, goal flags, etc.)
-      int specialGid = map.GetCell(MapLayer::Tile2, i);
+      /*int specialGid = map.GetCell(MapLayer::Tile2, i);
       if (specialGid != 0) {
         Vector2 specialPosition = {
           (float)(i % constants::mapWidth) * constants::blockSize,
           (float)(i / constants::mapWidth) * constants::blockSize
         };
         CreateSpecialObjectFromType(specialGid, specialPosition);
-      }
+      }*/
     }
     
     std::cout << "Level loaded successfully. Total enemies: " << totalEnemies_ << std::endl;
@@ -175,7 +198,7 @@ void GameManaging::CreateFallbackLevel() {
   
   // Create a simple platform level
   for (int x = 0; x < 200; x += 32) {
-    objectManager.AddStaticBlock({(float)x, 600.0f}, 'g'); // Ground blocks
+    objectManager.AddStaticBlockByTheme({(float)x, 600.0f}, 'g'); // Ground blocks
   }
   
   // Add some question blocks
@@ -524,16 +547,17 @@ void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
       objectManager.AddQuestionBlock(position, QuestionBlockItem::super_mushroom);
       break;
     case 4: // Static ground block
-      objectManager.AddStaticBlock(position, 'g');
+      objectManager.AddStaticBlockByTheme(position, 'g');
       break;
     case 5: // Pipe block
-      objectManager.AddStaticBlock(position, 'p');
+      objectManager.AddStaticBlockByTheme(position, 'p');
       break;
     default:
       // Default to ground block for unknown types
-      objectManager.AddStaticBlock(position, 'g');
+      objectManager.AddStaticBlockByTheme(position, 'g');
       break;
   }
+  return;
 }
 
 void GameManaging::CreateSpecialObjectFromType(int specialType, Vector2 position) {

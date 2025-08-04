@@ -65,7 +65,13 @@ void ObjectManager::AddQuestionBlock(Vector2 position, QuestionBlockItem item) {
   collision_->AddObject(temp);
 }
 
-void ObjectManager::AddStaticBlock(Vector2 position, char theme) {
+void ObjectManager::AddStaticBlockByGid(Vector2 position, Rectangle rect) {
+  GameObject *temp = new StaticBlock(position, scale_, rect);
+  object_list_.push_back(temp);
+  collision_->AddObject(temp);
+}
+
+void ObjectManager::AddStaticBlockByTheme(Vector2 position, char theme) {
   GameObject *temp = new StaticBlock(position, scale_, theme);
   object_list_.push_back(temp);
   collision_->AddObject(temp);

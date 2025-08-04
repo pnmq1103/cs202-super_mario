@@ -20,12 +20,12 @@ TileSelectorScene::TileSelectorScene(int &select_gidx)
 TileSelectorScene::~TileSelectorScene() {}
 
 void TileSelectorScene::Init() {
-  sprite_sheets_ = {
-    {1, 73, "tileset_ground", "res/sprites/tilesets/tileset_ground.txt"},
-    {74, 71, "tileset_underground",
-     "res/sprites/tilesets/tileset_underground.txt"}};
-
-  UpdateTextureParameters();
+  sprite_sheet_ = &App.Resource().GetTileset('m');
+  utility::ReadSpriteInfo(
+    "res/sprites/tilesets/tileset_minimal.txt", sprite_info_);
+  float width  = static_cast<float>(sprite_sheet_->width);
+  float height = static_cast<float>(sprite_sheet_->height);
+  boundary_    = {0, 0, width * 4, height * 4};
 }
 
 void TileSelectorScene::Update() {
@@ -34,10 +34,10 @@ void TileSelectorScene::Update() {
     return;
   }
 
-  if (IsKeyPressed(KEY_TAB)) {
-    cur_sheet_ = (cur_sheet_ + 1) % sprite_sheets_.size();
-    UpdateTextureParameters();
-  }
+  //if (IsKeyPressed(KEY_TAB)) {
+  //  cur_sheet_ = (cur_sheet_ + 1) % sprite_sheets_.size();
+  //  UpdateTextureParameters();
+  //}
 
   UpdateCamera();
   mouse_world_pos_ = GetScreenToWorld2D(GetMousePosition(), camera_);
@@ -50,10 +50,10 @@ void TileSelectorScene::Update() {
 
 void TileSelectorScene::Draw() {
   BeginMode2D(camera_);
-  float width  = static_cast<float>(cur_texture_->width);
-  float height = static_cast<float>(cur_texture_->height);
+  float width  = static_cast<float>(sprite_sheet_->width);
+  float height = static_cast<float>(sprite_sheet_->height);
   DrawTexturePro(
-    *cur_texture_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
+    *sprite_sheet_, {0, 0, width, height}, boundary_, {0, 0}, 0, WHITE);
   DrawRectangleLinesEx(boundary_, 2, BLACK);
   EndMode2D();
 }
@@ -90,17 +90,18 @@ void TileSelectorScene::UpdateCamera() {
       = Clamp(camera_.target.y, 0, world_height - constants::screenHeight);
 }
 
-void TileSelectorScene::UpdateTextureParameters() {
-  cur_texture_ = &FindTexture(sprite_sheets_[cur_sheet_].texture_key);
-  float width  = static_cast<float>(cur_texture_->width);
-  float height = static_cast<float>(cur_texture_->height);
-  boundary_    = {0, 0, width * 4, height * 4};
-}
+//void TileSelectorScene::UpdateTextureParameters() {
+//  cur_texture_ = &FindTexture(sprite_sheets_[cur_sheet_].texture_key);
+//  float width  = static_cast<float>(cur_texture_->width);
+//  float height = static_cast<float>(cur_texture_->height);
+//  boundary_    = {0, 0, width * 4, height * 4};
+//}
 
 const Texture &TileSelectorScene::FindTexture(std::string texture_key) const {
   std::unordered_map<std::string, const Texture *> mp;
   mp["tileset_ground"]      = &App.Resource().GetTileset('g');
   mp["tileset_underground"] = &App.Resource().GetTileset('u');
+  mp["tileset_minimal"]     = &App.Resource().GetTileset('m');
   mp["bowser"]              = &App.Resource().GetEnemy('b');
   mp["minions"]             = &App.Resource().GetEnemy('m');
   mp["enemies_icon"]        = &App.Resource().GetEnemy('i');
@@ -119,10 +120,10 @@ void TileSelectorScene::ChooseTile() {
   //  Because the display is scaled up 4 times
   mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
 
-  const auto &sheet = sprite_sheets_[cur_sheet_];
-  for (const auto &[local_idx, bounds] : sheet.info) {
+  //const auto &sheet = sprite_sheets_[cur_sheet_];
+  for (const auto &[local_idx, bounds] : sprite_info_) {
     if (CheckCollisionPointRec(mouse_world_pos_, bounds)) {
-      gidx_ref_ = sheet.first_gidx + local_idx;
+      gidx_ref_ = first_gidx_ + local_idx;
       break;
     }
   }

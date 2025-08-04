@@ -11,9 +11,11 @@ private:
   SceneType type_ = {TileSelector};
   int &gidx_ref_;
 
-  int cur_sheet_              = {0};
-  const Texture *cur_texture_ = {nullptr};
-  std::vector<SpriteSheet> sprite_sheets_;
+  /*int cur_sheet_              = {0};
+  const Texture *cur_texture_ = {nullptr};*/
+  const Texture* sprite_sheet_;
+  std::unordered_map<int, Rectangle> sprite_info_;
+  int first_gidx_ = 1;
 
   Rectangle boundary_ = {};
   std::vector<Button> buttons_;

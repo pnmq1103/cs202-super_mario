@@ -38,7 +38,8 @@ void SpriteManager::Init() {
     = LoadTexture("res/sprites/tilesets/tileset_ground.png");
   textures_["tileset_underground"]
     = LoadTexture("res/sprites/tilesets/tileset_underground.png");
-
+  textures_["tileset_minimal"]
+    = LoadTexture("res/sprites/tilesets/tileset_minimal.png");
   textures_["backgrounds"]
     = LoadTexture("res/sprites/backgrounds/background_ground.png");
 }
@@ -90,6 +91,8 @@ const Texture &SpriteManager::GetTileset(char type) const {
       return textures_.at("tileset_ground");
     case 'u':
       return textures_.at("tileset_underground");
+    case 'm':
+      return textures_.at("tileset_minimal");
     default:
       throw std::runtime_error("Invalid tileset type");
   }
