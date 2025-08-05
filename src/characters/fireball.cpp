@@ -55,6 +55,9 @@ void MarioFireball::StopY(bool stop_upper, bool stop_lower) {
 ProjectileType MarioFireball::GetType() {
   return mario_fireball;
 }
+void MarioFireball::ReverseDirection() {
+  velocity.x *= -1;
+}
 //+----------------------------------------------------------+
 //|                       Enemy Fireball                     |
 //+----------------------------------------------------------+
@@ -97,6 +100,8 @@ void EnemyFireball::StopY(bool stop_upper, bool stop_lower) {}
 ProjectileType EnemyFireball::GetType() {
   return enemy_fireball;
 }
+
+void EnemyFireball::ReverseDirection() {}
 //+----------------------------------------------------------+
 //|                       Electric ball                      |
 //+----------------------------------------------------------+
@@ -158,3 +163,5 @@ void ElectricBall::StopY(bool stop_upper, bool stop_lower) {}
 ProjectileType ElectricBall::GetType() {
   return electric_ball;
 }
+
+void ElectricBall::ReverseDirection() {}
