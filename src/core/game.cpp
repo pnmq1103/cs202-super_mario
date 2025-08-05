@@ -10,11 +10,13 @@
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
 
+CollisionHandler *GameScene::collision_handler_ = nullptr;
 GameScene::GameScene() : game_manager_() {}
 
 GameScene::~GameScene() {
   EnemyManager::GetInstance().ClearAllEnemies();
   if (collision_handler_) {
+    collision_handler_->Reset(256 * 4, 240 * 4);
     ObjectManager::GetInstance().Reset(4, collision_handler_);
   }
 
@@ -38,7 +40,11 @@ void GameScene::Init() {
   camera_.rotation = 0.0f;
   camera_.zoom     = 1.0f;
 
-  collision_handler_ = new CollisionHandler(256 * 4, 240 * 4);
+  if (!collision_handler_) {
+    collision_handler_ = new CollisionHandler(256 * 4, 240 * 4);
+  } else {
+    collision_handler_->Reset(256 * 4, 240 * 4);
+  }
 
   SelectedCharacter selectedChar
     = CharacterSelectorScene::GetSelectedCharacter();
@@ -51,12 +57,12 @@ void GameScene::Init() {
   input_command_->InitializeProjectilePool(collision_handler_);
 
   game_manager_.InitializeCollisionSystem(256 * 4, 240 * 4);
-
   game_manager_.SetCollisionHandler(collision_handler_);
   game_manager_.SetSceneCamera(&camera_);
 
   game_manager_.RegisterCharacterWithCollision(player_character_);
-  game_manager_.LoadLevel("res/maps/map3.json");
+  //game_manager_.LoadLevel("res/maps/map3.json");
+  CreateSimpleTestLevel();
   player_character_->SetCharacter(characterType, {10.0f, 500.0f});
 }
 
