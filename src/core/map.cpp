@@ -41,8 +41,8 @@ int Map::GetCell(MapLayer layer, int pos) const {
 
 const Texture &Map::FindTexture(std::string texture_key) const {
   std::unordered_map<std::string, const Texture *> mp;
-  mp["tileset_ground"]      = &App.Resource().GetTileset('g');
-  mp["tileset_underground"] = &App.Resource().GetTileset('u');
+  //mp["tileset_ground"]      = &App.Resource().GetTileset('g');
+  //mp["tileset_underground"] = &App.Resource().GetTileset('u');
   mp["tileset_minimal"]     = &App.Resource().GetTileset('m');
   mp["bowser"]              = &App.Resource().GetEnemy('b');
   mp["minions"]             = &App.Resource().GetEnemy('m');

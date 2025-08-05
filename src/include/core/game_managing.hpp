@@ -96,7 +96,7 @@ public:
 
   // Object creation from map data
   void CreateEnemyFromType(int enemyType, Vector2 position);
-  void CreateBlockFromType(int tileType, Vector2 position);
+  void CreateBlockFromType(int tileType, Vector2 position, Rectangle tileRect);
   void CreateSpecialObjectFromType(int specialType, Vector2 position);
   void ResumeEnemies();
   
