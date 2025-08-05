@@ -70,21 +70,11 @@ void MenuScene::Update() {
 
 void MenuScene::Draw() {
   // Draw background
-  timer_     += GetFrameTime();
-  float t     = std::min(timer_ / duration_, 1.0f);
-  float end_x = (constants::screenWidth - background_.width) / 2;
-
-  float start_x = end_x;
-  if (App.PreviousScene() == SceneType::Setting)
-    start_x = constants::screenWidth - background_.width;
-  else if (App.PreviousScene() == SceneType::Credit)
-    start_x = 0;
-
-  float ease  = 1 - powf(1 - t, 3);
-  float end_y = (constants::screenHeight - background_.height) / 2;
-
   DrawTextureV(
-    background_, {start_x + (end_x - start_x) * ease, end_y}, RAYWHITE);
+    background_,
+    {(constants::screenWidth - background_.width) / 2,
+     (constants::screenHeight - background_.height) / 2},
+    RAYWHITE);
 
   // Draw title
   float font_sz     = 150;
@@ -98,9 +88,7 @@ void MenuScene::Draw() {
   DrawButtons();
 }
 
-void MenuScene::Resume() {
-  timer_ = 0;
-}
+void MenuScene::Resume() {}
 
 SceneType MenuScene::Type() {
   return type_;
@@ -160,7 +148,7 @@ void MenuScene::CreateButtons() {
     },
     Rectangle{0, 0, 16, 16},
     Rectangle{64, constants::screenHeight - 64 * 2, 64, 64},
-    "res/sprites/buttons/credit.png");
+    "res/sprites/buttons/option.png");
 }
 
 void MenuScene::UpdateButtons() {

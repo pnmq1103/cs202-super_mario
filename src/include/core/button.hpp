@@ -12,6 +12,7 @@ public:
   Rectangle dst_     = {};
   Texture icon_      = {};
   Color tint_        = {Fade(LIGHTGRAY, 0.9f)};
+  bool is_hovered_   = {false};
 
 public:
   ~Button();

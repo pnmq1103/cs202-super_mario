@@ -11,17 +11,19 @@ private:
   SceneType type_ = {TileSelector};
   int &gidx_ref_;
 
-  /*int cur_sheet_              = {0};
-  const Texture *cur_texture_ = {nullptr};*/
-  const Texture* sprite_sheet_;
-  std::unordered_map<int, Rectangle> sprite_info_;
   int first_gidx_ = 1;
+  std::unordered_map<int, Rectangle> sprite_info_;
+  const Texture *sprite_sheet_ = {nullptr};
 
   Rectangle boundary_ = {};
   std::vector<Button> buttons_;
 
+private:
+  void UpdateCamera();
+  void ChooseTile();
+
 public:
-  TileSelectorScene(int &g_select_idx);
+  TileSelectorScene(int &select_gidx);
   ~TileSelectorScene();
 
   void Init() override;
@@ -29,15 +31,4 @@ public:
   void Draw() override;
   void Resume() override;
   SceneType Type() override;
-
-private:
-  void UpdateCamera();
-  void UpdateTextureParameters();
-
-  const Texture &FindTexture(std::string texture_key) const;
-  void ChooseTile();
-
-  void CreateButtons();
-  void UpdateButtons();
-  void DrawButtons();
 };

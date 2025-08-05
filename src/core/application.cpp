@@ -44,6 +44,12 @@ void Application::Draw() {
   DrawFPS(15, 15);
   if (cursor_hidden_ == false)
     DrawTextureRec(cursor_texture_, {0, 0, 64, 64}, GetMousePosition(), WHITE);
+
+  if (phase_ == TransitionState::InProgress) {
+    transition_.Draw(GetFrameTime());
+    if (transition_.Done())
+      phase_ = TransitionState::Done;
+  }
 }
 
 bool Application::ShouldClose() {
@@ -89,6 +95,11 @@ void Application::AddScene(std::unique_ptr<Scene> new_scene, bool hide_prev) {
     App.scene_manager_.Top().SetVisible(false);
   App.scene_manager_.Push(std::move(new_scene));
   App.scene_manager_.Init();
+
+  if (App.scene_manager_.Top().Type() != SceneType::Pause) {
+    App.transition_.Reset();
+    App.phase_ = TransitionState::InProgress;
+  }
 }
 
 void Application::RemoveScene(size_t count) {
