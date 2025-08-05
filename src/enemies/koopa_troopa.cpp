@@ -13,8 +13,8 @@ KoopaTroopa::KoopaTroopa(Vector2 pos, float Nscale)
   detection_range = 100.0f;
 
   // Set initial velocity for walking
-  velocity.x  = 10.0f; // Start walking right
-  facing_left = false;
+  velocity.x  = -10.0f; // Start walking left
+  facing_left = true;
 
   std::cout << "Koopa spawned with initial velocity: " << velocity.x
             << std::endl;

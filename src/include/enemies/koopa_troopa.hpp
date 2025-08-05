@@ -15,7 +15,7 @@ private:
 public:
   KoopaTroopa(Vector2 pos, float Nscale);
   ~KoopaTroopa();
-  
+
   void OnHit() override;
   void Update() override;
   void OnHitFromAbove() override;

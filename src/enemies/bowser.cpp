@@ -1,20 +1,21 @@
 #include "include/enemies/bowser.hpp"
+#include "include/characters/projectile_pool.hpp" // Add this include for ProjectilePool
 #include "include/enemies/movement_strategy.hpp"
 #include "include/managers/enemy_manager.hpp"
 
 Bowser::Bowser(Vector2 pos, float Nscale)
-    : Enemy(pos, Nscale, EnemyType::Bowser), hp(5), fire_timer(0.0f),
-      attack_cooldown(3.0f), rage_mode(false) {
-  // Set up boss movement pattern
-  SetMovementStrategy(new BossMovement(10.0f)); // Use boss-specific movement
+    : Enemy(pos, Nscale, EnemyType::Bowser), hp(3), fire_timer(0.0f),
+      attack_cooldown(2.0f), rage_mode(false) {
+  // Set up basic walking movement like Goomba/Koopa
+  SetMovementStrategy(new WalkingMovement(30.0f, false)); // Start moving right
 
-  // Boss-specific properties
-  health          = 5.0f;
-  max_health      = 5.0f;
-  detection_range = 250.0f; // Larger detection range for boss
+  // Bowser properties - more health than regular enemies
+  health          = 3.0f; // 3 hits to defeat
+  max_health      = 3.0f;
+  detection_range = 150.0f; // Detection range for fireball shooting
 
   // Set initial velocity for walking
-  velocity.x  = 15.0f; // Start walking right (slower than others)
+  velocity.x  = 30.0f; // Start walking right, like Goomba
   facing_left = false;
 
   std::cout << "Bowser spawned with initial velocity: " << velocity.x
@@ -24,25 +25,25 @@ Bowser::Bowser(Vector2 pos, float Nscale)
 Bowser::~Bowser() {}
 
 void Bowser::OnHit() {
-  // Boss is harder to defeat - takes multiple hits
-  DealDamage(1.0f);
+  // Simple hit handling like Goomba, but with more health
   hp--;
+  DealDamage(1.0f);
 
   if (hp <= 0) {
     alive    = false;
     state    = EnemyState::Dead;
-    velocity = {0.0f, 0.0f}; // Stop movement when dead
+    velocity = {0.0f, 0.0f};
+    std::cout << "Bowser defeated!" << std::endl;
   } else {
-    // Enter rage mode when low on health
-    if (hp <= 2 && !rage_mode) {
+    // Brief invulnerability after being hit
+    invulnerability_timer = 1.0f;
+
+    // Enter rage mode when low on health (faster shooting)
+    if (hp <= 1 && !rage_mode) {
       EnterRageMode();
     }
 
-    // Brief stun when hit
-    Stun(0.5f); // Shorter stun for boss
-
-    // Visual feedback
-    invulnerability_timer = 1.0f; // Longer invulnerability
+    std::cout << "Bowser hit! HP remaining: " << hp << std::endl;
   }
 }
 
@@ -53,123 +54,64 @@ void Bowser::Update() {
   // Update fire timer
   fire_timer += GetFrameTime();
 
-  // Advanced Boss AI
+  // Simple fireball shooting when player is close
   if (player_position && IsPlayerInRange(detection_range)) {
     // Face the player
     bool should_face_left = (player_position->x < position.x);
     SetFacing(should_face_left);
 
-    // Update velocity direction to match facing
-    if (state != EnemyState::Stunned) {
-      if (should_face_left && velocity.x > 0) {
-        velocity.x
-          = -abs(velocity.x); // Make velocity negative when facing left
-      } else if (!should_face_left && velocity.x < 0) {
-        velocity.x
-          = abs(velocity.x); // Make velocity positive when facing right
-      }
-    }
-
-    // Different attack patterns based on health
-    float attack_frequency
-      = rage_mode ? 1.5f : attack_cooldown; // Faster attacks in rage mode
-
-    // Attack periodically - shoot fireballs at player
-    if (fire_timer >= attack_frequency && state != EnemyState::Stunned) {
+    // Shoot fireball periodically when player is close
+    if (fire_timer >= attack_cooldown && state != EnemyState::Stunned) {
       ShootFireball();
       fire_timer = 0.0f;
     }
-
-    // In rage mode, move more aggressively toward player
-    if (rage_mode && state != EnemyState::Stunned) {
-      float distance_to_player = GetDistanceToPlayer();
-      if (distance_to_player > 100.0f) {
-        // Move toward player more aggressively
-        float move_speed = should_face_left ? -40.0f : 40.0f;
-        velocity.x       = move_speed;
-      } else {
-        // Close enough, focus on attacking
-        velocity.x *= 0.5f; // Slow down for better aim
-      }
-    }
-  } else {
-    // Normal patrol behavior when player not in range
-    if (state != EnemyState::Attacking && state != EnemyState::Stunned) {
-      // Resume normal movement
-      if (GetMovementStrategy()) {
-        // Movement strategy will handle patrolling
-      }
-    }
   }
 
-  // Reset attack state after short duration
-  if (state == EnemyState::Attacking) {
-    static float attack_state_timer = 0.0f;
-    attack_state_timer             += GetFrameTime();
-    if (attack_state_timer >= 0.5f) {
-      state              = EnemyState::Normal;
-      attack_state_timer = 0.0f;
-    }
+  // Simple update like Goomba - just walk and let movement strategy handle
+  // direction
+  if (state == EnemyState::Normal && GetMovementStrategy()) {
+    // Basic walking behavior is handled by movement strategy
   }
 
-  // Call base enemy update for physics and animation
+  // Call base enemy update (handles physics, animation, movement)
   Enemy::Update();
 }
 
 void Bowser::ShootFireball() {
-  // Get ProjectilePool from EnemyManager (you'll need to implement this)
-  // For now, we'll add a visual effect and prepare for projectile integration
+  try {
+    // Get ProjectilePool from EnemyManager with null checking
+    ProjectilePool *pool = EnemyManager::GetProjectilePool();
+    if (pool != nullptr) {
+      // Calculate fireball spawn position
+      Vector2 spawn_position = {
+        position.x + (facing_left ? -10.0f : frame.width * scale + 10.0f),
+        position.y + frame.height * scale / 2.0f // Center height
+      };
 
-  // Calculate fireball spawn position (mouth of Bowser)
-  Vector2 spawn_position = {
-    position.x + (facing_left ? -20.0f : frame.width * scale + 20.0f),
-    position.y + frame.height * scale / 3.0f // Roughly mouth height
-  };
+      // Shoot enemy fireball
+      pool->ShootEnemyFireball(spawn_position, facing_left);
 
-  // TODO: Integrate with ProjectilePool to actually shoot fireball
-  // pool->ShootEnemyFireball(spawn_position, facing_left);
-
-  // Visual feedback - enter attacking state briefly
-  state = EnemyState::Attacking;
-
-  // Sound effect (if available)
-  // PlaySound("bowser_fire");
-
-  std::cout << "Bowser shoots fireball at position: " << spawn_position.x
-            << ", " << spawn_position.y << std::endl;
+      std::cout << "Bowser shoots fireball!" << std::endl;
+    } else {
+      std::cout << "Warning: ProjectilePool is null, cannot shoot fireball!"
+                << std::endl;
+    }
+  } catch (const std::exception &e) {
+    std::cerr << "Error in Bowser::ShootFireball(): " << e.what() << std::endl;
+  }
 }
 
 void Bowser::EnterRageMode() {
+  // Simplified rage mode - just faster fireball shooting
   rage_mode       = true;
-  attack_cooldown = 1.5f; // Faster attacks
-
-  // Increase movement speed in rage mode
-  if (
-    auto *boss_movement = dynamic_cast<BossMovement *>(GetMovementStrategy())) {
-    // boss_movement->EnterRageMode(); // Implement this in BossMovement
-  }
-
-  std::cout << "Bowser enters RAGE MODE!" << std::endl;
+  attack_cooldown = 1.0f;
+  std::cout << "Bowser enters rage mode!" << std::endl;
 }
 
 void Bowser::OnHitFromAbove() {
   try {
-    // Bowser takes damage from above but is more resistant
-    DealDamage(1.0f);
-    hp--;
-
-    if (hp <= 0) {
-      alive = false;
-      state = EnemyState::Dead;
-    } else {
-      // Bowser doesn't get stunned easily from above hits
-      invulnerability_timer = 0.8f;
-
-      // Enter rage mode if health is low
-      if (hp <= 2 && !rage_mode) {
-        EnterRageMode();
-      }
-    }
+    // Mario jumped on Bowser - similar to Goomba but with more health
+    OnHit();
   } catch (const std::exception &e) {
     std::cerr << "Error in Bowser::OnHitFromAbove(): " << e.what() << std::endl;
     // Fallback: mark as dead
@@ -181,27 +123,12 @@ void Bowser::OnHitFromAbove() {
 
 void Bowser::OnHitFromSide() {
   try {
-    // Bowser is very resistant to side attacks
-    if (state == EnemyState::Stunned || IsInvulnerable()) {
-      return; // No damage if already stunned or invulnerable
+    // Side collision or projectile hit - similar to Goomba but with more health
+    if (IsInvulnerable()) {
+      return; // No damage if invulnerable
     }
 
-    DealDamage(0.5f); // Reduced damage from side
-    hp--;
-
-    if (hp <= 0) {
-      alive = false;
-      state = EnemyState::Dead;
-    } else {
-      // Brief knockback
-      velocity.x            = facing_left ? 50.0f : -50.0f;
-      invulnerability_timer = 1.0f;
-
-      // Enter rage mode if health is low
-      if (hp <= 2 && !rage_mode) {
-        EnterRageMode();
-      }
-    }
+    OnHit();
   } catch (const std::exception &e) {
     std::cerr << "Error in Bowser::OnHitFromSide(): " << e.what() << std::endl;
     // Fallback: mark as dead
@@ -219,7 +146,7 @@ Enemy *Bowser::Clone() const {
   Bowser *clone = new Bowser(*this);
   // Clone the movement strategy
   if (movement_strategy_) {
-    clone->SetMovementStrategy(new BossMovement(10.0f));
+    clone->SetMovementStrategy(new WalkingMovement(30.0f, facing_left));
   }
   return clone;
 }

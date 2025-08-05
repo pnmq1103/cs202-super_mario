@@ -9,7 +9,7 @@ private:
 public:
   PiranhaPlant(Vector2 pos, float Nscale);
   ~PiranhaPlant();
-  
+
   void OnHit() override;
   void Update() override;
   void OnHitFromAbove() override;

@@ -5,7 +5,7 @@ class Goomba : public Enemy {
 public:
   Goomba(Vector2 pos, float Nscale);
   ~Goomba();
-  
+
   void OnHit() override;
   void Update() override;
   void OnHitFromAbove() override;

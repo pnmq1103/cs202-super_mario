@@ -30,11 +30,15 @@ EnemyManager::~EnemyManager() {
   ClearAllEnemies();
 }
 
+// NOTE: SetProjectilePool and GetProjectilePool are implemented inline in the
+// header
+
 void EnemyManager::AddEnemy(Enemy *enemy) {
   if (enemy) {
     enemies.push_back(enemy);
 
-    // Set character reference for player detection
+    // Set character reference for simple player detection (for Bowser fireball
+    // shooting)
     if (activeCharacterPosition_) {
       enemy->SetPlayerReference(activeCharacterPosition_);
     }
@@ -44,7 +48,7 @@ void EnemyManager::AddEnemy(Enemy *enemy) {
       currentBoss_ = enemy;
     }
 
-    // IMPORTANT: Add enemy to collision system if available
+    // Add enemy to collision system if available
     if (collisionHandler_) {
       collisionHandler_->AddEnemy(enemy);
     }
@@ -83,7 +87,6 @@ Enemy *EnemyManager::CreateEnemyByType(
   return enemy;
 }
 
-// Add method to set collision handler like ObjectManager::Reset()
 void EnemyManager::SetCollisionHandler(CollisionHandler *collisionHandler) {
   collisionHandler_ = collisionHandler;
 
@@ -125,25 +128,11 @@ void EnemyManager::UpdateAll(float deltaTime) {
   if (isPaused_)
     return;
 
-  // Apply global speed multiplier - not used directly but could affect enemy
-  // behavior
-  (void)deltaTime; // This parameter isn't needed for the new GameObject-style
-                   // enemies
-
-  // Update each enemy - new GameObject style doesn't take deltaTime parameter
+  // Simple update - just call Update() on each enemy
   for (Enemy *enemy : enemies) {
     if (enemy && enemy->IsAlive()) {
-      enemy->Update(); // Remove deltaTime parameter
+      enemy->Update(); // Each enemy handles its own simple behavior
     }
-  }
-
-  // Update AI behaviors (non-collision related)
-  UpdateEnemyAI(GetFrameTime());
-  UpdateEnemyBehaviors(GetFrameTime());
-
-  // Update boss AI (non-collision related)
-  if (HasBoss()) {
-    UpdateBossAI(GetFrameTime());
   }
 
   // Clean up dead enemies
@@ -156,7 +145,8 @@ void EnemyManager::SetCharacterReferences(
   luigiPosition_           = luigi;
   activeCharacterPosition_ = active;
 
-  // Update all existing enemies with the new character reference for AI
+  // Update all existing enemies with the new character reference
+  // (Only needed for Bowser fireball shooting)
   for (Enemy *enemy : enemies) {
     if (enemy) {
       enemy->SetPlayerReference(activeCharacterPosition_);
@@ -169,209 +159,9 @@ void EnemyManager::SetFrameCount() {
   Enemy::SetFrameCount(); // Call static method like ObjectManager does
 }
 
-void EnemyManager::UpdateEnemyBehaviors(float deltaTime) {
-  (void)deltaTime; // Suppress unused parameter warning
-  for (Enemy *enemy : enemies) {
-    if (enemy && enemy->IsAlive()) {
-      UpdateEnemyTargeting(enemy);
-    }
-  }
-}
-
-void EnemyManager::UpdateEnemyTargeting(Enemy *enemy) {
-  if (!enemy || !activeCharacterPosition_)
-    return;
-
-  float distanceToPlayer = enemy->GetDistanceToPlayer();
-
-  // Update enemy behavior based on distance to player
-  if (distanceToPlayer <= 100.0f) {
-    // Player is close - enemy becomes more aggressive
-    if (enemy->CanAttack() && enemy->GetState() == EnemyState::Normal) {
-      enemy->EnterAttackMode();
-    }
-  }
-}
-
-void EnemyManager::UpdateEnemyAI(float deltaTime) {
-  // Advanced AI updates can be implemented here
-  // For now, we update basic behaviors
-
-  for (Enemy *enemy : enemies) {
-    if (enemy && enemy->IsAlive()) {
-      // Update enemy state machine
-      switch (enemy->GetState()) {
-        case EnemyState::Attacking:
-          if (enemy->CanAttack()) {
-            enemy->PerformAttack();
-          }
-          break;
-        case EnemyState::Stunned:
-          // Stunned enemies don't move
-          break;
-        default:
-          // Normal behavior handled by movement strategy
-          break;
-      }
-    }
-  }
-}
-
-void EnemyManager::UpdateBossAI(float deltaTime) {
-  if (!currentBoss_ || !currentBoss_->IsAlive())
-    return;
-
-  Bowser *bowser = dynamic_cast<Bowser *>(currentBoss_);
-  if (bowser) {
-    // Check if boss should enter rage mode
-    float healthPercentage = bowser->GetHP() / bowser->GetMaxHealth();
-    if (healthPercentage <= 0.3f) {
-      // Boss enters rage mode - could set a different movement strategy
-      bowser->EnterRageMode();
-    }
-  }
-}
-
-// Advanced enemy management methods (non-collision related)
-void EnemyManager::SetDifficulty(float difficultyMultiplier) {
-  difficultyMultiplier_ = difficultyMultiplier;
-
-  // Adjust enemy speeds and behaviors
-  for (Enemy *enemy : enemies) {
-    if (enemy && enemy->IsAlive()) {
-      ModifyEnemySpeed(enemy, difficultyMultiplier);
-    }
-  }
-}
-
-void EnemyManager::SetGlobalSpeedMultiplier(float multiplier) {
-  globalSpeedMultiplier_ = multiplier;
-}
-
-void EnemyManager::PauseAllEnemies() {
-  isPaused_ = true;
-
-  for (Enemy *enemy : enemies) {
-    if (enemy && enemy->IsAlive()) {
-      MovementStrategy *currentStrategy = enemy->GetMovementStrategy();
-      if (currentStrategy) {
-        pausedStrategies_[enemy] = currentStrategy;
-        // enemy->SetMovementStrategy(new StationaryMovement(0.0f)); //
-        // Commented out - need to implement StationaryMovement
-      }
-    }
-  }
-}
-
-void EnemyManager::ResumeAllEnemies() {
-  isPaused_ = false;
-
-  for (auto &pair : pausedStrategies_) {
-    Enemy *enemy                       = pair.first;
-    MovementStrategy *originalStrategy = pair.second;
-
-    if (enemy && enemy->IsAlive() && originalStrategy) {
-      // enemy->SetMovementStrategy(originalStrategy->Clone()); // Commented out
-      // - need Clone method
-    }
-  }
-  pausedStrategies_.clear();
-}
-
 void EnemyManager::SpawnBoss(EnemyType bossType, Vector2 position) {
   if (bossType == EnemyType::Bowser) {
     SpawnEnemy(bossType, position, 0);
-  }
-}
-
-void EnemyManager::SetBossRageMode() {
-  if (HasBoss()) {
-    Bowser *bowser = dynamic_cast<Bowser *>(currentBoss_);
-    if (bowser) {
-      bowser->EnterRageMode();
-    }
-  }
-}
-
-void
-EnemyManager::DamageEnemiesInRadius(Vector2 center, float radius, int damage) {
-  std::vector<Enemy *> nearbyEnemies = GetEnemiesInRadius(center, radius);
-
-  for (Enemy *enemy : nearbyEnemies) {
-    enemy->OnProjectileHit(center, damage);
-  }
-}
-
-void EnemyManager::KnockbackEnemiesInRadius(
-  Vector2 center, float radius, float force) {
-  std::vector<Enemy *> nearbyEnemies = GetEnemiesInRadius(center, radius);
-
-  for (Enemy *enemy : nearbyEnemies) {
-    Vector2 enemyPos  = enemy->GetPosition();
-    Vector2 direction = {enemyPos.x - center.x, enemyPos.y - center.y};
-    float distance
-      = sqrt(direction.x * direction.x + direction.y * direction.y);
-
-    if (distance > 0) {
-      direction.x /= distance;
-      direction.y /= distance;
-
-      Vector2 knockback  = {direction.x * force, direction.y * force * 0.5f};
-      Vector2 currentVel = enemy->GetVelocity();
-      enemy->SetVelocity(
-        {currentVel.x + knockback.x, currentVel.y + knockback.y});
-    }
-  }
-}
-
-void EnemyManager::SpawnFormation(
-  EnemyType type, Vector2 startPos, int count, float spacing) {
-  for (int i = 0; i < count; i++) {
-    Vector2 spawnPos = {startPos.x + i * spacing, startPos.y};
-    SpawnEnemy(type, spawnPos, 0);
-  }
-}
-
-void EnemyManager::SpawnWave(
-  const std::vector<std::pair<EnemyType, Vector2>> &wave) {
-  for (const auto &enemy : wave) {
-    SpawnEnemy(enemy.first, enemy.second, 0);
-  }
-}
-
-void EnemyManager::SpawnPatrolGroup(
-  EnemyType type, Vector2 pointA, Vector2 pointB, int count) {
-  for (int i = 0; i < count; i++) {
-    Vector2 spawnPos
-      = {pointA.x + (pointB.x - pointA.x) * i / (count - 1), pointA.y};
-    Enemy *enemy = CreateEnemyByType(type, spawnPos, 0);
-    if (enemy) {
-      // enemy->SetMovementStrategy(new PatrolMovement(pointA, pointB)); //
-      // Commented out - need PatrolMovement
-      AddEnemy(enemy);
-    }
-  }
-}
-
-void EnemyManager::MakeEnemyFollow(Enemy *enemy, Vector2 *target, float speed) {
-  if (enemy) {
-    // enemy->SetMovementStrategy(new FollowingMovement(target, speed)); //
-    // Commented out - need FollowingMovement
-  }
-}
-
-void EnemyManager::MakeEnemyPatrol(
-  Enemy *enemy, Vector2 pointA, Vector2 pointB, float speed) {
-  if (enemy) {
-    // enemy->SetMovementStrategy(new PatrolMovement(pointA, pointB, speed)); //
-    // Commented out - need PatrolMovement
-  }
-}
-
-void EnemyManager::MakeEnemyJump(Enemy *enemy, float interval, float force) {
-  if (enemy) {
-    // enemy->SetMovementStrategy(new JumpingMovement(interval, force)); //
-    // Commented out - need JumpingMovement
   }
 }
 
@@ -384,25 +174,6 @@ size_t EnemyManager::GetAliveEnemyCount() const {
   return std::count_if(enemies.begin(), enemies.end(), [](const Enemy *enemy) {
     return enemy && enemy->IsAlive();
   });
-}
-
-std::vector<Enemy *>
-EnemyManager::GetEnemiesInRadius(Vector2 center, float radius) const {
-  std::vector<Enemy *> nearbyEnemies;
-
-  for (Enemy *enemy : enemies) {
-    if (enemy && enemy->IsAlive()) {
-      Vector2 enemyPos = enemy->GetPosition();
-      float distance
-        = sqrt(pow(enemyPos.x - center.x, 2) + pow(enemyPos.y - center.y, 2));
-
-      if (distance <= radius) {
-        nearbyEnemies.push_back(enemy);
-      }
-    }
-  }
-
-  return nearbyEnemies;
 }
 
 std::vector<Enemy *> EnemyManager::GetEnemiesByType(EnemyType type) const {
@@ -421,144 +192,8 @@ bool EnemyManager::AreAllEnemiesDead() const {
   return GetAliveEnemyCount() == 0;
 }
 
-void EnemyManager::ModifyEnemySpeed(Enemy *enemy, float speedMultiplier) {
-  if (!enemy)
-    return;
-
-  // This would need to be implemented based on movement strategy
-  // For now, we can modify velocity directly
-  Vector2 currentVel = enemy->GetVelocity();
-  enemy->SetVelocity({currentVel.x * speedMultiplier, currentVel.y});
-}
-
-// Remaining utility methods with placeholders
-void EnemyManager::StunAllEnemiesInRadius(
-  Vector2 center, float radius, float duration) {
-  std::vector<Enemy *> nearbyEnemies = GetEnemiesInRadius(center, radius);
-  for (Enemy *enemy : nearbyEnemies) {
-    enemy->Stun(duration);
-  }
-}
-
-void EnemyManager::HandleProjectileCollisions(
-  Vector2 projectilePos, float projectileRadius, int damage) {
-  DamageEnemiesInRadius(projectilePos, projectileRadius, damage);
-}
-
-void EnemyManager::EnableAggressiveMode(bool aggressive) {
-  for (Enemy *enemy : enemies) {
-    if (enemy && enemy->IsAlive()) {
-      ModifyEnemyAggression(enemy, aggressive);
-    }
-  }
-}
-
-void EnemyManager::SetEnemyTarget(Enemy *enemy, Vector2 *target) {
-  if (enemy) {
-    enemy->SetPlayerReference(target);
-  }
-}
-
-std::vector<Enemy *> EnemyManager::GetEnemiesInState(EnemyState state) const {
-  std::vector<Enemy *> stateEnemies;
-  for (Enemy *enemy : enemies) {
-    if (enemy && enemy->IsAlive() && enemy->GetState() == state) {
-      stateEnemies.push_back(enemy);
-    }
-  }
-  return stateEnemies;
-}
-
 bool EnemyManager::HasEnemyType(EnemyType type) const {
   return !GetEnemiesByType(type).empty();
-}
-
-Enemy *EnemyManager::GetNearestEnemyToPosition(Vector2 position) const {
-  Enemy *nearest    = nullptr;
-  float minDistance = std::numeric_limits<float>::max();
-
-  for (Enemy *enemy : enemies) {
-    if (enemy && enemy->IsAlive()) {
-      Vector2 enemyPos = enemy->GetPosition();
-      float distance   = sqrt(
-        pow(enemyPos.x - position.x, 2) + pow(enemyPos.y - position.y, 2));
-      if (distance < minDistance) {
-        minDistance = distance;
-        nearest     = enemy;
-      }
-    }
-  }
-
-  return nearest;
-}
-
-Enemy *EnemyManager::GetFarthestEnemyFromPosition(Vector2 position) const {
-  Enemy *farthest   = nullptr;
-  float maxDistance = 0.0f;
-
-  for (Enemy *enemy : enemies) {
-    if (enemy && enemy->IsAlive()) {
-      Vector2 enemyPos = enemy->GetPosition();
-      float distance   = sqrt(
-        pow(enemyPos.x - position.x, 2) + pow(enemyPos.y - position.y, 2));
-      if (distance > maxDistance) {
-        maxDistance = distance;
-        farthest    = enemy;
-      }
-    }
-  }
-
-  return farthest;
-}
-
-void
-EnemyManager::ApplyStunEffect(Vector2 center, float radius, float duration) {
-  StunAllEnemiesInRadius(center, radius, duration);
-}
-
-void
-EnemyManager::ApplyKnockbackEffect(Vector2 center, float radius, float force) {
-  KnockbackEnemiesInRadius(center, radius, force);
-}
-
-void EnemyManager::ApplySlowEffect(float duration, float speedMultiplier) {
-  (void)duration;
-  (void)speedMultiplier; // Placeholder implementation
-}
-
-void EnemyManager::ApplyFreezeEffect(float duration) {
-  (void)duration; // Placeholder implementation
-}
-
-void EnemyManager::ModifyEnemyAggression(Enemy *enemy, bool aggressive) {
-  (void)enemy;
-  (void)aggressive; // Placeholder implementation
-}
-
-void EnemyManager::ModifyEnemyDetectionRange(Enemy *enemy, float newRange) {
-  (void)enemy;
-  (void)newRange; // Placeholder implementation
-}
-
-void EnemyManager::DebugDrawEnemyInfo() const {
-  // Debug visualization placeholder
-}
-
-void EnemyManager::PrintEnemyStates() const {
-  std::cout << "Enemy States:" << std::endl;
-  for (size_t i = 0; i < enemies.size(); ++i) {
-    Enemy *enemy = enemies[i];
-    if (enemy) {
-      std::cout << "Enemy " << i
-                << ": Type=" << static_cast<int>(enemy->GetType())
-                << ", State=" << static_cast<int>(enemy->GetState())
-                << ", Alive=" << enemy->IsAlive() << std::endl;
-    }
-  }
-}
-
-void EnemyManager::UpdateEnemyFormations(float deltaTime) {
-  (void)deltaTime; // Placeholder implementation
 }
 
 void EnemyManager::RemoveEnemy(int index) {

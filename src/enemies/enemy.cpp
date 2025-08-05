@@ -1,5 +1,6 @@
 #include "include/enemies/enemy.hpp"
 #include "include/core/application.hpp"
+#include "include/enemies/bowser.hpp"
 #include "include/enemies/movement_strategy.hpp"
 #include "include/managers/enemy_manager.hpp"
 #include <cmath>
@@ -69,7 +70,7 @@ Enemy::Enemy(Vector2 Nposition, float Nscale, EnemyType enemy_type)
   player_position       = nullptr;
 
   // Initialize frame with safe default before loading sprites
-  frame = {0, 0, 32, 32}; // Safe default 32x32 frame
+  frame = {0, 0, 32, 32};
 
   // Set appropriate texture based on enemy type
   switch (type) {
@@ -108,29 +109,6 @@ Enemy::~Enemy() {
 }
 
 Rectangle Enemy::GetRectangle() const {
-
-  /*if (frame_list.empty()) {
-    // Return default rectangle if frame list is not loaded
-    return {position.x, position.y, 32.0f * scale, 32.0f * scale};
-  }
-
-  // Check if current frame has valid dimensions
-  if (
-    frame.width <= 0 || frame.height <= 0 || frame.width > 1000
-    || frame.height > 1000) { // Sanity check for corruption
-    // Frame is corrupted or invalid, use first frame from list as fallback
-    if (
-      !frame_list.empty() && frame_list[0].width > 0 && frame_list[0].height > 0
-      && frame_list[0].width <= 1000 && frame_list[0].height <= 1000) {
-      return {
-        position.x, position.y, frame_list[0].width * scale,
-        frame_list[0].height * scale};
-    } else {
-      // Even first frame is bad, use safe default
-      return {position.x, position.y, 32.0f * scale, 32.0f * scale};
-    }
-  }*/
-
   // Frame seems valid, use it
   return {position.x, position.y, frame.width * scale, frame.height * scale};
 }
@@ -146,9 +124,7 @@ bool Enemy::IsAlive() const {
 void Enemy::Update() {
   if (!alive)
     return;
-
   try {
-
     // Update timers
     if (stun_timer > 0.0f) {
       stun_timer -= GetFrameTime();
@@ -165,11 +141,6 @@ void Enemy::Update() {
     if (alive && state != EnemyState::Stunned && movement_strategy_) {
       movement_strategy_->Update(this, GetFrameTime());
     }
-
-    // Apply physics similar to GameObject
-    /*velocity.y += gravity;
-    position.x += velocity.x * GetFrameTime();
-    position.y += velocity.y * GetFrameTime();*/
 
     // ===== ENHANCED WALL COLLISION DETECTION =====
     // Check for wall collision before collision_handler removes enemies
@@ -200,7 +171,10 @@ void Enemy::UpdateAnimationFrame() {
   switch (type) {
     case EnemyType::Goomba:
       // Goomba: ID 0-4 (5 frames for walking animation)
-      frame_index = (time / 8) % 5; // Use all 5 frames for smoother animation
+      if (state == EnemyState::Dead)
+        frame_index = 4; // Use last frame for dead state
+      else
+        frame_index = (time / 8) % 4; // Use all 4 frames for walking animation
       break;
 
     case EnemyType::Koopa:
@@ -208,17 +182,10 @@ void Enemy::UpdateAnimationFrame() {
         // Shell state: use ID 11-16
         frame_index = 11 + ((time / 5) % 6); // Shell animation
       } else {
-        // Normal Koopa walking - use facing_left instead of velocity
-        if (!facing_left) {
-          // Moving right: use ID 9-10
-          frame_index = 9 + ((time / 10) % 2);
-        } else {
-          // Moving left or stationary: use ID 17-21
-          frame_index = 17 + ((time / 10) % 5);
-        }
+        // Normal Koopa walking - use only ID 9-10 for both directions
+        frame_index = 9 + ((time / 10) % 2);
       }
       break;
-
     case EnemyType::Piranha:
       // Piranha Plant: ID 5-8 (4 frames)
       frame_index = 5 + ((time / 15) % 4); // Slower animation for piranha
@@ -285,9 +252,21 @@ void Enemy::UpdateAnimationFrame() {
 }
 
 void Enemy::Draw() {
-  if (!alive || !texture)
+  if (!texture)
     return;
 
+  if (!alive && state == EnemyState::Dead) {
+    // draw frame for dead enemy
+    Rectangle dest_rect = MakeDestRect(frame);
+    if (dest_rect.width <= 0 || dest_rect.height <= 0) {
+      // Skip drawing if destination rectangle is invalid
+      return;
+    }
+    // Draw dead enemy with a faded tint
+    DrawTexturePro(
+      *texture, frame, dest_rect, {0, 0}, 0.0f, ColorAlpha(WHITE, 0.5f));
+    return;
+  }
   // Apply visual effects based on state
   Color tint = WHITE;
   if (state == EnemyState::Stunned) {
@@ -468,15 +447,6 @@ bool Enemy::IsHitFromAbove(const Rectangle &characterRect) const {
 
   return (charBottom <= enemyTop + enemyRect.height * 0.3f)
          && (overlapY < overlapX);
-}
-
-// Improved Bowser AI integration
-void Enemy::UpdateBowserAI() {
-  if (type != EnemyType::Bowser || !alive)
-    return;
-
-  // This is just a placeholder for future boss AI expansions
-  // Bowser-specific AI updates are handled in Bowser::Update()
 }
 
 // Enhanced wall collision detection

@@ -6,12 +6,12 @@ private:
   int hp;
   float fire_timer;
   float attack_cooldown;
-  bool rage_mode; // New member for rage mode
+  bool rage_mode;
 
 public:
   Bowser(Vector2 pos, float Nscale);
   ~Bowser();
-  
+
   void OnHit() override;
   void Update() override;
   void OnHitFromAbove() override;
@@ -19,11 +19,9 @@ public:
   EnemyType GetType() override;
   Enemy *Clone() const override;
 
-  // Boss-specific methods
-  int GetHP() const; // Fixed method name
-  bool IsInRageMode() const; // New method
-  void EnterRageMode(); // Special mode when low health
-  void PerformSpecialAttack(); // Boss special attack
-  void ShootFireball(); // Shoot fireball at player
-  Vector2 GetCenterPosition() const; // Get center for projectile targeting
+  // Boss-specific methods (simplified)
+  int GetHP() const;
+  bool IsInRageMode() const;
+  void EnterRageMode(); // Simplified rage mode (not used)
+  void ShootFireball(); // Simplified (no actual shooting)
 };
