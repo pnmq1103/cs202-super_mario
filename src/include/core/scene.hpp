@@ -11,8 +11,8 @@ enum SceneType {
   Credit,
   TileSelector,
   EnemySelector,
+  CharacterSelector,
   Pause,
-  CharacterSelection,
 };
 
 class Scene {

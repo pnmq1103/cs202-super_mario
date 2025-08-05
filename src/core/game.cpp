@@ -3,7 +3,7 @@
 
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
-#include "include/core/character_selection.hpp"
+#include "include/core/character_selector.hpp"
 #include "include/core/command.hpp"
 #include "include/core/game.hpp"
 #include "include/core/game_managing.hpp"
@@ -45,7 +45,7 @@ void GameScene::Init() {
   collision_handler_ = new CollisionHandler(256 * 4, 240 * 4);
 
   SelectedCharacter selectedChar
-    = CharacterSelectionScene::GetSelectedCharacter();
+    = CharacterSelectorScene::GetSelectedCharacter();
 
   player_character_           = new Character(4.0f);
   CharacterType characterType = (selectedChar == SelectedCharacter::MARIO)
@@ -88,7 +88,7 @@ void GameScene::Update() {
     active_character->SetFrameCount();
     active_character->Update();
   }
-  ObjectManager::GetInstance().SetFrameCount(); // ✅ ADDED - for block sprites
+  ObjectManager::GetInstance().SetFrameCount(); // ADDED - for block sprites
   ObjectManager::GetInstance().Update();
   Enemy::SetFrameCount();
   input_command_->UpdateProjectiles();

@@ -13,6 +13,15 @@ private:
   std::vector<Slider> sliders_;
   float volume_ = {1};
 
+private:
+  void CreateButtons();
+  void UpdateButtons();
+  void DrawButtons();
+
+  void CreateSliders();
+  void UpdateSliders();
+  void DrawSliders();
+
 public:
   SettingScene();
   ~SettingScene();
@@ -22,14 +31,6 @@ public:
   void Draw() override;
   void Resume() override;
   SceneType Type() override;
-
-  void CreateButtons();
-  void UpdateButtons();
-  void DrawButtons();
-
-  void CreateSliders();
-  void UpdateSliders();
-  void DrawSliders();
 };
 
 // if volume = 0->translucent and red diagonal line

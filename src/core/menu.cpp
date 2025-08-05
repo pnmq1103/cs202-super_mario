@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include "include/core/application.hpp"
+#include "include/core/character_selector.hpp"
 #include "include/core/constants.hpp"
 #include "include/core/credit.hpp"
 #include "include/core/editor.hpp"
@@ -12,7 +13,6 @@
 #include "include/core/load.hpp"
 #include "include/core/menu.hpp"
 #include "include/core/setting.hpp"
-#include "include/core/character_selection.hpp"
 
 MenuScene::MenuScene() {
   menu_items_.resize(4);
@@ -26,7 +26,7 @@ MenuScene::~MenuScene() {
 }
 
 void MenuScene::Init() {
-  background_ = LoadTexture("res/menu_background.png");
+  background_ = LoadTexture("res/ui/menu_background.png");
   App.Media().PlayMusic("title");
   CreateButtons();
 }
@@ -47,7 +47,7 @@ void MenuScene::Update() {
 
       switch (selected_idx_) {
         case 0: // Play - now goes to character selection
-          App.AddScene(std::make_unique<CharacterSelectionScene>());
+          App.AddScene(std::make_unique<CharacterSelectorScene>());
           break;
         case 1: // Load
           App.AddScene(std::make_unique<LoadScene>());
@@ -128,7 +128,6 @@ void MenuScene::DrawOptions() {
 }
 
 void MenuScene::CreateButtons() {
-  // Setting
   buttons_.emplace_back(
     "Setting",
     []() {
@@ -138,9 +137,8 @@ void MenuScene::CreateButtons() {
     Rectangle{
       constants::screenWidth - 64 * 2, constants::screenHeight - 64 * 2, 64,
       64},
-    "res/sprites/buttons/setting.png");
+    "res/ui/buttons/setting.png");
 
-  // Credit
   buttons_.emplace_back(
     "Credit",
     []() {
@@ -148,7 +146,7 @@ void MenuScene::CreateButtons() {
     },
     Rectangle{0, 0, 16, 16},
     Rectangle{64, constants::screenHeight - 64 * 2, 64, 64},
-    "res/sprites/buttons/option.png");
+    "res/ui/buttons/credit.png");
 }
 
 void MenuScene::UpdateButtons() {

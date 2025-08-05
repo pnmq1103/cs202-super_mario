@@ -58,7 +58,7 @@ void PauseScene::CreateButtons() {
     []() {
       App.RemoveScene(2);
     },
-    src, dst, "res/sprites/buttons/menu.png");
+    src, dst, "res/ui/buttons/menu.png");
   x += button_width + spacing;
 
   dst = {x, y, button_width, button_height};
@@ -67,7 +67,7 @@ void PauseScene::CreateButtons() {
     []() {
       App.AddScene(std::make_unique<SettingScene>());
     },
-    src, dst, "res/sprites/buttons/setting.png");
+    src, dst, "res/ui/buttons/setting.png");
   x += button_width + spacing;
 
   dst = {x, y, button_width, button_height};
@@ -76,18 +76,18 @@ void PauseScene::CreateButtons() {
     []() {
       App.Close();
     },
-    src, dst, "res/sprites/buttons/quit.png");
+    src, dst, "res/ui/buttons/quit.png");
   x += button_width + spacing;
 
   dst = {x, y, button_width, button_height};
   if (App.PreviousScene() == SceneType::Game) {
     buttons_.emplace_back(
-      "Resume", []() {}, src, dst, "res/sprites/buttons/resume.png");
+      "Resume", []() {}, src, dst, "res/ui/buttons/resume.png");
     x += button_width + spacing;
 
     dst = {x, y, button_width, button_height};
     buttons_.emplace_back(
-      "Restart", []() {}, src, dst, "res/sprites/buttons/restart.png");
+      "Restart", []() {}, src, dst, "res/ui/buttons/restart.png");
   }
 }
 

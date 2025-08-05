@@ -115,7 +115,7 @@ void EditorScene::CreateButtons() {
     [this] {
       App.AddScene(std::make_unique<TileSelectorScene>(select_gidx_));
     },
-    src, dst, "res/sprites/buttons/choose_ground_tile.png");
+    src, dst, "res/ui/buttons/choose_ground_tile.png");
 
   dst = {100 + 64 + spacing, 100, 64, 64};
   buttons_.emplace_back(
@@ -123,7 +123,7 @@ void EditorScene::CreateButtons() {
     [this] {
       App.AddScene(std::make_unique<EnemySelectorScene>(select_gidx_));
     },
-    src, dst, "res/sprites/buttons/choose_enemy.png");
+    src, dst, "res/ui/buttons/choose_enemy.png");
 
   dst = {100 + 2 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
@@ -131,7 +131,7 @@ void EditorScene::CreateButtons() {
     [this] {
       SaveMap();
     },
-    src, dst, "res/sprites/buttons/save.png");
+    src, dst, "res/ui/buttons/save.png");
 
   dst = {100 + 3 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
@@ -139,7 +139,7 @@ void EditorScene::CreateButtons() {
     [this] {
       SaveMapAs();
     },
-    src, dst, "res/sprites/buttons/load.png");
+    src, dst, "res/ui/buttons/load.png");
 
   dst = {100 + 4 * (64 + spacing), 100, 64, 64};
   buttons_.emplace_back(
@@ -147,7 +147,7 @@ void EditorScene::CreateButtons() {
     [this] {
       LoadMap();
     },
-    src, dst, "res/sprites/buttons/load.png");
+    src, dst, "res/ui/buttons/load.png");
 }
 
 void EditorScene::UpdateCamera() {
