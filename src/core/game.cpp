@@ -28,10 +28,6 @@ GameScene::~GameScene() {
     player_character_ = nullptr;
   }
 
-  if (collision_handler_) {
-    delete collision_handler_;
-    collision_handler_ = nullptr;
-  }
 }
 
 void GameScene::Init() {
@@ -106,7 +102,7 @@ void GameScene::Update() {
   if (game_manager_.IsGameOver() && IsKeyPressed(KEY_R)) {
     game_manager_.ResetGame();
     // Reload first level
-    game_manager_.LoadLevel("res/saves/map_00.json");
+    game_manager_.LoadLevel("res/maps/map1.json");
   }
 
   // Handle level completion (improved)
@@ -116,7 +112,7 @@ void GameScene::Update() {
     } else {
       // All levels completed, restart game
       game_manager_.ResetGame();
-      game_manager_.LoadLevel("res/saves/map_00.json");
+      game_manager_.LoadLevel("res/maps/map1.json");
     }
   }
 }

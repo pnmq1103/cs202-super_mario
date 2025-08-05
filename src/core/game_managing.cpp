@@ -718,7 +718,7 @@ void GameManaging::LoadNextLevel() {
 
   // Try to load the next level from JSON file
   std::string levelFile
-    = "res/levels/level" + std::to_string(currentLevel_) + ".json";
+    = "res/maps/map" + std::to_string(currentLevel_) + ".json";
 
   std::cout << "Attempting to load next level: " << levelFile << std::endl;
   LoadLevel(levelFile);
