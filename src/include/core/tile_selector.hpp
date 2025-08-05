@@ -5,6 +5,7 @@
 #include "include/core/button.hpp"
 #include "include/core/map.hpp"
 #include "include/core/scene.hpp"
+#include "include/core/transition.hpp"
 
 class TileSelectorScene : public Scene {
 private:
@@ -13,7 +14,7 @@ private:
 
   /*int cur_sheet_              = {0};
   const Texture *cur_texture_ = {nullptr};*/
-  const Texture* sprite_sheet_;
+  const Texture *sprite_sheet_;
   std::unordered_map<int, Rectangle> sprite_info_;
   int first_gidx_ = 1;
 
@@ -21,7 +22,7 @@ private:
   std::vector<Button> buttons_;
 
 public:
-  TileSelectorScene(int &g_select_idx);
+  TileSelectorScene(int &select_gidx);
   ~TileSelectorScene();
 
   void Init() override;
@@ -32,7 +33,6 @@ public:
 
 private:
   void UpdateCamera();
-  void UpdateTextureParameters();
 
   const Texture &FindTexture(std::string texture_key) const;
   void ChooseTile();

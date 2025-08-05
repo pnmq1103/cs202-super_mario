@@ -4,11 +4,12 @@
 
 #include "include/core/scene.hpp"
 
-class SceneStack {
+class SceneList {
 private:
   std::vector<std::unique_ptr<Scene>> scenes_;
 
 public:
+  SceneList();
   void Push(std::unique_ptr<Scene> scene);
   void Pop();
   Scene &Top();

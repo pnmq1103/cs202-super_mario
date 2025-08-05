@@ -3,7 +3,6 @@
 
 #include "include/core/application.hpp"
 #include "include/core/constants.hpp"
-#include "include/core/scene.hpp"
 #include "include/core/tile_selector.hpp"
 #include "include/core/utility.hpp"
 
@@ -34,10 +33,10 @@ void TileSelectorScene::Update() {
     return;
   }
 
-  //if (IsKeyPressed(KEY_TAB)) {
-  //  cur_sheet_ = (cur_sheet_ + 1) % sprite_sheets_.size();
-  //  UpdateTextureParameters();
-  //}
+  // if (IsKeyPressed(KEY_TAB)) {
+  //   cur_sheet_ = (cur_sheet_ + 1) % sprite_sheets_.size();
+  //   UpdateTextureParameters();
+  // }
 
   UpdateCamera();
   mouse_world_pos_ = GetScreenToWorld2D(GetMousePosition(), camera_);
@@ -90,12 +89,12 @@ void TileSelectorScene::UpdateCamera() {
       = Clamp(camera_.target.y, 0, world_height - constants::screenHeight);
 }
 
-//void TileSelectorScene::UpdateTextureParameters() {
-//  cur_texture_ = &FindTexture(sprite_sheets_[cur_sheet_].texture_key);
-//  float width  = static_cast<float>(cur_texture_->width);
-//  float height = static_cast<float>(cur_texture_->height);
-//  boundary_    = {0, 0, width * 4, height * 4};
-//}
+// void TileSelectorScene::UpdateTextureParameters() {
+//   cur_texture_ = &FindTexture(sprite_sheets_[cur_sheet_].texture_key);
+//   float width  = static_cast<float>(cur_texture_->width);
+//   float height = static_cast<float>(cur_texture_->height);
+//   boundary_    = {0, 0, width * 4, height * 4};
+// }
 
 const Texture &TileSelectorScene::FindTexture(std::string texture_key) const {
   std::unordered_map<std::string, const Texture *> mp;
@@ -120,7 +119,7 @@ void TileSelectorScene::ChooseTile() {
   //  Because the display is scaled up 4 times
   mouse_world_pos_ = Vector2Scale(mouse_world_pos_, 0.25f);
 
-  //const auto &sheet = sprite_sheets_[cur_sheet_];
+  // const auto &sheet = sprite_sheets_[cur_sheet_];
   for (const auto &[local_idx, bounds] : sprite_info_) {
     if (CheckCollisionPointRec(mouse_world_pos_, bounds)) {
       gidx_ref_ = first_gidx_ + local_idx;

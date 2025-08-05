@@ -159,7 +159,7 @@ void MenuScene::CreateButtons() {
     },
     Rectangle{0, 0, 16, 16},
     Rectangle{64, constants::screenHeight - 64 * 2, 64, 64},
-    "res/sprites/buttons/credit.png");
+    "res/sprites/buttons/option.png");
 }
 
 void MenuScene::UpdateButtons() {

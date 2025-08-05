@@ -73,10 +73,22 @@ void EditorScene::Draw() {
       layer_name = "Unknown";
   }
   DrawText(("Layer: " + layer_name).c_str(), 50, 50, 20, RED);
+
+  if (phase_ != TransitionState::Done) {
+    if (phase_ == TransitionState::In)
+      transition_.InTransition(GetFrameTime());
+    else if (phase_ == TransitionState::Out)
+      transition_.OutTransition(GetFrameTime());
+
+    if (transition_.Done())
+      phase_ = TransitionState::Done;
+  }
 }
 
 void EditorScene::Resume() {
   button_clicked_ = false;
+  transition_.Reset();
+  phase_ = TransitionState::In;
 }
 
 SceneType EditorScene::Type() {
