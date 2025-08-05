@@ -69,6 +69,9 @@ public:
   void LoadNextLevel();
   void CreateFallbackLevel();
   void ApplyLevelDifficulty();
+  Vector2 GetSpawnPoint() const {
+    return spawnPoint_;
+  }
 
   // Core update loop
   void Update(float deltaTime, Character* activeCharacter);
@@ -106,6 +109,11 @@ public:
   int GetCurrentLevel() const;
   int GetMaxLevels() const;
   
+  // Simple pause/transition state methods for game.cpp compatibility
+  void TogglePause() { /* Simple pause toggle - can be expanded later */ }
+  bool IsPaused() const { return false; /* Simple return false for now */ }
+  bool IsInTransition() const { return false; /* Simple return false for now */ }
+
 private:
   // Helper methods
   void UpdateParticles(float deltaTime);

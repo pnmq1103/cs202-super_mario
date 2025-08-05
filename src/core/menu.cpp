@@ -12,6 +12,7 @@
 #include "include/core/load.hpp"
 #include "include/core/menu.hpp"
 #include "include/core/setting.hpp"
+#include "include/core/character_selection.hpp"
 
 MenuScene::MenuScene() {
   menu_items_.resize(4);
@@ -45,16 +46,16 @@ void MenuScene::Update() {
       last_input_ = time;
 
       switch (selected_idx_) {
-        case SceneType::Game:
-          App.AddScene(std::make_unique<GameScene>());
+        case 0: // Play - now goes to character selection
+          App.AddScene(std::make_unique<CharacterSelectionScene>());
           break;
-        case SceneType::Load:
+        case 1: // Load
           App.AddScene(std::make_unique<LoadScene>());
           break;
-        case SceneType::Editor:
+        case 2: // Editor
           App.AddScene(std::make_unique<EditorScene>());
           break;
-        case SceneType::Exit:
+        case 3: // Exit
           App.Close();
           break;
 

@@ -60,7 +60,6 @@ void GameManaging::SetCollisionHandler(CollisionHandler* handler) {
   collisionHandler_ = handler;
   if (collisionHandler_) {
     collisionHandler_->Reset(levelWidth_, levelHeight_);
-    // Also set collision handler for EnemyManager
     EnemyManager::GetInstance().SetCollisionHandler(collisionHandler_);
   }
 }
@@ -80,6 +79,7 @@ void GameManaging::RegisterCharacterWithCollision(Character* character) {
   }
 }
 
+// Lac lam
 void GameManaging::LoadLevel(const std::string &filename) {
   std::cout << "Loading level: " << filename << std::endl;
   
