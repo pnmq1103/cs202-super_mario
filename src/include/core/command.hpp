@@ -8,8 +8,8 @@ class ProjectilePool;
 
 class Command {
 private:
-  Character *character_        = {nullptr}; // Single character instead of mario/luigi
-  bool fireball_active_        = {false}; // Only allow one fireball at a time
+  Character *character_        = {nullptr}; 
+  bool fireball_active_        = {false}; 
   ProjectilePool *projectile_pool_ = {nullptr}; // Own projectile pool
   
   // Instructions system

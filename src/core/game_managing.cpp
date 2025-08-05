@@ -415,49 +415,112 @@ void GameManaging::DrawLevel() {
 }
 
 void GameManaging::DrawStats() const {
-  DrawText(TextFormat("Lives: %d", lives_), 10, 10, 24, WHITE);
-  DrawText(TextFormat("Points: %d", points_), 10, 40, 24, YELLOW);
-  DrawText(
-    TextFormat("Time: %d", countdownSeconds_ - (int)gameTime_), 10, 70, 24,
-    GREEN);
-  DrawText(
-    TextFormat("Level: %d/%d", currentLevel_, maxLevels_), 10, 100, 24, BLUE);
-  DrawText(
-    TextFormat("Enemies: %d/%d", enemiesKilled_, totalEnemies_), 10, 130, 20,
-    ORANGE);
+  if (!sceneCamera_)
+    return;
 
-  // Debug info
-  DrawText(
-    TextFormat("Spawn: %.0f, %.0f", spawnPoint_.x, spawnPoint_.y), 10, 160, 18,
-    LIME);
-  DrawText(TextFormat("Level End: %.0f", levelEndX_), 10, 190, 18, LIME);
+  // Calculate camera-relative position for HUI
+  Vector2 camera_offset = {
+    sceneCamera_->target.x - sceneCamera_->offset.x / sceneCamera_->zoom,
+    sceneCamera_->target.y - sceneCamera_->offset.y / sceneCamera_->zoom};
 
+  // HUI positioning (top-left corner relative to camera)
+  float hui_start_x   = camera_offset.x + 20.0f;
+  float hui_start_y   = camera_offset.y + 20.0f;
+  float hui_spacing_y = 40.0f;
+  float sprite_size   = 32.0f;
+  float text_offset_x = sprite_size + 10.0f;
+
+  // Try to load HUI textures if not already loaded (static to avoid reloading)
+  static Texture coin_hui_texture  = {0};
+  static Texture lives_hui_texture = {0};
+  static Texture time_hui_texture  = {0};
+  static bool textures_loaded      = false;
+
+  if (!textures_loaded) {
+    coin_hui_texture  = LoadTexture("res/ui/buttons/coin.png");
+    lives_hui_texture = LoadTexture("res/ui/buttons/lives.png");
+    time_hui_texture  = LoadTexture("res/ui/buttons/coin.png");
+    textures_loaded   = true;
+  }
+
+  // Draw coin HUI and points
+  if (IsTextureValid(coin_hui_texture)) {
+    Rectangle coin_dest = {hui_start_x, hui_start_y, sprite_size, sprite_size};
+    DrawTexturePro(
+      coin_hui_texture,
+      {0, 0, (float)coin_hui_texture.width, (float)coin_hui_texture.height},
+      coin_dest, {0, 0}, 0.0f, WHITE);
+  }
+  DrawText(
+    TextFormat("%d", points_), (int)(hui_start_x + text_offset_x),
+    (int)hui_start_y + 5, 24, YELLOW);
+
+  // Draw lives HUI and lives count
+  float lives_y = hui_start_y + hui_spacing_y;
+  if (IsTextureValid(lives_hui_texture)) {
+    Rectangle lives_dest = {hui_start_x, lives_y, sprite_size, sprite_size};
+    DrawTexturePro(
+      lives_hui_texture,
+      {0, 0, (float)lives_hui_texture.width, (float)lives_hui_texture.height},
+      lives_dest, {0, 0}, 0.0f, WHITE);
+  }
+  DrawText(
+    TextFormat("%d", lives_), (int)(hui_start_x + text_offset_x),
+    (int)lives_y + 5, 24, WHITE);
+
+  // Draw time HUI and countdown
+  float time_y = hui_start_y + hui_spacing_y * 2;
+  if (IsTextureValid(time_hui_texture)) {
+    Rectangle time_dest = {hui_start_x, time_y, sprite_size, sprite_size};
+    DrawTexturePro(
+      time_hui_texture,
+      {0, 0, (float)time_hui_texture.width, (float)time_hui_texture.height},
+      time_dest, {0, 0}, 0.0f, WHITE);
+  }
+  int remaining_time = countdownSeconds_ - (int)gameTime_;
+  DrawText(
+    TextFormat("%d", remaining_time), (int)(hui_start_x + text_offset_x),
+    (int)time_y + 5, 24, GREEN);
+
+  // Additional game info (level and enemies) - positioned below HUI
+  float info_y = hui_start_y + hui_spacing_y * 3;
+  DrawText(
+    TextFormat("Level: %d/%d", currentLevel_, maxLevels_), (int)hui_start_x,
+    (int)info_y, 20, BLUE);
+  DrawText(
+    TextFormat("Enemies: %d/%d", enemiesKilled_, totalEnemies_),
+    (int)hui_start_x, (int)(info_y + 25), 18, ORANGE);
+
+  // Game over and level complete messages (centered on screen)
   if (gameOver_) {
+    Vector2 center = {
+      camera_offset.x + GetScreenWidth() / (2.0f * sceneCamera_->zoom),
+      camera_offset.y + GetScreenHeight() / (2.0f * sceneCamera_->zoom)};
+    DrawText("GAME OVER", (int)center.x - 80, (int)center.y, 28, RED);
     DrawText(
-      "GAME OVER", GetScreenWidth() / 2 - 80, GetScreenHeight() / 2, 28, RED);
-    DrawText(
-      "Press R to restart", GetScreenWidth() / 2 - 100,
-      GetScreenHeight() / 2 + 40, 20, WHITE);
+      "Press R to restart", (int)center.x - 100, (int)center.y + 40, 20, WHITE);
   }
 
   if (levelComplete_) {
+    Vector2 center = {
+      camera_offset.x + GetScreenWidth() / (2.0f * sceneCamera_->zoom),
+      camera_offset.y + GetScreenHeight() / (2.0f * sceneCamera_->zoom)};
     if (currentLevel_ >= maxLevels_) {
       DrawText(
-        "CONGRATULATIONS!", GetScreenWidth() / 2 - 120,
-        GetScreenHeight() / 2 - 20, 28, GOLD);
+        "CONGRATULATIONS!", (int)center.x - 120, (int)center.y - 20, 28, GOLD);
       DrawText(
-        "YOU COMPLETED ALL LEVELS!", GetScreenWidth() / 2 - 150,
-        GetScreenHeight() / 2 + 20, 20, GOLD);
+        "YOU COMPLETED ALL LEVELS!", (int)center.x - 150, (int)center.y + 20,
+        20, GOLD);
       DrawText(
-        "Press R to restart", GetScreenWidth() / 2 - 100,
-        GetScreenHeight() / 2 + 60, 20, WHITE);
+        "Press R to restart", (int)center.x - 100, (int)center.y + 60, 20,
+        WHITE);
     } else {
       DrawText(
-        TextFormat("LEVEL %d COMPLETE!", currentLevel_),
-        GetScreenWidth() / 2 - 120, GetScreenHeight() / 2, 28, GREEN);
+        TextFormat("LEVEL %d COMPLETE!", currentLevel_), (int)center.x - 120,
+        (int)center.y, 28, GREEN);
       DrawText(
-        "Press SPACE for next level", GetScreenWidth() / 2 - 120,
-        GetScreenHeight() / 2 + 40, 20, WHITE);
+        "Press SPACE for next level", (int)center.x - 120, (int)center.y + 40,
+        20, WHITE);
     }
   }
 }
@@ -628,7 +691,7 @@ void GameManaging::LoadNextLevel() {
 
   // Try to load the next level from JSON file
   std::string levelFile
-    = "res/levels/level" + std::to_string(currentLevel_) + ".json";
+    = "res/maps/map" + std::to_string(currentLevel_) + ".json";
 
   std::cout << "Attempting to load next level: " << levelFile << std::endl;
   LoadLevel(levelFile);
