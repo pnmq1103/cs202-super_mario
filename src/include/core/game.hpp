@@ -1,19 +1,20 @@
 #pragma once
 
 #include "include/characters/character.hpp"
+#include "include/collision/collision_handler.hpp"
 #include "include/core/command.hpp"
 #include "include/core/game_managing.hpp"
 #include "include/core/scene.hpp"
-#include "include/collision/collision_handler.hpp"
 
 class GameScene : public Scene {
 private:
   SceneType type_ = {Game};
 
-  Character *player_character_ = {nullptr}; // Single character pointer instead of mario/luigi
-  Command *input_command_     = {nullptr};
-  GameManaging game_manager_; 
-  CollisionHandler* collision_handler_ = {nullptr}; 
+  Character *player_character_
+    = {nullptr}; // Single character pointer instead of mario/luigi
+  Command *input_command_ = {nullptr};
+  GameManaging game_manager_;
+  CollisionHandler *collision_handler_ = {nullptr};
 
 public:
   GameScene();
@@ -27,5 +28,5 @@ public:
   void CreateSimpleTestLevel();
 
 private:
-  void UpdateCamera(Character* character); // Camera update handled by GameScen
+  void UpdateCamera(Character *character); // Camera update handled by GameScen
 };

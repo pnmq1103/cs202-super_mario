@@ -3,10 +3,10 @@
 
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
+#include "include/core/character_selection.hpp"
 #include "include/core/command.hpp"
 #include "include/core/game.hpp"
 #include "include/core/game_managing.hpp"
-#include "include/core/character_selection.hpp"
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
 
@@ -17,7 +17,7 @@ GameScene::~GameScene() {
   if (collision_handler_) {
     ObjectManager::GetInstance().Reset(4, collision_handler_);
   }
- 
+
   if (input_command_) {
     delete input_command_;
     input_command_ = nullptr;
@@ -37,23 +37,25 @@ GameScene::~GameScene() {
 void GameScene::Init() {
   App.Media().PlayMusic("ground_theme");
 
-  camera_.target = {100.0f, 300.0f};
-  camera_.offset = {GetScreenWidth()/2.0f, GetScreenHeight()/2.0f};
+  camera_.target   = {100.0f, 300.0f};
+  camera_.offset   = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
   camera_.rotation = 0.0f;
-  camera_.zoom = 1.0f;
+  camera_.zoom     = 1.0f;
 
-  collision_handler_ = new CollisionHandler(3200.0f, 1000.0f);
+  collision_handler_ = new CollisionHandler(256 * 4, 240 * 4);
 
-  SelectedCharacter selectedChar = CharacterSelectionScene::GetSelectedCharacter();
-  
+  SelectedCharacter selectedChar
+    = CharacterSelectionScene::GetSelectedCharacter();
 
-  player_character_ = new Character(4.0f);
-  CharacterType characterType = (selectedChar == SelectedCharacter::MARIO) ? CharacterType::MARIO : CharacterType::LUIGI;
-  input_command_ = new Command(player_character_);
+  player_character_           = new Character(4.0f);
+  CharacterType characterType = (selectedChar == SelectedCharacter::MARIO)
+                                  ? CharacterType::MARIO
+                                  : CharacterType::LUIGI;
+  input_command_              = new Command(player_character_);
   input_command_->InitializeProjectilePool(collision_handler_);
 
-  game_manager_.InitializeCollisionSystem(3200.0f, 1000.0f);
-  
+  game_manager_.InitializeCollisionSystem(256 * 4, 240 * 4);
+
   game_manager_.SetCollisionHandler(collision_handler_);
   game_manager_.SetSceneCamera(&camera_);
 
@@ -61,7 +63,6 @@ void GameScene::Init() {
   CreateSimpleTestLevel();
   player_character_->SetCharacter(characterType, {10.0f, 500.0f});
 }
-
 
 void GameScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
@@ -78,9 +79,9 @@ void GameScene::Update() {
 
   if (input_command_) {
     input_command_->HandleInput();
-    input_command_->UpdateProjectiles();
   }
 
+  collision_handler_->CheckCollision();
   Character *active_character = player_character_;
 
   if (active_character) {
@@ -123,24 +124,24 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
   // Let game manager handle the background drawing
-  
+
   BeginMode2D(camera_);
-  
+
   // Let game manager handle drawing objects and enemies with proper background
   game_manager_.DrawLevel();
-  
+
   // Draw the player character (Mario or Luigi based on selection)
   if (player_character_) {
     player_character_->Draw();
   }
-  
+
   // Draw projectiles from Command
   if (input_command_) {
     input_command_->DrawProjectiles();
   }
-  
+
   EndMode2D();
-  
+
   // UI is drawn by game manager in DrawLevel()
   // But we also draw instructions system from Command
   if (input_command_) {
@@ -157,29 +158,31 @@ void GameScene::Resume() {
   App.Media().PlayMusic("ground_theme");
 }
 
-void GameScene::UpdateCamera(Character* character) {
-  if (!character) return;
+void GameScene::UpdateCamera(Character *character) {
+  if (!character)
+    return;
 
   Rectangle charRect = character->GetRectangle();
-  Vector2 charPos = {charRect.x + charRect.width / 2, charRect.y + charRect.height / 2};
+  Vector2 charPos
+    = {charRect.x + charRect.width / 2, charRect.y + charRect.height / 2};
 
   // Smooth camera following
-  float smoothing = 0.1f;
+  float smoothing   = 0.1f;
   Vector2 targetPos = {charPos.x, charPos.y - 100.0f};
 
   camera_.target.x += (targetPos.x - camera_.target.x) * smoothing;
   camera_.target.y += (targetPos.y - camera_.target.y) * smoothing;
 
   // Keep camera within level bounds
-  float levelWidth = 3200.0f;
-  float levelHeight = 1000.0f;
-  float halfScreenWidth = GetScreenWidth() / 2.0f / camera_.zoom;
+  float levelWidth       = 3200.0f;
+  float levelHeight      = 1000.0f;
+  float halfScreenWidth  = GetScreenWidth() / 2.0f / camera_.zoom;
   float halfScreenHeight = GetScreenHeight() / 2.0f / camera_.zoom;
 
-  camera_.target.x = fmaxf(halfScreenWidth, 
-    fminf(camera_.target.x, levelWidth - halfScreenWidth));
-  camera_.target.y = fmaxf(halfScreenHeight, 
-    fminf(camera_.target.y, levelHeight - halfScreenHeight));
+  camera_.target.x = fmaxf(
+    halfScreenWidth, fminf(camera_.target.x, levelWidth - halfScreenWidth));
+  camera_.target.y = fmaxf(
+    halfScreenHeight, fminf(camera_.target.y, levelHeight - halfScreenHeight));
 }
 
 SceneType GameScene::Type() {
@@ -219,30 +222,30 @@ void GameScene::CreateSimpleTestLevel() {
   }
 
   // Spawn some enemies for testing
-  //enemyManager.SpawnEnemy(EnemyType::Goomba, {200.0f, 550.0f});
-  //enemyManager.SpawnEnemy(EnemyType::Koopa, {400.0f, 550.0f});
-  //enemyManager.SpawnEnemy(EnemyType::Piranha, {600.0f, 570.0f});
-  //enemyManager.SpawnEnemy(EnemyType::Goomba, {800.0f, 550.0f});
+  // enemyManager.SpawnEnemy(EnemyType::Goomba, {200.0f, 550.0f});
+  // enemyManager.SpawnEnemy(EnemyType::Koopa, {400.0f, 550.0f});
+  // enemyManager.SpawnEnemy(EnemyType::Piranha, {600.0f, 570.0f});
+  // enemyManager.SpawnEnemy(EnemyType::Goomba, {800.0f, 550.0f});
 
   //// Set up initial movement for enemies
-  //const std::vector<Enemy *> &enemies = enemyManager.GetEnemies();
-  //for (Enemy *enemy : enemies) {
-  //  if (enemy) {
-  //    switch (enemy->GetType()) {
-  //      case EnemyType::Goomba:
-  //        enemy->SetVelocity({30.0f, 0.0f}); // Moving right
-  //        enemy->SetFacing(false);
-  //        break;
-  //      case EnemyType::Koopa:
-  //        enemy->SetVelocity({25.0f, 0.0f}); // Moving right
-  //        enemy->SetFacing(false);
-  //        break;
-  //      case EnemyType::Piranha:
-  //        enemy->SetVelocity({0.0f, 0.0f}); // Stationary
-  //        break;
-  //      default:
-  //        break;
-  //    }
-  //  }
-  //}
+  // const std::vector<Enemy *> &enemies = enemyManager.GetEnemies();
+  // for (Enemy *enemy : enemies) {
+  //   if (enemy) {
+  //     switch (enemy->GetType()) {
+  //       case EnemyType::Goomba:
+  //         enemy->SetVelocity({30.0f, 0.0f}); // Moving right
+  //         enemy->SetFacing(false);
+  //         break;
+  //       case EnemyType::Koopa:
+  //         enemy->SetVelocity({25.0f, 0.0f}); // Moving right
+  //         enemy->SetFacing(false);
+  //         break;
+  //       case EnemyType::Piranha:
+  //         enemy->SetVelocity({0.0f, 0.0f}); // Stationary
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   }
+  // }
 }
