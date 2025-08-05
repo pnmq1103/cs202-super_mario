@@ -60,7 +60,6 @@ void GameManaging::SetSceneCamera(Camera2D *camera) {
 void GameManaging::SetCollisionHandler(CollisionHandler *handler) {
   collisionHandler_ = handler;
   if (collisionHandler_) {
-    collisionHandler_->Reset(levelWidth_, levelHeight_);
     EnemyManager::GetInstance().SetCollisionHandler(collisionHandler_);
   }
 }
