@@ -8,9 +8,7 @@ class ProjectilePool;
 
 class Command {
 private:
-  Character *mario_            = {nullptr};
-  Character *luigi_            = {nullptr};
-  Character *active_character_ = {nullptr};
+  Character *character_        = {nullptr}; // Single character instead of mario/luigi
   bool fireball_active_        = {false}; // Only allow one fireball at a time
   ProjectilePool *projectile_pool_ = {nullptr}; // Own projectile pool
   
@@ -20,12 +18,11 @@ private:
   bool instructions_initialized_ = {false};
 
 public:
-  Command(Character *mario = nullptr, Character *luigi = nullptr);
+  Command(Character *character = nullptr);
   ~Command();
 
-  // Set Mario and Luigi pointers
-  void SetMario(Character *mario);
-  void SetLuigi(Character *luigi);
+  // Set character pointer
+  void SetCharacter(Character *character);
 
   // Initialize projectile pool with collision handler
   void InitializeProjectilePool(class CollisionHandler* collision_handler);
@@ -33,13 +30,8 @@ public:
   // Get projectile pool for drawing/updating externally if needed
   ProjectilePool* GetProjectilePool() const { return projectile_pool_; }
 
-  // Set the active character to control
-  void SetActiveCharacter(Character *character);
+  // Get the active character
   Character *GetActiveCharacter() const;
-
-  // Switch between Mario and Luigi
-  void SwitchCharacter();
-
 
   void HandleInput();
 

@@ -12,6 +12,7 @@ enum SceneType {
   TileSelector,
   EnemySelector,
   Pause,
+  CharacterSelection,
 };
 
 class Scene {
