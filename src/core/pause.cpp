@@ -12,6 +12,10 @@ void PauseScene::Init() {
 }
 
 void PauseScene::Update() {
+  if (IsKeyPressed(KEY_ESCAPE)) {
+    App.RemoveScene();
+    return;
+  }
   UpdateButtons();
 }
 
@@ -50,20 +54,20 @@ void PauseScene::CreateButtons() {
   Rectangle dst = {x, y, button_width, button_height};
 
   buttons_.emplace_back(
-    "Setting",
-    []() {
-      App.AddScene(std::make_unique<SettingScene>());
-    },
-    src, dst, "res/sprites/buttons/setting.png");
-  x += button_width + spacing;
-
-  dst = {x, y, button_width, button_height};
-  buttons_.emplace_back(
     "Menu",
     []() {
       App.RemoveScene(2);
     },
     src, dst, "res/sprites/buttons/menu.png");
+  x += button_width + spacing;
+
+  dst = {x, y, button_width, button_height};
+  buttons_.emplace_back(
+    "Setting",
+    []() {
+      App.AddScene(std::make_unique<SettingScene>());
+    },
+    src, dst, "res/sprites/buttons/setting.png");
   x += button_width + spacing;
 
   dst = {x, y, button_width, button_height};

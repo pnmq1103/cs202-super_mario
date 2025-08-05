@@ -5,7 +5,6 @@
 #include "include/core/button.hpp"
 #include "include/core/map.hpp"
 #include "include/core/scene.hpp"
-#include "include/core/transition.hpp"
 
 class EditorScene : public Scene {
 private:
@@ -20,9 +19,6 @@ private:
 
   std::vector<Button> buttons_;
   bool button_clicked_ = {false};
-
-  Transition transition_;
-  TransitionState phase_ = {TransitionState::In};
 
 private:
   void LoadMap();

@@ -29,13 +29,9 @@ void SettingScene::Update() {
 }
 
 void SettingScene::Draw() {
-  timer_       += GetFrameTime();
-  float t       = std::min(timer_ / duration_, 1.0f);
-  float start_x = (constants::screenWidth - background_.width) / 2;
-  float end_x   = constants::screenWidth - background_.width;
-  float ease    = t < 0.5f ? 4 * t * t * t : 1 - powf(-2 * t + 2, 3) / 2;
-  float y       = (constants::screenHeight - background_.height) / 2;
-  DrawTextureV(background_, {start_x + (end_x - start_x) * ease, y}, RAYWHITE);
+  float x = (constants::screenWidth - background_.width) / 2;
+  float y = (constants::screenHeight - background_.height) / 2;
+  DrawTextureV(background_, {x, y}, RAYWHITE);
 
   DrawButtons();
   DrawSliders();

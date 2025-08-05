@@ -1,21 +1,17 @@
 #pragma once
-#include "include/core/constants.hpp"
 
 enum class TransitionState {
-  In,
-  Out,
+  InProgress,
   Done,
 };
 
 class Transition {
 private:
-  float duration_ = {1};
-  float speed_    = {constants::screenWidth / duration_};
-  float bar_x_    = {constants::screenWidth};
+  float timer_    = {0};
+  float duration_ = {0.5f};
 
 public:
-  void InTransition(float dt);
-  void OutTransition(float dt);
+  void Draw(float dt);
   void Reset();
   bool Done();
 };

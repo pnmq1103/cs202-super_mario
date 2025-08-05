@@ -6,6 +6,7 @@
 #include "include/core/media.hpp"
 #include "include/core/scene_list.hpp"
 #include "include/core/sprite_manager.hpp"
+#include "include/core/transition.hpp"
 
 class Application {
 private:
@@ -20,6 +21,9 @@ private:
   bool cursor_hidden_     = {false}; // Custom cursor
 
   bool exit_window_ = {false};
+
+  Transition transition_;
+  TransitionState phase_ = {TransitionState::InProgress};
 
 private:
   Application(); // Singleton constructor should be private

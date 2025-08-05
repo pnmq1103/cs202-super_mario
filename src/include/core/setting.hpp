@@ -13,9 +13,6 @@ private:
   std::vector<Slider> sliders_;
   float volume_ = {1};
 
-  float timer_    = {0};
-  float duration_ = {1};
-
 public:
   SettingScene();
   ~SettingScene();

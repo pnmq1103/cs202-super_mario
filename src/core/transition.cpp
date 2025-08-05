@@ -1,33 +1,23 @@
+#include <algorithm>
 #include <raylib.h>
 
 #include "include/core/constants.hpp"
 #include "include/core/transition.hpp"
 
-void Transition::InTransition(float dt) {
-  bar_x_ -= speed_ * dt;
-  if (bar_x_ <= 0) {
-    bar_x_ = 0;
-    return;
-  }
-  Rectangle bar = {0, 0, bar_x_, constants::screenHeight};
-  DrawRectangleRec(bar, WHITE);
-}
-
-void Transition::OutTransition(float dt) {
-  bar_x_ -= speed_ * dt;
-  if (bar_x_ <= 0) {
-    bar_x_ = 0;
-    return;
-  }
-  Rectangle bar
-    = {bar_x_, 0, constants::screenWidth - bar_x_, constants::screenHeight};
-  DrawRectangleRec(bar, WHITE);
+void Transition::Draw(float dt) {
+  timer_             += dt;
+  float t             = std::min(timer_ / duration_, 1.0f);
+  float easing        = 1 - t * t * t * t;
+  unsigned char alpha = static_cast<unsigned char>(easing * 256);
+  Color color         = {0, 0, 0, alpha};
+  DrawRectangleRec(
+    {0, 0, constants::screenWidth, constants::screenHeight}, color);
 }
 
 void Transition::Reset() {
-  bar_x_ = constants::screenWidth;
+  timer_ = 0;
 }
 
 bool Transition::Done() {
-  return bar_x_ == 0;
+  return timer_ == 1;
 }

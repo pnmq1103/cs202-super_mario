@@ -216,7 +216,6 @@
     <ClInclude Include="src\include\core\scene_list.hpp" />
     <ClInclude Include="src\include\core\setting.hpp" />
     <ClInclude Include="src\include\external\json.hpp" />
-    <ClInclude Include="src\include\external\tileson.hpp" />
     <ClInclude Include="src\include\external\tinyfiledialogs.h" />
     <ClInclude Include="src\include\managers\enemy_manager.hpp" />
     <ClInclude Include="src\include\objects\brick_block.hpp" />
