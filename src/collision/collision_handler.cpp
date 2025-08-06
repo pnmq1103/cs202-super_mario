@@ -287,7 +287,7 @@ void CollisionHandler::CheckCollisionCharacter() {
           Vector2 speed       = character_->GetSpeed();
 
           if (
-          rect.y + rect.height >= rectangle.y && (rect.x + rect.width >=rectangle.x
+          rect.y + rect.height +speed.y >= rectangle.y && (rect.x + rect.width >=rectangle.x
           && rect.x <= rectangle.x + rectangle.width)) {
             character_->StopY(rectangle.y);
           }
