@@ -170,7 +170,7 @@ void GameScene::UpdateCamera(Character *character) {
     desired_x = player_pos.x - (left_boundary - camera_.offset.x);
   else if (player_pos_screen + player_rect.width > right_boundary)
     desired_x
-      = player_pos.x + player_rect.width - (right_boundary + camera_.offset.x);
+      = player_pos.x + player_rect.width - (right_boundary - camera_.offset.x);
 
   camera_.target.x = Lerp(camera_.target.x, desired_x, smooth);
   camera_.target.y = Lerp(camera_.target.y, player_pos.y, smooth);
