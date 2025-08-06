@@ -226,3 +226,7 @@ void CharacterState::Bounce() {
   } else if (IsFalling())
     velocity_y *= -0.9;
 }
+
+bool CharacterState::IsDead() {
+  return is_die;
+}

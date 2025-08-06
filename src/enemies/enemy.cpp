@@ -108,13 +108,24 @@ Enemy::~Enemy() {
   }
 }
 
-Rectangle Enemy::GetRectangle() const {
-  // Frame seems valid, use it
-  return {position.x, position.y, frame.width * scale, frame.height * scale};
+Rectangle Enemy::GetRectangle() {
+  try {
+    if (position.x < 0 || position.y < 0) {
+      throw std::runtime_error("Invalid position for enemy rectangle");
+    }
+    // Frame seems valid, use it
+    return {position.x, position.y, frame.width * scale, frame.height * scale};
+  } catch (const std::exception &e) {
+    std::cerr << "Exception in GetRectangle(): " << e.what() << std::endl;
+  }
 }
 
 Rectangle Enemy::GetRect() const {
-  return GetRectangle();
+  try {
+    return GetRectangle();
+  } catch (const std::exception &e) {
+    std::cerr << "Exception in GetRect(): " << e.what() << std::endl;
+  }
 }
 
 bool Enemy::IsAlive() const {

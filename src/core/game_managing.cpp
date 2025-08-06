@@ -313,6 +313,12 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
 
   // Update background music
   UpdateBackgroundMusic();
+
+  // Handle character death
+  if (activeCharacter->IsDead() && !isDeathHandled_) {
+    OnPlayerDeath(activeCharacter);
+    isDeathHandled_ = true; // ensure we only handle death once
+  }
 }
 
 void GameManaging::CheckLevelCompletion(Character *activeCharacter) {
