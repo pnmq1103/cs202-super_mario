@@ -16,6 +16,8 @@ KoopaTroopa::KoopaTroopa(Vector2 pos, float Nscale)
   velocity.x  = -10.0f; // Start walking left
   facing_left = true;
 
+  position.y -= 27 * scale;
+
   std::cout << "Koopa spawned with initial velocity: " << velocity.x
             << std::endl;
 }

@@ -12,6 +12,8 @@ PiranhaPlant::PiranhaPlant(Vector2 pos, float Nscale)
   max_health      = 1.0f;
   detection_range = 120.0f;
 
+  position.y -= 24 * scale;
+
   // Piranha plants are dangerous to touch
   velocity = {0.0f, 0.0f}; // No horizontal movement
 }

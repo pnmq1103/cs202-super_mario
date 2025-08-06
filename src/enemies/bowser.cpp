@@ -18,6 +18,8 @@ Bowser::Bowser(Vector2 pos, float Nscale)
   velocity.x  = 30.0f; // Start walking right, like Goomba
   facing_left = false;
 
+  pos.y -= scale * 16;
+
   std::cout << "Bowser spawned with initial velocity: " << velocity.x
             << std::endl;
 }

@@ -23,6 +23,7 @@ CharacterState::CharacterState(
   stop_direction = 0;
   time_star      = 0;
   x_stop         = INT_MIN;
+  velocity_x     = 0;
 }
 CharacterState::~CharacterState() {}
 
@@ -66,9 +67,9 @@ Vector2 CharacterState::GetSpeed() {
     velocity.x = 0;
   else {
     if (to_left)
-      velocity.x = -speed;
+      velocity.x = -velocity_x;
     else
-      velocity.x = speed;
+      velocity.x = velocity_x;
   }
   velocity.y = velocity_y;
   return velocity;
@@ -119,6 +120,7 @@ void CharacterState::Run(bool to_left) {
     this->to_left = to_left;
   }
 }
+
 void CharacterState::StopX() {
   if (is_die)
     return;
@@ -136,8 +138,9 @@ void CharacterState::StopX() {
   }
   if (stop_direction == 0)
     stop_direction = n;
-  time_x = -1;
-  x_stop = position.x;
+  time_x     = -1;
+  x_stop     = position.x;
+  velocity_x = 0;
 }
 void CharacterState::StopY(float Ny) {
   if (is_die)
@@ -186,22 +189,24 @@ void CharacterState::Update() {
   if (velocity_y > 0)
     is_fall = true;
 
+  if (velocity_x < 0)
+    velocity_x = 0;
+  if (velocity_x > speed)
+    velocity_x = speed;
+
   if (time_x != -1) {
     if (velocity_y == 0) {
       if (time - time_x == runTime) {
         time_x = -1;
       }
-      if (to_left)
-        position.x -= speed;
-      else
-        position.x += speed;
+
     } else {
       time_x = -1;
-      if (to_left)
-        position.x -= speed;
-      else
-        position.x += speed;
     }
+    if (to_left)
+      position.x -= speed;
+    else
+      position.x += speed;
   }
 }
 void CharacterState::ToStarman() {

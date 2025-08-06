@@ -16,6 +16,8 @@ Goomba::Goomba(Vector2 pos, float Nscale)
   velocity.x  = 30.0f; // Start walking right
   facing_left = false;
 
+  position.y -= scale * 16;
+
   std::cout << "Goomba spawned with initial velocity: " << velocity.x
             << std::endl;
 }
