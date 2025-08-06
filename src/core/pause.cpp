@@ -39,9 +39,8 @@ SceneType PauseScene::Type() {
 void PauseScene::CreateButtons() {
   float button_width  = 64;
   float button_height = 64;
-  float spacing       = 20;
-
-  int button_count = 3;
+  float spacing       = 40;
+  int button_count    = 3;
   if (App.PreviousScene() == SceneType::Game)
     button_count = 5;
 
@@ -51,8 +50,8 @@ void PauseScene::CreateButtons() {
   float y = box_pos.y + (box_height - button_height) / 2;
 
   Rectangle src = {0, 0, 16, 16};
-  Rectangle dst = {x, y, button_width, button_height};
 
+  Rectangle dst = {x, y, button_width, button_height};
   buttons_.emplace_back(
     "Menu",
     []() {

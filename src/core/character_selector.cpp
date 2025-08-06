@@ -26,6 +26,7 @@ void CharacterSelectorScene::Init() {
   global_selected_character_ = SelectedCharacter::MARIO;
 
   last_input_ = GetTime();
+  CreateRegions();
 }
 
 void CharacterSelectorScene::Update() {
@@ -41,7 +42,7 @@ void CharacterSelectorScene::Update() {
       last_input_ = time;
       SelectLuigi();
     }
-    if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)) {
+    if (IsKeyPressed(KEY_ENTER)) {
       last_input_ = time;
       std::cout << "Start game key pressed!" << std::endl;
       StartGame();
@@ -53,29 +54,64 @@ void CharacterSelectorScene::Update() {
       App.RemoveScene();
     }
   }
+
+  Vector2 mouse = GetMousePosition();
+  if (
+    CheckCollisionPointRec(mouse, left_rec)
+    || CheckCollisionPointTriangle(mouse, left_tri.a, left_tri.b, left_tri.c)) {
+    hover_left = true;
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+      SelectLuigi();
+      StartGame();
+    }
+  } else {
+    hover_left = false;
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+      SelectMario();
+      StartGame();
+    }
+  }
 }
 
 void CharacterSelectorScene::Draw() {
-  float x = (constants::screenWidth - background_.width) / 2;
-  float y = (constants::screenHeight - background_.height) / 2;
+  DrawTexture(background_, 0, 0, RAYWHITE);
 
-  DrawTextureV(background_, {x, y}, RAYWHITE);
-
-  float font_sz     = 90;
+  float font_sz     = 25;
   const char *title = "Choose Your Character";
   Vector2 title_sz  = MeasureTextEx(GetFontDefault(), title, font_sz, 1);
   float title_x     = (constants::screenWidth - title_sz.x) / 2;
-  float title_y     = constants::screenHeight * 0.15f;
+  float title_y     = constants::screenHeight / 2;
+  DrawTextEx(GetFontDefault(), title, {title_x, title_y}, font_sz, 1, WHITE);
 
-  DrawTextEx(GetFontDefault(), title, {title_x, title_y}, font_sz, 1, DARKBLUE);
-  DrawCharacterOptions();
   DrawInstructions();
+
+  Color dark   = ColorAlpha(BLACK, 0.3f);
+  Color bright = ColorAlpha(BLACK, 0);
+  DrawRectangleRec(left_rec, hover_left ? bright : dark);
+  DrawTriangle(left_tri.a, left_tri.b, left_tri.c, hover_left ? bright : dark);
+
+  DrawRectangleRec(right_rec, hover_left ? dark : bright);
+  DrawTriangle(
+    right_tri.a, right_tri.b, right_tri.c, hover_left ? dark : bright);
 }
 
 void CharacterSelectorScene::Resume() {}
 
 SceneType CharacterSelectorScene::Type() {
   return type_;
+}
+
+void CharacterSelectorScene::CreateRegions() {
+  // Dividing line
+  Vector2 p1 = {566, 0};
+  Vector2 p2 = {430, 960};
+  float d    = p1.x - p2.x;
+
+  left_rec  = {0, 0, p2.x, constants::screenHeight};
+  right_rec = {p1.x, 0, constants::screenWidth - p2.x, constants::screenHeight};
+
+  left_tri  = {p1, {p1.x - d, p1.y}, p2};
+  right_tri = {p1, p2, {p1.x, p2.y}};
 }
 
 void CharacterSelectorScene::SelectMario() {
@@ -98,88 +134,18 @@ void CharacterSelectorScene::StartGame() {
   App.AddScene(std::make_unique<GameScene>());
 }
 
-void CharacterSelectorScene::DrawCharacterOptions() {
-  float centerX = constants::screenWidth / 2.0f;
-  float centerY = constants::screenHeight / 2.0f;
-
-  // Character option positions
-  float mario_x = centerX + 200.0f;
-  float luigi_x = centerX - 200.0f;
-  float char_y  = centerY;
-
-  // Character sizes
-  float char_width  = 150.0f;
-  float char_height = 200.0f;
-
-  // Draw Mario option
-  Color mario_color
-    = (selectedCharacter_ == SelectedCharacter::MARIO) ? YELLOW : WHITE;
-  float mario_scale
-    = (selectedCharacter_ == SelectedCharacter::MARIO) ? 1.2f : 1.0f;
-
-  // Draw Mario rectangle (placeholder for character sprite)
-  Rectangle mario_rect = {
-    mario_x - char_width * mario_scale / 2,
-    char_y - char_height * mario_scale / 2, char_width * mario_scale,
-    char_height * mario_scale};
-  DrawRectangleRec(mario_rect, ColorAlpha(RED, 0.7f));
-  DrawRectangleLinesEx(mario_rect, 5, mario_color);
-
-  const char *mario_label = "MARIO";
-  Vector2 mario_label_sz  = MeasureTextEx(GetFontDefault(), mario_label, 30, 1);
-  DrawTextEx(
-    GetFontDefault(), mario_label,
-    {mario_x - mario_label_sz.x / 2,
-     char_y + char_height * mario_scale / 2 + 20},
-    30, 1, mario_color);
-
-  Color luigi_color
-    = (selectedCharacter_ == SelectedCharacter::LUIGI) ? YELLOW : WHITE;
-  float luigi_scale
-    = (selectedCharacter_ == SelectedCharacter::LUIGI) ? 1.2f : 1.0f;
-
-  Rectangle luigi_rect = {
-    luigi_x - char_width * luigi_scale / 2,
-    char_y - char_height * luigi_scale / 2, char_width * luigi_scale,
-    char_height * luigi_scale};
-  DrawRectangleRec(luigi_rect, ColorAlpha(GREEN, 0.7f));
-  DrawRectangleLinesEx(luigi_rect, 5, luigi_color);
-
-  const char *luigi_label = "LUIGI";
-  Vector2 luigi_label_sz  = MeasureTextEx(GetFontDefault(), luigi_label, 30, 1);
-  DrawTextEx(
-    GetFontDefault(), luigi_label,
-    {luigi_x - luigi_label_sz.x / 2,
-     char_y + char_height * luigi_scale / 2 + 20},
-    30, 1, luigi_color);
-
-  double time       = GetTime();
-  float wave        = static_cast<float>((sin(time * 4) + 1) * 0.5);
-  float indicator_y = char_y - char_height / 2 - 50;
-
-  if (selectedCharacter_ == SelectedCharacter::MARIO) {
-    float alpha = 0.5f + 0.5f * wave;
-    DrawText(
-      "", (int)(mario_x - 10), (int)indicator_y, 40, ColorAlpha(YELLOW, alpha));
-  } else {
-    float alpha = 0.5f + 0.5f * wave;
-    DrawText(
-      "", (int)(luigi_x - 10), (int)indicator_y, 40, ColorAlpha(YELLOW, alpha));
-  }
-}
-
 void CharacterSelectorScene::DrawInstructions() {
   float instructions_y = constants::screenHeight * 0.8f;
 
   const char *instructions[] = {
-    "Use LEFT/RIGHT arrows to select character",
-    "Press ENTER or SPACE to start game", "Press ESC to return to menu"};
+    "LEFT/ RIGHT arrows to select character", "ENTER/ SPACE to start game",
+    "ESC to return"};
 
   for (int i = 0; i < 3; i++) {
     Vector2 text_sz = MeasureTextEx(GetFontDefault(), instructions[i], 20, 1);
     float text_x    = (constants::screenWidth - text_sz.x) / 2;
     DrawTextEx(
       GetFontDefault(), instructions[i], {text_x, instructions_y + i * 30}, 20,
-      1, DARKGRAY);
+      1, WHITE);
   }
 }

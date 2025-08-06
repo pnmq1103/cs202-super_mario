@@ -12,6 +12,12 @@ enum class SelectedCharacter {
   LUIGI,
 };
 
+struct Triangle {
+  Vector2 a;
+  Vector2 b;
+  Vector2 c;
+};
+
 class CharacterSelectorScene : public Scene {
 private:
   SceneType type_ = {CharacterSelector};
@@ -22,14 +28,19 @@ private:
 
   Texture background_    = {};
   double last_input_     = {0};
-  const double cooldown_ = {0.3};
+  const double cooldown_ = {0.1};
+
+  bool hover_left     = {false};
+  Rectangle left_rec  = {};
+  Rectangle right_rec = {};
+  Triangle left_tri   = {};
+  Triangle right_tri  = {};
 
 private:
+  void CreateRegions();
   void SelectMario();
   void SelectLuigi();
   void StartGame();
-
-  void DrawCharacterOptions();
   void DrawInstructions();
 
 public:

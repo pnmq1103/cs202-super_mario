@@ -8,7 +8,7 @@ enum class TransitionState {
 class Transition {
 private:
   float timer_    = {0};
-  float duration_ = {0.5f};
+  float duration_ = {0.2f};
 
 public:
   void Draw(float dt);

@@ -26,7 +26,7 @@ EditorScene::EditorScene() {
     constants::blockSize * constants::mapWidth - 2 * buffer,
     constants::blockSize * constants::mapHeight - 2 * buffer};
 
-  buttons_.reserve(5);
+  buttons_.reserve(6);
 }
 
 EditorScene::~EditorScene() {}
@@ -72,7 +72,7 @@ void EditorScene::Draw() {
     default:
       layer_name = "Unknown";
   }
-  DrawText(("Layer: " + layer_name).c_str(), 50, 50, 20, RED);
+  DrawText(("Layer: " + layer_name).c_str(), 100, 100, 20, RED);
 }
 
 void EditorScene::Resume() {
@@ -106,48 +106,70 @@ void EditorScene::SaveMapAs() {
 }
 
 void EditorScene::CreateButtons() {
-  Rectangle src = {0, 0, 16, 16};
-  Rectangle dst = {100, 100, 64, 64};
-  float spacing = 40;
+  float button_width  = 64;
+  float button_height = 64;
+  float spacing       = 40;
+  int button_count    = 5;
 
+  float total_width
+    = button_count * button_width + (button_count - 1) * spacing;
+  float x = (constants::screenWidth - total_width) / 2;
+  float y = button_height * 1.5f;
+
+  Rectangle src = {0, 0, 16, 16};
+
+  Rectangle dst = {x, y, button_width, button_height};
   buttons_.emplace_back(
     "Tilset",
     [this] {
       App.AddScene(std::make_unique<TileSelectorScene>(select_gidx_));
     },
     src, dst, "res/ui/buttons/choose_ground_tile.png");
+  x += button_width + spacing;
 
-  dst = {100 + 64 + spacing, 100, 64, 64};
+  dst = {x, y, button_width, button_height};
   buttons_.emplace_back(
     "Enemy",
     [this] {
       App.AddScene(std::make_unique<EnemySelectorScene>(select_gidx_));
     },
     src, dst, "res/ui/buttons/choose_enemy.png");
+  x += button_width + spacing;
 
-  dst = {100 + 2 * (64 + spacing), 100, 64, 64};
+  dst = {x, y, button_width, button_height};
   buttons_.emplace_back(
     "Save",
     [this] {
       SaveMap();
     },
     src, dst, "res/ui/buttons/save.png");
+  x += button_width + spacing;
 
-  dst = {100 + 3 * (64 + spacing), 100, 64, 64};
+  dst = {x, y, button_width, button_height};
   buttons_.emplace_back(
     "Save as",
     [this] {
       SaveMapAs();
     },
     src, dst, "res/ui/buttons/load.png");
+  x += button_width + spacing;
 
-  dst = {100 + 4 * (64 + spacing), 100, 64, 64};
+  dst = {x, y, button_width, button_height};
   buttons_.emplace_back(
     "Load",
     [this] {
       LoadMap();
     },
     src, dst, "res/ui/buttons/load.png");
+  x += button_width + spacing;
+
+  dst = {32, 32, 64, 64};
+  buttons_.emplace_back(
+    "Return",
+    []() {
+      App.RemoveScene();
+    },
+    src, dst, "res/ui/buttons/return.png");
 }
 
 void EditorScene::UpdateCamera() {
@@ -176,9 +198,9 @@ void EditorScene::UpdateMouse() {
 
 void EditorScene::UpdateButtons() {
   for (size_t i = 0; i < buttons_.size(); ++i) {
-    buttons_[i].Update();
     if (buttons_[i].Clicked())
       button_clicked_ = true;
+    buttons_[i].Update();
   }
 }
 
