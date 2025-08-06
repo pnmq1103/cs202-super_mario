@@ -7,11 +7,6 @@
 #include "include/core/button.hpp"
 #include "include/core/scene.hpp"
 
-enum class SelectedCharacter {
-  MARIO,
-  LUIGI,
-};
-
 struct Triangle {
   Vector2 a;
   Vector2 b;
@@ -22,9 +17,7 @@ class CharacterSelectorScene : public Scene {
 private:
   SceneType type_ = {CharacterSelector};
 
-  // Character selection state (now instance variable)
-  SelectedCharacter selectedCharacter_ = {SelectedCharacter::MARIO};
-  static SelectedCharacter global_selected_character_;
+  CharacterType selected_character_ = {CharacterType::MARIO};
 
   Texture background_    = {};
   double last_input_     = {0};
@@ -44,7 +37,7 @@ private:
   void DrawInstructions();
 
 public:
-  CharacterSelectorScene();
+  CharacterSelectorScene() = default;
   ~CharacterSelectorScene();
 
   void Init() override;
@@ -52,8 +45,4 @@ public:
   void Draw() override;
   void Resume() override;
   SceneType Type() override;
-
-  static SelectedCharacter GetSelectedCharacter() {
-    return global_selected_character_;
-  }
 };

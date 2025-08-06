@@ -10,6 +10,7 @@ class GameScene : public Scene {
 private:
   SceneType type_ = {Game};
 
+  CharacterType character_type_;
   Character *player_character_
     = {nullptr}; // Single character pointer instead of mario/luigi
   Command *input_command_ = {nullptr};
@@ -17,7 +18,7 @@ private:
   static CollisionHandler *collision_handler_;
 
 public:
-  GameScene();
+  GameScene(CharacterType type);
   ~GameScene();
 
   void Init() override;

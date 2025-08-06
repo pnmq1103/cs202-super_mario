@@ -119,12 +119,12 @@ void GameManaging::LoadLevel(const std::string &filename) {
     // Process map data to create game objects
     int mapSize = constants::mapWidth * constants::mapHeight;
     for (int i = 0; i < mapSize; i++) {
-    //get the gid
-      int tileGid = map.GetCell(MapLayer::Tile1, i);
+      // get the gid
+      int tileGid        = map.GetCell(MapLayer::Tile1, i);
       int enemyGid       = map.GetCell(MapLayer::Objects, i);
       int pipeGid        = map.GetCell(MapLayer::Tile2, i);
       Rectangle tileRect = {0, 0, 0, 0}; // Initialize tile rectangle
-      //draw tile1
+      // draw tile1
       if (tileGid != 0) {
         tileRect             = map.GetInfo(tileGid);
         Vector2 tilePosition = {
@@ -133,7 +133,7 @@ void GameManaging::LoadLevel(const std::string &filename) {
         CreateBlockFromType(tileGid, tilePosition, tileRect);
       }
 
-      //draw objects
+      // draw objects
       if (enemyGid != 0) {
         Vector2 enemyPosition = {
           (float)(i % constants::mapWidth) * constants::blockSize,
@@ -431,9 +431,9 @@ void GameManaging::DrawStats() const {
   static bool textures_loaded      = false;
 
   if (!textures_loaded) {
-    coin_hui_texture  = LoadTexture("res/ui/buttons/coin.png");
-    lives_hui_texture = LoadTexture("res/ui/buttons/lives.png");
-    time_hui_texture  = LoadTexture("res/ui/buttons/coin.png");
+    coin_hui_texture  = LoadTexture("res/ui/coin.png");
+    lives_hui_texture = LoadTexture("res/ui/lives.png");
+    time_hui_texture  = LoadTexture("res/ui/coin.png");
     textures_loaded   = true;
   }
 
@@ -612,7 +612,8 @@ void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
   // EnemyManager::AddEnemy()
 }
 
-void GameManaging::CreateBlockFromType(int tileGid, Vector2 tilePosition, Rectangle tileRect) {
+void GameManaging::CreateBlockFromType(
+  int tileGid, Vector2 tilePosition, Rectangle tileRect) {
   if (tileGid == 1) {
     ObjectManager::GetInstance().AddBrickBlock(tilePosition);
   } else if (tileGid == 2) {

@@ -29,8 +29,8 @@ void SpriteManager::Init() {
   textures_["enemies_icon"]
     = LoadTexture("res/sprites/enemies/enemies_icon.png");
 
-  textures_["icons"]   = LoadTexture("res/sprites/icons/icons.png");
-  textures_["objects"] = LoadTexture("res/sprites/icons/objects.png");
+  textures_["block_objects"]
+    = LoadTexture("res/sprites/icons/block_objects.png");
   textures_["electric_shot"]
     = LoadTexture("res/sprites/electric_shot/electric_shot.png");
 
@@ -103,7 +103,7 @@ const Texture &SpriteManager::GetIcon() const {
 }
 
 const Texture &SpriteManager::GetObject() const {
-  return textures_.at("objects");
+  return textures_.at("block_objects");
 }
 
 const Texture &SpriteManager::GetElectricShot() const {

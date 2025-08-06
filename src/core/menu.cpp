@@ -9,7 +9,6 @@
 #include "include/core/constants.hpp"
 #include "include/core/credit.hpp"
 #include "include/core/editor.hpp"
-#include "include/core/game.hpp"
 #include "include/core/load.hpp"
 #include "include/core/menu.hpp"
 #include "include/core/setting.hpp"
@@ -46,16 +45,16 @@ void MenuScene::Update() {
       last_input_ = time;
 
       switch (selected_idx_) {
-        case 0: // Play - now goes to character selection
+        case 0:
           App.AddScene(std::make_unique<CharacterSelectorScene>());
           break;
-        case 1: // Load
+        case 1:
           App.AddScene(std::make_unique<LoadScene>());
           break;
-        case 2: // Editor
+        case 2:
           App.AddScene(std::make_unique<EditorScene>());
           break;
-        case 3: // Exit
+        case 3:
           App.Close();
           break;
 
@@ -128,25 +127,23 @@ void MenuScene::DrawOptions() {
 }
 
 void MenuScene::CreateButtons() {
+  Rectangle src = {0, 0, 16, 16};
+  Rectangle dst = {
+    constants::screenWidth - 64 * 2, constants::screenHeight - 64 * 2, 64, 64};
   buttons_.emplace_back(
     "Setting",
     []() {
       App.AddScene(std::make_unique<SettingScene>());
     },
-    Rectangle{0, 0, 16, 16},
-    Rectangle{
-      constants::screenWidth - 64 * 2, constants::screenHeight - 64 * 2, 64,
-      64},
-    "res/ui/buttons/setting.png");
+    src, dst, "res/ui/buttons/setting.png");
 
+  dst = {64, constants::screenHeight - 64 * 2, 64, 64};
   buttons_.emplace_back(
     "Credit",
     []() {
       App.AddScene(std::make_unique<CreditScene>());
     },
-    Rectangle{0, 0, 16, 16},
-    Rectangle{64, constants::screenHeight - 64 * 2, 64, 64},
-    "res/ui/buttons/credit.png");
+    src, dst, "res/ui/buttons/credit.png");
 }
 
 void MenuScene::UpdateButtons() {

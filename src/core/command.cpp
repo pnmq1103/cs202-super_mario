@@ -53,7 +53,7 @@ void Command::InitializeInstructionsButton() {
       Rectangle{0.0f, 0.0f, 16.0f, 16.0f},
       Rectangle{
         static_cast<float>(GetScreenWidth() - 120), 10.0f, 100.0f, 40.0f},
-      "res/sprites/icons/icons.png");
+      "res/sprites/icons/block_objects.png");
     instructions_initialized_ = true;
   }
 }

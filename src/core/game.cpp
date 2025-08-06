@@ -11,7 +11,9 @@
 #include "include/objects/object_manager.hpp"
 
 CollisionHandler *GameScene::collision_handler_ = nullptr;
-GameScene::GameScene() : game_manager_() {}
+
+GameScene::GameScene(CharacterType type)
+    : game_manager_(), character_type_(type) {}
 
 GameScene::~GameScene() {
   EnemyManager::GetInstance().ClearAllEnemies();
@@ -29,13 +31,12 @@ GameScene::~GameScene() {
     delete player_character_;
     player_character_ = nullptr;
   }
-
 }
 
 void GameScene::Init() {
   App.Media().PlayMusic("ground_theme");
 
-  camera_.target   = {100.0f, 300.0f};
+  camera_.target   = {0, 0};
   camera_.offset   = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
   camera_.rotation = 0.0f;
   camera_.zoom     = 1.0f;
@@ -46,14 +47,9 @@ void GameScene::Init() {
     collision_handler_->Reset(256 * 4, 240 * 4);
   }
 
-  SelectedCharacter selectedChar
-    = CharacterSelectorScene::GetSelectedCharacter();
+  player_character_ = new Character(4);
 
-  player_character_           = new Character(4.0f);
-  CharacterType characterType = (selectedChar == SelectedCharacter::MARIO)
-                                  ? CharacterType::MARIO
-                                  : CharacterType::LUIGI;
-  input_command_              = new Command(player_character_);
+  input_command_ = new Command(player_character_);
   input_command_->InitializeProjectilePool(collision_handler_);
 
   game_manager_.InitializeCollisionSystem(256 * 4, 240 * 4);
@@ -61,9 +57,9 @@ void GameScene::Init() {
   game_manager_.SetSceneCamera(&camera_);
 
   game_manager_.RegisterCharacterWithCollision(player_character_);
-  //game_manager_.LoadLevel("res/maps/map3.json");
+  // game_manager_.LoadLevel("res/maps/map3.json");
   CreateSimpleTestLevel();
-  player_character_->SetCharacter(characterType, {10.0f, 500.0f});
+  player_character_->SetCharacter(character_type_, {10.0f, 500.0f});
 }
 
 void GameScene::Update() {
@@ -222,7 +218,7 @@ void GameScene::CreateSimpleTestLevel() {
       {3136.0f, 600.0f - 64.0f * (float)i}, 'g'); // Right wall at map edge
   }
 
-    // Spawn some enemies for testing
+  // Spawn some enemies for testing
   enemyManager.SpawnEnemy(EnemyType::Goomba, {200.0f, 550.0f});
   // enemyManager.SpawnEnemy(EnemyType::Koopa, {400.0f, 550.0f});
   // enemyManager.SpawnEnemy(EnemyType::Piranha, {600.0f, 570.0f});
