@@ -45,6 +45,7 @@ public:
 
   static void AddScene(std::unique_ptr<Scene> new_scene, bool hide_prev = true);
   static void RemoveScene(size_t count = 1);
+  static void RemoveSceneUntil(SceneType type);
   static void ToggleCustomCursor();
   static void Close();
 };

@@ -8,7 +8,7 @@ QuestionBlock::QuestionBlock(
   texture       = &App.Resource().GetObject();
   is_used_      = false;
   item_spawned_ = false;
-  LoadFrameList("res/sprites/icons/objects.txt");
+  LoadFrameList("res/sprites/objects/objects.txt");
 }
 
 QuestionBlock::~QuestionBlock() {}
@@ -24,7 +24,7 @@ void QuestionBlock::Update() {
 
     if (!item_spawned_) {
       item_spawned_ = true;
-      texture       = &App.Resource().GetIcon();
+      texture       = &App.Resource().GetObject();
       frame         = {110, 88, 16, 16};
       switch (item_) {
         case coin:

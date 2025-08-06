@@ -21,8 +21,7 @@ void PauseScene::Update() {
 
 void PauseScene::Draw() {
   DrawRectangleRec(
-    {0, 0, constants::screenWidth, constants::screenHeight},
-    Fade(LIGHTGRAY, 0.9f));
+    {0, 0, constants::screenWidth, constants::screenHeight}, Fade(GRAY, 0.6f));
 
   DrawRectangleRec({box_pos.x, box_pos.y, box_width, box_height}, WHITE);
   DrawRectangleLinesEx({box_pos.x, box_pos.y, box_width, box_height}, 5, RED);
@@ -41,6 +40,7 @@ void PauseScene::CreateButtons() {
   float button_height = 64;
   float spacing       = 40;
   int button_count    = 3;
+
   if (App.PreviousScene() == SceneType::Game)
     button_count = 5;
 
@@ -55,7 +55,7 @@ void PauseScene::CreateButtons() {
   buttons_.emplace_back(
     "Menu",
     []() {
-      App.RemoveScene(2);
+      App.RemoveSceneUntil(SceneType::Menu);
     },
     src, dst, "res/ui/buttons/menu.png");
   x += button_width + spacing;

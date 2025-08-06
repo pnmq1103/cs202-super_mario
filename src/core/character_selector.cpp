@@ -21,8 +21,8 @@ void CharacterSelectorScene::Init() {
 
 void CharacterSelectorScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    std::cout << "Escape pressed, returning to menu" << std::endl;
     App.RemoveScene();
+    return;
   }
   double time = GetTime();
 
@@ -64,16 +64,9 @@ void CharacterSelectorScene::Update() {
 void CharacterSelectorScene::Draw() {
   DrawTexture(background_, 0, 0, RAYWHITE);
 
-  float font_sz     = 25;
-  const char *title = "Choose Your Character";
-  Vector2 title_sz  = MeasureTextEx(GetFontDefault(), title, font_sz, 1);
-  float title_x     = (constants::screenWidth - title_sz.x) / 2;
-  float title_y     = constants::screenHeight / 2;
-  DrawTextEx(GetFontDefault(), title, {title_x, title_y}, font_sz, 1, WHITE);
-
   DrawInstructions();
 
-  Color dark   = ColorAlpha(BLACK, 0.3f);
+  Color dark   = ColorAlpha(BLACK, 0.5f);
   Color bright = ColorAlpha(BLACK, 0);
   DrawRectangleRec(left_rec, hover_left ? bright : dark);
   DrawTriangle(left_tri.a, left_tri.b, left_tri.c, hover_left ? bright : dark);

@@ -16,7 +16,6 @@ public:
   const Texture &GetLuigi(char type) const;
   const Texture &GetEnemy(char type) const;
   const Texture &GetTileset(char type) const;
-  const Texture &GetIcon() const;
   const Texture &GetObject() const;
   const Texture &GetElectricShot() const;
   const Texture &GetBackground() const;

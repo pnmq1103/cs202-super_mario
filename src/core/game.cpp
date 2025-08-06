@@ -7,6 +7,7 @@
 #include "include/core/command.hpp"
 #include "include/core/game.hpp"
 #include "include/core/game_managing.hpp"
+#include "include/core/pause.hpp"
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
 
@@ -66,7 +67,7 @@ void GameScene::Init() {
 
 void GameScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    App.RemoveScene();
+    App.AddScene(std::make_unique<PauseScene>(), false);
     return;
   }
   if (IsKeyPressed(KEY_P)) {

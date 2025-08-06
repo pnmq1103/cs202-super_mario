@@ -93,6 +93,7 @@ void Application::AddScene(std::unique_ptr<Scene> new_scene, bool hide_prev) {
   App.Media().StopMusic();
   if (hide_prev)
     App.scene_manager_.Top().SetVisible(false);
+  App.previous_scene_ = App.scene_manager_.Top().Type();
   App.scene_manager_.Push(std::move(new_scene));
   App.scene_manager_.Init();
 
@@ -113,6 +114,23 @@ void Application::RemoveScene(size_t count) {
     if (App.scene_manager_.Size() == App.Media().MusicStateSize())
       App.Media().LoadMusicState();
   }
+  App.scene_manager_.Top().SetVisible(true);
+  App.scene_manager_.Top().Resume();
+}
+
+void Application::RemoveSceneUntil(SceneType type) {
+  App.Media().StopMusic();
+
+  while (App.scene_manager_.Size()) {
+    if (App.scene_manager_.Top().Type() == type)
+      break;
+
+    App.previous_scene_ = App.scene_manager_.Top().Type();
+    App.scene_manager_.Pop();
+    if (App.scene_manager_.Size() == App.Media().MusicStateSize())
+      App.Media().LoadMusicState();
+  }
+
   App.scene_manager_.Top().SetVisible(true);
   App.scene_manager_.Top().Resume();
 }

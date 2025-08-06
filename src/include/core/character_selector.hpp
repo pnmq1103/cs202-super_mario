@@ -17,13 +17,13 @@ class CharacterSelectorScene : public Scene {
 private:
   SceneType type_ = {CharacterSelector};
 
-  CharacterType selected_character_ = {CharacterType::MARIO};
+  CharacterType selected_character_ = {CharacterType::LUIGI};
 
   Texture background_    = {};
   double last_input_     = {0};
   const double cooldown_ = {0.1};
 
-  bool hover_left     = {false};
+  bool hover_left     = {true};
   Rectangle left_rec  = {};
   Rectangle right_rec = {};
   Triangle left_tri   = {};
@@ -31,8 +31,6 @@ private:
 
 private:
   void CreateRegions();
-  void SelectMario();
-  void SelectLuigi();
   void StartGame();
   void DrawInstructions();
 

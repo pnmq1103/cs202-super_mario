@@ -11,8 +11,8 @@ private:
 
   std::vector<Button> buttons_;
 
-  float box_width  = 500;
-  float box_height = 175;
+  float box_width  = 600;
+  float box_height = 200;
   Vector2 box_pos  = {
     (constants::screenWidth - box_width) / 2,
     (constants::screenHeight - box_height) / 2};

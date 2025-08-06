@@ -2,7 +2,7 @@
 
 Coin::Coin(Vector2 Nposition, float Nscale) : GameObject(Nposition, Nscale) {
   texture = &App.Resource().GetObject();
-  LoadFrameList("res/sprites/icons/objects.txt");
+  LoadFrameList("res/sprites/objects/objects.txt");
 }
 
 Coin::~Coin() {}

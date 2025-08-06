@@ -3,7 +3,7 @@
 SuperStar::SuperStar(Vector2 Nposition, float Nscale)
     : GameObject(Nposition, Nscale),
       color_set_({RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, WHITE}) {
-  texture = &App.Resource().GetIcon();
+  texture = &App.Resource().GetObject();
   frame   = {25, 153, 15, 16};
 }
 

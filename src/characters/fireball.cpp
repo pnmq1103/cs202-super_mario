@@ -9,7 +9,7 @@ MarioFireball::MarioFireball() : Projectile(5, {20, 0}) {
   bounce_coefficient_ = 0.9f;
   range_              = 1000;
 
-  LoadFrameList("res/sprites/icons/objects.txt");
+  LoadFrameList("res/sprites/objects/objects.txt");
   texture = &App.Resource().GetObject();
   frame   = frame_list[133];
 }
@@ -62,7 +62,7 @@ void MarioFireball::ReverseDirection() {
 //|                       Enemy Fireball                     |
 //+----------------------------------------------------------+
 EnemyFireball::EnemyFireball() : Projectile(5, {10, 0}) {
-  LoadFrameList("res/sprites/icons/objects.txt");
+  LoadFrameList("res/sprites/objects/objects.txt");
   texture = &App.Resource().GetObject();
   frame   = frame_list[133];
   range_  = 1000;
