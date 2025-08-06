@@ -44,7 +44,8 @@ GameManaging::GameManaging() {
 
   // Level completion criteria
   levelEndX_
-    = constants::mapWidth * constants::blockSize; // Character must reach this X position to complete level
+    = constants::mapWidth * constants::blockSize; // Character must reach this X
+                                                  // position to complete level
   totalEnemies_  = 0;
   enemiesKilled_ = 0;
 }
@@ -668,8 +669,7 @@ void GameManaging::CreateBlockFromType(
       tilePosition, QuestionBlockItem::coin);
   } else if (tileGid == 3) {
     ObjectManager::GetInstance().AddCoin(tilePosition);
-  } else if (tileGid >= 17 && tileGid <= 36) // using the minimal tileset
-  {
+  } else if (tileGid >= 17 && tileGid <= 37) { // using the minimal tileset
     ObjectManager::GetInstance().AddStaticBlockByGid(
       tilePosition, tileRect); // add by gid instead of theme's default block
   } else {
