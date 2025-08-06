@@ -60,9 +60,9 @@ void GameScene::Init() {
   game_manager_.SetSceneCamera(&camera_);
 
   game_manager_.RegisterCharacterWithCollision(player_character_);
-  game_manager_.LoadLevel("res/maps/map1.json");
+  game_manager_.LoadLevel("res/maps/map3.json");
   //CreateSimpleTestLevel();
-  player_character_->SetCharacter(character_type_, {10.0f, 500.0f});
+  player_character_->SetCharacter(characterType, {10.0f, 500.0f});
 }
 
 void GameScene::Update() {

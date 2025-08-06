@@ -3,8 +3,8 @@ StaticBlock::StaticBlock(Vector2 Nposition, float Nscale, char theme)
     : GameObject(Nposition, Nscale) {
   switch (theme) {
     case 'g':
-      texture = &App.Resource().GetTileset('g');
-      frame   = {112, 96, 16, 16};
+      texture = &App.Resource().GetTileset('m');
+      frame   = {80, 64, 16, 16};
       break;
     case 's':
       texture = &App.Resource().GetTileset('s');

@@ -3,7 +3,7 @@
 FireFlower::FireFlower(Vector2 Nposition, float Nscale)
     : GameObject(Nposition, Nscale) {
   texture = &App.Resource().GetObject();
-  frame   = {67, 131, 16, 16};
+  frame   = {128, 0, 16, 16};
 }
 
 FireFlower::~FireFlower() {}

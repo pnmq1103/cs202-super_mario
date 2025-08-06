@@ -15,8 +15,8 @@ PipeBlock::PipeBlock(
   has_head_    = Nhas_head;
   has_tail_    = Nhas_tail;
 
- /* texture = &App.Resource().GetTileset('w');
-  LoadFrameList("res/sprites/tilesets/tileset_underwater.txt");*/
+ texture = &App.Resource().GetTileset('m');
+  LoadFrameList("res/sprites/tilesets/tileset_minimal.txt");
 }
 
 PipeBlock::~PipeBlock() {}
@@ -49,7 +49,7 @@ void PipeBlock::OnHit() {}
 
 void PipeBlock::Draw() {
   // Check if frame_list has enough elements before accessing
-  if (frame_list.size() < 44) {
+  if (frame_list.size() != 37) {
     return; // Not enough frames loaded, skip drawing
   }
 
@@ -57,12 +57,12 @@ void PipeBlock::Draw() {
 
     if (has_head_) {
       DrawTexturePro(
-        *texture, frame_list[12], MakeDestRectMod(position, frame_list[12]),
+        *texture, frame_list[8], MakeDestRectMod(position, frame_list[8]),
         {0, 0}, 0.f, WHITE);
 
       Vector2 point = {position.x + 16 * scale, position.y};
       DrawTexturePro(
-        *texture, frame_list[13], MakeDestRectMod(point, frame_list[13]),
+        *texture, frame_list[9], MakeDestRectMod(point, frame_list[9]),
         {0, 0}, 0.f, WHITE);
     }
 
@@ -70,12 +70,12 @@ void PipeBlock::Draw() {
 
       Vector2 point = {position.x + scale, position.y + (i + 1) * 16 * scale};
       DrawTexturePro(
-        *texture, frame_list[26], MakeDestRectMod(point, frame_list[26]),
+        *texture, frame_list[15], MakeDestRectMod(point, frame_list[15]),
         {0, 0}, 0.f, WHITE);
 
       point = {position.x + scale * 16, position.y + (i + 1) * 16 * scale};
       DrawTexturePro(
-        *texture, frame_list[27], MakeDestRectMod(point, frame_list[27]),
+        *texture, frame_list[16], MakeDestRectMod(point, frame_list[16]),
         {0, 0}, 0.f, WHITE);
     }
 
@@ -83,13 +83,13 @@ void PipeBlock::Draw() {
 
       Vector2 point = {position.x, position.y + (length_ + 1) * 16 * scale};
       DrawTexturePro(
-        *texture, frame_list[42], MakeDestRectMod(point, frame_list[42]),
+        *texture, frame_list[25], MakeDestRectMod(point, frame_list[25]),
         {0, 0}, 0.f, WHITE);
 
       point
         = {position.x + scale * 16, position.y + (length_ + 1) * 16 * scale};
       DrawTexturePro(
-        *texture, frame_list[43], MakeDestRectMod(point, frame_list[43]),
+        *texture, frame_list[26], MakeDestRectMod(point, frame_list[26]),
         {0, 0}, 0.f, WHITE);
     }
 
@@ -97,12 +97,12 @@ void PipeBlock::Draw() {
 
     if (has_head_) {
       DrawTexturePro(
-        *texture, frame_list[10], MakeDestRectMod(position, frame_list[10]),
+        *texture, frame_list[5], MakeDestRectMod(position, frame_list[5]),
         {0, 0}, 0.f, WHITE);
 
       Vector2 point = {position.x, position.y + 16 * scale};
       DrawTexturePro(
-        *texture, frame_list[23], MakeDestRectMod(point, frame_list[23]),
+        *texture, frame_list[10], MakeDestRectMod(point, frame_list[10]),
         {0, 0}, 0.f, WHITE);
     }
 
@@ -110,12 +110,12 @@ void PipeBlock::Draw() {
 
       Vector2 point = {position.x + (i + 1) * 16 * scale, position.y + scale};
       DrawTexturePro(
-        *texture, frame_list[14], MakeDestRectMod(point, frame_list[14]),
+        *texture, frame_list[6], MakeDestRectMod(point, frame_list[6]),
         {0, 0}, 0.f, WHITE);
 
       point = {position.x + (i + 1) * 16 * scale, position.y + scale * 16};
       DrawTexturePro(
-        *texture, frame_list[24], MakeDestRectMod(point, frame_list[24]),
+        *texture, frame_list[11], MakeDestRectMod(point, frame_list[11]),
         {0, 0}, 0.f, WHITE);
     }
 
@@ -123,13 +123,13 @@ void PipeBlock::Draw() {
 
       Vector2 point = {position.x + (length_ + 1) * 16 * scale, position.y};
       DrawTexturePro(
-        *texture, frame_list[11], MakeDestRectMod(point, frame_list[11]),
+        *texture, frame_list[7], MakeDestRectMod(point, frame_list[7]),
         {0, 0}, 0.f, WHITE);
 
       point
         = {position.x + (length_ + 1) * 16 * scale, position.y + scale * 16};
       DrawTexturePro(
-        *texture, frame_list[25], MakeDestRectMod(point, frame_list[25]),
+        *texture, frame_list[12], MakeDestRectMod(point, frame_list[12]),
         {0, 0}, 0.f, WHITE);
     }
   }

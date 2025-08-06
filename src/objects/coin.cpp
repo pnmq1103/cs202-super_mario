@@ -2,7 +2,7 @@
 
 Coin::Coin(Vector2 Nposition, float Nscale) : GameObject(Nposition, Nscale) {
   texture = &App.Resource().GetObject();
-  LoadFrameList("res/sprites/objects/objects.txt");
+  LoadFrameList("res/sprites/objects/block_objects.txt");
 }
 
 Coin::~Coin() {}
@@ -14,7 +14,7 @@ void Coin::OnHit() {
 }
 
 void Coin::Update() {
-  frame = frame_list[59 + ((time / 5) % +8)];
+  frame = frame_list[10 + ((time / 5) % +8)];
   GameObject::Update();
 }
 

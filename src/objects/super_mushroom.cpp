@@ -6,7 +6,7 @@ SuperMushroom::SuperMushroom(Vector2 Nposition, float Nscale, bool to_left)
   if (to_left)
     velocity.x *= -1;
   texture = &App.Resource().GetObject();
-  frame   = {46, 131, 16, 16};
+  frame   = {144, 0, 16, 16};
   y_mark  = INT_MAX / 2;
 }
 

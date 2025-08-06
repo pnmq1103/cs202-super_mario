@@ -44,7 +44,7 @@ GameManaging::GameManaging() {
 
   // Level completion criteria
   levelEndX_
-    = 3000.0f; // Character must reach this X position to complete level
+    = constants::mapWidth * constants::blockSize; // Character must reach this X position to complete level
   totalEnemies_  = 0;
   enemiesKilled_ = 0;
 }

@@ -29,7 +29,7 @@ void SpriteManager::Init() {
   textures_["enemies_icon"]
     = LoadTexture("res/sprites/enemies/enemies_icon.png");
 
-  textures_["objects"] = LoadTexture("res/sprites/objects/objects.png");
+  textures_["objects"] = LoadTexture("res/sprites/objects/block_objects.png");
   textures_["electric_shot"]
     = LoadTexture("res/sprites/electric_shot/electric_shot.png");
 

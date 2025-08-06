@@ -9,15 +9,15 @@ MarioFireball::MarioFireball() : Projectile(5, {20, 0}) {
   bounce_coefficient_ = 0.9f;
   range_              = 1000;
 
-  LoadFrameList("res/sprites/objects/objects.txt");
+  LoadFrameList("res/sprites/objects/block_objects.txt");
   texture = &App.Resource().GetObject();
-  frame   = frame_list[133];
+  frame   = frame_list[19];
 }
 MarioFireball::~MarioFireball() {}
 void MarioFireball::Update() {
   if (is_destroy)
     return;
-  frame = frame_list[(time / 15) % 3 + 133];
+  frame = frame_list[(time / 15) % 3 + 19];
 
   if (velocity.x > 0) {
     if (position.x >= original_position.x + range_) {
@@ -62,9 +62,9 @@ void MarioFireball::ReverseDirection() {
 //|                       Enemy Fireball                     |
 //+----------------------------------------------------------+
 EnemyFireball::EnemyFireball() : Projectile(5, {10, 0}) {
-  LoadFrameList("res/sprites/objects/objects.txt");
+  LoadFrameList("res/sprites/objects/block_objects.txt");
   texture = &App.Resource().GetObject();
-  frame   = frame_list[133];
+  frame   = frame_list[19];
   range_  = 1000;
 }
 EnemyFireball::~EnemyFireball() {}
@@ -81,11 +81,11 @@ void EnemyFireball::Update() {
   }
 
   if ((time / 5) % 3 == 0) {
-    frame = frame_list[745];
+    frame = frame_list[19];
   } else if ((time / 5) % 3 == 1) {
-    frame = frame_list[759];
+    frame = frame_list[20];
   } else {
-    frame = frame_list[773];
+    frame = frame_list[21];
   }
   position.x += velocity.x;
   position.y += velocity.y;
