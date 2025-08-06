@@ -90,12 +90,11 @@ void GameScene::Update() {
     active_character->SetFrameCount();
     active_character->Update();
   }
-  ObjectManager::GetInstance().SetFrameCount(); // ADDED - for block sprites
+  ObjectManager::GetInstance().SetFrameCount();
   ObjectManager::GetInstance().Update();
   Enemy::SetFrameCount();
   input_command_->UpdateProjectiles();
 
-  // Update camera smoothly
   UpdateCamera(active_character);
 
   // Let game manager handle all game logic
@@ -223,8 +222,8 @@ void GameScene::CreateSimpleTestLevel() {
       {3136.0f, 600.0f - 64.0f * (float)i}, 'g'); // Right wall at map edge
   }
 
-  // Spawn some enemies for testing
-  // enemyManager.SpawnEnemy(EnemyType::Goomba, {200.0f, 550.0f});
+    // Spawn some enemies for testing
+  enemyManager.SpawnEnemy(EnemyType::Goomba, {200.0f, 550.0f});
   // enemyManager.SpawnEnemy(EnemyType::Koopa, {400.0f, 550.0f});
   // enemyManager.SpawnEnemy(EnemyType::Piranha, {600.0f, 570.0f});
   // enemyManager.SpawnEnemy(EnemyType::Goomba, {800.0f, 550.0f});

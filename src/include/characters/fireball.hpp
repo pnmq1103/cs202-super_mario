@@ -13,6 +13,7 @@ public:
   void Renew(Vector2 Nposition, bool to_left);
   void StopY(bool stop_upper, bool stop_lower);
   ProjectileType GetType();
+  void ReverseDirection();
 };
 
 class EnemyFireball : public Projectile {
@@ -26,6 +27,7 @@ public:
   void Draw();
   void StopY(bool stop_upper, bool stop_lower);
   ProjectileType GetType();
+  void ReverseDirection();
 };
 
 class ElectricBall : public Projectile {
@@ -43,4 +45,5 @@ public:
   void Renew(Vector2 Nposition, bool to_left);
   void StopY(bool stop_upper, bool stop_lower);
   ProjectileType GetType();
+  void ReverseDirection();
 };

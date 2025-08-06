@@ -34,6 +34,7 @@ public:
   bool IsDestroyed();
   virtual void Renew(Vector2 Nposition, bool to_left);
   virtual void StopY(bool stop_upper, bool stop_lower) = 0;
+  virtual void ReverseDirection()                      = 0;
   virtual ProjectileType GetType()                     = 0;
   Vector2 GetSpeed();
 };

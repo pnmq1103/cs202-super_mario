@@ -60,7 +60,6 @@ void GameManaging::SetSceneCamera(Camera2D *camera) {
 void GameManaging::SetCollisionHandler(CollisionHandler *handler) {
   collisionHandler_ = handler;
   if (collisionHandler_) {
-    collisionHandler_->Reset(levelWidth_, levelHeight_);
     EnemyManager::GetInstance().SetCollisionHandler(collisionHandler_);
   }
 }
@@ -331,11 +330,6 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
   // Clear dead enemies (killed by boundaries or other means)
   enemyManager.ClearDeadEnemies();
 
-  // Update collision system - this will handle wall/boundary collisions for
-  // enemies
-  // UpdateCollisionSystem(); ********************* wrong order **************
-
-  // Check level completion conditions
   CheckLevelCompletion(activeCharacter);
 
   // Update particles

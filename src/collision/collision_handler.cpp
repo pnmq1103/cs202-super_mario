@@ -9,6 +9,7 @@ CollisionHandler::CollisionHandler(float width, float height)
 }
 
 void CollisionHandler::Reset(float width, float height) {
+  std::cout << "reset\n";
   column_ = std::ceil(width / cellSize_);
   row_    = std::ceil(height / cellSize_);
 
@@ -120,6 +121,7 @@ void CollisionHandler::AddCharacter(Character *character) {
 }
 
 void CollisionHandler::AddProjectile(Projectile *projectile) {
+  std::cout << "add\n";
   if (!projectile)
     return;
   for (int i = 0; i < projectile_list_.size(); ++i) {
@@ -285,7 +287,7 @@ void CollisionHandler::CheckCollisionCharacter() {
           Vector2 speed       = character_->GetSpeed();
 
           if (
-          rect.y + rect.height >= rectangle.y && (rect.x + rect.width >=rectangle.x
+          rect.y + rect.height +speed.y >= rectangle.y && (rect.x + rect.width >=rectangle.x
           && rect.x <= rectangle.x + rectangle.width)) {
             character_->StopY(rectangle.y);
           }
@@ -496,8 +498,19 @@ void CollisionHandler::CheckCollisionProjectile() {
         while (it != grid_[j][position[2]].end()) {
           int type = it->first, index = it->second;
 
-          if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle())) {
-            projectile_list_[i]->Destroy();
+          Rectangle rectangle = object_list_[index]->GetRectangle();
+          Vector2 speed       = projectile_list_[i]->GetSpeed();
+
+          if (
+            rect.x + speed.x <= rectangle.x + rectangle.width
+            && rect.x > rectangle.x + rectangle.width
+            && !(
+              rect.y >= rectangle.y + rectangle.height
+              || rect.y + rect.height <= rectangle.y)) {
+            if (projectile_list_[i]->GetType() == mario_fireball)
+              projectile_list_[i]->ReverseDirection();
+            else
+              projectile_list_[i]->Destroy();
           }
 
           ++it;
@@ -506,9 +519,22 @@ void CollisionHandler::CheckCollisionProjectile() {
         it = grid_[j][position[3]].begin();
         while (it != grid_[j][position[3]].end()) {
           int type = it->first, index = it->second;
+
+          Rectangle rectangle = object_list_[index]->GetRectangle();
+          Vector2 speed       = projectile_list_[i]->GetSpeed();
+
           if (type == 2) {
-            if (CheckCollisionRecs(rect, object_list_[index]->GetRectangle()))
-              projectile_list_[i]->Destroy();
+            if (
+              rect.x + rect.width + speed.x >= rectangle.x
+              && rect.x + rect.width < rectangle.x
+              && !(
+                rect.y >= rectangle.y + rectangle.height
+                || rect.y + rect.height <= rectangle.y)) {
+              if (projectile_list_[i]->GetType() == mario_fireball)
+                projectile_list_[i]->ReverseDirection();
+              else
+                projectile_list_[i]->Destroy();
+            }
           }
           ++it;
         }
