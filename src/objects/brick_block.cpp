@@ -1,7 +1,7 @@
 #include "include/objects/brick_block.hpp"
 BrickBlock::BrickBlock(Vector2 Nposition, float Nscale)
     : GameObject(Nposition, Nscale) {
-  texture = &App.Resource().GetObject();
+  texture = &App.Resource().GetTileset('g');
   frame   = {0, 0, 16, 16};
 }
 

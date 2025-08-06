@@ -69,10 +69,6 @@ void
 GameManaging::InitializeCollisionSystem(float worldWidth, float worldHeight) {
   levelWidth_  = worldWidth;
   levelHeight_ = worldHeight;
-
-  if (collisionHandler_) {
-    collisionHandler_->Reset(levelWidth_, levelHeight_);
-  }
 }
 
 void GameManaging::RegisterCharacterWithCollision(Character *character) {
@@ -87,25 +83,11 @@ void GameManaging::LoadLevel(const std::string &filename) {
 
   UnloadLevel();
 
-  // Set frame counters like in main.cpp
-  ObjectManager::GetInstance().SetFrameCount();
-  Enemy::SetFrameCount();
-
   // IMPORTANT: Make sure collision handler is properly initialized BEFORE Reset
-  if (!collisionHandler_) {
-    // Initialize collision system if not already done
-    InitializeCollisionSystem(levelWidth_, levelHeight_);
-  }
 
   // Reset managers
-  if (collisionHandler_) {
-    collisionHandler_->Reset(levelWidth_, levelHeight_);
-    // Set collision handler for EnemyManager
-    EnemyManager::GetInstance().SetCollisionHandler(collisionHandler_);
-  }
 
   // Reset ObjectManager with the VALID collision handler
-  ObjectManager::GetInstance().Reset((int)constants::scale, collisionHandler_);
 
   // Reset level completion tracking
   levelComplete_ = false;
@@ -287,14 +269,6 @@ void GameManaging::UnloadLevel() {
   // Clear managers
   EnemyManager::GetInstance().ClearAllEnemies();
   // ObjectManager doesn't have Clear method, so we reset it instead
-  if (collisionHandler_) {
-    ObjectManager::GetInstance().Reset(
-      (int)constants::scale, collisionHandler_);
-  }
-
-  if (collisionHandler_) {
-    collisionHandler_->Reset(levelWidth_, levelHeight_);
-  }
 }
 
 void GameManaging::ResetGame() {
@@ -385,8 +359,6 @@ void GameManaging::DrawLevel() {
   DrawBackground();
 
   // Draw blocks using ObjectManager
-  ObjectManager::GetInstance().SetFrameCount();
-  ObjectManager::GetInstance().Update();
   ObjectManager::GetInstance().Draw();
 
   // Draw enemies using EnemyManager
@@ -542,21 +514,21 @@ void GameManaging::DrawBackground() {
 void GameManaging::UpdateTime() {
   float delta = GetFrameTime();
   gameTime_  += delta;
-  
+
   int remainingTime = countdownSeconds_ - (int)gameTime_;
-  
+
   // Play warning sound when time is running low
   static bool timeWarningPlayed = false;
   if (remainingTime <= 100 && remainingTime > 0 && !timeWarningPlayed) {
     App.Media().PlaySound("time-up_warning");
     timeWarningPlayed = true;
   }
-  
+
   // Reset warning flag when time is reset or level changes
   if (remainingTime > 100) {
     timeWarningPlayed = false;
   }
-  
+
   if (remainingTime <= 0) {
     App.Media().PlaySound("life_lost");
     DecreaseLife();
@@ -566,16 +538,16 @@ void GameManaging::UpdateTime() {
 
 void GameManaging::AddPoints(int points) {
   points_ += points;
-  
+
   // Play coin sound for small point gains (like collecting coins)
   if (points <= 200) {
     App.Media().PlaySound("coin");
   }
-  
+
   // Check for 1-up (extra life) milestone
   static int lastLifeThreshold = 0;
   int currentLifeThreshold = points_ / 10000; // Every 10,000 points = 1 life
-  
+
   if (currentLifeThreshold > lastLifeThreshold) {
     lives_++;
     App.Media().PlaySound("1up");
@@ -586,10 +558,10 @@ void GameManaging::AddPoints(int points) {
 
 void GameManaging::DecreaseLife() {
   lives_--;
-  
+
   // Play life lost sound
   App.Media().PlaySound("life_lost");
-  
+
   if (lives_ <= 0) {
     gameOver_ = true;
     // Game over sound will be played in UpdateBackgroundMusic()
@@ -602,7 +574,7 @@ void GameManaging::HitBlock(GameObject *block, Character *character) {
     AddPoints(50);
     Rectangle blockRect = block->GetRectangle();
     SpawnParticle({blockRect.x + 16, blockRect.y}, YELLOW);
-    
+
     // Play appropriate sound based on block type
     if (block->GetType() == ObjectType::BrickBlock) {
       App.Media().PlaySound("brick");
@@ -680,7 +652,8 @@ void GameManaging::CreateBlockFromType(
   }
 }
 
-void GameManaging::CreateSpecialObjectFromType(int specialType, Vector2 position) {
+void
+GameManaging::CreateSpecialObjectFromType(int specialType, Vector2 position) {
   switch (specialType) {
     case 200: // Spawn point
       spawnPoint_ = position;
@@ -718,7 +691,7 @@ void GameManaging::PlaySoundEffect(const std::string &soundName) {
 
 void GameManaging::UpdateBackgroundMusic() {
   App.Media().UpdateMusic();
-  
+
   static int lastLevel = 0;
   if (currentLevel_ != lastLevel) {
     lastLevel = currentLevel_;
@@ -742,11 +715,11 @@ void GameManaging::UpdateBackgroundMusic() {
     std::cout << "Changed background music for level " << currentLevel_
               << std::endl;
   }
-  
+
   // Handle special game state music
-  static bool gameOverSoundPlayed = false;
+  static bool gameOverSoundPlayed      = false;
   static bool levelCompleteSoundPlayed = false;
-  
+
   if (gameOver_ && !gameOverSoundPlayed) {
     App.Media().PlaySound("gameover");
     App.Media().StopMusic(); // Stop background music when game over
@@ -754,7 +727,7 @@ void GameManaging::UpdateBackgroundMusic() {
   } else if (!gameOver_) {
     gameOverSoundPlayed = false; // Reset flag when game is not over
   }
-  
+
   if (levelComplete_ && !levelCompleteSoundPlayed) {
     App.Media().PlaySound("level_complete");
     levelCompleteSoundPlayed = true;
@@ -855,7 +828,8 @@ void GameManaging::OnPlayerDeath(Character *character) {
 
     EnemyManager::GetInstance().PauseAllEnemies();
 
-    // Stop background music (game over sound will be played in UpdateBackgroundMusic)
+    // Stop background music (game over sound will be played in
+    // UpdateBackgroundMusic)
     App.Media().StopMusic();
 
     // Reset the level (but keep gameOver_ = true)

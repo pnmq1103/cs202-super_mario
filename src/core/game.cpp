@@ -13,17 +13,15 @@
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
 
-CollisionHandler *GameScene::collision_handler_ = nullptr;
+CollisionHandler GameScene::collision_handler_(
+  constants::mapWidth * 16 * constants::scale,
+  constants::mapHeight * 16 * constants::scale);
 
 GameScene::GameScene(CharacterType type)
     : game_manager_(), character_type_(type) {}
 
 GameScene::~GameScene() {
   EnemyManager::GetInstance().ClearAllEnemies();
-  if (collision_handler_) {
-    collision_handler_->Reset(constants::screenWidth, constants::screenHeight);
-    ObjectManager::GetInstance().Reset(4, collision_handler_);
-  }
 
   if (input_command_) {
     delete input_command_;
@@ -44,26 +42,23 @@ void GameScene::Init() {
   camera_.rotation = 0;
   camera_.zoom     = 1;
 
-  if (!collision_handler_) {
-    collision_handler_
-      = new CollisionHandler(constants::screenWidth, constants::screenHeight);
-  } else {
-    collision_handler_->Reset(constants::screenWidth, constants::screenHeight);
-  }
+  collision_handler_.Reset(
+    constants::mapWidth * 16 * constants::scale,
+    constants::mapHeight * 16 * constants::scale);
 
   player_character_ = new Character(4);
 
   input_command_ = new Command(player_character_);
-  input_command_->InitializeProjectilePool(collision_handler_);
+  input_command_->InitializeProjectilePool(&collision_handler_);
 
-  game_manager_.InitializeCollisionSystem(
-    constants::screenWidth, constants::screenHeight);
-  game_manager_.SetCollisionHandler(collision_handler_);
+  game_manager_.SetCollisionHandler(&collision_handler_);
   game_manager_.SetSceneCamera(&camera_);
 
   game_manager_.RegisterCharacterWithCollision(player_character_);
+  ObjectManager::GetInstance().Reset(
+    (int)constants::scale, &collision_handler_);
   game_manager_.LoadLevel("res/maps/map3.json");
-  //CreateSimpleTestLevel();
+  // CreateSimpleTestLevel();
   player_character_->SetCharacter(character_type_, {10.0f, 500.0f});
 }
 
@@ -81,7 +76,7 @@ void GameScene::Update() {
   if (input_command_)
     input_command_->HandleInput();
 
-  collision_handler_->CheckCollision();
+  collision_handler_.CheckCollision();
 
   if (player_character_) {
     player_character_->SetFrameCount();
@@ -193,10 +188,10 @@ SceneType GameScene::Type() {
 void GameScene::CreateSimpleTestLevel() {
   // Initialize managers first
   ObjectManager &objectManager = ObjectManager::GetInstance();
-  objectManager.Reset(4, collision_handler_);
+  objectManager.Reset(4, &collision_handler_);
 
   EnemyManager &enemyManager = EnemyManager::GetInstance();
-  enemyManager.SetCollisionHandler(collision_handler_);
+  enemyManager.SetCollisionHandler(&collision_handler_);
 
   // Create ground - extended for a proper level
   for (int x = 0; x < 200; x += 64) {

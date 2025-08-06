@@ -1,4 +1,5 @@
 #include "include/objects/game_object.hpp"
+#include "include/core/constants.hpp"
 #include "include/objects/object_manager.hpp"
 
 int GameObject::object_count_ = 0;
@@ -51,7 +52,7 @@ void GameObject::Update() {
     position.y = y_mark;
     velocity.y = 0;
   }
-  if (is_destroyed && position.y > 1000)
+  if (is_destroyed && position.y > constants::mapHeight * 16 * constants::scale)
     ObjectManager::GetInstance().DeleteObject(index_);
 }
 
@@ -79,3 +80,7 @@ void GameObject::ReverseDirection() {
 }
 
 void GameObject::StopY(float Ny) {}
+
+Vector2 GameObject::GetSpeed() {
+  return velocity;
+}

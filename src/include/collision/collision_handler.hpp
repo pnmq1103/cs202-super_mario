@@ -32,6 +32,7 @@ private:
   void CheckCollisionCharacter();
   void CheckCollisionProjectile();
   void CheckCollisionEnemy();
+  void CheckCollisionMushroom();
 
 public:
   CollisionHandler(float width, float height);

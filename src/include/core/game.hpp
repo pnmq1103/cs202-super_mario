@@ -15,7 +15,7 @@ private:
     = {nullptr}; // Single character pointer instead of mario/luigi
   Command *input_command_ = {nullptr};
   GameManaging game_manager_;
-  static CollisionHandler *collision_handler_;
+  static CollisionHandler collision_handler_;
 
 public:
   GameScene(CharacterType type);

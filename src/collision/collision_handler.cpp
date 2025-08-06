@@ -9,7 +9,7 @@ CollisionHandler::CollisionHandler(float width, float height)
 }
 
 void CollisionHandler::Reset(float width, float height) {
-  std::cout << "reset\n";
+  std::cout << "reset collision handler\n";
   column_ = std::ceil(width / cellSize_);
   row_    = std::ceil(height / cellSize_);
 
@@ -38,15 +38,8 @@ std::vector<int> CollisionHandler::SearchLocation(Rectangle rectangle) {
       y1  = std::floor(rectangle.y / cellSize_), x2, y2;
   float a = (rectangle.x + rectangle.width) / cellSize_,
         b = (rectangle.y + rectangle.height) / cellSize_;
-  if (a == std::floor(a)) {
-    x2 = a;
-  } else
-    x2 = std::floor(a);
-  if (b == std::floor(b)) {
-    y2 = b;
-  } else
-    y2 = std::floor(b);
-
+  x2      = std::ceil(a);
+  y2      = std::ceil(b);
   if (x1 < 0)
     x1 = 0;
   if (y1 < 0)
@@ -121,7 +114,6 @@ void CollisionHandler::AddCharacter(Character *character) {
 }
 
 void CollisionHandler::AddProjectile(Projectile *projectile) {
-  std::cout << "add\n";
   if (!projectile)
     return;
   for (int i = 0; i < projectile_list_.size(); ++i) {
@@ -184,14 +176,15 @@ void CollisionHandler::UpdatePosition() {
 void CollisionHandler::CheckCollision() {
   if (!character_)
     return;
-
   UpdatePosition();
   CheckCollisionCharacter();
   CheckCollisionProjectile();
   CheckCollisionEnemy();
+  CheckCollisionMushroom();
 }
 
 void CollisionHandler::CheckCollisionCharacter() {
+
   std::vector<int> position = SearchLocation(character_->GetRectangle());
 
   for (int i = position[2]; i <= position[3]; ++i) {
@@ -215,7 +208,9 @@ void CollisionHandler::CheckCollisionCharacter() {
                     rectangle = object_list_[index]->GetRectangle();
           Vector2 speed       = character_->GetSpeed();
 
-          if (rect.y + speed.y <= rectangle.y + rectangle.height && (rect.x +rect.width >= rectangle.x && rect.x <= rectangle.x + rectangle.width)) {
+          if (rect.y + speed.y <= rectangle.y + rectangle.height 
+            && (rect.x +rect.width >= rectangle.x && rect.x <= rectangle.x + rectangle.width)) {
+
             character_->StopY();
             if (object_list_[index]->GetType() == ObjectType::BrickBlock) {
               if (character_->GetState() > 0)
@@ -287,8 +282,8 @@ void CollisionHandler::CheckCollisionCharacter() {
           Vector2 speed       = character_->GetSpeed();
 
           if (
-          rect.y + rect.height +speed.y >= rectangle.y && (rect.x + rect.width >=rectangle.x
-          && rect.x <= rectangle.x + rectangle.width)) {
+          rect.y + rect.height +speed.y >= rectangle.y 
+          && (rect.x + rect.width >=rectangle.x && rect.x <= rectangle.x + rectangle.width)) {
             character_->StopY(rectangle.y);
           }
         } else {
@@ -688,6 +683,97 @@ void CollisionHandler::CheckCollisionEnemy() {
                 rect.y >= rectangle.y + rectangle.height
                 || rect.y + rect.height <= rectangle.y)) {
               enemy_list_[i]->ReverseDirection();
+            }
+          }
+          ++it;
+        }
+      }
+    }
+  }
+}
+
+void CollisionHandler::CheckCollisionMushroom() {
+  for (int j = 0; j < object_list_.size(); ++j) {
+    if (
+      object_list_[j] && !object_list_[j]->IsDestroyed()
+      && object_list_[j]->GetType() == ObjectType::SuperMushroom) {
+      std::vector<int> position
+        = SearchLocation(object_list_[j]->GetRectangle());
+      for (int i = position[2]; i <= position[3]; ++i) {
+        auto it = grid_[position[1]][i].begin();
+        while (it != grid_[position[1]][i].end()) {
+          int type = it->first, index = it->second;
+          if (j == index) {
+            ++it;
+            continue;
+          }
+
+          if (type == 2) {
+            if (object_list_[index]->GetType() != ObjectType::SuperMushroom) {
+              Rectangle rect      = object_list_[j]->GetRectangle(),
+                        rectangle = object_list_[index]->GetRectangle();
+              Vector2 speed       = object_list_[j]->GetSpeed();
+
+              if (
+          rect.y + rect.height  >= rectangle.y
+          && (rect.x + rect.width >=rectangle.x && rect.x <= rectangle.x +
+          rectangle.width)) {
+                object_list_[j]->StopY(rectangle.y);
+              }
+            }
+          }
+
+          ++it;
+        }
+      }
+
+      for (int i = position[0]; i <= position[1]; ++i) {
+        auto it = grid_[i][position[2]].begin();
+        while (it != grid_[i][position[2]].end()) {
+          int type = it->first, index = it->second;
+          if (j == index) {
+            ++it;
+            continue;
+          }
+          if (type == 2) {
+            if (object_list_[index]->GetType() != ObjectType::SuperMushroom) {
+              Rectangle rect      = object_list_[j]->GetRectangle(),
+                        rectangle = object_list_[index]->GetRectangle();
+              Vector2 speed       = object_list_[j]->GetSpeed();
+
+              if (
+                rect.x + speed.x <= rectangle.x + rectangle.width
+                && rect.x > rectangle.x + rectangle.width
+                && !(
+                  rect.y >= rectangle.y + rectangle.height
+                  || rect.y + rect.height <= rectangle.y)) {
+                object_list_[j]->ReverseDirection();
+              }
+            }
+          }
+          ++it;
+        }
+
+        it = grid_[i][position[3]].begin();
+        while (it != grid_[i][position[3]].end()) {
+          int type = it->first, index = it->second;
+          if (j == index) {
+            ++it;
+            continue;
+          }
+          if (type == 2) {
+            if (object_list_[index]->GetType() != ObjectType::SuperMushroom) {
+              Rectangle rect      = object_list_[j]->GetRectangle(),
+                        rectangle = object_list_[index]->GetRectangle();
+              Vector2 speed       = object_list_[j]->GetSpeed();
+              if (
+                rect.x + rect.width + speed.x >= rectangle.x
+                && rect.x + rect.width < rectangle.x
+                && !(
+                  rect.y >= rectangle.y + rectangle.height
+                  || rect.y + rect.height <= rectangle.y)) {
+                object_list_[j]->ReverseDirection();
+              }
             }
           }
           ++it;
