@@ -49,7 +49,7 @@
     <ClCompile Include="src\enemies\koopa_troopa.cpp" />
     <ClCompile Include="src\core\scene.cpp" />
     <ClCompile Include="src\core\pause.cpp" />
-    <ClCompile Include="src\core\character_selection.cpp" />
+    <ClCompile Include="src\core\transition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -79,7 +79,6 @@
     <ClInclude Include="src\include\collision\collision_handler.hpp" />
     <ClInclude Include="src\include\external\json.hpp" />
     <ClInclude Include="src\include\external\tinyfiledialogs.h" />
-    <ClInclude Include="src\include\external\tileson.hpp" />
     <ClInclude Include="src\include\core\enemy_selector.hpp" />
     <ClInclude Include="src\include\core\map.hpp" />
     <ClInclude Include="src\include\core\utility.hpp" />
@@ -102,7 +101,7 @@
     <ClInclude Include="src\include\managers\enemy_manager.hpp" />
     <ClInclude Include="src\include\core\constants.hpp" />
     <ClInclude Include="src\include\core\pause.hpp" />
-    <ClInclude Include="src\include\core\character_selection.hpp" />
+    <ClInclude Include="src\include\core\transition.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

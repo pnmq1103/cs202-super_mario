@@ -119,35 +119,21 @@ void GameManaging::LoadLevel(const std::string &filename) {
     // Process map data to create game objects
     int mapSize = constants::mapWidth * constants::mapHeight;
     for (int i = 0; i < mapSize; i++) {
-      // Create blocks from Tile1 layer
-      int tileGid        = map.GetCell(MapLayer::Tile1, i);
+    //get the gid
+      int tileGid = map.GetCell(MapLayer::Tile1, i);
+      int enemyGid       = map.GetCell(MapLayer::Objects, i);
       int pipeGid        = map.GetCell(MapLayer::Tile2, i);
       Rectangle tileRect = {0, 0, 0, 0}; // Initialize tile rectangle
+      //draw tile1
       if (tileGid != 0) {
         tileRect             = map.GetInfo(tileGid);
         Vector2 tilePosition = {
           (float)(i % constants::mapWidth) * constants::blockSize,
           (float)(i / constants::mapWidth) * constants::blockSize};
-        if (tileGid == 1) {
-          ObjectManager::GetInstance().AddBrickBlock(tilePosition);
-        } else if (tileGid == 2) {
-          ObjectManager::GetInstance().AddQuestionBlock(
-            tilePosition, QuestionBlockItem::coin);
-        } else if (tileGid >= 17 && tileGid <= 36) { // using the minimal
-                                                     // tileset
-          ObjectManager::GetInstance().AddStaticBlockByGid(
-            tilePosition,
-            tileRect); // add by gid instead of theme's default block
-        } else {
-          // fallback for debugging
-          std::cout << "Unknown tile GID: " << tileGid << " at index " << i
-                    << std::endl;
-          ObjectManager::GetInstance().AddStaticBlockByTheme(
-            tilePosition, 'g'); // default to ground block
-        }
+        CreateBlockFromType(tileGid, tilePosition, tileRect);
       }
-      // Create enemies from Objects layer
-      int enemyGid = map.GetCell(MapLayer::Objects, i);
+
+      //draw objects
       if (enemyGid != 0) {
         Vector2 enemyPosition = {
           (float)(i % constants::mapWidth) * constants::blockSize,
@@ -165,16 +151,6 @@ void GameManaging::LoadLevel(const std::string &filename) {
         ObjectManager::GetInstance().AddPipeBlock(
           pipePosition, constants::blockSize * 3, true, true, false);
       }
-      // Handle special objects from Tile2 layer (spawn points, goal flags,
-      // etc.)
-      /*int specialGid = map.GetCell(MapLayer::Tile2, i);
-      if (specialGid != 0) {
-        Vector2 specialPosition = {
-          (float)(i % constants::mapWidth) * constants::blockSize,
-          (float)(i / constants::mapWidth) * constants::blockSize
-        };
-        CreateSpecialObjectFromType(specialGid, specialPosition);
-      }*/
     }
 
     std::cout << "Level loaded successfully. Total enemies: " << totalEnemies_
@@ -455,9 +431,9 @@ void GameManaging::DrawStats() const {
   static bool textures_loaded      = false;
 
   if (!textures_loaded) {
-    coin_hui_texture  = LoadTexture("res/coin_HUI.jpg");
-    lives_hui_texture = LoadTexture("res/lives_HUI.jpg");
-    time_hui_texture  = LoadTexture("res/time_HUI.jpg");
+    coin_hui_texture  = LoadTexture("res/ui/buttons/coin.png");
+    lives_hui_texture = LoadTexture("res/ui/buttons/lives.png");
+    time_hui_texture  = LoadTexture("res/ui/buttons/coin.png");
     textures_loaded   = true;
   }
 
@@ -616,16 +592,16 @@ void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
   EnemyManager &enemyManager = EnemyManager::GetInstance();
 
   switch (enemyType) {
-    case 90: // Goomba
+    case 80: // Goomba
       enemyManager.SpawnEnemy(EnemyType::Goomba, position);
       break;
-    case 95: // Piranha
+    case 81: // Piranha
       enemyManager.SpawnEnemy(EnemyType::Piranha, position);
       break;
-    case 99: // Koopa
+    case 82: // Koopa
       enemyManager.SpawnEnemy(EnemyType::Koopa, position);
       break;
-    case 100: // Bowser (boss enemy for level 3)
+    case 79: // Bowser (boss enemy for level 3)
       enemyManager.SpawnEnemy(EnemyType::Bowser, position);
       break;
     default:
@@ -636,32 +612,23 @@ void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
   // EnemyManager::AddEnemy()
 }
 
-void GameManaging::CreateBlockFromType(int tileType, Vector2 position) {
-  ObjectManager &objectManager = ObjectManager::GetInstance();
-
-  switch (tileType) {
-    case 1: // Brick block
-      objectManager.AddBrickBlock(position);
-      break;
-    case 2: // Question block with coin
-      objectManager.AddQuestionBlock(position, QuestionBlockItem::coin);
-      break;
-    case 3: // Question block with power-up
-      objectManager.AddQuestionBlock(
-        position, QuestionBlockItem::super_mushroom);
-      break;
-    case 4: // Static ground block
-      objectManager.AddStaticBlockByTheme(position, 'g');
-      break;
-    case 5: // Pipe block
-      objectManager.AddStaticBlockByTheme(position, 'p');
-      break;
-    default:
-      // Default to ground block for unknown types
-      objectManager.AddStaticBlockByTheme(position, 'g');
-      break;
+void GameManaging::CreateBlockFromType(int tileGid, Vector2 tilePosition, Rectangle tileRect) {
+  if (tileGid == 1) {
+    ObjectManager::GetInstance().AddBrickBlock(tilePosition);
+  } else if (tileGid == 2) {
+    ObjectManager::GetInstance().AddQuestionBlock(
+      tilePosition, QuestionBlockItem::coin);
+  } else if (tileGid == 3) {
+    ObjectManager::GetInstance().AddCoin(tilePosition);
+  } else if (tileGid >= 17 && tileGid <= 36) { // using the minimal tileset
+    ObjectManager::GetInstance().AddStaticBlockByGid(
+      tilePosition, tileRect); // add by gid instead of theme's default block
+  } else {
+    // fallback for debugging
+    std::cout << "Unknown tile GID: " << tileGid << std::endl;
+    ObjectManager::GetInstance().AddStaticBlockByTheme(
+      tilePosition, 'g'); // default to ground block
   }
-  return;
 }
 
 void

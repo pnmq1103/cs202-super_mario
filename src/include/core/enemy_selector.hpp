@@ -10,12 +10,16 @@ private:
   SceneType type_ = {EnemySelector};
   int &gidx_ref_;
 
-  int first_gidx = 77;
+  int first_gidx = 79;
 
-  const Texture *sprite_sheet_ = {nullptr};
   std::unordered_map<int, Rectangle> sprite_info_;
+  const Texture *sprite_sheet_ = {nullptr};
 
   Rectangle boundary_ = {};
+
+private:
+  void UpdateCamera();
+  void ChooseTile();
 
 public:
   EnemySelectorScene(int &gidx);
@@ -26,8 +30,4 @@ public:
   void Draw() override;
   void Resume() override;
   SceneType Type() override;
-
-private:
-  void UpdateCamera();
-  void ChooseTile();
 };

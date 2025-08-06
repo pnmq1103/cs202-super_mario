@@ -18,9 +18,6 @@ private:
   double last_input_     = {0};
   const double cooldown_ = {0.2};
 
-  float timer_    = {0};
-  float duration_ = {0.5f};
-
   std::vector<Button> buttons_;
 
 public:

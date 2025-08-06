@@ -27,7 +27,11 @@ void Button::Update() {
       throw std::invalid_argument("nullptr");
   }
 
-  if (Hovered()) {
+  is_hovered_ = Hovered();
+}
+
+void Button::Draw() {
+  if (is_hovered_) {
     tint_ = WHITE;
 
     Font font         = GetFontDefault();
@@ -60,10 +64,9 @@ void Button::Update() {
 
     // Draw text
     DrawTextEx(font, text, pos, font_size, spacing, WHITE);
-  }
-}
+  } else
+    tint_ = Fade(LIGHTGRAY, 0.9f);
 
-void Button::Draw() {
   DrawTexturePro(icon_, src_, dst_, {0, 0}, 0, tint_);
 }
 
