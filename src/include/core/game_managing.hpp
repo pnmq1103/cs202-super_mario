@@ -50,6 +50,9 @@ private:
   
   // Collision system reference
   CollisionHandler* collisionHandler_;
+  
+  // Pause state
+  bool isPaused_ = false;
 
 public:
   GameManaging();
@@ -78,6 +81,8 @@ public:
   void UpdateCollisionSystem();
   void CheckLevelCompletion(Character* activeCharacter);
   void HandleLevelProgression();
+  void RestartCurrentLevel(Character *character);
+  void OnPlayerDeath(Character *character);
 
   // Essential rendering
   void DrawLevel();
@@ -110,8 +115,16 @@ public:
   int GetMaxLevels() const;
   
   // Simple pause/transition state methods for game.cpp compatibility
-  void TogglePause() { /* Simple pause toggle - can be expanded later */ }
-  bool IsPaused() const { return false; /* Simple return false for now */ }
+  void TogglePause() { 
+    isPaused_ = !isPaused_;
+    if (isPaused_) {
+      App.Media().TogglePauseMusic();
+      App.Media().PlaySound("pause");
+    } else {
+      App.Media().TogglePauseMusic();
+    }
+  }
+  bool IsPaused() const { return isPaused_; }
   bool IsInTransition() const { return false; /* Simple return false for now */ }
 
 private:

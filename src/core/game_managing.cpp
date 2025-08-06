@@ -361,9 +361,11 @@ void GameManaging::CheckLevelCompletion(Character *activeCharacter) {
     if (reachedEnd) {
       std::cout << "Level " << currentLevel_
                 << " completed by reaching the end!" << std::endl;
+      App.Media().PlaySound("flagpole"); // Flagpole completion sound
     } else {
       std::cout << "Level " << currentLevel_
                 << " completed by defeating all enemies!" << std::endl;
+      App.Media().PlaySound("course_clear"); // All enemies defeated sound
     }
   }
 }
@@ -540,7 +542,23 @@ void GameManaging::DrawBackground() {
 void GameManaging::UpdateTime() {
   float delta = GetFrameTime();
   gameTime_  += delta;
-  if (countdownSeconds_ - (int)gameTime_ <= 0) {
+  
+  int remainingTime = countdownSeconds_ - (int)gameTime_;
+  
+  // Play warning sound when time is running low
+  static bool timeWarningPlayed = false;
+  if (remainingTime <= 100 && remainingTime > 0 && !timeWarningPlayed) {
+    App.Media().PlaySound("time-up_warning");
+    timeWarningPlayed = true;
+  }
+  
+  // Reset warning flag when time is reset or level changes
+  if (remainingTime > 100) {
+    timeWarningPlayed = false;
+  }
+  
+  if (remainingTime <= 0) {
+    App.Media().PlaySound("life_lost");
     DecreaseLife();
     gameTime_ = 0;
   }
@@ -548,12 +566,33 @@ void GameManaging::UpdateTime() {
 
 void GameManaging::AddPoints(int points) {
   points_ += points;
+  
+  // Play coin sound for small point gains (like collecting coins)
+  if (points <= 200) {
+    App.Media().PlaySound("coin");
+  }
+  
+  // Check for 1-up (extra life) milestone
+  static int lastLifeThreshold = 0;
+  int currentLifeThreshold = points_ / 10000; // Every 10,000 points = 1 life
+  
+  if (currentLifeThreshold > lastLifeThreshold) {
+    lives_++;
+    App.Media().PlaySound("1up");
+    lastLifeThreshold = currentLifeThreshold;
+    std::cout << "Extra life earned! Lives: " << lives_ << std::endl;
+  }
 }
 
 void GameManaging::DecreaseLife() {
   lives_--;
+  
+  // Play life lost sound
+  App.Media().PlaySound("life_lost");
+  
   if (lives_ <= 0) {
     gameOver_ = true;
+    // Game over sound will be played in UpdateBackgroundMusic()
   }
 }
 
@@ -563,7 +602,15 @@ void GameManaging::HitBlock(GameObject *block, Character *character) {
     AddPoints(50);
     Rectangle blockRect = block->GetRectangle();
     SpawnParticle({blockRect.x + 16, blockRect.y}, YELLOW);
-    PlaySoundEffect("block_hit");
+    
+    // Play appropriate sound based on block type
+    if (block->GetType() == ObjectType::BrickBlock) {
+      App.Media().PlaySound("brick");
+    } else if (block->GetType() == ObjectType::Block) {
+      App.Media().PlaySound("powerup");
+    } else {
+      App.Media().PlaySound("bump");
+    }
   }
   (void)character;
 }
@@ -633,8 +680,7 @@ void GameManaging::CreateBlockFromType(
   }
 }
 
-void
-GameManaging::CreateSpecialObjectFromType(int specialType, Vector2 position) {
+void GameManaging::CreateSpecialObjectFromType(int specialType, Vector2 position) {
   switch (specialType) {
     case 200: // Spawn point
       spawnPoint_ = position;
@@ -667,16 +713,58 @@ void GameManaging::UpdateParticles(float deltaTime) {
 }
 
 void GameManaging::PlaySoundEffect(const std::string &soundName) {
-  (void)soundName; // Audio placeholder
+  App.Media().PlaySound(soundName);
 }
 
 void GameManaging::UpdateBackgroundMusic() {
-  // Background music placeholder - could change music based on level
+  App.Media().UpdateMusic();
+  
+  static int lastLevel = 0;
+  if (currentLevel_ != lastLevel) {
+    lastLevel = currentLevel_;
+
+    // Select different music based on level
+    switch (currentLevel_) {
+      case 1:
+        App.Media().PlayMusic("ground_theme");
+        break;
+      case 2:
+        App.Media().PlayMusic("underground_theme");
+        break;
+      case 3:
+        App.Media().PlayMusic("castle_theme");
+        break;
+      default:
+        App.Media().PlayMusic("ground_theme");
+        break;
+    }
+
+    std::cout << "Changed background music for level " << currentLevel_
+              << std::endl;
+  }
+  
+  // Handle special game state music
+  static bool gameOverSoundPlayed = false;
+  static bool levelCompleteSoundPlayed = false;
+  
+  if (gameOver_ && !gameOverSoundPlayed) {
+    App.Media().PlaySound("gameover");
+    App.Media().StopMusic(); // Stop background music when game over
+    gameOverSoundPlayed = true;
+  } else if (!gameOver_) {
+    gameOverSoundPlayed = false; // Reset flag when game is not over
+  }
+  
+  if (levelComplete_ && !levelCompleteSoundPlayed) {
+    App.Media().PlaySound("level_complete");
+    levelCompleteSoundPlayed = true;
+  } else if (!levelComplete_) {
+    levelCompleteSoundPlayed = false; // Reset flag when level is not complete
+  }
 }
 
 void GameManaging::LoadNextLevel() {
   if (currentLevel_ >= maxLevels_) {
-    // All levels completed - could restart or show credits
     std::cout << "All levels completed! Restarting game..." << std::endl;
     ResetGame();
     return;
@@ -733,5 +821,52 @@ void GameManaging::HandleLevelProgression() {
 
   if (gameOver_ && IsKeyPressed(KEY_R)) {
     ResetGame();
+  }
+}
+void GameManaging::RestartCurrentLevel(Character *character) {
+  if (sceneCamera_) {
+    sceneCamera_->target = spawnPoint_;
+  }
+
+  // Reload the current level
+  std::string levelFile
+    = "res/maps/map" + std::to_string(currentLevel_) + ".json";
+  LoadLevel(levelFile);
+
+  // Don't reset lives or score - just the level state
+  levelComplete_ = false;
+  gameOver_      = false;
+  // Reset the character's state and position if provided
+  if (character) {
+    character->SetState(0, false);
+    CharacterType currentType = character->GetCharacter();
+    character->SetCharacter(currentType, spawnPoint_);
+  }
+}
+void GameManaging::OnPlayerDeath(Character *character) {
+  // DecreaseLife() already plays the life_lost sound
+  DecreaseLife();
+
+  if (!IsGameOver()) {
+    std::cout << "Player died. Lives remaining: " << lives_ << std::endl;
+    RestartCurrentLevel(character);
+  } else {
+    std::cout << "GAME OVER! No lives remaining." << std::endl;
+
+    EnemyManager::GetInstance().PauseAllEnemies();
+
+    // Stop background music (game over sound will be played in UpdateBackgroundMusic)
+    App.Media().StopMusic();
+
+    // Reset the level (but keep gameOver_ = true)
+    UnloadLevel();
+
+    // Move character out of harm's way if needed
+    if (character) {
+      character->SetState(0, false);
+      CharacterType currentType = character->GetCharacter();
+      character->SetCharacter(currentType, spawnPoint_);
+    }
+    // HandleLevelProgression will reset game when R key is pressed
   }
 }
