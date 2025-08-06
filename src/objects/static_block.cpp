@@ -4,7 +4,7 @@ StaticBlock::StaticBlock(Vector2 Nposition, float Nscale, char theme)
   switch (theme) {
     case 'g':
       texture = &App.Resource().GetTileset('m');
-      frame   = {80, 64, 16, 16};
+      frame   = {80, 48, 16, 16};
       break;
     case 's':
       texture = &App.Resource().GetTileset('s');
