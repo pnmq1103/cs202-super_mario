@@ -81,7 +81,11 @@ void PauseScene::CreateButtons() {
   dst = {x, y, button_width, button_height};
   if (App.PreviousScene() == SceneType::Game) {
     buttons_.emplace_back(
-      "Resume", []() {}, src, dst, "res/ui/buttons/resume.png");
+      "Resume",
+      []() {
+        App.RemoveScene();
+      },
+      src, dst, "res/ui/buttons/resume.png");
     x += button_width + spacing;
 
     dst = {x, y, button_width, button_height};

@@ -181,7 +181,7 @@ void EditorScene::UpdateCamera() {
 
   // Zoom
   camera_.zoom = expf(logf(camera_.zoom) + GetMouseWheelMove() * 0.1f);
-  Clamp(camera_.zoom, 0.1f, 3.0f);
+  camera_.zoom = Clamp(camera_.zoom, 0.3f, 2.0f);
   if (IsKeyPressed(KEY_R))
     camera_.zoom = 1;
 }
@@ -236,14 +236,12 @@ void EditorScene::PlaceBlock() {
 }
 
 void EditorScene::DrawGrid() {
-  float zoom = camera_.zoom;
-
   Vector2 topleft = {
-    camera_.target.x - camera_.offset.x / zoom,
-    camera_.target.y - camera_.offset.y / zoom};
+    camera_.target.x - camera_.offset.x / camera_.zoom,
+    camera_.target.y - camera_.offset.y / camera_.zoom};
 
-  float visible_width  = constants::screenWidth / zoom;
-  float visible_height = constants::screenHeight / zoom;
+  float visible_width  = constants::screenWidth / camera_.zoom;
+  float visible_height = constants::screenHeight / camera_.zoom;
 
   int start_x
     = static_cast<int>(std::max(0.0f, topleft.x / constants::blockSize));

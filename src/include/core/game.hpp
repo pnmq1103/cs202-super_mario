@@ -29,5 +29,5 @@ public:
   void CreateSimpleTestLevel();
 
 private:
-  void UpdateCamera(Character *character); // Camera update handled by GameScen
+  void UpdateCamera(Character *character);
 };

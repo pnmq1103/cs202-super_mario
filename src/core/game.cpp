@@ -1,10 +1,12 @@
 ﻿#include <raylib.h>
+#include <raymath.h>
 #include <stdexcept>
 
 #include "include/characters/character.hpp"
 #include "include/core/application.hpp"
 #include "include/core/character_selector.hpp"
 #include "include/core/command.hpp"
+#include "include/core/constants.hpp"
 #include "include/core/game.hpp"
 #include "include/core/game_managing.hpp"
 #include "include/core/pause.hpp"
@@ -19,7 +21,7 @@ GameScene::GameScene(CharacterType type)
 GameScene::~GameScene() {
   EnemyManager::GetInstance().ClearAllEnemies();
   if (collision_handler_) {
-    collision_handler_->Reset(256 * 4, 240 * 4);
+    collision_handler_->Reset(constants::screenWidth, constants::screenHeight);
     ObjectManager::GetInstance().Reset(4, collision_handler_);
   }
 
@@ -37,17 +39,16 @@ GameScene::~GameScene() {
 void GameScene::Init() {
   App.Media().PlayMusic("ground_theme");
 
-  camera_.offset   = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
-  camera_.rotation = 0.0f;
-  camera_.zoom     = 1.0f;
-  // Position camera at a better starting position
-  camera_.target = {100.0f, 500.0f};
-  
+  camera_.target   = {0, 0};
+  camera_.offset   = {constants::screenWidth / 2, constants::screenHeight / 2};
+  camera_.rotation = 0;
+  camera_.zoom     = 1;
 
   if (!collision_handler_) {
-    collision_handler_ = new CollisionHandler(256 * 4, 240 * 4);
+    collision_handler_
+      = new CollisionHandler(constants::screenWidth, constants::screenHeight);
   } else {
-    collision_handler_->Reset(256 * 4, 240 * 4);
+    collision_handler_->Reset(constants::screenWidth, constants::screenHeight);
   }
 
   player_character_ = new Character(4);
@@ -55,14 +56,15 @@ void GameScene::Init() {
   input_command_ = new Command(player_character_);
   input_command_->InitializeProjectilePool(collision_handler_);
 
-  game_manager_.InitializeCollisionSystem(256 * 4, 240 * 4);
+  game_manager_.InitializeCollisionSystem(
+    constants::screenWidth, constants::screenHeight);
   game_manager_.SetCollisionHandler(collision_handler_);
   game_manager_.SetSceneCamera(&camera_);
 
   game_manager_.RegisterCharacterWithCollision(player_character_);
-  game_manager_.LoadLevel("res/maps/map3.json");
-  //CreateSimpleTestLevel();
-  player_character_->SetCharacter(characterType, {10.0f, 500.0f});
+  // game_manager_.LoadLevel("res/maps/map1.json");
+  CreateSimpleTestLevel();
+  player_character_->SetCharacter(character_type_, {10.0f, 500.0f});
 }
 
 void GameScene::Update() {
@@ -70,51 +72,46 @@ void GameScene::Update() {
     App.AddScene(std::make_unique<PauseScene>(), false);
     return;
   }
-  if (IsKeyPressed(KEY_P)) {
+  if (IsKeyPressed(KEY_P))
     game_manager_.TogglePause();
-  }
 
-  if (game_manager_.IsPaused() || game_manager_.IsInTransition()) {
+  if (game_manager_.IsPaused() || game_manager_.IsInTransition())
     return;
-  }
 
-  if (input_command_) {
+  if (input_command_)
     input_command_->HandleInput();
-  }
 
   collision_handler_->CheckCollision();
-  Character *active_character = player_character_;
 
-  if (active_character) {
-    active_character->SetFrameCount();
-    active_character->Update();
+  if (player_character_) {
+    player_character_->SetFrameCount();
+    player_character_->Update();
   }
   ObjectManager::GetInstance().SetFrameCount();
   ObjectManager::GetInstance().Update();
   Enemy::SetFrameCount();
   input_command_->UpdateProjectiles();
 
-  UpdateCamera(active_character);
+  UpdateCamera(player_character_);
 
   // Let game manager handle all game logic
   float dt = GetFrameTime();
-  game_manager_.Update(dt, active_character);
+  game_manager_.Update(dt, player_character_);
 
-  // Handle level progression
   game_manager_.HandleLevelProgression();
 
-  // Handle game over/restart (improved)
+  // Game over/restart
   if (game_manager_.IsGameOver() && IsKeyPressed(KEY_R)) {
     game_manager_.ResetGame();
     // Reload first level
     game_manager_.LoadLevel("res/maps/map1.json");
   }
 
-  // Handle level completion (improved)
+  // Level completion
   if (game_manager_.IsLevelComplete() && IsKeyPressed(KEY_SPACE)) {
-    if (game_manager_.CanAdvanceLevel()) {
+    if (game_manager_.CanAdvanceLevel())
       game_manager_.LoadNextLevel();
-    } else {
+    else {
       // All levels completed, restart game
       game_manager_.ResetGame();
       game_manager_.LoadLevel("res/maps/map1.json");
@@ -131,14 +128,12 @@ void GameScene::Draw() {
   game_manager_.DrawLevel();
 
   // Draw the player character (Mario or Luigi based on selection)
-  if (player_character_) {
+  if (player_character_)
     player_character_->Draw();
-  }
 
   // Draw projectiles from Command
-  if (input_command_) {
+  if (input_command_)
     input_command_->DrawProjectiles();
-  }
 
   EndMode2D();
 
@@ -151,73 +146,50 @@ void GameScene::Draw() {
 }
 
 void GameScene::Resume() {
-  // Resume any paused systems
   game_manager_.ResumeEnemies();
-
-  // Resume background music if it was paused
-  App.Media().PlayMusic("ground_theme");
 }
 
 void GameScene::UpdateCamera(Character *character) {
   if (!character)
     return;
 
-  Rectangle charRect = character->GetRectangle();
-  Vector2 charPos
-    = {charRect.x + charRect.width / 2, charRect.y + charRect.height / 2};
+  Rectangle player_rect = character->GetRectangle();
+  Vector2 player_pos    = {
+    player_rect.x + player_rect.width / 2,
+    player_rect.y + player_rect.height / 2};
 
-  // Initialize camera to character position on first update
-  static bool firstUpdate = true;
-  if (firstUpdate) {
-    camera_.target = charPos;
-    firstUpdate    = false;
-  }
+  float visible_width  = constants::screenWidth;
+  float visible_height = constants::screenHeight;
+  float map_width      = constants::mapWidth * constants::blockSize;
+  float map_height     = constants::mapHeight * constants::blockSize;
 
-  // Use a smaller vertical offset to keep more of the ground visible
-  // Look ahead slightly in the direction the character is facing
-  float lookAheadOffset = 100.0f;
-  float verticalOffset  = 50.0f;
-  float targetX         = charPos.x;
+  float smooth = 5 * GetFrameTime();
 
-  // Look ahead based on character direction
-  if (character->IsToLeft()) {
-    targetX -= lookAheadOffset; // Look left
-  } else {
-    targetX += lookAheadOffset; // Look right
-  }
+  // Dead zone
+  float left_boundary     = 50;
+  float right_boundary    = constants::screenWidth / 2;
+  float desired_x         = player_pos.x;
+  float player_pos_screen = player_pos.x - camera_.target.x + camera_.offset.x;
 
-  // Smooth camera following
-  float smoothing   = 0.08f;
-  Vector2 targetPos = {targetX, charPos.y - verticalOffset};
+  if (player_pos_screen < left_boundary)
+    desired_x = player_pos.x - (left_boundary - camera_.offset.x);
+  else if (player_pos_screen + player_rect.width > right_boundary)
+    desired_x
+      = player_pos.x + player_rect.width - (right_boundary + camera_.offset.x);
 
-  camera_.target.x += (targetPos.x - camera_.target.x) * smoothing;
-  camera_.target.y += (targetPos.y - camera_.target.y) * smoothing;
+  camera_.target.x = Lerp(camera_.target.x, desired_x, smooth);
+  camera_.target.y = Lerp(camera_.target.y, player_pos.y, smooth);
 
-  // Use level dimensions based on collision handler initialization
-  // These match what you used to initialize the collision handler
-  float levelWidth  = 256 * 4;
-  float levelHeight = 240 * 4;
-
-  // Keep camera within level bounds
-  float halfScreenWidth  = GetScreenWidth() / 2.0f / camera_.zoom;
-  float halfScreenHeight = GetScreenHeight() / 2.0f / camera_.zoom;
-
-  // Constrain horizontal position
-  camera_.target.x = fmaxf(
-    halfScreenWidth, fminf(camera_.target.x, levelWidth - halfScreenWidth));
-
-  // Allow camera to show the full vertical range of the level
-  // Only constrain the top, not the bottom to allow seeing the ground
-  float minY       = halfScreenHeight;
-  camera_.target.y = fmaxf(minY, camera_.target.y);
-
-  // Debug output to help diagnose camera issues
-  // DrawText(TextFormat("Camera: %.1f, %.1f", camera_.target.x,
-  // camera_.target.y), 10, 30, 20, RED);
+  camera_.target.x
+    = Clamp(camera_.target.x, visible_width / 2, map_width - visible_width / 2);
+  camera_.target.y = Clamp(
+    camera_.target.y, visible_height / 2, map_height - visible_height / 2);
 }
+
 SceneType GameScene::Type() {
   return type_;
 }
+
 void GameScene::CreateSimpleTestLevel() {
   // Initialize managers first
   ObjectManager &objectManager = ObjectManager::GetInstance();
