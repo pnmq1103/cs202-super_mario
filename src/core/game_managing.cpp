@@ -433,7 +433,7 @@ void GameManaging::DrawStats() const {
   if (!textures_loaded) {
     coin_hui_texture  = LoadTexture("res/ui/coin.png");
     lives_hui_texture = LoadTexture("res/ui/lives.png");
-    time_hui_texture  = LoadTexture("res/ui/coin.png");
+    time_hui_texture  = LoadTexture("res/ui/time.png");
     textures_loaded   = true;
   }
 

@@ -36,10 +36,12 @@ GameScene::~GameScene() {
 void GameScene::Init() {
   App.Media().PlayMusic("ground_theme");
 
-  camera_.target   = {0, 0};
   camera_.offset   = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
   camera_.rotation = 0.0f;
   camera_.zoom     = 1.0f;
+  // Position camera at a better starting position
+  camera_.target = {100.0f, 500.0f};
+  
 
   if (!collision_handler_) {
     collision_handler_ = new CollisionHandler(256 * 4, 240 * 4);
@@ -57,8 +59,8 @@ void GameScene::Init() {
   game_manager_.SetSceneCamera(&camera_);
 
   game_manager_.RegisterCharacterWithCollision(player_character_);
-  // game_manager_.LoadLevel("res/maps/map3.json");
-  CreateSimpleTestLevel();
+  game_manager_.LoadLevel("res/maps/map1.json");
+  //CreateSimpleTestLevel();
   player_character_->SetCharacter(character_type_, {10.0f, 500.0f});
 }
 
@@ -163,25 +165,55 @@ void GameScene::UpdateCamera(Character *character) {
   Vector2 charPos
     = {charRect.x + charRect.width / 2, charRect.y + charRect.height / 2};
 
+  // Initialize camera to character position on first update
+  static bool firstUpdate = true;
+  if (firstUpdate) {
+    camera_.target = charPos;
+    firstUpdate    = false;
+  }
+
+  // Use a smaller vertical offset to keep more of the ground visible
+  // Look ahead slightly in the direction the character is facing
+  float lookAheadOffset = 100.0f;
+  float verticalOffset  = 50.0f;
+  float targetX         = charPos.x;
+
+  // Look ahead based on character direction
+  if (character->IsToLeft()) {
+    targetX -= lookAheadOffset; // Look left
+  } else {
+    targetX += lookAheadOffset; // Look right
+  }
+
   // Smooth camera following
-  float smoothing   = 0.1f;
-  Vector2 targetPos = {charPos.x, charPos.y - 100.0f};
+  float smoothing   = 0.08f;
+  Vector2 targetPos = {targetX, charPos.y - verticalOffset};
 
   camera_.target.x += (targetPos.x - camera_.target.x) * smoothing;
   camera_.target.y += (targetPos.y - camera_.target.y) * smoothing;
 
+  // Use level dimensions based on collision handler initialization
+  // These match what you used to initialize the collision handler
+  float levelWidth  = 256 * 4;
+  float levelHeight = 240 * 4;
+
   // Keep camera within level bounds
-  float levelWidth       = 3200.0f;
-  float levelHeight      = 1000.0f;
   float halfScreenWidth  = GetScreenWidth() / 2.0f / camera_.zoom;
   float halfScreenHeight = GetScreenHeight() / 2.0f / camera_.zoom;
 
+  // Constrain horizontal position
   camera_.target.x = fmaxf(
     halfScreenWidth, fminf(camera_.target.x, levelWidth - halfScreenWidth));
-  camera_.target.y = fmaxf(
-    halfScreenHeight, fminf(camera_.target.y, levelHeight - halfScreenHeight));
-}
 
+  // Allow camera to show the full vertical range of the level
+  // Only constrain the top, not the bottom to allow seeing the ground
+  float minY       = halfScreenHeight;
+  camera_.target.y = fmaxf(minY, camera_.target.y);
+
+  // Debug output to help diagnose camera issues
+  // DrawText(TextFormat("Camera: %.1f, %.1f", camera_.target.x,
+  // camera_.target.y), 10, 30, 20, RED);
+}
 SceneType GameScene::Type() {
   return type_;
 }
