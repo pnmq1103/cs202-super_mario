@@ -3,8 +3,13 @@
 
 class PiranhaPlant : public Enemy {
 private:
-  bool is_emerging; // New member names to match implementation
-  float emerge_timer;
+  bool is_emerging;      // Whether plant is currently emerging (vs hiding)
+  float emerge_timer;    // Timer for emergence/hiding cycle
+  float emerge_duration; // How long to stay emerged (seconds)
+  float hide_duration;   // How long to stay hidden (seconds)
+  float emerge_distance; // How far to emerge from pipe (pixels)
+  float initial_y;       // Initial Y position (fully hidden)
+  float emerge_speed;    // Speed of movement during emergence/hiding
 
 public:
   PiranhaPlant(Vector2 pos, float Nscale);
@@ -17,7 +22,7 @@ public:
   EnemyType GetType() override;
   Enemy *Clone() const override;
 
-  // New methods for emergence behavior
+  // Emergence behavior methods
   void StartEmerging();
   void StartHiding();
   bool IsEmerging() const;

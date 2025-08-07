@@ -24,7 +24,7 @@ private:
   // Static members similar to GameObject pattern
   static int enemy_count_;
   int index_;
-
+  bool pending_deletion = false;
 protected:
   // Static frame counter for animations, similar to GameObject
   static int time;
@@ -67,6 +67,13 @@ protected:
   void UpdateAnimationFrame();
 
 public:
+  bool isPendingDeletion() const {
+    return pending_deletion;
+  }
+  void MarkForDeletion() {
+    pending_deletion = true;
+  }
+
   // Static methods for frame management like GameObject
   static void SetFrameCount();
   static void Reset();
