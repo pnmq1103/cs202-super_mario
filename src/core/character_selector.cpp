@@ -13,15 +13,17 @@ CharacterType CharacterSelectorScene::selected_character_
 
 CharacterSelectorScene::~CharacterSelectorScene() {
   UnloadTexture(background_);
+  UnloadTexture(mario_);
+  UnloadTexture(luigi_);
 }
 
 void CharacterSelectorScene::Init() {
   background_ = LoadTexture("res/ui/character_selection.png");
+  mario_      = LoadTexture("res/ui/character_selection_mario.png");
+  luigi_      = LoadTexture("res/ui/character_selection_luigi.png");
   App.Media().PlayMusic("choose_character");
 
   selected_character_ = CharacterType::LUIGI;
-
-  CreateRegions();
 }
 
 void CharacterSelectorScene::Update() {
@@ -69,33 +71,18 @@ void CharacterSelectorScene::Update() {
 void CharacterSelectorScene::Draw() {
   DrawTexture(background_, 0, 0, RAYWHITE);
 
-  Color dark   = ColorAlpha(BLACK, 0.5f);
-  Color bright = ColorAlpha(BLACK, 0);
-  DrawRectangleRec(left_rec, hover_left ? bright : dark);
-  DrawTriangle(left_tri.a, left_tri.b, left_tri.c, hover_left ? bright : dark);
+  Color dark   = ColorAlpha(GRAY, 0.3f);
+  Color bright = ColorAlpha(WHITE, 1);
+  DrawTexture(luigi_, 0, 0, hover_left ? bright : dark);
+  DrawTexture(mario_, 0, 0, hover_left ? dark : bright);
 
-  DrawRectangleRec(right_rec, hover_left ? dark : bright);
-  DrawTriangle(
-    right_tri.a, right_tri.b, right_tri.c, hover_left ? dark : bright);
+  DisplayPower();
 }
 
 void CharacterSelectorScene::Resume() {}
 
 SceneType CharacterSelectorScene::Type() {
   return type_;
-}
-
-void CharacterSelectorScene::CreateRegions() {
-  // Dividing line
-  Vector2 p1 = {566, 0};
-  Vector2 p2 = {430, 960};
-  float d    = p1.x - p2.x;
-
-  left_rec  = {0, 0, p2.x, constants::screenHeight};
-  right_rec = {p1.x, 0, constants::screenWidth - p2.x, constants::screenHeight};
-
-  left_tri  = {p1, {p1.x - d, p1.y}, p2};
-  right_tri = {p1, p2, {p1.x, p2.y}};
 }
 
 void CharacterSelectorScene::StartGame() {
@@ -107,4 +94,22 @@ void CharacterSelectorScene::StartGame() {
 
 CharacterType CharacterSelectorScene::GetCharacterType() {
   return selected_character_;
+}
+
+void CharacterSelectorScene::DisplayPower() {
+  const char *mario[] = {"SPEED: 10", "JUMP: 7", "FIRE"};
+  const char *luigi[] = {"SPEED: 7", "JUMP: 10", "ELECTRIC"};
+
+  float y = constants::screenHeight * 0.45;
+  if (hover_left) {
+    for (int i = 0; i < 3; i++) {
+      float x = 380;
+      DrawTextEx(GetFontDefault(), luigi[i], {x, y + i * 30}, 20, 1, WHITE);
+    }
+  } else {
+    for (int i = 0; i < 3; i++) {
+      float x = 550;
+      DrawTextEx(GetFontDefault(), mario[i], {x, y + i * 30}, 20, 1, WHITE);
+    }
+  }
 }

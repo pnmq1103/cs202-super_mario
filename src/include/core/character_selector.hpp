@@ -19,18 +19,17 @@ private:
 
   static CharacterType selected_character_;
 
-  Texture background_    = {};
+  Texture background_ = {};
+  Texture mario_      = {};
+  Texture luigi_      = {};
+
   double last_input_     = {0};
   const double cooldown_ = {0.1};
 
-  bool hover_left     = {true};
-  Rectangle left_rec  = {};
-  Rectangle right_rec = {};
-  Triangle left_tri   = {};
-  Triangle right_tri  = {};
+  bool hover_left = {true};
 
 private:
-  void CreateRegions();
+  void DisplayPower();
   void StartGame();
 
 public:
