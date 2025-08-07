@@ -27,7 +27,7 @@ PiranhaPlant::PiranhaPlant(Vector2 pos, float Nscale)
   // CRITICAL: Set the proper movement strategy with visible initial position
   // Make sure the plant is initially visible above the pipe
   PiranhaMovementStrategy *strategy = new PiranhaMovementStrategy();
-  strategy->SetEmergeDistance(64.0f * scale); // Scale properly with sprite size
+  strategy->SetEmergeDistance(45.0f * scale); // Scale properly with sprite size
   SetMovementStrategy(strategy);
 }
 
