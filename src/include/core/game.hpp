@@ -20,10 +20,6 @@ private:
 public:
   GameScene(CharacterType type);
   ~GameScene();
-  // Add to GameScene class:
-  GameManaging &GetGameManager() {
-    return game_manager_;
-  }
 
   void Init() override;
   void Update() override;

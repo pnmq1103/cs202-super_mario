@@ -584,8 +584,7 @@ void Enemy::DealDamage(float damage) {
       health = 0.0f;
       alive  = false;
       state  = EnemyState::Dead;
-      MarkForDeletion();
-      EnemyManager::GetInstance().OnEnemyDeath(index_);
+
       // Debug log
 
     } else {
@@ -599,7 +598,6 @@ void Enemy::DealDamage(float damage) {
     // Fallback: mark as dead
     alive = false;
     state = EnemyState::Dead;
-    MarkForDeletion();
   }
 }
 

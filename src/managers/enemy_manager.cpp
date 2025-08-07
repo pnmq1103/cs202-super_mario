@@ -113,44 +113,14 @@ void EnemyManager::ClearDeadEnemies() {
 
 void EnemyManager::CleanupDeadEnemies() {
   for (int i = 0; i < enemies.size(); ++i) {
-    if (enemies[i] && (!enemies[i]->IsAlive() && enemies[i]->isPendingDeletion())) {
+    if (enemies[i] && !enemies[i]->IsAlive()) {
       if (enemies[i] == currentBoss_) {
         currentBoss_ = nullptr;
       }
-      if (collisionHandler_) {
-        collisionHandler_->RemoveEnemy(i);
-      }
       delete enemies[i];
       enemies[i] = nullptr;
+      collisionHandler_->RemoveEnemy(i);
     }
-  }
-}
-void EnemyManager::OnEnemyDeath(int index) {
-  // Don't delete immediately, just mark for cleanup
-  // The enemy will be removed during next CleanupDeadEnemies call
-  if (index >= 0 && index < enemies.size() && enemies[index]) {
-    // Make sure the enemy is marked for deletion
-      if (gameManager_) {
-        int point = 100;
-        switch (enemies[index]->GetType()) {
-          case EnemyType::Goomba:
-            point = 100;
-            break;
-          case EnemyType::Koopa:
-            point = 200;
-            break;
-          case EnemyType::Piranha:
-            point = 300;
-            break;
-          case EnemyType::Bowser:
-            point = 500; // Boss gives more points
-            break;
-          default:
-            point = 100; // Default for unknown types
-        }
-        gameManager_->AddPoints(point);
-      }
-    enemies[index]->MarkForDeletion();
   }
 }
 

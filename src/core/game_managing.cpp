@@ -364,7 +364,8 @@ void GameManaging::DrawLevel() {
 
   DrawBackground();
 
-  
+  // Draw blocks using ObjectManager
+  ObjectManager::GetInstance().Draw();
 
   // Draw enemies using EnemyManager
   EnemyManager &enemyManager = EnemyManager::GetInstance();
@@ -373,9 +374,6 @@ void GameManaging::DrawLevel() {
       enemy->Draw();
     }
   }
-
-  // Draw blocks using ObjectManager
-  ObjectManager::GetInstance().Draw();
 
   // Draw particles
   for (const auto &particle : particles_) {
@@ -805,23 +803,11 @@ void GameManaging::HandleLevelProgression() {
   }
 }
 void GameManaging::RestartCurrentLevel(Character *character) {
-  // Store character reference before resetting
-  Character *characterRef = character;
-
   if (sceneCamera_) {
     sceneCamera_->target = spawnPoint_;
   }
 
-  // First reset character position and state before loading level
-  // This prevents the character from being at an invalid position during level
-  // loading
-  if (characterRef) {
-    characterRef->SetState(0, false);
-    CharacterType currentType = characterRef->GetCharacter();
-    characterRef->SetCharacter(currentType, spawnPoint_);
-  }
-
-  // Now reload the level
+  // Reload the current level
   std::string levelFile
     = "res/maps/map" + std::to_string(currentLevel_) + ".json";
   LoadLevel(levelFile);
@@ -829,11 +815,11 @@ void GameManaging::RestartCurrentLevel(Character *character) {
   // Don't reset lives or score - just the level state
   levelComplete_ = false;
   gameOver_      = false;
-
-  // CRITICAL: Register the character with collision handler AFTER level is
-  // loaded
-  if (characterRef && collisionHandler_) {
-    collisionHandler_->AddCharacter(characterRef);
+  // Reset the character's state and position if provided
+  if (character) {
+    character->SetState(0, false);
+    CharacterType currentType = character->GetCharacter();
+    character->SetCharacter(currentType, spawnPoint_);
   }
 }
 void GameManaging::OnPlayerDeath(Character *character) {

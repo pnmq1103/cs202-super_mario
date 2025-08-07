@@ -54,10 +54,6 @@ void GameScene::Init() {
   game_manager_.SetCollisionHandler(&collision_handler_);
   game_manager_.SetSceneCamera(&camera_);
 
-  ObjectManager::GetInstance().SetGameManager(&game_manager_);
-  EnemyManager::GetInstance().SetGameManager(&game_manager_);
-    
-
   game_manager_.RegisterCharacterWithCollision(player_character_);
   ObjectManager::GetInstance().Reset(
     (int)constants::scale, &collision_handler_);
@@ -76,36 +72,6 @@ void GameScene::Update() {
 
   if (game_manager_.IsPaused() || game_manager_.IsInTransition())
     return;
- 
-  //if (player_character_) {
-  //  static bool wasAlive = true;
-
-  //  // Use position and velocity instead of direct state access
-  //  bool isCurrentlyAlive = true;
-
-  //  // Character is dead if:
-  //  // 1. It's not moving when it should be (check velocity)
-  //  Vector2 velocity = player_character_->GetSpeed();
-  //  // 2. Check if y position is too low (fell off map)
-  //  Rectangle rect = player_character_->GetRectangle();
-  //  float deathY   = 1500.0f; // Adjust this value based on your map
-
-  //  // Consider character dead if it fell below threshold
-  //  if (rect.y > deathY) {
-  //    isCurrentlyAlive = false;
-  //  }
-
-  //  // If character was alive but now is dead, handle death
-  //  if (wasAlive && !isCurrentlyAlive) {
-  //    game_manager_.OnPlayerDeath(player_character_);
-  //    wasAlive = false;
-  //    return;
-  //  }
-
-  //  if (isCurrentlyAlive) {
-  //    wasAlive = true;
-  //  }
-  //}
 
   if (input_command_)
     input_command_->HandleInput();

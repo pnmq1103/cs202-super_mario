@@ -289,16 +289,15 @@ void Command::ShootFireball() {
   Rectangle character_rect = character_->GetRectangle();
   bool to_left             = character_->IsToLeft();
 
-  Vector2 spawn_position1 = {
+  Vector2 spawn_position = {
     character_rect.x + (to_left ? -10.0f : character_rect.width + 10.0f),
     character_rect.y + character_rect.height / 2.0f};
-  Vector2 spawn_position2 = {character_rect.x,character_rect.y};
 
   CharacterType char_type = character_->GetCharacter();
   if (char_type == CharacterType::MARIO) {
-    projectile_pool_->ShootMarioFireball(spawn_position2, to_left);
+    projectile_pool_->ShootMarioFireball(spawn_position, to_left);
   } else if (char_type == CharacterType::LUIGI) {
-    projectile_pool_->ShootElectricBall(spawn_position1, to_left);
+    projectile_pool_->ShootElectricBall(spawn_position, to_left);
   }
 }
 

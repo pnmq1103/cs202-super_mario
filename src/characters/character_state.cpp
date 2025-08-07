@@ -67,9 +67,9 @@ Vector2 CharacterState::GetSpeed() {
     velocity.x = 0;
   else {
     if (to_left)
-      velocity.x = -speed;
+      velocity.x = -velocity_x;
     else
-      velocity.x = speed;
+      velocity.x = velocity_x;
   }
   velocity.y = velocity_y;
   return velocity;

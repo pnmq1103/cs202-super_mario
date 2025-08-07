@@ -9,14 +9,12 @@
 #include "include/objects/static_block.hpp"
 #include "include/objects/super_mushroom.hpp"
 #include "include/objects/super_star.hpp"
-#include "include/core/game_managing.hpp"
 
 class ObjectManager {
 private:
   std::vector<GameObject *> object_list_;
   float scale_;
   CollisionHandler *collision_;
-  GameManaging *gameManager_ = nullptr;
 
   ObjectManager();
   ObjectManager(const ObjectManager &)            = delete;
@@ -44,11 +42,5 @@ public:
   void Update();
   void Draw();
   void OnHit(int index); // this is for testing purpose only. please dont use
-  // this function.
-  void SetGameManager(GameManaging *gameManager) {
-    gameManager_ = gameManager;
-  }
-  GameManaging *GetGameManager() const {
-    return gameManager_;
-  }
+                         // this function.
 };

@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 class Enemy; // Forward declaration
-class PiranhaPlant;
+
 // Strategy interface for enemy movement
 class MovementStrategy {
 public:
@@ -14,38 +14,6 @@ public:
   virtual void ReverseDirection() {} // Optional override
 };
 
-class PiranhaMovementStrategy : public MovementStrategy {
-private:
-  float emergeTime     = 2.0f;  // Time to stay emerged (seconds)
-  float hideTime       = 2.0f;  // Time to stay hidden (seconds)
-  float emergeDistance = 32.0f; // Distance to emerge (pixels)
-  float timer          = 0.0f;  // Current state timer
-  bool isEmerging
-    = true; // Whether currently emerging (vs hiding) - start as emerging
-  float initialY = 0.0f; // Initial Y position (fully hidden)
-  float targetY  = 0.0f; // Target Y position (fully emerged)
-
-public:
-  PiranhaMovementStrategy();
-  void Update (Enemy *enemy, float dt) override;
-  void ReverseDirection() override;
-  MovementStrategy *Clone() const override;
-
-  // Add these methods to control emergence/hiding
-  void SetEmergeDistance(float distance) {
-    emergeDistance = distance;
-  }
-  void StartEmerging() {
-    isEmerging = true;
-    timer      = 0.0f;
-  }
-  void StartHiding() {
-    isEmerging = false;
-    timer      = 0.0f;
-  }
-  void ForceEmerge();
-  void ForceHide();
-};
 // Basic walking movement - left and right
 class WalkingMovement : public MovementStrategy {
 private:
