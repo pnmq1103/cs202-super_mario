@@ -17,6 +17,10 @@ MarioFireball::~MarioFireball() {}
 void MarioFireball::Update() {
   if (is_destroy)
     return;
+  if (time > 100) {
+    Destroy();
+    return;
+  }
   frame = frame_list[(time / 15) % 3 + 19];
 
   if (velocity.x > 0) {
