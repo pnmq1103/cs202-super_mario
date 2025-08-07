@@ -3,16 +3,16 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include "include/core/game_managing.hpp"
 
 class Character;        // Forward declaration
 class CollisionHandler; // Forward declaration
 class ProjectilePool;   // Forward declaration
-
+class GameManaging;     // Forward declaration
 class EnemyManager {
 private:
   std::vector<Enemy *> enemies;
   std::unordered_map<Enemy *, MovementStrategy *> pausedStrategies_;
-
   // Character references for simple player detection (Bowser fireball shooting
   // only)
   Vector2 *marioPosition_;
@@ -29,7 +29,7 @@ private:
   float difficultyMultiplier_;
   bool isPaused_;
   float globalSpeedMultiplier_;
-
+  GameManaging *gameManager_ = nullptr;
   // Boss management
   Enemy *currentBoss_;
 
@@ -50,6 +50,10 @@ public:
 
   void ClearAllEnemies();
   void ClearDeadEnemies();
+  void SetGameManager(GameManaging *gameManager) {
+    gameManager_ = gameManager;
+  }
+  void OnEnemyDeath(int index);
 
   // Update and rendering (like ObjectManager)
   void SetFrameCount();

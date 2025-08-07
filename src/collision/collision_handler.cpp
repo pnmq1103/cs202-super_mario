@@ -167,7 +167,7 @@ void CollisionHandler::UpdatePosition() {
     }
   }
   for (int i = 0; i < enemy_list_.size(); ++i) {
-    if (enemy_list_[i] && enemy_list_[i]->IsAlive()) {
+    if (enemy_list_[i] && enemy_list_[i]->IsAlive() && !enemy_list_[i]->isPendingDeletion()) {
       UpdateToGrid(3, i, enemy_list_[i]->GetRect());
     }
   }

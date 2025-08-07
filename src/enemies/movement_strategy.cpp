@@ -476,3 +476,71 @@ void FollowingMovement::Update(Enemy *enemy, float deltaTime) {
 MovementStrategy *FollowingMovement::Clone() const {
   return new FollowingMovement(targetPosition_, speed_, detectionRange_);
 }
+
+
+PiranhaMovementStrategy::PiranhaMovementStrategy() {
+  // Initialize in hiding state so it emerges first
+  isEmerging = false;
+  timer      = 0.0f;
+}
+
+void PiranhaMovementStrategy::Update(Enemy *enemy, float dt) {
+  // Get current position
+  Vector2 pos = enemy->GetPosition();
+
+  // First time setup - record initial position
+  if (initialY == 0.0f) {
+    initialY = pos.y;
+    targetY  = initialY - emergeDistance;
+    std::cout << "Piranha plant initial Y: " << initialY
+              << ", target Y: " << targetY << std::endl;
+  }
+
+  // Update timer
+  timer += dt;
+
+  if (isEmerging) {
+    // Calculate how far to emerge (0.0 to 1.0)
+    float t = std::min(timer / emergeTime, 1.0f);
+    // Move upward (emerge)
+    float newY = initialY - (t * emergeDistance);
+    enemy->SetPosition({pos.x, newY});
+
+    // Check if fully emerged
+    if (timer >= emergeTime) {
+      // Start hiding after staying emerged
+      isEmerging = false;
+      timer      = 0.0f;
+    }
+  } else {
+    // Calculate how far to hide (0.0 to 1.0)
+    float t = std::min(timer / hideTime, 1.0f);
+    // Move downward (hide)
+    float newY = targetY + (t * emergeDistance);
+    enemy->SetPosition({pos.x, newY});
+
+    // Check if fully hidden
+    if (timer >= hideTime) {
+      // Start emerging after staying hidden
+      isEmerging = true;
+      timer      = 0.0f;
+    }
+  }
+}
+
+void PiranhaMovementStrategy::ReverseDirection() {
+  // Piranha plants don't change horizontal direction
+}
+
+MovementStrategy *PiranhaMovementStrategy::Clone() const {
+  return new PiranhaMovementStrategy(*this);
+}
+void PiranhaMovementStrategy::ForceEmerge() {
+  isEmerging = true;
+  timer      = emergeTime; // Set to maximum time to fully emerge immediately
+}
+
+void PiranhaMovementStrategy::ForceHide() {
+  isEmerging = false;
+  timer      = hideTime; // Set to maximum time to fully hide immediately
+}
