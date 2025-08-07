@@ -52,6 +52,10 @@ void PiranhaPlant::Update() {
 }
 
 void PiranhaPlant::OnHit() {
+  alive    = false;
+  state    = EnemyState::Dead;
+  velocity = {0.0f, 0.0f};
+
   // Piranha plants only take damage from projectiles
   // The actual damage handling happens in OnProjectileHit in the base class
 }
@@ -68,6 +72,7 @@ void PiranhaPlant::OnHitFromSide() {
   // Player should take damage instead
   // Make sure to play the "hit" sound
   App.Media().PlaySound("bump");
+  OnHit();
 }
 
 EnemyType PiranhaPlant::GetType() {
