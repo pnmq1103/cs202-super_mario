@@ -45,4 +45,5 @@ public:
   void Bounce();
   Rectangle GetRectangle();
   bool IsToLeft();
+  bool IsDead();
 };

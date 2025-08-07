@@ -54,6 +54,9 @@ private:
   // Pause state
   bool isPaused_ = false;
 
+  // Flag for handling death
+  bool isDeathHandled_ = false;
+
 public:
   GameManaging();
   ~GameManaging();

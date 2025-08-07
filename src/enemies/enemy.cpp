@@ -109,12 +109,15 @@ Enemy::~Enemy() {
 }
 
 Rectangle Enemy::GetRectangle() const {
+  if (position.x < 0 || position.y < 0) {
+    throw std::runtime_error("Invalid position for enemy rectangle");
+  }
   // Frame seems valid, use it
   return {position.x, position.y, frame.width * scale, frame.height * scale};
 }
 
 Rectangle Enemy::GetRect() const {
-  return GetRectangle();
+    return GetRectangle();
 }
 
 bool Enemy::IsAlive() const {
@@ -573,7 +576,8 @@ void Enemy::DealDamage(float damage) {
       health = 0.0f;
       alive  = false;
       state  = EnemyState::Dead;
-
+      MarkForDeletion();
+      EnemyManager::GetInstance().OnEnemyDeath(index_);
       // Debug log
 
     } else {
@@ -587,6 +591,7 @@ void Enemy::DealDamage(float damage) {
     // Fallback: mark as dead
     alive = false;
     state = EnemyState::Dead;
+    MarkForDeletion();
   }
 }
 

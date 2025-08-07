@@ -67,9 +67,9 @@ Vector2 CharacterState::GetSpeed() {
     velocity.x = 0;
   else {
     if (to_left)
-      velocity.x = -velocity_x;
+      velocity.x = -speed;
     else
-      velocity.x = velocity_x;
+      velocity.x = speed;
   }
   velocity.y = velocity_y;
   return velocity;
@@ -225,4 +225,8 @@ void CharacterState::Bounce() {
     velocity_y = -2;
   } else if (IsFalling())
     velocity_y *= -0.9;
+}
+
+bool CharacterState::IsDead() {
+  return is_die;
 }

@@ -1,4 +1,5 @@
 #include "include/objects/coin.hpp"
+#include "include/objects/object_manager.hpp"
 
 Coin::Coin(Vector2 Nposition, float Nscale) : GameObject(Nposition, Nscale) {
   texture = &App.Resource().GetObject();
@@ -11,6 +12,10 @@ void Coin::OnHit() {
   if (is_destroyed)
     return;
   is_destroyed = true;
+  auto &objectManager = ObjectManager::GetInstance();
+  if (objectManager.GetGameManager()) {
+    objectManager.GetGameManager()->AddPoints(200);
+  }
 }
 
 void Coin::Update() {

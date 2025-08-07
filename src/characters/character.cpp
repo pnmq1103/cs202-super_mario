@@ -182,3 +182,9 @@ bool Character::IsToLeft() {
     throw std::runtime_error("not yet set character");
   return pState_->IsToLeft();
 }
+
+bool Character::IsDead() {
+      if (!pState_)
+    throw std::runtime_error("not yet set character");
+      return pState_->IsDead();
+}

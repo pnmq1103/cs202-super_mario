@@ -51,6 +51,7 @@ public:
   void ToStarman();
   bool IsStarman();
   void Bounce();
+  bool IsDead();
 
   friend class Character;
 };
