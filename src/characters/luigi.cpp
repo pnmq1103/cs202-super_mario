@@ -11,7 +11,7 @@
 
 NormalLuigi::NormalLuigi(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
-    : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
+    : CharacterState(18, 7, 50, 500, Nscale, Nto_left) {
   if (!is_evolving) {
     disabled     = true;
     pre_texture_ = &App.Resource().GetLuigi('s');
@@ -87,7 +87,7 @@ void NormalLuigi::Draw() {
 
 BigLuigi::BigLuigi(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
-    : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
+    : CharacterState(18, 7, 50, 500, Nscale, Nto_left) {
   disabled = true;
   texture  = &App.Resource().GetLuigi('s');
   context  = Ncontext;
@@ -169,7 +169,7 @@ void BigLuigi::Draw() {
 
 FireLuigi::FireLuigi(
   Character *Ncontext, float Nscale, bool Nto_left, bool is_evolving)
-    : CharacterState(18, 5, 50, 500, Nscale, Nto_left) {
+    : CharacterState(18, 7, 50, 500, Nscale, Nto_left) {
   LoadFrameList("res/sprites/characters/powerup.txt");
   if (is_evolving) {
     disabled     = true;

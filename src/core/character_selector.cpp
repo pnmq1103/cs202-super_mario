@@ -48,8 +48,6 @@ void CharacterSelectorScene::Update() {
     }
   }
 
-  std::cout << static_cast<int>(selected_character_);
-
   // Vector2 mouse = GetMousePosition();
   // if (
   //   CheckCollisionPointRec(mouse, left_rec)

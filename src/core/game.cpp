@@ -56,12 +56,11 @@ void GameScene::Init() {
 
   ObjectManager::GetInstance().SetGameManager(&game_manager_);
   EnemyManager::GetInstance().SetGameManager(&game_manager_);
-    
 
   game_manager_.RegisterCharacterWithCollision(player_character_);
   ObjectManager::GetInstance().Reset(
     (int)constants::scale, &collision_handler_);
-  game_manager_.LoadLevel("res/maps/map2.json");
+  game_manager_.LoadLevel("res/maps/map1.json");
   // CreateSimpleTestLevel();
   player_character_->SetCharacter(character_type_, {10.0f, 500.0f});
 }
@@ -76,9 +75,9 @@ void GameScene::Update() {
 
   if (game_manager_.IsPaused() || game_manager_.IsInTransition())
     return;
- 
-  //if (player_character_) {
-  //  static bool wasAlive = true;
+
+  // if (player_character_) {
+  //   static bool wasAlive = true;
 
   //  // Use position and velocity instead of direct state access
   //  bool isCurrentlyAlive = true;
