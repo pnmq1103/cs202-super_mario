@@ -2,6 +2,8 @@
 
 ProjectilePool::ProjectilePool(CollisionHandler *Ncollision)
     : projectile_list_(7, nullptr) {
+  time_      = 0;
+  time_mark_ = -20;
   collision_ = Ncollision;
   for (int i = 0; i < 3; ++i) {
     projectile_list_[i]     = new MarioFireball();
@@ -17,6 +19,12 @@ ProjectilePool::~ProjectilePool() {
     delete projectile_list_[i];
 }
 void ProjectilePool::ShootMarioFireball(Vector2 Nposition, bool to_left) {
+
+  if (time_ - time_mark_ > 20)
+    time_mark_ = time_;
+  else
+    return;
+
   for (int i = 0; i < 3; ++i) {
     if (projectile_list_[i]->IsDestroyed()) {
       projectile_list_[i]->Renew(Nposition, to_left);
@@ -37,6 +45,7 @@ void ProjectilePool::ShootElectricBall(Vector2 Nposition, bool to_left) {
     projectile_list_[6]->Renew(Nposition, to_left);
 }
 void ProjectilePool::SetFrameCount() {
+  ++time_;
   for (int i = 0; i < 7; ++i)
     projectile_list_[i]->SetFrameCount();
 }

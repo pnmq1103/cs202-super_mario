@@ -112,9 +112,7 @@ void Command::HandleInput() {
   }
 
   // --- Handle Projectile Shooting (Shift Key) ---
-  if (
-    IsKeyDown(KEY_LEFT_SHIFT) && character_->GetState() == 2
-    && !fireball_active_) {
+  if (IsKeyDown(KEY_LEFT_SHIFT) && character_->GetState() == 2) {
     ShootFireball();
     fireball_active_ = true;
   }
@@ -292,7 +290,7 @@ void Command::ShootFireball() {
   Vector2 spawn_position1 = {
     character_rect.x + (to_left ? -10.0f : character_rect.width + 10.0f),
     character_rect.y + character_rect.height / 2.0f};
-  Vector2 spawn_position2 = {character_rect.x,character_rect.y};
+  Vector2 spawn_position2 = {character_rect.x, character_rect.y};
 
   CharacterType char_type = character_->GetCharacter();
   if (char_type == CharacterType::MARIO) {

@@ -8,6 +8,7 @@ class ProjectilePool {
 private:
   std::vector<Projectile *> projectile_list_;
   CollisionHandler *collision_;
+  int time_, time_mark_;
 
 public:
   ProjectilePool(CollisionHandler *Ncollision);
