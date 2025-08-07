@@ -10,6 +10,7 @@
 #include "include/core/application.hpp"
 #include "include/core/constants.hpp"
 #include "include/core/file_handler.hpp"
+#include "include/core/game.hpp"
 #include "include/core/map.hpp"
 #include "include/external/json.hpp"
 #include "include/managers/enemy_manager.hpp"
@@ -364,7 +365,8 @@ void GameManaging::DrawLevel() {
 
   DrawBackground();
 
-  
+  // Draw blocks using ObjectManager
+  ObjectManager::GetInstance().Draw();
 
   // Draw enemies using EnemyManager
   EnemyManager &enemyManager = EnemyManager::GetInstance();
@@ -805,36 +807,9 @@ void GameManaging::HandleLevelProgression() {
   }
 }
 void GameManaging::RestartCurrentLevel(Character *character) {
-  // Store character reference before resetting
-  Character *characterRef = character;
-
-  if (sceneCamera_) {
-    sceneCamera_->target = spawnPoint_;
-  }
-
-  // First reset character position and state before loading level
-  // This prevents the character from being at an invalid position during level
-  // loading
-  if (characterRef) {
-    characterRef->SetState(0, false);
-    CharacterType currentType = characterRef->GetCharacter();
-    characterRef->SetCharacter(currentType, spawnPoint_);
-  }
-
-  // Now reload the level
-  std::string levelFile
-    = "res/maps/map" + std::to_string(currentLevel_) + ".json";
-  LoadLevel(levelFile);
-
-  // Don't reset lives or score - just the level state
-  levelComplete_ = false;
-  gameOver_      = false;
-
-  // CRITICAL: Register the character with collision handler AFTER level is
-  // loaded
-  if (characterRef && collisionHandler_) {
-    collisionHandler_->AddCharacter(characterRef);
-  }
+  // App.RemoveScene();
+  // App.AddScene(
+  // std::make_unique<GameScene>(CharacterSelectorScene::GetCharacterType()));
 }
 void GameManaging::OnPlayerDeath(Character *character) {
   // DecreaseLife() already plays the life_lost sound

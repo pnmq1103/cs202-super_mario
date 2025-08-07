@@ -107,6 +107,15 @@ void GameScene::Update() {
   //  }
   //}
 
+  if (
+    player_character_->GetRectangle().y
+    > constants::mapHeight * constants::blockSize) {
+    App.RemoveScene();
+    App.AddScene(
+      std::make_unique<GameScene>(CharacterSelectorScene::GetCharacterType()));
+    return;
+  }
+
   if (input_command_)
     input_command_->HandleInput();
 
@@ -132,7 +141,7 @@ void GameScene::Update() {
   // Game over/restart
   if (game_manager_.IsGameOver() && IsKeyPressed(KEY_R)) {
     game_manager_.ResetGame();
-    // Reload first level
+    //  Reload first level
     game_manager_.LoadLevel("res/maps/map1.json");
   }
 
