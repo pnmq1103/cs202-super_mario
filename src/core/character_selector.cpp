@@ -97,8 +97,8 @@ CharacterType CharacterSelectorScene::GetCharacterType() {
 }
 
 void CharacterSelectorScene::DisplayPower() {
-  const char *mario[] = {"SPEED: 10", "JUMP: 7", "FIRE"};
-  const char *luigi[] = {"SPEED: 7", "JUMP: 10", "ELECTRIC"};
+  const char *mario[] = {"SPEED: 10", "JUMP: 3", "FIRE"};
+  const char *luigi[] = {"SPEED: 7", "JUMP: 5", "ELECTRIC"};
 
   float y = constants::screenHeight * 0.45;
   if (hover_left) {
