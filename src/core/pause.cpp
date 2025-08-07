@@ -1,6 +1,8 @@
 #include "include/core/pause.hpp"
 #include "include/core/application.hpp"
+#include "include/core/character_selector.hpp"
 #include "include/core/constants.hpp"
+#include "include/core/game.hpp"
 #include "include/core/setting.hpp"
 
 PauseScene::PauseScene() {
@@ -90,7 +92,13 @@ void PauseScene::CreateButtons() {
 
     dst = {x, y, button_width, button_height};
     buttons_.emplace_back(
-      "Restart", []() {}, src, dst, "res/ui/buttons/restart.png");
+      "Restart",
+      []() {
+        App.RemoveScene(2);
+        App.AddScene(std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType()));
+      },
+      src, dst, "res/ui/buttons/restart.png");
   }
 }
 

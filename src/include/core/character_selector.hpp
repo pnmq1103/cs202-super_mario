@@ -17,7 +17,7 @@ class CharacterSelectorScene : public Scene {
 private:
   SceneType type_ = {CharacterSelector};
 
-  CharacterType selected_character_ = {CharacterType::LUIGI};
+  static CharacterType selected_character_;
 
   Texture background_    = {};
   double last_input_     = {0};
@@ -32,7 +32,6 @@ private:
 private:
   void CreateRegions();
   void StartGame();
-  void DrawInstructions();
 
 public:
   CharacterSelectorScene() = default;
@@ -43,4 +42,6 @@ public:
   void Draw() override;
   void Resume() override;
   SceneType Type() override;
+
+  static CharacterType GetCharacterType();
 };

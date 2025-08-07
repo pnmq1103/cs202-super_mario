@@ -8,8 +8,8 @@ Slider::~Slider() {}
 
 Slider::Slider(
   std ::string label, std::function<void()> action, Rectangle source,
-  Rectangle bounds, const std::string &path)
-    : Button(label, action, source, bounds, path) {
+  Rectangle bounds, const std::string &path, float percentage)
+    : Button(label, action, source, bounds, path), percentage_(percentage) {
   slider_bounds_ = {bounds.x + bounds.width + 16, bounds.y + 16, 64 * 5, 32};
 }
 

@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include "include/core/application.hpp"
+#include "include/core/config.hpp"
 #include "include/core/media.hpp"
 #include "include/core/menu.hpp"
 #include "include/core/sprite_manager.hpp"
@@ -41,7 +42,7 @@ void Application::Update() {
 
 void Application::Draw() {
   scene_manager_.Draw();
-  DrawFPS(15, 15);
+  // DrawFPS(15, 15);
   if (cursor_hidden_ == false)
     DrawTextureRec(cursor_texture_, {0, 0, 64, 64}, GetMousePosition(), WHITE);
 
@@ -83,6 +84,10 @@ SpriteManager &Application::Resource() {
 
 Media &Application::Media() {
   return media_;
+}
+
+Config &Application::Config() {
+  return config_;
 }
 
 void Application::AddScene(std::unique_ptr<Scene> new_scene, bool hide_prev) {

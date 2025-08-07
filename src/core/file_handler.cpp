@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "include/core/config.hpp"
 #include "include/core/file_handler.hpp"
 #include "include/core/map.hpp"
 #include "include/external/tinyfiledialogs.h"
@@ -67,4 +68,25 @@ void FileHandler::LoadMapFromFile(Map &map, const std::filesystem::path &path) {
   fin >> j;
 
   j.get_to(map);
+}
+
+void FileHandler::SaveConfig(const Config &config) {
+  std::filesystem::path full_path = base_path / "config.json";
+  std::ofstream fout(full_path);
+  if (fout.is_open() == false)
+    throw std::runtime_error("failed to create config file");
+
+  nlohmann::json j = config;
+  fout << j.dump();
+}
+
+void FileHandler::LoadConfig(Config &config) {
+  std::filesystem::path full_path = base_path / "config.json";
+  std::ifstream fin(full_path);
+  if (fin.is_open() == false)
+    throw std::runtime_error("failed to open config file");
+
+  nlohmann::json j;
+  fin >> j;
+  j.get_to(config);
 }

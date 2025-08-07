@@ -50,6 +50,8 @@
     <ClCompile Include="src\core\scene.cpp" />
     <ClCompile Include="src\core\pause.cpp" />
     <ClCompile Include="src\core\transition.cpp" />
+    <ClCompile Include="src\core\character_selector.cpp" />
+    <ClCompile Include="src\core\config.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />
@@ -102,6 +104,8 @@
     <ClInclude Include="src\include\core\constants.hpp" />
     <ClInclude Include="src\include\core\pause.hpp" />
     <ClInclude Include="src\include\core\transition.hpp" />
+    <ClInclude Include="src\include\core\character_selector.hpp" />
+    <ClInclude Include="src\include\core\config.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

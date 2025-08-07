@@ -4,13 +4,9 @@
 
 CreditScene::CreditScene() {}
 
-CreditScene::~CreditScene() {
-  UnloadTexture(background_);
-}
+CreditScene::~CreditScene() {}
 
-void CreditScene::Init() {
-  background_ = LoadTexture("res/ui/menu_background.png");
-}
+void CreditScene::Init() {}
 
 void CreditScene::Update() {
   if (IsKeyDown(KEY_ESCAPE)) {
@@ -20,9 +16,8 @@ void CreditScene::Update() {
 }
 
 void CreditScene::Draw() {
-  DrawTextureV(
-    background_, {0, (constants::screenHeight - background_.height) / 2},
-    RAYWHITE);
+  DrawRectangleRec(
+    {0, 0, constants::screenWidth, constants::screenHeight}, WHITE);
 }
 
 void CreditScene::Resume() {}

@@ -13,7 +13,7 @@ public:
   Slider() = default;
   Slider(
     std::string label, std::function<void()> action, Rectangle source,
-    Rectangle bounds, const std::string &path);
+    Rectangle bounds, const std::string &path, float percentage_ = 1);
 
   void Update();
   void Draw() override;

@@ -2,18 +2,16 @@
 #include "include/core/application.hpp"
 #include "include/core/button.hpp"
 #include "include/core/constants.hpp"
+#include "include/core/file_handler.hpp"
 
 SettingScene::SettingScene() {
   buttons_.reserve(3);
   sliders_.reserve(2);
 }
 
-SettingScene::~SettingScene() {
-  UnloadTexture(background_);
-}
+SettingScene::~SettingScene() {}
 
 void SettingScene::Init() {
-  background_ = LoadTexture("res/ui/menu_background.png");
   CreateButtons();
   CreateSliders();
 }
@@ -29,10 +27,8 @@ void SettingScene::Update() {
 }
 
 void SettingScene::Draw() {
-  float x = constants::screenWidth - background_.width;
-  float y = (constants::screenHeight - background_.height) / 2;
-  DrawTextureV(background_, {x, y}, RAYWHITE);
-
+  DrawRectangleRec(
+    {0, 0, constants::screenWidth, constants::screenHeight}, WHITE);
   DrawButtons();
   DrawSliders();
 }
@@ -58,14 +54,17 @@ void SettingScene::DrawButtons() {
 void SettingScene::CreateSliders() {
   sliders_.emplace_back(
     "Music", []() {}, Rectangle{0, 0, 16, 16},
-    Rectangle{50, 50, 16 * 4, 16 * 4}, "res/ui/buttons/volume_on.png");
+    Rectangle{50, 50, 16 * 4, 16 * 4}, "res/ui/buttons/volume_on.png",
+    App.Config().GetMusicVolume());
 }
 
 void SettingScene::UpdateSliders() {
   for (size_t i = 0; i < sliders_.size(); ++i) {
+    sliders_[i].Update();
     if (i == 0) {
-      sliders_[i].Update();
-      volume_ = sliders_[i].GetPercentage();
+      float volume = sliders_[i].GetPercentage();
+      App.Config().SetMusicVolume(volume);
+      App.Media().SetMusicVolume(volume);
     }
   }
 }

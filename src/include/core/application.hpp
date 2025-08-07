@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include <stack>
 
+#include "include/core/config.hpp"
 #include "include/core/media.hpp"
 #include "include/core/scene_list.hpp"
 #include "include/core/sprite_manager.hpp"
@@ -13,6 +14,7 @@ private:
   SpriteManager res_manager_;
   Media media_;
   Image icon_image_ = {};
+  Config config_;
 
   SceneList scene_manager_;
   SceneType previous_scene_ = {Exit};
@@ -42,6 +44,7 @@ public:
   static SceneType PreviousScene();
   SpriteManager &Resource();
   Media &Media();
+  Config &Config();
 
   static void AddScene(std::unique_ptr<Scene> new_scene, bool hide_prev = true);
   static void RemoveScene(size_t count = 1);

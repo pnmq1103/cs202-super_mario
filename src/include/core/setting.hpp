@@ -8,10 +8,8 @@ class SettingScene : public Scene {
 private:
   SceneType type_ = {Setting};
 
-  Texture background_ = {};
   std::vector<Button> buttons_;
   std::vector<Slider> sliders_;
-  float volume_ = {1};
 
 private:
   void CreateButtons();

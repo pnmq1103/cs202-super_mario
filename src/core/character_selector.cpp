@@ -8,6 +8,9 @@
 #include "include/core/constants.hpp"
 #include "include/core/game.hpp"
 
+CharacterType CharacterSelectorScene::selected_character_
+  = CharacterType::LUIGI;
+
 CharacterSelectorScene::~CharacterSelectorScene() {
   UnloadTexture(background_);
 }
@@ -15,6 +18,8 @@ CharacterSelectorScene::~CharacterSelectorScene() {
 void CharacterSelectorScene::Init() {
   background_ = LoadTexture("res/ui/character_selection.png");
   App.Media().PlayMusic("choose_character");
+
+  selected_character_ = CharacterType::LUIGI;
 
   CreateRegions();
 }
@@ -43,6 +48,8 @@ void CharacterSelectorScene::Update() {
     }
   }
 
+  std::cout << static_cast<int>(selected_character_);
+
   // Vector2 mouse = GetMousePosition();
   // if (
   //   CheckCollisionPointRec(mouse, left_rec)
@@ -63,8 +70,6 @@ void CharacterSelectorScene::Update() {
 
 void CharacterSelectorScene::Draw() {
   DrawTexture(background_, 0, 0, RAYWHITE);
-
-  DrawInstructions();
 
   Color dark   = ColorAlpha(BLACK, 0.5f);
   Color bright = ColorAlpha(BLACK, 0);
@@ -102,16 +107,6 @@ void CharacterSelectorScene::StartGame() {
   App.AddScene(std::make_unique<GameScene>(selected_character_));
 }
 
-void CharacterSelectorScene::DrawInstructions() {
-  float y = constants::screenHeight * 0.8f;
-
-  const char *instructions[]
-    = {"LEFT/ RIGHT arrows to select", "ENTER to start game", "ESC to return"};
-
-  for (int i = 0; i < 3; i++) {
-    Vector2 text_sz = MeasureTextEx(GetFontDefault(), instructions[i], 20, 1);
-    float x         = (constants::screenWidth - text_sz.x) / 2;
-    DrawTextEx(
-      GetFontDefault(), instructions[i], {x, y + i * 30}, 20, 1, WHITE);
-  }
+CharacterType CharacterSelectorScene::GetCharacterType() {
+  return selected_character_;
 }
