@@ -289,7 +289,7 @@ void Command::ShootFireball() {
 
   Vector2 spawn_position1 = {
     character_rect.x + (to_left ? -10.0f : character_rect.width + 10.0f),
-    character_rect.y + character_rect.height / 2.0f};
+    character_rect.y + character_rect.height / 2.0f - 10.f};
   Vector2 spawn_position2 = {character_rect.x, character_rect.y};
 
   CharacterType char_type = character_->GetCharacter();

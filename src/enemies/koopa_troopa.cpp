@@ -58,8 +58,8 @@ void KoopaTroopa::OnHitFromAbove() {
       return;
     }
     case KoopaState::Sliding: {
-      alive = false;
-      state       = EnemyState::Dead;
+      alive    = false;
+      state    = EnemyState::Dead;
       velocity = {0.0f, 0.0f};
       std::cout << "Sliding Koopa destroyed!" << std::endl;
       break;
@@ -72,15 +72,33 @@ void KoopaTroopa::OnHitFromAbove() {
 }
 
 void KoopaTroopa::OnHitFromSide() {
+  if (shell_timer > 0.0f) {
+    return; // Ignore hits while in shell mode
+  }
   switch (GetKoopaState()) {
     case KoopaState::Walking: {
-      return;
+      koopa_state = KoopaState::Sliding;
+      state       = EnemyState::Shell; // Set the base Enemy state
+
+      SetMovementStrategy(new SlidingMovement());
+
+      shell_timer = 2.0f; // cooldown to avoid immediate re-hits
+
+      std::cout << "Koopa enters shell mode and sliding!" << std::endl;
+      break;
     }
     case KoopaState::Shell: {
       return;
     }
     case KoopaState::Sliding: {
-      KickShell(facing_left);
+      alive    = false;
+      state    = EnemyState::Dead;
+      velocity = {0.0f, 0.0f};
+      std::cout << "Sliding Koopa destroyed!" << std::endl;
+      break;
+    }
+    default: {
+      std::cout << "Koopa in unknown state on hit from above!" << std::endl;
       break;
     }
   }
@@ -117,7 +135,7 @@ void KoopaTroopa::KickShell(bool kick_left) {
   if (koopa_state == KoopaState::Shell) {
     koopa_state = KoopaState::Sliding;
     state       = EnemyState::Normal;
-    facing_left      = kick_left;
+    facing_left = kick_left;
 
     SetMovementStrategy(new SlidingMovement(kick_left));
 
