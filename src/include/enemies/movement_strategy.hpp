@@ -2,6 +2,7 @@
 #include <memory>
 #include <raylib.h>
 #include <unordered_map>
+#include "include/core/constants.hpp"
 
 class Enemy; // Forward declaration
 class PiranhaPlant;
@@ -171,28 +172,18 @@ public:
 // Sliding movement - for Koopa shells with physics
 class SlidingMovement : public MovementStrategy {
 private:
-  float speed_;
   bool movingLeft_;
-  float friction_;
   float minSpeed_;
   bool isBouncing_;
 
 public:
   SlidingMovement(
-    float speed = 100.0f, bool movingLeft = true, float friction = 0.98f);
+ bool movingLeft = true);
   void Update(Enemy *enemy, float deltaTime) override;
   MovementStrategy *Clone() const override;
 
   void ReverseDirection() override;
-  void SetSpeed(float speed) {
-    speed_ = speed;
-  }
-  float GetSpeed() const {
-    return speed_;
-  }
-  bool IsMoving() const {
-    return speed_ > minSpeed_;
-  }
+
 };
 
 // Patrol movement - moves between two points

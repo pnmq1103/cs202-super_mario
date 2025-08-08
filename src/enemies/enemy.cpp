@@ -182,8 +182,8 @@ void Enemy::UpdateAnimationFrame() {
 
     case EnemyType::Koopa:
       if (state == EnemyState::Shell) {
-        // Shell state: use ID 11-16
-        frame_index = 11 + ((time / 5) % 6); // Shell animation
+        // Shell state: use ID 13-16
+        frame_index = 11 + ((time / 5) % 4); // Shell animation
       } else {
         // Normal Koopa walking - use only ID 9-10 for both directions
         frame_index = 9 + ((time / 10) % 2);

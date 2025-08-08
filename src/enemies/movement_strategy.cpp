@@ -24,6 +24,19 @@ void WalkingMovement::Update(Enemy *enemy, float deltaTime) {
   // Update position
   position.x += velocity.x;
   position.y += velocity.y;
+  if (position.x <= 0.0f) {
+    position.x = 0.0f; // Prevent going off-screen
+    direction  = 1.0f; // Reverse direction on left edge
+    ReverseDirection();
+  }
+  if (position.x >= constants::blockSize * constants::mapWidth) { // map size
+                                                                  // bruh im so
+                                                                  // done
+    position.x
+      = constants::blockSize * constants::mapWidth; // Prevent going off-screen
+    direction  = -1.0f;          // Reverse direction on right edge
+    ReverseDirection();
+  }
 
   // Simple ground collision (assuming ground at y=600)
 
@@ -322,8 +335,8 @@ MovementStrategy *StationaryMovement::Clone() const {
 }
 
 // SlidingMovement Implementation
-SlidingMovement::SlidingMovement(float speed, bool movingLeft, float friction)
-    : speed_(speed), movingLeft_(movingLeft), friction_(friction),
+SlidingMovement::SlidingMovement(bool movingLeft)
+    : movingLeft_(movingLeft),
       minSpeed_(5.0f), isBouncing_(false) {}
 
 void SlidingMovement::Update(Enemy *enemy, float deltaTime) {
@@ -334,38 +347,37 @@ void SlidingMovement::Update(Enemy *enemy, float deltaTime) {
   Vector2 velocity = enemy->GetVelocity();
 
   float direction = movingLeft_ ? -1.0f : 1.0f;
-  velocity.x      = speed_ * direction;
+  velocity.x      = 10.0f * direction;
 
   // Apply gravity
   velocity.y += 10.f;
 
   // Update position
+
   position.x += velocity.x;
   position.y += velocity.y;
-
-  // Apply friction
-  speed_ *= friction_;
-
-  // Stop if speed is too low
-  if (speed_ < minSpeed_) {
-    speed_     = 0.0f;
-    velocity.x = 0;
+  if (position.x <= 0.0f) {
+    position.x = 0.0f; // Prevent going off-screen
+    direction  = 1.0f; // Reverse direction on left edge
+    ReverseDirection();
   }
+  if (position.x >= constants::blockSize * constants::mapWidth) { // map size bruh im so done
+    position.x = constants::blockSize * constants::mapWidth; // Prevent going off-screen
+    direction  = -1.0f; // Reverse direction on right edge
+    ReverseDirection();
+  }
+  // remove the friction from the speed
 
   enemy->SetPosition(position);
   enemy->SetVelocity(velocity);
 }
 
 MovementStrategy *SlidingMovement::Clone() const {
-  return new SlidingMovement(speed_, movingLeft_, friction_);
+  return new SlidingMovement(movingLeft_);
 }
 
 void SlidingMovement::ReverseDirection() {
   movingLeft_ = !movingLeft_;
-  // Boost speed when bouncing off walls
-  if (speed_ < 50.0f) {
-    speed_ = 80.0f;
-  }
 }
 
 // PatrolMovement Implementation
