@@ -25,4 +25,6 @@ public:
 
   KoopaState GetKoopaState() const;
   void KickShell(bool kick_left); // New method for manual shell kicking
+
+  bool IsRunningDeathAnimation() const;
 };

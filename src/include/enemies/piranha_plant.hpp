@@ -28,4 +28,6 @@ public:
   bool IsEmerging() const;
   void ForceEmerge();
   void ForceHide();
+
+  bool IsRunningDeathAnimation() const;
 };

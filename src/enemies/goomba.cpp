@@ -26,17 +26,22 @@ Goomba::~Goomba() {}
 
 void Goomba::OnHit() {
   // Goomba dies immediately when hit (stomped or from side)
-  alive    = false;
-  state    = EnemyState::Dead;
-  velocity = {0.0f, 0.0f};
+  alive      = false;
+  state      = EnemyState::Dead;
+  velocity   = {0.0f, 0.0f};
+  time_death = time;
 
   // Visual death effect - flatten sprite
   // This could trigger a death animation
 }
 
 void Goomba::Update() {
-  if (!alive)
+  if (!alive) {
+    if (IsRunningDeathAnimation()) {
+      frame = frame_list[2];
+    }
     return;
+  }
 
   // Simple AI - just walk and reverse direction on walls
   if (state == EnemyState::Normal && GetMovementStrategy()) {

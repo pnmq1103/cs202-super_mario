@@ -161,20 +161,33 @@ void EnemyManager::UpdateAll(float deltaTime) {
     return;
 
   // Simple update - just call Update() on each enemy
+  // for (int i = 0; i < enemies.size(); ++i) {
+  //   if (enemies[i]) {
+  //     if (enemies[i]->IsAlive() || enemies[i]->IsRunningDeathAnimation())
+  //       enemies[i]->Update();
+  //     else {
+  //       delete enemies[i];
+  //       enemies[i] = nullptr;
+  //       collisionHandler_->RemoveEnemy(i);
+  //     }
+  //   }
+  // }
+
   for (int i = 0; i < enemies.size(); ++i) {
     if (enemies[i]) {
       if (enemies[i]->IsAlive())
         enemies[i]->Update();
       else {
-        delete enemies[i];
-        enemies[i] = nullptr;
         collisionHandler_->RemoveEnemy(i);
+        if (enemies[i]->IsRunningDeathAnimation()) {
+          enemies[i]->Update();
+        } else {
+          delete enemies[i];
+          enemies[i] = nullptr;
+        }
       }
     }
   }
-
-  // Clean up dead enemies
-  CleanupDeadEnemies();
 }
 
 void EnemyManager::SetCharacterReferences(

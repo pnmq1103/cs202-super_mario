@@ -25,9 +25,11 @@ private:
   static int enemy_count_;
   int index_;
   bool pending_deletion = false;
+
 protected:
   // Static frame counter for animations, similar to GameObject
   static int time;
+  int time_death, death_duration;
 
   Vector2 position;
   const float scale, gravity;
@@ -84,6 +86,7 @@ public:
   // Core functionality similar to GameObject
   virtual Rectangle GetRectangle() const;
   bool IsAlive() const;
+  virtual bool IsRunningDeathAnimation() const;
   virtual void OnHit() = 0;
   virtual void Update();
   virtual void Draw();

@@ -8,11 +8,11 @@
 #include "include/core/command.hpp"
 #include "include/core/constants.hpp"
 #include "include/core/game.hpp"
+#include "include/core/game_info.hpp"
 #include "include/core/game_managing.hpp"
 #include "include/core/pause.hpp"
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
-#include "include/core/game_info.hpp"
 
 CollisionHandler GameScene::collision_handler_(
   constants::mapWidth * 16 * constants::scale,
@@ -65,13 +65,11 @@ void GameScene::Init() {
   game_manager_.SetCurrentLevel(current_level_);
   if (current_level_ == 1) {
     GameInfo::GetInstance().coin = 0;
-  }
-  else {
+  } else {
     if (GameInfo::GetInstance().HasInitialPointsForLevel(current_level_)) {
       GameInfo::GetInstance().coin
         = GameInfo::GetInstance().GetInitialPointsForLevel(current_level_);
-    }
-    else {
+    } else {
       GameInfo::GetInstance().SetInitialPointsForLevel(
         current_level_, GameInfo::GetInstance().coin);
     }
@@ -113,8 +111,9 @@ void GameScene::Update() {
         GameInfo::GetInstance().Reset();
         // Load first level with scene replacement
         App.RemoveScene();
-        App.AddScene(std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), 1));
+        App.AddScene(
+          std::make_unique<GameScene>(
+            CharacterSelectorScene::GetCharacterType(), 1));
         return;
       } else {
         // Still have lives - restart current level with scene replacement
@@ -131,13 +130,13 @@ void GameScene::Update() {
           }
         }
         App.RemoveScene();
-        App.AddScene(std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), currentLevel));
+        App.AddScene(
+          std::make_unique<GameScene>(
+            CharacterSelectorScene::GetCharacterType(), currentLevel));
         return;
       }
     }
   }
-
 
   if (input_command_)
     input_command_->HandleInput();
@@ -150,7 +149,6 @@ void GameScene::Update() {
   }
   ObjectManager::GetInstance().SetFrameCount();
   ObjectManager::GetInstance().Update();
-  Enemy::SetFrameCount();
   input_command_->UpdateProjectiles();
 
   UpdateCamera(player_character_);
@@ -168,14 +166,16 @@ void GameScene::Update() {
       int nextLevel = game_manager_.GetCurrentLevel() + 1;
 
       App.RemoveScene();
-      App.AddScene(std::make_unique<GameScene>(
-        CharacterSelectorScene::GetCharacterType(), nextLevel));
+      App.AddScene(
+        std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), nextLevel));
     } else {
       // All levels completed, restart game
       GameInfo::GetInstance().Reset(); // Reset game info
       App.RemoveScene();
-      App.AddScene(std::make_unique<GameScene>(
-        CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
+      App.AddScene(
+        std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
     }
     return;
   }

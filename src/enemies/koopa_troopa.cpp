@@ -1,4 +1,5 @@
 #include "include/enemies/koopa_troopa.hpp"
+#include "include/core/constants.hpp"
 #include "include/enemies/movement_strategy.hpp"
 
 KoopaTroopa::KoopaTroopa(Vector2 pos, float Nscale)
@@ -29,8 +30,14 @@ void KoopaTroopa::OnHit() {
 }
 
 void KoopaTroopa::Update() {
-  if (!alive)
+  if (!alive) {
+    if (IsRunningDeathAnimation()) {
+      velocity.y += 10;
+      position.y += velocity.y;
+      position.x += velocity.x;
+    }
     return;
+  }
   if (shell_timer > 0.0f) {
     shell_timer -= GetFrameTime();
   }
@@ -61,7 +68,7 @@ void KoopaTroopa::OnHitFromAbove() {
     case KoopaState::Sliding: {
       alive    = false;
       state    = EnemyState::Dead;
-      velocity = {0.0f, 0.0f};
+      velocity = {0, -50.0f};
       std::cout << "Sliding Koopa destroyed!" << std::endl;
       break;
     }
@@ -94,7 +101,7 @@ void KoopaTroopa::OnHitFromSide() {
     case KoopaState::Sliding: {
       alive    = false;
       state    = EnemyState::Dead;
-      velocity = {0.0f, 0.0f};
+      velocity = {0, -50.0f};
       std::cout << "Sliding Koopa destroyed!" << std::endl;
       break;
     }
@@ -141,5 +148,16 @@ void KoopaTroopa::KickShell(bool kick_left) {
     SetMovementStrategy(new SlidingMovement(kick_left));
 
     std::cout << "Koopa shell manually kicked!" << std::endl;
+  }
+}
+
+bool KoopaTroopa::IsRunningDeathAnimation() const {
+  if (IsAlive())
+    return false;
+  else {
+    if (position.y > constants::mapHeight * constants::blockSize)
+      return false;
+    else
+      return true;
   }
 }

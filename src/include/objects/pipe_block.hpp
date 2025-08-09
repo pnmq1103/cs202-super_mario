@@ -16,5 +16,6 @@ public:
   Rectangle GetRectangle();
   void OnHit();
   void Draw();
+  bool IsPipe();
   ObjectType GetType();
 };

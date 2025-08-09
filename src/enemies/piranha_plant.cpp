@@ -36,8 +36,14 @@ PiranhaPlant::~PiranhaPlant() {
 }
 
 void PiranhaPlant::Update() {
-  if (!alive)
+  if (!alive) {
+    if (IsRunningDeathAnimation()) {
+      velocity.y += 10;
+      position.x += velocity.x;
+      position.y += velocity.y;
+    }
     return;
+  }
 
   // Let the base class update handle movement strategy execution
   Enemy::Update();
@@ -54,7 +60,7 @@ void PiranhaPlant::Update() {
 void PiranhaPlant::OnHit() {
   alive    = false;
   state    = EnemyState::Dead;
-  velocity = {0.0f, 0.0f};
+  velocity = {10.0f, -50.0f};
 
   // Piranha plants only take damage from projectiles
   // The actual damage handling happens in OnProjectileHit in the base class
@@ -138,5 +144,16 @@ void PiranhaPlant::ForceHide() {
     if (strategy) {
       strategy->ForceHide();
     }
+  }
+}
+
+bool PiranhaPlant::IsRunningDeathAnimation() const {
+  if (IsAlive())
+    return false;
+  else {
+    if (position.y > constants::mapHeight * constants::blockSize)
+      return false;
+    else
+      return true;
   }
 }

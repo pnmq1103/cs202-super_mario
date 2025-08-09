@@ -62,17 +62,17 @@ void ObjectManager::AddPipeBlock(
 void ObjectManager::AddQuestionBlock(Vector2 position, int itemType) {
   QuestionBlockItem item;
   switch (itemType) {
-    case 0:  // Coin
+    case 0: // Coin
       item = QuestionBlockItem::coin;
       break;
-    case 1:  // Super Mushroom
+    case 1: // Super Mushroom
       item = QuestionBlockItem::super_mushroom;
       break;
-    case 2:  // Fire Flower
+    case 2: // Fire Flower
       item = QuestionBlockItem::fire_flower;
       break;
     case 3: // Super Star
-        item = QuestionBlockItem::super_star;
+      item = QuestionBlockItem::super_star;
       break;
     default:
       break;
@@ -118,10 +118,16 @@ void ObjectManager::Update() {
 }
 
 void ObjectManager::Draw() {
+  static bool draw_pipe = false;
   for (int i = 0; i < object_list_.size(); ++i) {
-    if (object_list_[i])
-      object_list_[i]->Draw();
+    if (object_list_[i]) {
+      if (
+        (draw_pipe && object_list_[i]->IsPipe())
+        || (!draw_pipe && !object_list_[i]->IsPipe()))
+        object_list_[i]->Draw();
+    }
   }
+  draw_pipe = !draw_pipe;
 }
 
 void ObjectManager::OnHit(int index) {

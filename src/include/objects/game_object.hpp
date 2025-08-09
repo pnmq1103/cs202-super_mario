@@ -52,5 +52,6 @@ public:
   void ReverseDirection();
   virtual void StopY(float Ny);
   virtual ObjectType GetType() = 0;
+  virtual bool IsPipe();
   Vector2 GetSpeed();
 };

@@ -46,6 +46,9 @@ void Enemy::Reset() {
 
 Enemy::Enemy(Vector2 Nposition, float Nscale, EnemyType enemy_type)
     : scale(Nscale), gravity(5.0f), type(enemy_type) {
+  time_death     = -1;
+  death_duration = 10;
+
   index_ = enemy_count_;
   ++enemy_count_;
 
@@ -117,11 +120,20 @@ Rectangle Enemy::GetRectangle() const {
 }
 
 Rectangle Enemy::GetRect() const {
-    return GetRectangle();
+  return GetRectangle();
 }
 
 bool Enemy::IsAlive() const {
   return alive;
+}
+
+bool Enemy::IsRunningDeathAnimation() const {
+  if (time_death == -1)
+    return false;
+  if (time - time_death > death_duration)
+    return false;
+  else
+    return true;
 }
 
 void Enemy::Update() {
@@ -258,25 +270,7 @@ void Enemy::Draw() {
   if (!texture)
     return;
 
-  if (!alive && state == EnemyState::Dead) {
-    // draw frame for dead enemy
-    Rectangle dest_rect = MakeDestRect(frame);
-    if (dest_rect.width <= 0 || dest_rect.height <= 0) {
-      // Skip drawing if destination rectangle is invalid
-      return;
-    }
-    // Draw dead enemy with a faded tint
-    DrawTexturePro(
-      *texture, frame, dest_rect, {0, 0}, 0.0f, ColorAlpha(WHITE, 0.5f));
-    return;
-  }
-  // Apply visual effects based on state
   Color tint = WHITE;
-  if (state == EnemyState::Stunned) {
-    tint = ColorAlpha(WHITE, 0.7f);
-  } else if (IsInvulnerable()) {
-    tint = ColorAlpha(WHITE, 0.5f);
-  }
 
   // Handle sprite flipping for direction - FIXED LOGIC
   Rectangle source_rect = frame;
@@ -286,6 +280,7 @@ void Enemy::Draw() {
 
   switch (type) {
     case EnemyType::Goomba:
+
       shouldFlipSprite = (velocity.x < 0); // Flip when moving left
       break;
     case EnemyType::Koopa:
@@ -310,10 +305,6 @@ void Enemy::Draw() {
   }
   // Additional safety check for MakeDestRect
   Rectangle dest_rect = MakeDestRect(frame);
-  if (dest_rect.width <= 0 || dest_rect.height <= 0) {
-    // Skip drawing if destination rectangle is invalid
-    return;
-  }
 
   DrawTexturePro(*texture, source_rect, dest_rect, {0, 0}, 0.0f, tint);
 }

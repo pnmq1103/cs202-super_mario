@@ -84,3 +84,7 @@ void GameObject::StopY(float Ny) {}
 Vector2 GameObject::GetSpeed() {
   return velocity;
 }
+
+bool GameObject::IsPipe() {
+  return false;
+}

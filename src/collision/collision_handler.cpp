@@ -137,6 +137,8 @@ void CollisionHandler::AddEnemy(Enemy *enemy) {
 }
 
 void CollisionHandler::RemoveObject(int index) {
+  if (!object_list_[index])
+    return;
   object_list_[index] = nullptr;
   std::string s       = MakeID(2, index);
   if (previous_position_.find(s) != previous_position_.end()) {
@@ -146,6 +148,8 @@ void CollisionHandler::RemoveObject(int index) {
 }
 
 void CollisionHandler::RemoveEnemy(int index) {
+  if (!enemy_list_[index])
+    return;
   enemy_list_[index] = nullptr;
   std::string s      = MakeID(3, index);
   if (previous_position_.find(s) != previous_position_.end()) {
