@@ -34,7 +34,7 @@ public:
   void AddPipeBlock(
     Vector2 position, int length, bool is_vertical, bool has_head,
     bool has_tail);
-  void AddQuestionBlock(Vector2 position, QuestionBlockItem item);
+  void AddQuestionBlock(Vector2 position, int itemType);
   void AddStaticBlockByGid(Vector2 position, Rectangle rect);
   void AddStaticBlockByTheme(Vector2 position, char theme);
   void AddSuperMushroom(Vector2 position, bool to_left);

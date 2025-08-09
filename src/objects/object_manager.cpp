@@ -59,7 +59,24 @@ void ObjectManager::AddPipeBlock(
   collision_->AddObject(temp);
 }
 
-void ObjectManager::AddQuestionBlock(Vector2 position, QuestionBlockItem item) {
+void ObjectManager::AddQuestionBlock(Vector2 position, int itemType) {
+  QuestionBlockItem item;
+  switch (itemType) {
+    case 0:  // Coin
+      item = QuestionBlockItem::coin;
+      break;
+    case 1:  // Super Mushroom
+      item = QuestionBlockItem::super_mushroom;
+      break;
+    case 2:  // Fire Flower
+      item = QuestionBlockItem::fire_flower;
+      break;
+    case 3: // Super Star
+        item = QuestionBlockItem::super_star;
+      break;
+    default:
+      break;
+  }
   GameObject *temp = new QuestionBlock(position, scale_, item);
   object_list_.push_back(temp);
   collision_->AddObject(temp);

@@ -648,7 +648,7 @@ void GameManaging::CreateBlockFromType(
     ObjectManager::GetInstance().AddBrickBlock(tilePosition);
   } else if (tileGid == 2) {
     ObjectManager::GetInstance().AddQuestionBlock(
-      tilePosition, QuestionBlockItem::coin);
+      tilePosition, std::rand() % 4);
   } else if (tileGid == 3) {
     ObjectManager::GetInstance().AddCoin(tilePosition);
   } else if (tileGid >= 17 && tileGid <= 37) { // using the minimal tileset

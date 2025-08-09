@@ -24,8 +24,7 @@ void QuestionBlock::Update() {
 
     if (!item_spawned_) {
       item_spawned_ = true;
-      texture       = &App.Resource().GetObject();
-      frame         = {0, 0, 16, 16};
+      frame         = frame_list[22];
       switch (item_) {
         case coin:
           ObjectManager::GetInstance().AddCoin(

@@ -49,7 +49,8 @@ void KoopaTroopa::OnHitFromAbove() {
 
       SetMovementStrategy(new SlidingMovement());
 
-      shell_timer = 2.0f; // cooldown to avoid immediate re-hits
+      shell_timer = 2.5f; // cooldown to avoid immediate re-hits; increased
+                          // a bit for better gameplay
 
       std::cout << "Koopa enters shell mode and sliding!" << std::endl;
       break;
