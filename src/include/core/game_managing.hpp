@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include <string>
 #include <vector>
+#include <map>
 
 // Include the actual GameObject and Enemy classes
 #include "include/objects/game_object.hpp"
@@ -33,8 +34,6 @@ private:
   // Level progression
   int currentLevel_;
   int maxLevels_;
-  int totalEnemies_;
-  int enemiesKilled_;
   float levelEndX_;
 
   // Camera reference from Scene (read-only)
@@ -83,7 +82,6 @@ public:
   void Update(float deltaTime, Character* activeCharacter);
   void UpdateCollisionSystem();
   void CheckLevelCompletion(Character* activeCharacter);
-  void HandleLevelProgression();
   void RestartCurrentLevel(Character *character);
   void OnPlayerDeath(Character *character);
 
@@ -116,6 +114,8 @@ public:
   int GetPoints() const { return points_; }
   int GetCurrentLevel() const;
   int GetMaxLevels() const;
+  void SetLives(int lives);
+  void SetCurrentLevel(int level);
   
   // Simple pause/transition state methods for game.cpp compatibility
   void TogglePause() { 

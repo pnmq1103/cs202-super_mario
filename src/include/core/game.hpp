@@ -16,9 +16,10 @@ private:
   Command *input_command_ = {nullptr};
   GameManaging game_manager_;
   static CollisionHandler collision_handler_;
+  int current_level_ = 1;
 
 public:
-  GameScene(CharacterType type);
+  GameScene(CharacterType type, int level = 1);
   ~GameScene();
   // Add to GameScene class:
   GameManaging &GetGameManager() {
@@ -30,7 +31,6 @@ public:
   void Draw() override;
   void Resume() override;
   SceneType Type() override;
-  void CreateSimpleTestLevel();
 
 private:
   void UpdateCamera(Character *character);

@@ -188,6 +188,7 @@
     <ClInclude Include="src\include\core\constants.hpp" />
     <ClInclude Include="src\include\core\credit.hpp" />
     <ClInclude Include="src\include\core\enemy_selector.hpp" />
+    <ClInclude Include="src\include\core\game_info.hpp" />
     <ClInclude Include="src\include\core\map.hpp" />
     <ClInclude Include="src\include\core\pause.hpp" />
     <ClInclude Include="src\include\core\sprite_manager.hpp" />

@@ -12,13 +12,14 @@
 #include "include/core/pause.hpp"
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
+#include "include/core/game_info.hpp"
 
 CollisionHandler GameScene::collision_handler_(
   constants::mapWidth * 16 * constants::scale,
   constants::mapHeight * 16 * constants::scale);
 
-GameScene::GameScene(CharacterType type)
-    : game_manager_(), character_type_(type) {}
+GameScene::GameScene(CharacterType type, int level)
+    : game_manager_(), character_type_(type), current_level_(level) {}
 
 GameScene::~GameScene() {
   EnemyManager::GetInstance().ClearAllEnemies();
@@ -60,9 +61,25 @@ void GameScene::Init() {
   game_manager_.RegisterCharacterWithCollision(player_character_);
   ObjectManager::GetInstance().Reset(
     (int)constants::scale, &collision_handler_);
-  game_manager_.LoadLevel("res/maps/map1.json");
   // game_manager_.LoadLevel("res/saves/map_00.json");
-  //  CreateSimpleTestLevel();
+  game_manager_.SetCurrentLevel(current_level_);
+  if (current_level_ == 1) {
+    GameInfo::GetInstance().coin = 0;
+  }
+  else {
+    if (GameInfo::GetInstance().HasInitialPointsForLevel(current_level_)) {
+      GameInfo::GetInstance().coin
+        = GameInfo::GetInstance().GetInitialPointsForLevel(current_level_);
+    }
+    else {
+      GameInfo::GetInstance().SetInitialPointsForLevel(
+        current_level_, GameInfo::GetInstance().coin);
+    }
+  }
+  std::string levelPath
+    = "res/maps/map" + std::to_string(current_level_) + ".json";
+
+  game_manager_.LoadLevel(levelPath);
   player_character_->SetCharacter(character_type_, {10.0f, 500.0f});
 }
 
@@ -76,45 +93,51 @@ void GameScene::Update() {
 
   if (game_manager_.IsPaused() || game_manager_.IsInTransition())
     return;
+  if (player_character_) {
+    // Check if character fell off the map
+    if (
+      player_character_->GetRectangle().y
+      > constants::mapHeight * constants::blockSize) {
+      // Only decrease life if the character wasn't already dead
+      // This prevents double-counting deaths when killed by enemies
+      if (!player_character_->IsDead()) {
+        // Decrement life in GameInfo
+        game_manager_.OnPlayerDeath(player_character_);
+      }
 
-  // if (player_character_) {
-  //   static bool wasAlive = true;
-
-  //  // Use position and velocity instead of direct state access
-  //  bool isCurrentlyAlive = true;
-
-  //  // Character is dead if:
-  //  // 1. It's not moving when it should be (check velocity)
-  //  Vector2 velocity = player_character_->GetSpeed();
-  //  // 2. Check if y position is too low (fell off map)
-  //  Rectangle rect = player_character_->GetRectangle();
-  //  float deathY   = 1500.0f; // Adjust this value based on your map
-
-  //  // Consider character dead if it fell below threshold
-  //  if (rect.y > deathY) {
-  //    isCurrentlyAlive = false;
-  //  }
-
-  //  // If character was alive but now is dead, handle death
-  //  if (wasAlive && !isCurrentlyAlive) {
-  //    game_manager_.OnPlayerDeath(player_character_);
-  //    wasAlive = false;
-  //    return;
-  //  }
-
-  //  if (isCurrentlyAlive) {
-  //    wasAlive = true;
-  //  }
-  //}
-
-  if (
-    player_character_->GetRectangle().y
-    > constants::mapHeight * constants::blockSize) {
-    App.RemoveScene();
-    App.AddScene(
-      std::make_unique<GameScene>(CharacterSelectorScene::GetCharacterType()));
-    return;
+      int currentLevel = game_manager_.GetCurrentLevel();
+      // Check if we still have lives left
+      if (GameInfo::GetInstance().life <= 0) {
+        // Game over - reset game completely
+        GameInfo::GetInstance().SaveToFile();
+        GameInfo::GetInstance().Reset();
+        // Load first level with scene replacement
+        App.RemoveScene();
+        App.AddScene(std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), 1));
+        return;
+      } else {
+        // Still have lives - restart current level with scene replacement
+        // DON'T save current points! Instead, reset to initial level points
+        if (currentLevel == 1) {
+          // For level 1, always reset to 0
+          GameInfo::GetInstance().coin = 0;
+        } else {
+          // For other levels, use initial level points (from when the player
+          // first entered)
+          if (GameInfo::GetInstance().HasInitialPointsForLevel(currentLevel)) {
+            GameInfo::GetInstance().coin
+              = GameInfo::GetInstance().GetInitialPointsForLevel(currentLevel);
+          }
+        }
+        App.RemoveScene();
+        App.AddScene(std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), currentLevel));
+        return;
+      }
+    }
   }
+
 
   if (input_command_)
     input_command_->HandleInput();
@@ -132,28 +155,29 @@ void GameScene::Update() {
 
   UpdateCamera(player_character_);
 
-  // Let game manager handle all game logic
   float dt = GetFrameTime();
   game_manager_.Update(dt, player_character_);
 
-  game_manager_.HandleLevelProgression();
-
-  // Game over/restart
-  if (game_manager_.IsGameOver() && IsKeyPressed(KEY_R)) {
-    game_manager_.ResetGame();
-    //  Reload first level
-    game_manager_.LoadLevel("res/maps/map1.json");
-  }
-
-  // Level completion
   if (game_manager_.IsLevelComplete() && IsKeyPressed(KEY_SPACE)) {
-    if (game_manager_.CanAdvanceLevel())
-      game_manager_.LoadNextLevel();
-    else {
+    if (game_manager_.CanAdvanceLevel()) {
+      GameInfo::GetInstance().coin = game_manager_.GetPoints();
+
+      // Award for level completion
+      GameInfo::GetInstance().life++;
+
+      int nextLevel = game_manager_.GetCurrentLevel() + 1;
+
+      App.RemoveScene();
+      App.AddScene(std::make_unique<GameScene>(
+        CharacterSelectorScene::GetCharacterType(), nextLevel));
+    } else {
       // All levels completed, restart game
-      game_manager_.ResetGame();
-      game_manager_.LoadLevel("res/maps/map1.json");
+      GameInfo::GetInstance().Reset(); // Reset game info
+      App.RemoveScene();
+      App.AddScene(std::make_unique<GameScene>(
+        CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
     }
+    return;
   }
 }
 
@@ -226,66 +250,4 @@ void GameScene::UpdateCamera(Character *character) {
 
 SceneType GameScene::Type() {
   return type_;
-}
-
-void GameScene::CreateSimpleTestLevel() {
-  // Initialize managers first
-  ObjectManager &objectManager = ObjectManager::GetInstance();
-  objectManager.Reset(4, &collision_handler_);
-
-  EnemyManager &enemyManager = EnemyManager::GetInstance();
-  enemyManager.SetCollisionHandler(&collision_handler_);
-
-  // Create ground - extended for a proper level
-  for (int x = 0; x < 200; x += 64) {
-    objectManager.AddStaticBlockByTheme(
-      {(float)x, 600.0f}, 'g'); // Ground blocks
-  }
-
-  // Add some platforms
-  for (int x = 300; x < 500; x += 64) {
-    objectManager.AddStaticBlockByTheme({(float)x, 400.0f}, 'g'); // Platform
-  }
-
-  // Add some blocks and power-ups
-  objectManager.AddBrickBlock({400.0f, 300.0f});
-  objectManager.AddQuestionBlock({500.0f, 300.0f}, QuestionBlockItem::coin);
-  objectManager.AddQuestionBlock(
-    {600.0f, 300.0f}, QuestionBlockItem::super_mushroom);
-
-  // Add some walls for collision testing
-  for (int i = 0; i < 10; i++) {
-    objectManager.AddStaticBlockByTheme(
-      {0.0f, 600.0f - 64.0f * (float)i}, 'g'); // Left wall
-    objectManager.AddStaticBlockByTheme(
-      {3136.0f, 600.0f - 64.0f * (float)i}, 'g'); // Right wall at map edge
-  }
-
-  // Spawn some enemies for testing
-  enemyManager.SpawnEnemy(EnemyType::Goomba, {200.0f, 550.0f});
-  // enemyManager.SpawnEnemy(EnemyType::Koopa, {400.0f, 550.0f});
-  // enemyManager.SpawnEnemy(EnemyType::Piranha, {600.0f, 570.0f});
-  // enemyManager.SpawnEnemy(EnemyType::Goomba, {800.0f, 550.0f});
-
-  //// Set up initial movement for enemies
-  // const std::vector<Enemy *> &enemies = enemyManager.GetEnemies();
-  // for (Enemy *enemy : enemies) {
-  //   if (enemy) {
-  //     switch (enemy->GetType()) {
-  //       case EnemyType::Goomba:
-  //         enemy->SetVelocity({30.0f, 0.0f}); // Moving right
-  //         enemy->SetFacing(false);
-  //         break;
-  //       case EnemyType::Koopa:
-  //         enemy->SetVelocity({25.0f, 0.0f}); // Moving right
-  //         enemy->SetFacing(false);
-  //         break;
-  //       case EnemyType::Piranha:
-  //         enemy->SetVelocity({0.0f, 0.0f}); // Stationary
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   }
-  // }
 }
