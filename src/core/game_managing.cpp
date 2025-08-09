@@ -15,14 +15,15 @@
 #include "include/external/json.hpp"
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
+#include "include/core/game_info.hpp"
 
 using json = nlohmann::json;
 
 GameManaging::GameManaging() {
   // Basic game state initialization
-  lives_            = 3;
+  lives_            = GameInfo::GetInstance().life;
+  points_           = GameInfo::GetInstance().coin;
   gameTime_         = 0.0f;
-  points_           = 0;
   countdownSeconds_ = 300;
   gameOver_         = false;
   levelComplete_    = false;
@@ -45,10 +46,8 @@ GameManaging::GameManaging() {
 
   // Level completion criteria
   levelEndX_
-    = constants::mapWidth * constants::blockSize; // Character must reach this X
+    = constants::mapWidth * constants::blockSize - 200.0f; // Character must reach this X
                                                   // position to complete level
-  totalEnemies_  = 0;
-  enemiesKilled_ = 0;
 }
 
 GameManaging::~GameManaging() {
@@ -82,18 +81,38 @@ void GameManaging::RegisterCharacterWithCollision(Character *character) {
 void GameManaging::LoadLevel(const std::string &filename) {
   std::cout << "Loading level: " << filename << std::endl;
 
+  // If first time loading this level, set initial points
+  //if (isFirstTimeInLevel(currentLevel_)) {
+  //  // For level 1, always start with 0 or loaded points
+  //  if (currentLevel_ == 1) {
+  //    initialLevelPoints_[currentLevel_] = 0;
+  //    points_                            = 0;but 
+  //    GameInfo::GetInstance().coin       = 0;
+  //  }
+  //  // For other levels, use current accumulated points
+  //  else {
+  //    initialLevelPoints_[currentLevel_] = GameInfo::GetInstance().coin;
+  //    points_                            = GameInfo::GetInstance().coin;
+  //  }
+
+  //  std::cout << "Initial points for level " << currentLevel_
+  //            << " set to: " << initialLevelPoints_[currentLevel_] << std::endl;
+  //}
+  //// If restarting this level (after death), reset to initial points
+  //else {
+  //  points_                      = initialLevelPoints_[currentLevel_];
+  //  GameInfo::GetInstance().coin = points_;
+  //  std::cout << "Restarting level " << currentLevel_
+  //            << " with points: " << points_ << std::endl;
+  //}
+
   UnloadLevel();
 
   // IMPORTANT: Make sure collision handler is properly initialized BEFORE Reset
-
   // Reset managers
-
   // Reset ObjectManager with the VALID collision handler
-
   // Reset level completion tracking
   levelComplete_ = false;
-  totalEnemies_  = 0;
-  enemiesKilled_ = 0;
 
   // Try to load from JSON file
   try {
@@ -123,7 +142,6 @@ void GameManaging::LoadLevel(const std::string &filename) {
           (float)(i % constants::mapWidth) * constants::blockSize,
           (float)(i / constants::mapWidth) * constants::blockSize};
         CreateEnemyFromType(enemyGid, enemyPosition);
-        totalEnemies_++; // Count enemies for completion tracking
       }
 
       // draw the pipes last so they are on top of the piranha plants
@@ -134,11 +152,10 @@ void GameManaging::LoadLevel(const std::string &filename) {
         // hard-code pipe blocks; all pipes in map will be the same size
         ObjectManager::GetInstance().AddPipeBlock(
           pipePosition, constants::blockSize * 3, true, true, false);
+        std::cout << "Added pipe block at " << pipePosition.x << ", "
+                  << pipePosition.y << std::endl;
       }
     }
-
-    std::cout << "Level loaded successfully. Total enemies: " << totalEnemies_
-              << std::endl;
 
   } catch (const std::exception &e) {
     std::cerr << "Failed to load level " << filename << ": " << e.what()
@@ -199,7 +216,6 @@ void GameManaging::CreateFallbackLevel() {
         enemyManager.SpawnEnemy(EnemyType::Goomba, enemyPos);
       }
     }
-    totalEnemies_++;
 
     // Set up proper initial movement for newly spawned enemies
     const std::vector<Enemy *> &enemies = enemyManager.GetEnemies();
@@ -243,13 +259,13 @@ void GameManaging::ApplyLevelDifficulty() {
   // Adjust game parameters based on level difficulty
   switch (currentLevel_) {
     case 1:
-      countdownSeconds_ = 400; // More time for level 1
+      countdownSeconds_ = 200; 
       break;
     case 2:
-      countdownSeconds_ = 350; // Less time for level 2
+      countdownSeconds_ = 250; 
       break;
     case 3:
-      countdownSeconds_ = 300; // Even less time for level 3
+      countdownSeconds_ = 200;
       break;
     default:
       countdownSeconds_ = 300;
@@ -273,16 +289,18 @@ void GameManaging::UnloadLevel() {
 }
 
 void GameManaging::ResetGame() {
-  lives_         = 3;
-  points_        = 0;
+  lives_                       = 3;
+  GameInfo::GetInstance().life = lives_;
+  points_                       = 0;
+  GameInfo ::GetInstance().coin = 0;
   gameTime_      = 0.0f;
   gameOver_      = false;
   levelComplete_ = false;
   currentLevel_  = 1;
   spawnPoint_    = {100.0f, 500.0f};
-  totalEnemies_  = 0;
-  enemiesKilled_ = 0;
+  isDeathHandled_ = false;
   UnloadLevel();
+  
 }
 
 void GameManaging::Update(float deltaTime, Character *activeCharacter) {
@@ -301,8 +319,7 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
 
   // Update enemy kill count for level completion
   int currentAliveEnemies = (int)enemyManager.GetEnemies().size();
-  enemiesKilled_          = totalEnemies_ - currentAliveEnemies;
-
+ 
   // Clear dead enemies (killed by boundaries or other means)
   enemyManager.ClearDeadEnemies();
 
@@ -331,23 +348,21 @@ void GameManaging::CheckLevelCompletion(Character *activeCharacter) {
   // Check if character reached the end of the level
   bool reachedEnd = charRect.x >= levelEndX_;
 
-  // Check if all enemies are defeated (optional completion method)
-  bool allEnemiesDefeated
-    = (totalEnemies_ > 0) && (enemiesKilled_ >= totalEnemies_);
-
-  if (reachedEnd || allEnemiesDefeated) {
+ 
+  if (reachedEnd) {
     levelComplete_ = true;
-    AddPoints(1000 * currentLevel_); // Bonus points for completing level
+    int timeUsed      = (int)gameTime_;
+    int timeRemaining = countdownSeconds_ - timeUsed;
 
-    if (reachedEnd) {
-      std::cout << "Level " << currentLevel_
+    GameInfo::GetInstance().SetLevelCompletionTime(currentLevel_, timeUsed);
+    
+    AddPoints(1000 * currentLevel_); // Bonus points for completing level
+    GameInfo::GetInstance().coin = points_;
+    GameInfo::GetInstance().SaveToFile();
+
+    std::cout << "Level " << currentLevel_
                 << " completed by reaching the end!" << std::endl;
-      App.Media().PlaySound("flagpole"); // Flagpole completion sound
-    } else {
-      std::cout << "Level " << currentLevel_
-                << " completed by defeating all enemies!" << std::endl;
-      App.Media().PlaySound("course_clear"); // All enemies defeated sound
-    }
+    App.Media().PlaySound("flagpole"); // Flagpole completion sound
   }
 }
 
@@ -466,9 +481,6 @@ void GameManaging::DrawStats() const {
   DrawText(
     TextFormat("Level: %d/%d", currentLevel_, maxLevels_), (int)hui_start_x,
     (int)info_y, 20, BLUE);
-  DrawText(
-    TextFormat("Enemies: %d/%d", enemiesKilled_, totalEnemies_),
-    (int)hui_start_x, (int)(info_y + 25), 18, ORANGE);
 
   // Game over and level complete messages (centered on screen)
   if (gameOver_) {
@@ -548,6 +560,7 @@ void GameManaging::UpdateTime() {
 
 void GameManaging::AddPoints(int points) {
   points_ += points;
+  GameInfo::GetInstance().coin = points_;
 
   // Play coin sound for small point gains (like collecting coins)
   if (points <= 200) {
@@ -568,14 +581,8 @@ void GameManaging::AddPoints(int points) {
 
 void GameManaging::DecreaseLife() {
   lives_--;
-
-  // Play life lost sound
-  App.Media().PlaySound("life_lost");
-
-  if (lives_ <= 0) {
-    gameOver_ = true;
-    // Game over sound will be played in UpdateBackgroundMusic()
-  }
+  // Make sure GameInfo is also synchronized
+  GameInfo::GetInstance().life = lives_;
 }
 
 void GameManaging::HitBlock(GameObject *block, Character *character) {
@@ -793,49 +800,42 @@ bool GameManaging::CanAdvanceLevel() const {
   return levelComplete_ && currentLevel_ < maxLevels_;
 }
 
-void GameManaging::HandleLevelProgression() {
-  if (levelComplete_) {
-    if (IsKeyPressed(KEY_SPACE) && currentLevel_ < maxLevels_) {
-      LoadNextLevel();
-    } else if (IsKeyPressed(KEY_R) && currentLevel_ >= maxLevels_) {
-      ResetGame();
-    }
-  }
-
-  if (gameOver_ && IsKeyPressed(KEY_R)) {
-    ResetGame();
-  }
-}
-void GameManaging::RestartCurrentLevel(Character *character) {
-  // App.RemoveScene();
-  // App.AddScene(
-  // std::make_unique<GameScene>(CharacterSelectorScene::GetCharacterType()));
-}
+//void GameManaging::RestartCurrentLevel(Character *character) {
+//  // App.RemoveScene();
+//  // App.AddScene(
+//  // std::make_unique<GameScene>(CharacterSelectorScene::GetCharacterType()));
+//  if (GameInfo::GetInstance().life <= 0) {
+//    // Game over - reset everything and go to level 1
+//    ResetGame();
+//    LoadLevel("res/maps/map1.json");
+//  } else {
+//    // Restart current level - we have lives left
+//    // Reset character position to spawn point
+//    if (character) {
+//      character->SetCharacter(character->GetCharacter(), spawnPoint_);
+//    }
+//
+//    // Reset level state but keep GameInfo data (lives, coins, etc.)
+//    // You might need to reload the current level JSON here
+//
+//    isDeathHandled_ = false;
+//    gameOver_       = false;
+//  }
+//}
 void GameManaging::OnPlayerDeath(Character *character) {
-  // DecreaseLife() already plays the life_lost sound
-  DecreaseLife();
+  if (character) {
+    // Decrease life in GameInfo
+    character->Die();
+    // Play death sound
+    App.Media().PlaySound("life_lost");
 
-  if (!IsGameOver()) {
-    std::cout << "Player died. Lives remaining: " << lives_ << std::endl;
-    RestartCurrentLevel(character);
-  } else {
-    std::cout << "GAME OVER! No lives remaining." << std::endl;
-
-    EnemyManager::GetInstance().PauseAllEnemies();
-
-    // Stop background music (game over sound will be played in
-    // UpdateBackgroundMusic)
-    App.Media().StopMusic();
-
-    // Reset the level (but keep gameOver_ = true)
-    UnloadLevel();
-
-    // Move character out of harm's way if needed
-    if (character) {
-      character->SetState(0, false);
-      CharacterType currentType = character->GetCharacter();
-      character->SetCharacter(currentType, spawnPoint_);
-    }
-    // HandleLevelProgression will reset game when R key is pressed
+    // Mark as handled to prevent multiple deaths in one frame
+    DecreaseLife();
   }
+}
+void GameManaging::SetLives(int lives) {
+  lives_ = lives;
+}
+void GameManaging::SetCurrentLevel(int level) {
+  currentLevel_ = level;
 }
