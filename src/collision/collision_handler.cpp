@@ -167,7 +167,9 @@ void CollisionHandler::UpdatePosition() {
     }
   }
   for (int i = 0; i < enemy_list_.size(); ++i) {
-    if (enemy_list_[i] && enemy_list_[i]->IsAlive() && !enemy_list_[i]->isPendingDeletion()) {
+    if (
+      enemy_list_[i] && enemy_list_[i]->IsAlive()
+      && !enemy_list_[i]->isPendingDeletion()) {
       UpdateToGrid(3, i, enemy_list_[i]->GetRect());
     }
   }
@@ -619,6 +621,13 @@ void CollisionHandler::CheckCollisionEnemy() {
         while (it != grid_[position[1]][j].end()) {
           int type = it->first, index = it->second;
           if (type == 2) {
+            if (
+              object_list_[index]->GetType() != ObjectType::Block
+              && object_list_[index]->GetType() != ObjectType::BrickBlock) {
+              ++it;
+              continue;
+            }
+
             Rectangle rectangle = object_list_[index]->GetRectangle();
 
             if (
@@ -646,6 +655,13 @@ void CollisionHandler::CheckCollisionEnemy() {
               projectile_list_[index]->Destroy();
             }
           } else if (type == 2) {
+            if (
+              object_list_[index]->GetType() != ObjectType::Block
+              && object_list_[index]->GetType() != ObjectType::BrickBlock) {
+              ++it;
+              continue;
+            }
+
             Rectangle rect      = enemy_list_[i]->GetRectangle(),
                       rectangle = object_list_[index]->GetRectangle();
             Vector2 speed       = enemy_list_[i]->GetVelocity();
@@ -673,6 +689,13 @@ void CollisionHandler::CheckCollisionEnemy() {
               projectile_list_[index]->Destroy();
             }
           } else if (type == 2) {
+            if (
+              object_list_[index]->GetType() != ObjectType::Block
+              && object_list_[index]->GetType() != ObjectType::BrickBlock) {
+              ++it;
+              continue;
+            }
+
             Rectangle rect      = enemy_list_[i]->GetRectangle(),
                       rectangle = object_list_[index]->GetRectangle();
             Vector2 speed       = enemy_list_[i]->GetVelocity();
