@@ -3,73 +3,65 @@
 
 #include "include/core/application.hpp"
 #include "include/core/load.hpp"
+#include "include/core/file_handler.hpp"
+#include "include/core/button.hpp"
+#include "include/core/game.hpp"
+#include "include/core/character_selector.hpp"
 
 LoadScene::LoadScene() {
-  for (int i = 0; i < 3; ++i) {
-    rects[i].x      = 1024 / 2 - 256 / 2;
-    rects[i].y      = static_cast<float>(150 + i * (buttonHeight + 50));
-    rects[i].width  = static_cast<float>(buttonWidth);
-    rects[i].height = static_cast<float>(buttonHeight);
-  }
 }
 
 LoadScene::~LoadScene() = default;
 
-void LoadScene::Init() {}
+void LoadScene::Init() {
+}
 
 void LoadScene::Update() {
   if (IsKeyPressed(KEY_ESCAPE)) {
     App.RemoveScene();
     return;
   }
-  // int selectedSlot    = 0;
-  // bool waitingForPath = false;
-  // path;
-  // if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-  //   Vector2 m = GetMousePosition();
-  //   for (int i = 0; i < 3; ++i) {
-  //     if (CheckCollisionPointRec(m, rects[i])) {
-  //       // fix bug by moving file opening from draw to update
-  //       selectedSlot   = i;
-  //       waitingForPath = true;
-  //     }
-  //   }
-  // }
-  // if (waitingForPath) {
-  //   FileHandler handler(selectedSlot + 1);
-  //   path = handler.OpenFilePath();
-  //   // handler.LoadFile(path, saveData[selectedSlot]);
-  //   waitingForPath = false;
-  // }
+  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    const Vector2 m = GetMousePosition();
+
+
+    if (CheckCollisionPointRec(m, buttonRects_[0])) {
+      LoadUsingMapPath("res/maps/map1.json");
+    } else if (CheckCollisionPointRec(m, buttonRects_[1])) {
+      LoadUsingMapPath("res/maps/map2.json");
+    } else if (CheckCollisionPointRec(m, buttonRects_[2])) {
+      LoadUsingMapPath("res/maps/map3.json");
+    }
+  }
+  
 }
 
 void LoadScene::Draw() {
   DrawText(
     "Choose Saved Game", 1024 / 2 - MeasureText("Choose Saved Game", 40) / 2,
     20, 40, BLACK);
-  // for (int i = 0; i < 3; i++) {
-  //   // check for existing saved game
-  //   std::string slotText;
-  //   FileHandler handler(i + 1);
-  //   if (handler.LoadFile(path, saveData[i])) {
-  //     slotText = "Save game no." + std::to_string(i + 1) + " - "
-  //                + std::to_string(saveData[i].score);
-  //   } else {
-  //     slotText = "Slot " + std::to_string(i + 1);
-  //   }
-  //   // draw the rectangle and text for each save slot
-  //   int textWidth = MeasureText(slotText.c_str(), 20);
-  //   DrawRectangleRec(rects[i], LIGHTGRAY);
-  //   DrawRectangleLinesEx(rects[i], 2, DARKGRAY);
-
-  //  int textX = (int)(rects[i].x + rects[i].width / 2) - textWidth / 2;
-  //  int textY = (int)(rects[i].y + rects[i].height + 10);
-  //  DrawText(slotText.c_str(), textX, textY, 20, BLACK);
-  //}
+   for (int i = 1; i <= 3; i++) {
+     
+  }
+  for (int i = 0; i < 3; i++) {
+    DrawRectangleRec(buttonRects_[i], LIGHTGRAY);
+    DrawText(
+      TextFormat("Map %d", i + 1), buttonRects_[i].x + (buttonRects_[i].width / 4),
+      buttonRects_[i].y + (buttonRects_[i].height/ 4), 40, BLACK);
+  }
 }
 
 void LoadScene::Resume() {}
 
 SceneType LoadScene::Type() {
   return type_;
+}
+
+void LoadScene::Pause() {}
+
+void LoadScene::LoadUsingMapPath(const std::string& mapPath) { 
+    // default with luigi because game resets to luigi
+  auto game = std::make_unique<GameScene>(CharacterSelectorScene::GetCharacterType());
+  game->SetLevelPath(mapPath);
+  App.AddScene(std::move(game));
 }

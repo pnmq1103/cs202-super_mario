@@ -7,12 +7,12 @@
 class LoadScene : public Scene {
 private:
   SceneType type_ = {Load};
-
-  std::string path;
-  Rectangle rects[3] = {};
-  // SaveData saveData[3]   = {};
-  const int buttonWidth  = {256};
-  const int buttonHeight = {128};
+  Rectangle buttonRects_[3] = {
+	  {412, 200, 200, 100}, // Button 1
+	  {412, 400, 200, 100}, // Button 2
+	  {412, 600, 200, 100}  // Button 3
+  };
+  void LoadUsingMapPath(const std::string& mapPath);
 
 public:
   LoadScene();
@@ -23,4 +23,7 @@ public:
   void Draw() override;
   void Resume() override;
   SceneType Type() override;
+  void Pause();
+  void DrawButtons();
+  void UpdateButtons();
 };

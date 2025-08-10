@@ -56,6 +56,7 @@ private:
   // Flag for handling death
   bool isDeathHandled_ = false;
 
+
 public:
   GameManaging();
   ~GameManaging();

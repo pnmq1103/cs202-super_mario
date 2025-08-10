@@ -61,7 +61,7 @@ void GameScene::Init() {
   game_manager_.RegisterCharacterWithCollision(player_character_);
   ObjectManager::GetInstance().Reset(
     (int)constants::scale, &collision_handler_);
-  // game_manager_.LoadLevel("res/saves/map_00.json");
+
   game_manager_.SetCurrentLevel(current_level_);
   if (current_level_ == 1) {
     GameInfo::GetInstance().coin = 0;
@@ -74,9 +74,10 @@ void GameScene::Init() {
         current_level_, GameInfo::GetInstance().coin);
     }
   }
-  std::string levelPath
-    = "res/maps/map" + std::to_string(current_level_) + ".json";
-
+  // if no custom level path is set, load default level based on current_level_
+  if (!is_level_loaded_) {
+  levelPath = "res/maps/map" + std::to_string(current_level_) + ".json";
+}
   game_manager_.LoadLevel(levelPath);
   player_character_->SetCharacter(character_type_, {10.0f, 500.0f});
 }
@@ -250,4 +251,9 @@ void GameScene::UpdateCamera(Character *character) {
 
 SceneType GameScene::Type() {
   return type_;
+}
+
+void GameScene::SetLevelPath(const std::string &path) {
+  levelPath = path;
+  is_level_loaded_ = true;
 }

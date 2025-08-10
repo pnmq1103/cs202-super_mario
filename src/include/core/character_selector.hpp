@@ -32,6 +32,7 @@ private:
   void DisplayPower();
   void StartGame();
 
+
 public:
   CharacterSelectorScene() = default;
   ~CharacterSelectorScene();
@@ -43,4 +44,6 @@ public:
   SceneType Type() override;
 
   static CharacterType GetCharacterType();
+
+
 };

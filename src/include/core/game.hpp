@@ -17,6 +17,8 @@ private:
   GameManaging game_manager_;
   static CollisionHandler collision_handler_;
   int current_level_ = 1;
+  std::string levelPath = {"res/maps/map1.json"};
+  bool is_level_loaded_ = false;
 
 public:
   GameScene(CharacterType type, int level = 1);
@@ -31,6 +33,8 @@ public:
   void Draw() override;
   void Resume() override;
   SceneType Type() override;
+  //void CreateSimpleTestLevel();
+  void SetLevelPath(const std::string &path);
 
 private:
   void UpdateCamera(Character *character);
