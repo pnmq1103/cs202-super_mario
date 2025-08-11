@@ -1,9 +1,9 @@
 #pragma once
+#include "include/core/game_managing.hpp"
 #include "include/enemies/enemy.hpp"
 #include <memory>
 #include <unordered_map>
 #include <vector>
-#include "include/core/game_managing.hpp"
 
 class Character;        // Forward declaration
 class CollisionHandler; // Forward declaration
@@ -47,6 +47,7 @@ public:
   void SetCollisionHandler(CollisionHandler *handler);
   void AddEnemy(Enemy *enemy);
   void SpawnEnemy(EnemyType type, Vector2 position, int spriteId = 0);
+  void SpawnBoss(Vector2 position, Character *character);
 
   void ClearAllEnemies();
   void ClearDeadEnemies();
@@ -73,7 +74,7 @@ public:
   }
 
   // Boss management
-  void SpawnBoss(EnemyType bossType, Vector2 position);
+
   Enemy *GetBoss() const {
     return currentBoss_;
   }

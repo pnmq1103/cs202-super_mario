@@ -76,8 +76,8 @@ void GameScene::Init() {
   }
   // if no custom level path is set, load default level based on current_level_
   if (!is_level_loaded_) {
-  levelPath = "res/maps/map" + std::to_string(current_level_) + ".json";
-}
+    levelPath = "res/maps/map" + std::to_string(current_level_) + ".json";
+  }
   game_manager_.LoadLevel(levelPath);
   player_character_->SetCharacter(character_type_, {10.0f, 500.0f});
 }
@@ -139,6 +139,11 @@ void GameScene::Update() {
     }
   }
 
+  static bool check = true;
+  if (check) {
+    check = false;
+    EnemyManager::GetInstance().SpawnBoss({500, 1500}, player_character_);
+  }
   if (input_command_)
     input_command_->HandleInput();
 
@@ -254,6 +259,6 @@ SceneType GameScene::Type() {
 }
 
 void GameScene::SetLevelPath(const std::string &path) {
-  levelPath = path;
+  levelPath        = path;
   is_level_loaded_ = true;
 }

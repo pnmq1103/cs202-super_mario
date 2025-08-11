@@ -101,8 +101,8 @@ public:
   void SetMovementStrategy(MovementStrategy *strategy);
   MovementStrategy *GetMovementStrategy() const;
   void UpdateMovement(float dt);
-  void ReverseDirection();    // Made public for collision handler
-  void HandleWallCollision(); // Added missing method
+  virtual void ReverseDirection(); // Made public for collision handler
+  void HandleWallCollision();      // Added missing method
 
   // Physics similar to GameObject
   virtual void StopY(float Ny);
@@ -119,6 +119,7 @@ public:
   void SetPosition(Vector2 pos);
   void SetVelocity(Vector2 vel);
   void SetPlayerReference(Vector2 *player_pos);
+  void SetFacing(bool to_left);
 
   // Utility methods
   float GetDistanceToPlayer() const;
@@ -127,7 +128,6 @@ public:
   void DealDamage(float damage);
   bool IsInvulnerable() const;
   bool IsFacingLeft() const;
-  void SetFacing(bool left);
 
   // Attack methods for AI
   bool CanAttack() const;
@@ -145,4 +145,10 @@ public:
   bool CheckCollision(Rectangle other) const;
   void Render(
     Texture &tex, const std::unordered_map<int, Rectangle> &sprite_rects) const;
+  virtual bool IsCrazy() {
+    return false;
+  }
+  virtual bool GetStopDirection() {
+    return false;
+  }
 };

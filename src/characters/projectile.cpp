@@ -38,7 +38,16 @@ void Projectile::SetFrameCount() {
   ++time;
 }
 void Projectile::Draw() {
+  if (GetType() == mario_fireball) {
+    if (velocity.x < 0)
+      frame.width = -fabs(frame.width);
+  } else if (GetType() == enemy_fireball) {
+    if (velocity.x > 0)
+      frame.width = -fabs(frame.width);
+  }
+
   DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
+  frame.width = fabs(frame.width);
 }
 Rectangle Projectile::GetRectangle() {
   return {position.x, position.y, frame.width * scale, frame.height * scale};

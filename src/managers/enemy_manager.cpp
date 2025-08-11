@@ -62,6 +62,10 @@ void EnemyManager::SpawnEnemy(EnemyType type, Vector2 position, int spriteId) {
   }
 }
 
+void EnemyManager::SpawnBoss(Vector2 position, Character *character) {
+  AddEnemy(new Bowser(position, 4.f, character, projectilePool_));
+}
+
 Enemy *EnemyManager::CreateEnemyByType(
   EnemyType type, Vector2 position, int spriteId) {
   Enemy *enemy = nullptr;
@@ -76,9 +80,6 @@ Enemy *EnemyManager::CreateEnemyByType(
       break;
     case EnemyType::Piranha:
       enemy = new PiranhaPlant(position, scale);
-      break;
-    case EnemyType::Bowser:
-      enemy = new Bowser(position, scale);
       break;
     default:
       break;
@@ -208,12 +209,6 @@ void EnemyManager::SetCharacterReferences(
 // Keep SetFrameCount for consistency with GameObject pattern
 void EnemyManager::SetFrameCount() {
   Enemy::SetFrameCount(); // Call static method like ObjectManager does
-}
-
-void EnemyManager::SpawnBoss(EnemyType bossType, Vector2 position) {
-  if (bossType == EnemyType::Bowser) {
-    SpawnEnemy(bossType, position, 0);
-  }
 }
 
 // Utility functions

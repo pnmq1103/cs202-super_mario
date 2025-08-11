@@ -76,26 +76,20 @@ Enemy::Enemy(Vector2 Nposition, float Nscale, EnemyType enemy_type)
   frame = {0, 0, 32, 32};
 
   // Set appropriate texture based on enemy type
-  switch (type) {
-    case EnemyType::Bowser:
-      texture = &App.Resource().GetEnemy('b');
-      try {
-        LoadFrameList("res/sprites/enemies/bowser.txt");
-      } catch (const std::exception &e) {
-        std::cerr << "Failed to load Bowser sprites: " << e.what() << std::endl;
-      }
-      break;
-    case EnemyType::Goomba:
-    case EnemyType::Koopa:
-    case EnemyType::Piranha:
-    default:
-      texture = &App.Resource().GetEnemy('m');
-      try {
-        LoadFrameList("res/sprites/enemies/minions.txt");
-      } catch (const std::exception &e) {
-        std::cerr << "Failed to load minion sprites: " << e.what() << std::endl;
-      }
-      break;
+  if (type == EnemyType::Bowser) {
+    texture = &App.Resource().GetEnemy('b');
+    try {
+      LoadFrameList("res/sprites/enemies/bowser.txt");
+    } catch (const std::exception &e) {
+      std::cerr << "Failed to load bowser sprites: " << e.what() << std::endl;
+    }
+  } else {
+    texture = &App.Resource().GetEnemy('m');
+    try {
+      LoadFrameList("res/sprites/enemies/minions.txt");
+    } catch (const std::exception &e) {
+      std::cerr << "Failed to load minion sprites: " << e.what() << std::endl;
+    }
   }
 
   // Initialize frame after loading frame list
@@ -174,6 +168,8 @@ void Enemy::Update() {
 }
 
 void Enemy::UpdateAnimationFrame() {
+  if (type == EnemyType::Bowser)
+    return;
   if (frame_list.empty()) {
     // Set default frame if no frame list loaded
     frame = {0, 0, 32, 32}; // Default 32x32 sprite as per minions.txt
@@ -204,25 +200,6 @@ void Enemy::UpdateAnimationFrame() {
     case EnemyType::Piranha:
       // Piranha Plant: ID 5-8 (4 frames)
       frame_index = 5 + ((time / 15) % 4); // Slower animation for piranha
-      break;
-
-    case EnemyType::Bowser:
-      if (state == EnemyState::Attacking) {
-        // Preparing to shoot: ID 11-15
-        frame_index = 11 + ((time / 5) % 5); // Attack preparation animation
-      } else {
-        // Normal movement based on facing_left instead of velocity
-        if (!facing_left) {
-          // Facing right: ID 9-10
-          frame_index = 9 + ((time / 20) % 2);
-        } else if (facing_left) {
-          // Facing left: ID 0-6
-          frame_index = (time / 20) % 7;
-        } else {
-          // Default/idle: ID 7-8
-          frame_index = 7 + ((time / 25) % 2);
-        }
-      }
       break;
   }
 
@@ -537,6 +514,21 @@ void Enemy::SetPlayerReference(Vector2 *player_pos) {
   player_position = player_pos;
 }
 
+void Enemy::SetFacing(bool to_left) {
+  // Store old direction for logging
+  bool was_facing_left = facing_left;
+  float old_velocity   = velocity.x;
+
+  facing_left = to_left;
+
+  if (facing_left) {
+    velocity.x = -fabs(velocity.x);
+  } else
+    velocity.x = fabs(velocity.x);
+  // Update animation frame immediately to reflect direction change
+  UpdateAnimationFrame();
+}
+
 // Utility methods
 float Enemy::GetDistanceToPlayer() const {
   if (!player_position)
@@ -592,10 +584,6 @@ bool Enemy::IsInvulnerable() const {
 
 bool Enemy::IsFacingLeft() const {
   return facing_left;
-}
-
-void Enemy::SetFacing(bool left) {
-  facing_left = left;
 }
 
 // Legacy compatibility methods - DEPRECATED

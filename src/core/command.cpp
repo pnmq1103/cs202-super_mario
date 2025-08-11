@@ -4,6 +4,7 @@
 #include "include/characters/projectile_pool.hpp"
 #include "include/collision/collision_handler.hpp"
 #include "include/core/command.hpp"
+#include "include/managers/enemy_manager.hpp"
 
 Command::Command(Character *character)
     : character_(character), fireball_active_(false), projectile_pool_(nullptr),
@@ -19,6 +20,7 @@ Command::~Command() {
 void Command::InitializeProjectilePool(CollisionHandler *collision_handler) {
   if (!projectile_pool_ && collision_handler) {
     projectile_pool_ = new ProjectilePool(collision_handler);
+    EnemyManager::SetProjectilePool(projectile_pool_);
   }
 }
 
