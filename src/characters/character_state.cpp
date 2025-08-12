@@ -208,6 +208,7 @@ void CharacterState::Update() {
     else
       position.x += speed;
   }
+  std::cout << "x " << position.x << '\n';
 }
 void CharacterState::ToStarman() {
   time_star = 60 * 10;
