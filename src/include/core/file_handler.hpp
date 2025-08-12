@@ -2,6 +2,7 @@
 #include <string>
 
 #include "include/core/config.hpp"
+#include "include/core/game_info.hpp"
 #include "include/core/map.hpp"
 
 class FileHandler {
@@ -22,4 +23,7 @@ public:
 
   static void SaveConfig(const Config &config);
   static void LoadConfig(Config &config);
+
+  static void SaveGameInfo(const GameInfo &info);
+  static void LoadGameInfo(GameInfo &info);
 };

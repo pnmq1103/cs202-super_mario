@@ -52,6 +52,7 @@
     <ClCompile Include="src\core\transition.cpp" />
     <ClCompile Include="src\core\character_selector.cpp" />
     <ClCompile Include="src\core\config.cpp" />
+    <ClCompile Include="src\core\game_info.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\core\application.hpp" />

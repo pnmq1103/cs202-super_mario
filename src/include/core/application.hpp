@@ -29,6 +29,8 @@ private:
 
 private:
   Application(); // Singleton constructor should be private
+  Application(const Application &)            = delete;
+  Application &operator=(const Application &) = delete;
 
 public:
   ~Application();

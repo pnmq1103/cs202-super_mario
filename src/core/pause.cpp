@@ -44,7 +44,7 @@ void PauseScene::CreateButtons() {
   int button_count    = 3;
 
   if (App.PreviousScene() == SceneType::Game)
-    button_count = 5;
+    button_count = 4;
 
   float total_width
     = button_count * button_width + (button_count - 1) * spacing;
@@ -89,16 +89,6 @@ void PauseScene::CreateButtons() {
       },
       src, dst, "res/ui/buttons/resume.png");
     x += button_width + spacing;
-
-    dst = {x, y, button_width, button_height};
-    buttons_.emplace_back(
-      "Restart",
-      []() {
-        App.RemoveScene(2);
-        App.AddScene(std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType()));
-      },
-      src, dst, "res/ui/buttons/restart.png");
   }
 }
 
