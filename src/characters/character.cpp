@@ -65,6 +65,9 @@ void Character::SetState(int state, bool is_evolving) {
   }
   if (position.x > INT_MIN && position.y > INT_MIN) {
     Rectangle rect2 = pState_->GetRectangle();
+    if (!left) {
+      position.x -= fabs(rect2.width) - fabs(rect.width);
+    }
     pState_->SetPosition(position);
   }
 }

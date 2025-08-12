@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "include/characters/character_state.hpp"
+#include "include/core/constants.hpp"
 
 CharacterState::CharacterState(
   int NrunTime, float Nspeed, int NjumpTime, float NjumpHeight, float Nscale,
@@ -124,7 +125,6 @@ void CharacterState::Run(bool to_left) {
 void CharacterState::StopX() {
   if (is_die)
     return;
-  std::cout << stop_direction << '\n';
   int n;
   if (to_left)
     n = -1;
@@ -208,7 +208,14 @@ void CharacterState::Update() {
     else
       position.x += speed;
   }
-  std::cout << "x " << position.x << '\n';
+
+  if (position.x < 0)
+    position.x = 0;
+  if (
+    position.x + frame.width * scale
+    > constants::mapWidth * constants::blockSize)
+    position.x
+      = constants::mapWidth * constants::blockSize - frame.width * scale;
 }
 void CharacterState::ToStarman() {
   time_star = 60 * 10;
@@ -222,10 +229,9 @@ bool CharacterState::IsStarman() {
 void CharacterState::Bounce() {
   if (is_die)
     return;
-  if (IsStarman()) {
-    velocity_y = -2;
-  } else if (IsFalling())
-    velocity_y *= -0.9;
+  std::cout << "bounce\n";
+  if (IsFalling())
+    velocity_y *= -1.1;
 }
 
 bool CharacterState::IsDead() {
