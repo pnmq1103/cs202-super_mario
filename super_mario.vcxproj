@@ -135,6 +135,7 @@
     <ClCompile Include="src\core\config.cpp" />
     <ClCompile Include="src\core\credit.cpp" />
     <ClCompile Include="src\core\enemy_selector.cpp" />
+    <ClCompile Include="src\core\game_info.cpp" />
     <ClCompile Include="src\core\map.cpp" />
     <ClCompile Include="src\core\pause.cpp" />
     <ClCompile Include="src\core\scene.cpp" />

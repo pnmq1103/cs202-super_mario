@@ -108,13 +108,12 @@ void GameScene::Update() {
       // Check if we still have lives left
       if (GameInfo::GetInstance().life <= 0) {
         // Game over - reset game completely
-        GameInfo::GetInstance().SaveToFile();
+        // GameInfo::GetInstance().SaveToFile();
         GameInfo::GetInstance().Reset();
         // Load first level with scene replacement
         App.RemoveScene();
-        App.AddScene(
-          std::make_unique<GameScene>(
-            CharacterSelectorScene::GetCharacterType(), 1));
+        App.AddScene(std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), 1));
         return;
       } else {
         // Still have lives - restart current level with scene replacement
@@ -131,9 +130,8 @@ void GameScene::Update() {
           }
         }
         App.RemoveScene();
-        App.AddScene(
-          std::make_unique<GameScene>(
-            CharacterSelectorScene::GetCharacterType(), currentLevel));
+        App.AddScene(std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), currentLevel));
         return;
       }
     }
@@ -172,16 +170,14 @@ void GameScene::Update() {
       int nextLevel = game_manager_.GetCurrentLevel() + 1;
 
       App.RemoveScene();
-      App.AddScene(
-        std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), nextLevel));
+      App.AddScene(std::make_unique<GameScene>(
+        CharacterSelectorScene::GetCharacterType(), nextLevel));
     } else {
       // All levels completed, restart game
       GameInfo::GetInstance().Reset(); // Reset game info
       App.RemoveScene();
-      App.AddScene(
-        std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
+      App.AddScene(std::make_unique<GameScene>(
+        CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
     }
     return;
   }

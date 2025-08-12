@@ -90,3 +90,24 @@ void FileHandler::LoadConfig(Config &config) {
   fin >> j;
   j.get_to(config);
 }
+
+void FileHandler::SaveGameInfo(const GameInfo &info) {
+  std::filesystem::path full_path = base_path / "save_game.json";
+  std::ofstream fout(full_path);
+  if (fout.is_open() == false)
+    throw std::runtime_error("failed to create save game file");
+
+  nlohmann::json j = info;
+  fout << j.dump();
+}
+
+void FileHandler::LoadGameInfo(GameInfo &info) {
+  std::filesystem::path full_path = base_path / "config.json";
+  std::ifstream fin(full_path);
+  if (fin.is_open() == false)
+    throw std::runtime_error("failed to open config file");
+
+  nlohmann::json j;
+  fin >> j;
+  j.get_to(info);
+}
