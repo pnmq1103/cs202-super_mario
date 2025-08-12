@@ -66,7 +66,7 @@ void MarioFireball::ReverseDirection() {
 //|                       Enemy Fireball                     |
 //+----------------------------------------------------------+
 EnemyFireball::EnemyFireball() : Projectile(5, {10, 0}) {
-  LoadFrameList("D:/project/mario/res/sprites/enemies/bowser.txt");
+  LoadFrameList("res/sprites/enemies/bowser.txt");
   texture = &App.Resource().GetEnemy('b');
   frame   = frame_list[17];
   range_  = 1000;
