@@ -72,7 +72,10 @@ void EditorScene::Draw() {
     default:
       layer_name = "Unknown";
   }
-  DrawText(("Layer: " + layer_name).c_str(), 100, 100, 20, RED);
+  Vector2 dst = {285, 64};
+  if (cur_layer_ == MapLayer::Objects)
+    dst = {370, 64};
+  DrawTextEx(GetFontDefault(), layer_name.c_str(), dst, 20, 1, RED);
 }
 
 void EditorScene::Resume() {

@@ -357,7 +357,7 @@ void GameManaging::CheckLevelCompletion(Character *activeCharacter) {
 
     AddPoints(1000 * currentLevel_); // Bonus points for completing level
     GameInfo::GetInstance().coin = points_;
-    // GameInfo::GetInstance().SaveToFile();
+    FileHandler::SaveGameInfo(GameInfo::GetInstance());
 
     std::cout << "Level " << currentLevel_ << " completed by reaching the end!"
               << std::endl;

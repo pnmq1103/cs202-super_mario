@@ -7,6 +7,7 @@
 #include "include/core/character_selector.hpp"
 #include "include/core/command.hpp"
 #include "include/core/constants.hpp"
+#include "include/core/file_handler.hpp"
 #include "include/core/game.hpp"
 #include "include/core/game_info.hpp"
 #include "include/core/game_managing.hpp"
@@ -108,7 +109,7 @@ void GameScene::Update() {
       // Check if we still have lives left
       if (GameInfo::GetInstance().life <= 0) {
         // Game over - reset game completely
-        // GameInfo::GetInstance().SaveToFile();
+        FileHandler::SaveGameInfo(GameInfo::GetInstance());
         GameInfo::GetInstance().Reset();
         // Load first level with scene replacement
         App.RemoveScene();
@@ -213,12 +214,54 @@ void GameScene::Resume() {
   game_manager_.ResumeEnemies();
 }
 
+// void GameScene::UpdateCamera(Character *character) {
+//   if (!character)
+//     return;
+//
+//   Rectangle player_rect = character->GetRectangle();
+//   Vector2 player_pos    = {
+//     player_rect.x + player_rect.width / 2,
+//     player_rect.y + player_rect.height / 2};
+//
+//   float visible_width  = constants::screenWidth;
+//   float visible_height = constants::screenHeight;
+//   float map_width      = constants::mapWidth * constants::blockSize;
+//   float map_height     = constants::mapHeight * constants::blockSize;
+//
+//   float smooth = 5 * GetFrameTime();
+//
+//   // Dead zone
+//   float left_boundary     = 50;
+//   float right_boundary    = constants::screenWidth / 2;
+//   float desired_x         = player_pos.x;
+//   float player_pos_screen = player_pos.x - camera_.target.x +
+//   camera_.offset.x;
+//
+//   if (player_pos_screen < left_boundary)
+//     desired_x = player_pos.x - (left_boundary - camera_.offset.x);
+//   else if (player_pos_screen + player_rect.width > right_boundary)
+//     desired_x
+//       = player_pos.x + player_rect.width - (right_boundary -
+//       camera_.offset.x);
+//
+//   camera_.target.x = Lerp(camera_.target.x, desired_x, smooth);
+//   camera_.target.y = Lerp(camera_.target.y, player_pos.y, smooth);
+//
+//   camera_.target.x
+//     = Clamp(camera_.target.x, visible_width / 2, map_width - visible_width /
+//     2);
+//   camera_.target.y = Clamp(
+//     camera_.target.y, visible_height / 2, map_height - visible_height / 2);
+// }
+
 void GameScene::UpdateCamera(Character *character) {
   if (!character)
     return;
 
+  Vector2 desired_target = camera_.target;
+
   Rectangle player_rect = character->GetRectangle();
-  Vector2 player_pos    = {
+  Vector2 player_center = {
     player_rect.x + player_rect.width / 2,
     player_rect.y + player_rect.height / 2};
 
@@ -227,22 +270,27 @@ void GameScene::UpdateCamera(Character *character) {
   float map_width      = constants::mapWidth * constants::blockSize;
   float map_height     = constants::mapHeight * constants::blockSize;
 
-  float smooth = 5 * GetFrameTime();
+  float smooth = 10 * GetFrameTime();
 
   // Dead zone
-  float left_boundary     = 50;
-  float right_boundary    = constants::screenWidth / 2;
-  float desired_x         = player_pos.x;
-  float player_pos_screen = player_pos.x - camera_.target.x + camera_.offset.x;
+  Vector2 player_screen = GetWorldToScreen2D(player_center, camera_);
+  float left_boundary   = visible_width / 4;
+  float right_boundary  = visible_width / 3;
+  float top_boundary    = visible_height / 5;
+  float bottom_boundary = visible_height / 3;
 
-  if (player_pos_screen < left_boundary)
-    desired_x = player_pos.x - (left_boundary - camera_.offset.x);
-  else if (player_pos_screen + player_rect.width > right_boundary)
-    desired_x
-      = player_pos.x + player_rect.width - (right_boundary - camera_.offset.x);
+  if (player_screen.x < left_boundary)
+    desired_target.x -= (left_boundary - player_screen.x);
+  else if (player_screen.x > right_boundary)
+    desired_target.x += (player_screen.x - right_boundary);
 
-  camera_.target.x = Lerp(camera_.target.x, desired_x, smooth);
-  camera_.target.y = Lerp(camera_.target.y, player_pos.y, smooth);
+  if (player_screen.y < top_boundary)
+    desired_target.y -= (top_boundary - player_screen.y);
+  else if (player_screen.y > bottom_boundary)
+    desired_target.y += (player_screen.y - bottom_boundary);
+
+  camera_.target.x = Lerp(camera_.target.x, desired_target.x, smooth);
+  camera_.target.y = Lerp(camera_.target.y, desired_target.y, smooth);
 
   camera_.target.x
     = Clamp(camera_.target.x, visible_width / 2, map_width - visible_width / 2);

@@ -36,18 +36,40 @@ void LoadScene::Update() {
   }
 }
 
+// void LoadScene::Draw() {
+//   DrawText(
+//     "Choose map", 1024 / 2 - MeasureText("Choose map", 40) / 2, 20, 40,
+//     BLACK);
+//
+//   for (int i = 0; i < 4; i++) {
+//     DrawRectangleRec(buttonRects_[i], LIGHTGRAY);
+//     int x = static_cast<int>(buttonRects_[i].x + (buttonRects_[i].width /
+//     4)); int y = static_cast<int>(buttonRects_[i].y + (buttonRects_[i].height
+//     / 4)); Font font        = GetFontDefault(); std::string text = "Map " +
+//     std::to_string(i + 1); Vector2 sz       = MeasureTextEx(font,
+//     text.c_str(), 40, 1); if (i != 3)
+//       DrawText(text.c_str(), x, y, 40, BLACK);
+//     else {
+//       text = "Others";
+//       sz   = MeasureTextEx(font, text.c_str(), 40, 1);
+//       DrawText(text.c_str(), x, y, 40, BLACK);
+//     }
+//   }
+// }
 void LoadScene::Draw() {
-  DrawText(
-    "Choose map", 1024 / 2 - MeasureText("Choose map", 40) / 2, 20, 40, BLACK);
+  const char *title = "Choose map";
+  DrawText(title, 1024 / 2 - MeasureText(title, 40) / 2, 20, 40, BLACK);
 
+  Font font = GetFontDefault();
   for (int i = 0; i < 4; i++) {
     DrawRectangleRec(buttonRects_[i], LIGHTGRAY);
-    int x = static_cast<int>(buttonRects_[i].x + (buttonRects_[i].width / 4));
-    int y = static_cast<int>(buttonRects_[i].y + (buttonRects_[i].height / 4));
-    if (i != 3)
-      DrawText(TextFormat("Map %d", i + 1), x, y, 40, BLACK);
-    else
-      DrawText("Others", x, y, 40, BLACK);
+    std::string text = (i != 3) ? "Map " + std::to_string(i + 1) : "Others";
+    Vector2 sz       = MeasureTextEx(font, text.c_str(), 40, 1);
+
+    float x = buttonRects_[i].x + (buttonRects_[i].width - sz.x) / 2;
+    float y = buttonRects_[i].y + (buttonRects_[i].height - sz.y) / 2;
+
+    DrawText(text.c_str(), static_cast<int>(x), static_cast<int>(y), 40, BLACK);
   }
 }
 

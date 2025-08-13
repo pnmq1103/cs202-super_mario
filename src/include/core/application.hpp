@@ -28,19 +28,18 @@ private:
   TransitionState phase_ = {TransitionState::InProgress};
 
 private:
-  Application(); // Singleton constructor should be private
+  Application();
   Application(const Application &)            = delete;
   Application &operator=(const Application &) = delete;
 
-public:
-  ~Application();
-  void Run();
-
-  // These will stay public for now for testing purposes
   void Init();
   void Update();
   void Draw();
   bool ShouldClose();
+
+public:
+  ~Application();
+  void Run();
 
   static Application &Instance();
   static SceneType PreviousScene();
