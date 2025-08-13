@@ -413,8 +413,8 @@ void CollisionHandler::CheckCollisionCharacter() {
               character_->GetRectangle(), enemy_list_[index]->GetRect())) {
           if (character_->IsStarman())
             enemy_list_[index]->OnHitFromSide();
-          else
-            character_->Die();
+          // else
+          //   character_->Die();
         }
       }
       ++it;
@@ -485,8 +485,8 @@ void CollisionHandler::CheckCollisionCharacter() {
               character_->GetRectangle(), enemy_list_[index]->GetRect())) {
           if (character_->IsStarman())
             enemy_list_[index]->OnHitFromSide();
-          else
-            character_->Die();
+          // else
+          //   character_->Die();
         }
       }
       ++it;
