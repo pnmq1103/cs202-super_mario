@@ -68,7 +68,7 @@ void MarioFireball::ReverseDirection() {
 EnemyFireball::EnemyFireball() : Projectile(5, {10, 0}) {
   LoadFrameList("res/sprites/enemies/bowser.txt");
   texture = &App.Resource().GetEnemy('b');
-  frame   = frame_list[17];
+  frame   = frame_list[16];
   range_  = 1000;
 }
 EnemyFireball::~EnemyFireball() {}
@@ -84,7 +84,7 @@ void EnemyFireball::Update() {
       is_destroy = true;
   }
 
-  frame = frame_list[(time / 5) % 2 + 17];
+  frame = frame_list[(time / 5) % 2 + 16];
 
   position.x += velocity.x;
   position.y += velocity.y;
