@@ -507,6 +507,10 @@ void CollisionHandler::CheckCollisionProjectile() {
             ++it;
             continue;
           }
+          if (object_list_[index]->IsDestroyed()) {
+            ++it;
+            continue;
+          }
 
           Rectangle rectangle = object_list_[index]->GetRectangle();
           Vector2 speed       = projectile_list_[i]->GetSpeed();
@@ -530,6 +534,10 @@ void CollisionHandler::CheckCollisionProjectile() {
         while (it != grid_[j][position[3]].end()) {
           int type = it->first, index = it->second;
           if (type != 2) {
+            ++it;
+            continue;
+          }
+          if (object_list_[index]->IsDestroyed()) {
             ++it;
             continue;
           }
@@ -561,7 +569,7 @@ void CollisionHandler::CheckCollisionProjectile() {
           auto it = grid_[position[0]][j].begin();
           while (it != grid_[position[0]][j].end()) {
             int type = it->first, index = it->second;
-            if (type == 2) {
+            if (type == 2 && !object_list_[index]->IsDestroyed()) {
               Rectangle rectangle = object_list_[index]->GetRectangle();
               Vector2 speed       = projectile_list_[i]->GetSpeed();
               if (rect.y + speed.y <= rectangle.y + rectangle.height &&
@@ -575,7 +583,7 @@ void CollisionHandler::CheckCollisionProjectile() {
           it = grid_[position[1]][j].begin();
           while (it != grid_[position[1]][j].end()) {
             int type = it->first, index = it->second;
-            if (type == 2) {
+            if (type == 2 && !object_list_[index]->IsDestroyed()) {
               Rectangle rectangle = object_list_[index]->GetRectangle();
               Vector2 speed       = projectile_list_[i]->GetSpeed();
               if (rect.y + rect.height +speed.y >= rectangle.y && (rect.x + rect.width >=rectangle.x
@@ -637,7 +645,7 @@ void CollisionHandler::CheckCollisionEnemy() {
 
         while (it != grid_[position[1]][j].end()) {
           int type = it->first, index = it->second;
-          if (type == 2) {
+          if (type == 2 && !object_list_[index]->IsDestroyed()) {
             if (
               object_list_[index]->GetType() != ObjectType::Block
               && object_list_[index]->GetType() != ObjectType::BrickBlock) {
@@ -664,14 +672,14 @@ void CollisionHandler::CheckCollisionEnemy() {
 
         while (it != grid_[j][position[2]].end()) {
           int type = it->first, index = it->second;
-          if (type == 1) {
+          if (type == 1 && !projectile_list_[index]->IsDestroyed()) {
             if (
               CheckCollisionRecs(rect, projectile_list_[index]->GetRectangle())
               && projectile_list_[index]->GetType() != enemy_fireball) {
               enemy_list_[i]->OnHitFromSide();
               projectile_list_[index]->Destroy();
             }
-          } else if (type == 2) {
+          } else if (type == 2 && !object_list_[index]->IsDestroyed()) {
             if (
               object_list_[index]->GetType() != ObjectType::Block
               && object_list_[index]->GetType() != ObjectType::BrickBlock) {
@@ -698,14 +706,14 @@ void CollisionHandler::CheckCollisionEnemy() {
 
         while (it != grid_[j][position[3]].end()) {
           int type = it->first, index = it->second;
-          if (type == 1) {
+          if (type == 1 && !projectile_list_[index]->IsDestroyed()) {
             if (
               CheckCollisionRecs(rect, projectile_list_[index]->GetRectangle())
               && projectile_list_[index]->GetType() != enemy_fireball) {
               enemy_list_[i]->OnHitFromSide();
               projectile_list_[index]->Destroy();
             }
-          } else if (type == 2) {
+          } else if (type == 2 && !object_list_[index]->IsDestroyed()) {
             if (
               object_list_[index]->GetType() != ObjectType::Block
               && object_list_[index]->GetType() != ObjectType::BrickBlock) {
@@ -748,7 +756,7 @@ void CollisionHandler::CheckCollisionMushroom() {
             continue;
           }
 
-          if (type == 2) {
+          if (type == 2 && !object_list_[index]->IsDestroyed()) {
             if (object_list_[index]->GetType() != ObjectType::SuperMushroom) {
               Rectangle rect      = object_list_[j]->GetRectangle(),
                         rectangle = object_list_[index]->GetRectangle();
@@ -775,7 +783,7 @@ void CollisionHandler::CheckCollisionMushroom() {
             ++it;
             continue;
           }
-          if (type == 2) {
+          if (type == 2 && !object_list_[index]->IsDestroyed()) {
             if (object_list_[index]->GetType() != ObjectType::SuperMushroom) {
               Rectangle rect      = object_list_[j]->GetRectangle(),
                         rectangle = object_list_[index]->GetRectangle();
@@ -801,7 +809,7 @@ void CollisionHandler::CheckCollisionMushroom() {
             ++it;
             continue;
           }
-          if (type == 2) {
+          if (type == 2 && !object_list_[index]->IsDestroyed()) {
             if (object_list_[index]->GetType() != ObjectType::SuperMushroom) {
               Rectangle rect      = object_list_[j]->GetRectangle(),
                         rectangle = object_list_[index]->GetRectangle();
