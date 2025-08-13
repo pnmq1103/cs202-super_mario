@@ -182,10 +182,15 @@ void CollisionHandler::UpdatePosition() {
 void CollisionHandler::CheckCollision() {
   if (!character_)
     return;
+
   UpdatePosition();
+
   CheckCollisionCharacter();
+
   CheckCollisionProjectile();
+
   CheckCollisionEnemy();
+
   CheckCollisionMushroom();
 }
 
@@ -408,8 +413,8 @@ void CollisionHandler::CheckCollisionCharacter() {
               character_->GetRectangle(), enemy_list_[index]->GetRect())) {
           if (character_->IsStarman())
             enemy_list_[index]->OnHitFromSide();
-          // else
-          // character_->Die();
+          else
+            character_->Die();
         }
       }
       ++it;
@@ -480,8 +485,8 @@ void CollisionHandler::CheckCollisionCharacter() {
               character_->GetRectangle(), enemy_list_[index]->GetRect())) {
           if (character_->IsStarman())
             enemy_list_[index]->OnHitFromSide();
-          // else
-          // character_->Die();
+          else
+            character_->Die();
         }
       }
       ++it;
@@ -498,6 +503,10 @@ void CollisionHandler::CheckCollisionProjectile() {
         auto it = grid_[j][position[2]].begin();
         while (it != grid_[j][position[2]].end()) {
           int type = it->first, index = it->second;
+          if (type != 2) {
+            ++it;
+            continue;
+          }
 
           Rectangle rectangle = object_list_[index]->GetRectangle();
           Vector2 speed       = projectile_list_[i]->GetSpeed();
@@ -520,6 +529,10 @@ void CollisionHandler::CheckCollisionProjectile() {
         it = grid_[j][position[3]].begin();
         while (it != grid_[j][position[3]].end()) {
           int type = it->first, index = it->second;
+          if (type != 2) {
+            ++it;
+            continue;
+          }
 
           Rectangle rectangle = object_list_[index]->GetRectangle();
           Vector2 speed       = projectile_list_[i]->GetSpeed();

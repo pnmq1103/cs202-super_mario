@@ -1,4 +1,5 @@
 #include "include/characters/fireball.hpp"
+#include "include/core/constants.hpp"
 #include <cmath>
 
 //+----------------------------------------------------------+
@@ -36,6 +37,11 @@ void MarioFireball::Update() {
   position.x += velocity.x;
   position.y += velocity.y;
   velocity.y += gravity_;
+
+  if (position.x + frame.width * scale < 0)
+    Destroy();
+  if (position.x > constants::mapWidth * constants::blockSize)
+    Destroy();
 }
 void MarioFireball::Draw() {
   if (is_destroy)
@@ -88,6 +94,11 @@ void EnemyFireball::Update() {
 
   position.x += velocity.x;
   position.y += velocity.y;
+
+  if (position.x + frame.width * scale < 0)
+    Destroy();
+  if (position.x > constants::mapWidth * constants::blockSize)
+    Destroy();
 }
 void EnemyFireball::Draw() {
   if (is_destroy)
@@ -139,6 +150,11 @@ void ElectricBall::Update() {
     position.x += velocity.x;
     position.y += velocity.y;
   }
+
+  if (position.x + frame.width * scale < 0)
+    Destroy();
+  if (position.x > constants::mapWidth * constants::blockSize)
+    Destroy();
 }
 void ElectricBall::Draw() {
   if (is_destroy)

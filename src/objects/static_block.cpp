@@ -27,7 +27,7 @@ StaticBlock::StaticBlock(Vector2 Nposition, float Nscale, char theme)
 StaticBlock::StaticBlock(Vector2 Nposition, float Nscale, Rectangle rect)
     : GameObject(Nposition, Nscale) {
   texture = &App.Resource().GetTileset('m');
-  frame = rect;
+  frame   = rect;
 }
 
 StaticBlock::~StaticBlock() {}

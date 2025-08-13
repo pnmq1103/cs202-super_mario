@@ -229,7 +229,6 @@ bool CharacterState::IsStarman() {
 void CharacterState::Bounce() {
   if (is_die)
     return;
-  std::cout << "bounce\n";
   if (IsFalling())
     velocity_y *= -1.1;
 }
