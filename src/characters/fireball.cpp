@@ -180,3 +180,32 @@ ProjectileType ElectricBall::GetType() {
 }
 
 void ElectricBall::ReverseDirection() {}
+
+//+----------------------------------------------------------+
+//|                       static fireball                    |
+//+----------------------------------------------------------+
+
+StaticFireball::StaticFireball() : Projectile(4, {0, 0}) {
+  LoadFrameList("res/sprites/enemies/bowser.txt");
+  texture       = &App.Resource().GetEnemy('b');
+  frame         = frame_list[18];
+  existing_time = 100;
+}
+
+StaticFireball::~StaticFireball() {}
+
+void StaticFireball::Update() {
+  if (time > existing_time)
+    is_destroy = true;
+  if (is_destroy)
+    return;
+  frame = frame_list[(time / 10) % 3 + 18];
+}
+
+void StaticFireball::StopY(bool stop_upper, bool stop_lower) {}
+
+ProjectileType StaticFireball::GetType() {
+  return enemy_fireball;
+}
+
+void StaticFireball::ReverseDirection() {}

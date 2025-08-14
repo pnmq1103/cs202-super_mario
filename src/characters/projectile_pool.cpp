@@ -15,7 +15,7 @@ ProjectilePool::ProjectilePool(CollisionHandler *Ncollision)
   collision_->AddProjectile(projectile_list_[6]);
 }
 ProjectilePool::~ProjectilePool() {
-  for (int i = 0; i < 7; ++i)
+  for (int i = 0; i < projectile_list_.size(); ++i)
     delete projectile_list_[i];
 }
 void ProjectilePool::ShootMarioFireball(Vector2 Nposition, bool to_left) {
@@ -44,17 +44,35 @@ void ProjectilePool::ShootElectricBall(Vector2 Nposition, bool to_left) {
   if (projectile_list_[6]->IsDestroyed())
     projectile_list_[6]->Renew(Nposition, to_left);
 }
+
+void ProjectilePool::ShootStaticFireball(Vector2 Nposition) {
+  for (int i = 7; i < projectile_list_.size(); ++i) {
+    if (projectile_list_[i]->IsDestroyed()) {
+      projectile_list_[i]->Renew(Nposition, true);
+      return;
+    }
+  }
+  Projectile *projectile = new StaticFireball();
+  projectile->Renew(Nposition, true);
+  projectile_list_.push_back(projectile);
+  collision_->AddProjectile(projectile);
+}
+
 void ProjectilePool::SetFrameCount() {
   ++time_;
-  for (int i = 0; i < 7; ++i)
+  for (int i = 0; i < projectile_list_.size(); ++i)
     projectile_list_[i]->SetFrameCount();
 }
 void ProjectilePool::Update() {
-  for (int i = 0; i < 7; ++i)
+  for (int i = 0; i < projectile_list_.size(); ++i) {
     projectile_list_[i]->Update();
+    if (projectile_list_[i]->IsDestroyed()) {
+      collision_->RemoveProjectile(i);
+    }
+  }
 }
 void ProjectilePool::Draw() {
-  for (int i = 0; i < 7; ++i)
+  for (int i = 0; i < projectile_list_.size(); ++i)
     projectile_list_[i]->Draw();
 }
 

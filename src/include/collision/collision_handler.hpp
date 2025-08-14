@@ -44,7 +44,9 @@ public:
   void AddObject(GameObject *object);
   void AddEnemy(Enemy *enemy);
 
+  void RemoveProjectile(int index);
   void RemoveObject(int index);
   void RemoveEnemy(int index);
+
   void CheckCollision();
 };

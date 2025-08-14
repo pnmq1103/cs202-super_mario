@@ -4,7 +4,7 @@
 #include "include/managers/enemy_manager.hpp"
 
 CollisionHandler::CollisionHandler(float width, float height)
-    : cellSize_(16 * 4), projectile_list_(7, nullptr) {
+    : cellSize_(16 * 4) {
   Reset(width, height);
 }
 
@@ -14,8 +14,7 @@ void CollisionHandler::Reset(float width, float height) {
   row_    = std::ceil(height / cellSize_);
 
   character_ = nullptr;
-  for (int i = 0; i < 7; ++i)
-    projectile_list_[i] = nullptr;
+  projectile_list_.clear();
   object_list_.clear();
   enemy_list_.clear();
 
@@ -116,12 +115,7 @@ void CollisionHandler::AddCharacter(Character *character) {
 void CollisionHandler::AddProjectile(Projectile *projectile) {
   if (!projectile)
     return;
-  for (int i = 0; i < projectile_list_.size(); ++i) {
-    if (!projectile_list_[i]) {
-      projectile_list_[i] = projectile;
-      return;
-    }
-  }
+  projectile_list_.push_back(projectile);
 }
 
 void CollisionHandler::AddObject(GameObject *object) {
@@ -136,7 +130,22 @@ void CollisionHandler::AddEnemy(Enemy *enemy) {
   enemy_list_.push_back(enemy);
 }
 
+void CollisionHandler::RemoveProjectile(int index) {
+  if (index < 0 || index >= projectile_list_.size())
+    throw std::runtime_error("out of bounce index");
+  if (!projectile_list_[index])
+    return;
+
+  std::string s = MakeID(1, index);
+  if (previous_position_.find(s) != previous_position_.end()) {
+    RemoveFromGrid(1, index, previous_position_[s]);
+    previous_position_.erase(s);
+  }
+}
+
 void CollisionHandler::RemoveObject(int index) {
+  if (index < 0 || index >= object_list_.size())
+    throw std::runtime_error("out of bounce index");
   if (!object_list_[index])
     return;
   object_list_[index] = nullptr;
@@ -148,6 +157,8 @@ void CollisionHandler::RemoveObject(int index) {
 }
 
 void CollisionHandler::RemoveEnemy(int index) {
+  if (index < 0 || index >= enemy_list_.size())
+    throw std::runtime_error("out of bounce index");
   if (!enemy_list_[index])
     return;
   enemy_list_[index] = nullptr;

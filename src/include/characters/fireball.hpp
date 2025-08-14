@@ -47,3 +47,16 @@ public:
   ProjectileType GetType();
   void ReverseDirection();
 };
+
+class StaticFireball : public Projectile {
+private:
+  int existing_time;
+
+public:
+  StaticFireball();
+  ~StaticFireball();
+  void Update();
+  void StopY(bool stop_upper, bool stop_lower);
+  ProjectileType GetType();
+  void ReverseDirection();
+};

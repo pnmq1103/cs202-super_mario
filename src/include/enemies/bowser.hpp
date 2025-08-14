@@ -5,7 +5,8 @@
 
 class Bowser : public Enemy {
 private:
-  int hit_timer_, shoot_timer_, shoot_time_;
+  int hit_timer_, shoot_timer_, shoot_time_, throw_timer_, throw_duration_;
+  Rectangle character_rectangle_;
   Character *character_;
   ProjectilePool *pool_;
   bool stop_direction;

@@ -16,6 +16,7 @@ public:
   void ShootMarioFireball(Vector2 Nposition, bool to_left);
   void ShootEnemyFireball(Vector2 Nposition, bool to_left);
   void ShootElectricBall(Vector2 Nposition, bool to_left);
+  void ShootStaticFireball(Vector2 Nposition);
   void SetFrameCount();
   void Update();
   void Draw();

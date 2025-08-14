@@ -15,6 +15,7 @@ Bowser::Bowser(
   position.y         -= scale * 41;
   frame               = frame_list[0];
   velocity.x          = 1;
+  throw_duration_ = throw_timer_ = 50;
   SetMovementStrategy(new FollowStrategy(character_));
 }
 
@@ -59,6 +60,17 @@ void Bowser::Update() {
   if (shoot_timer_ == 0) {
     shoot_timer_ = 200;
     shoot_time_  = time;
+  }
+
+  if (health <= 2) {
+    --throw_timer_;
+    if (throw_timer_ == 0) {
+      throw_timer_ = throw_duration_;
+      pool_->ShootStaticFireball(
+        {character_rectangle_.x, character_rectangle_.y});
+    } else if (throw_timer_ == 15) {
+      character_rectangle_ = character_->GetRectangle();
+    }
   }
 
   if (time - shoot_time_ < 75) {
