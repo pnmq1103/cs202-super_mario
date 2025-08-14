@@ -151,4 +151,5 @@ public:
   virtual bool GetStopDirection() {
     return false;
   }
+  void KillAndNotify();
 };

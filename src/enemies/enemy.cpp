@@ -598,3 +598,12 @@ void Enemy::Render(
   // Legacy method - use Draw() instead
   const_cast<Enemy *>(this)->Draw();
 }
+void Enemy::KillAndNotify() {
+  if (!alive)
+    return;
+  alive      = false;
+  state      = EnemyState::Dead;
+  time_death = time;
+  velocity   = {0.f, 0.f};
+  EnemyManager::GetInstance().OnEnemyDeath(index_);
+}
