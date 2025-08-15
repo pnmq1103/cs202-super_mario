@@ -15,7 +15,7 @@ Bowser::Bowser(
   position.y         -= scale * 41;
   frame               = frame_list[0];
   velocity.x          = 1;
-  throw_duration_ = throw_timer_ = 50;
+  throw_duration_ = throw_timer_ = 30;
   SetMovementStrategy(new FollowStrategy(character_));
 }
 

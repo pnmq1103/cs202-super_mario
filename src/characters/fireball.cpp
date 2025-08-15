@@ -202,6 +202,12 @@ void StaticFireball::Update() {
   frame = frame_list[(time / 10) % 3 + 18];
 }
 
+void StaticFireball::Draw() {
+  if (is_destroy)
+    return;
+  Projectile::Draw();
+}
+
 void StaticFireball::StopY(bool stop_upper, bool stop_lower) {}
 
 ProjectileType StaticFireball::GetType() {

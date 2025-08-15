@@ -56,6 +56,7 @@ public:
   StaticFireball();
   ~StaticFireball();
   void Update();
+  void Draw();
   void StopY(bool stop_upper, bool stop_lower);
   ProjectileType GetType();
   void ReverseDirection();

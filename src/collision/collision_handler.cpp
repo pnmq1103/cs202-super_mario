@@ -340,8 +340,12 @@ void CollisionHandler::CheckCollisionCharacter() {
           }
         }
       } else if (type == 3) {
-        if (CheckCollisionRecs(
-              character_->GetRectangle(), enemy_list_[index]->GetRect())) {
+        Rectangle rect      = character_->GetRectangle(),
+                  rectangle = enemy_list_[index]->GetRectangle();
+        Vector2 speed       = character_->GetSpeed();
+
+        if (rect.y + rect.height +speed.y >= rectangle.y 
+          && (rect.x + rect.width >=rectangle.x && rect.x <= rectangle.x + rectangle.width)) {
           if (character_->IsStarman()) {
             enemy_list_[index]->OnHitFromSide();
           } else {
