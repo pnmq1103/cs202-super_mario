@@ -46,9 +46,8 @@ GameManaging::GameManaging() {
 
   // Level completion criteria
   levelEndX_ = constants::mapWidth * constants::blockSize
-               - 64.0f
-              ; // Character must reach this X
-                         // position to complete level
+               - 64.0f; // Character must reach this X
+                        // position to complete level
 }
 
 GameManaging::~GameManaging() {
@@ -335,7 +334,7 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
 
   // Handle character death
   if (activeCharacter->IsDead() && !isDeathHandled_) {
-    OnPlayerDeath(activeCharacter);
+    OnPlayerDeath(character_);
     isDeathHandled_ = true; // ensure we only handle death once
   }
 }
@@ -486,7 +485,8 @@ void GameManaging::DrawStats() const {
       camera_offset.y + GetScreenHeight() / (2.0f * sceneCamera_->zoom)};
     DrawText("GAME OVER", (int)center.x - 80, (int)center.y, 28, RED);
     DrawText(
-      "Press Space to restart", (int)center.x - 100, (int)center.y + 40, 20, WHITE);
+      "Press Space to restart", (int)center.x - 100, (int)center.y + 40, 20,
+      WHITE);
   }
 
   if (levelComplete_) {
@@ -635,7 +635,7 @@ void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
       enemyManager.SpawnEnemy(EnemyType::Koopa, position);
       break;
     case 79: // Bowser (boss enemy for level 3)
-      enemyManager.SpawnBoss(position, character_) ;
+      enemyManager.SpawnBoss(position, character_);
       break;
     default:
       std::cout << "Unknown enemy type: " << enemyType << std::endl;
@@ -821,13 +821,8 @@ bool GameManaging::CanAdvanceLevel() const {
 // }
 void GameManaging::OnPlayerDeath(Character *character) {
   if (character) {
-    // Decrease life in GameInfo
-    character->Die();
     // Play death sound
     App.Media().PlaySound("life_lost");
-
-    // Mark as handled to prevent multiple deaths in one frame
-    DecreaseLife();
   }
 }
 void GameManaging::SetLives(int lives) {

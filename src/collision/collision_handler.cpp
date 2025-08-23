@@ -206,6 +206,8 @@ void CollisionHandler::CheckCollision() {
 }
 
 void CollisionHandler::CheckCollisionCharacter() {
+  if (character_->IsDead())
+    return;
 
   std::vector<int> position = SearchLocation(character_->GetRectangle());
 

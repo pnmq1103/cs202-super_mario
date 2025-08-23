@@ -30,14 +30,17 @@ private:
 
   std::string levelPath = "res/maps/map1.json";
 
+  bool is_level_loaded_;
+
 private:
   void DisplayPower();
   void StartGame();
 
-
 public:
   CharacterSelectorScene(std::string levelPath);
-  CharacterSelectorScene() = default;
+  CharacterSelectorScene() {
+    is_level_loaded_ = false;
+  }
   ~CharacterSelectorScene();
 
   void Init() override;
@@ -47,6 +50,4 @@ public:
   SceneType Type() override;
 
   static CharacterType GetCharacterType();
-
-
 };

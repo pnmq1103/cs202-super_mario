@@ -105,7 +105,7 @@ void CharacterState::Draw() {
 void CharacterState::Jump() {
   if (disabled)
     return;
-  if (velocity_y == 0) {
+  if (velocity_y == 0 || is_die) {
     y_before_jump = position.y;
     velocity_y    = -4.0 * jumpHeight / jumpTime;
     is_jump       = true;

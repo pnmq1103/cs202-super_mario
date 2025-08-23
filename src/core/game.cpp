@@ -15,19 +15,21 @@
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
 
-
 CollisionHandler GameScene::collision_handler_(
   constants::mapWidth * 16 * constants::scale,
   constants::mapHeight * 16 * constants::scale);
 
 GameScene::GameScene(CharacterType type, int level)
-    : game_manager_(), character_type_(type), current_level_(level) {}
+    : game_manager_(), character_type_(type), current_level_(level) {
+  GameInfo::GetInstance().Reset();
+  is_level_loaded_ = false;
+}
 
 GameScene::GameScene(CharacterType type, std::string level)
-    : GameScene(type) {
-  constants::is_level_loaded_ = true;
-  levelPath = level;
-  
+    : game_manager_(), character_type_(type), current_level_(1) {
+  GameInfo::GetInstance().Reset();
+  is_level_loaded_ = true;
+  levelPath        = level;
 };
 
 GameScene::~GameScene() {
@@ -85,7 +87,7 @@ void GameScene::Init() {
   }
   game_manager_.SetCharacter(player_character_);
   // if no custom level path is set, load default level based on current_level_
-  if (!constants::is_level_loaded_) {
+  if (!is_level_loaded_) {
     levelPath = "res/maps/map" + std::to_string(current_level_) + ".json";
   }
   game_manager_.LoadLevel(levelPath);
@@ -109,21 +111,32 @@ void GameScene::Update() {
       > constants::mapHeight * constants::blockSize) {
       // Only decrease life if the character wasn't already dead
       // This prevents double-counting deaths when killed by enemies
-      if (!player_character_->IsDead()) {
+      if (player_character_->IsDead()) {
         // Decrement life in GameInfo
-             game_manager_.OnPlayerDeath(player_character_);
+
+        if (!is_level_loaded_) {
+          game_manager_.DecreaseLife();
+        }
       }
 
       int currentLevel = game_manager_.GetCurrentLevel();
       // Check if we still have lives left
-      if (GameInfo::GetInstance().life <= 0) {
+      if (is_level_loaded_) {
+        GameInfo::GetInstance().coin = 0;
+        App.RemoveScene();
+        App.AddScene(
+          std::make_unique<GameScene>(
+            CharacterSelectorScene::GetCharacterType(), levelPath));
+        return;
+      } else if (GameInfo::GetInstance().life <= 0) {
         // Game over - reset game completely
         FileHandler::SaveGameInfo(GameInfo::GetInstance());
         GameInfo::GetInstance().Reset();
         // Load first level with scene replacement
         App.RemoveScene();
-        App.AddScene(std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), 1));
+        App.AddScene(
+          std::make_unique<GameScene>(
+            CharacterSelectorScene::GetCharacterType(), 1));
         return;
       } else {
         // Still have lives - restart current level with scene replacement
@@ -140,27 +153,15 @@ void GameScene::Update() {
           }
         }
         App.RemoveScene();
-        if (constants::is_level_loaded_) {
-          int curLevel;
-          std::cout << " meow       :" << levelPath << '\n';
-         
-          if (levelPath == "res/maps/map1.json" )
-            curLevel = 1;
-          else if (levelPath == "res/maps/map2.json" )
-            curLevel = 2;
-          else if (levelPath == "res/maps/map3.json" )
-            curLevel = 3;
-          App.AddScene(std::make_unique<GameScene>(
-            CharacterSelectorScene::GetCharacterType(), curLevel));
-        } else {
-          App.AddScene(std::make_unique<GameScene>(
+        App.AddScene(
+          std::make_unique<GameScene>(
             CharacterSelectorScene::GetCharacterType(), currentLevel));
-        }
+
         return;
       }
     }
   }
-  
+
   if (input_command_)
     input_command_->HandleInput();
 
@@ -180,7 +181,13 @@ void GameScene::Update() {
   game_manager_.Update(dt, player_character_);
 
   if (game_manager_.IsLevelComplete() && IsKeyPressed(KEY_SPACE)) {
-    if (game_manager_.CanAdvanceLevel()) {
+    if (is_level_loaded_) {
+      GameInfo::GetInstance().coin = 0;
+      App.RemoveScene();
+      App.AddScene(
+        std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), levelPath));
+    } else if (game_manager_.CanAdvanceLevel()) {
       GameInfo::GetInstance().coin = game_manager_.GetPoints();
 
       // Award for level completion
@@ -189,14 +196,16 @@ void GameScene::Update() {
       int nextLevel = game_manager_.GetCurrentLevel() + 1;
 
       App.RemoveScene();
-      App.AddScene(std::make_unique<GameScene>(
-        CharacterSelectorScene::GetCharacterType(), nextLevel));
+      App.AddScene(
+        std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), nextLevel));
     } else {
       // All levels completed, restart game
       GameInfo::GetInstance().Reset(); // Reset game info
       App.RemoveScene();
-      App.AddScene(std::make_unique<GameScene>(
-        CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
+      App.AddScene(
+        std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
     }
     return;
   }
@@ -322,5 +331,5 @@ SceneType GameScene::Type() {
 
 void GameScene::SetLevelPath(const std::string &path) {
   levelPath        = path;
-  constants::is_level_loaded_ = true;
+  is_level_loaded_ = true;
 }
