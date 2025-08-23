@@ -18,6 +18,16 @@ void PauseScene::Update() {
     App.RemoveScene();
     return;
   }
+
+  double time = GetTime();
+  if (IsKeyPressed(KEY_TAB) && (time - last_input_ >= cooldown_)) {
+    if (selected_idx_ != -1)
+      buttons_[selected_idx_].ToggleHighlight();
+    selected_idx_ = (selected_idx_ + 1) % static_cast<int>(buttons_.size());
+    buttons_[selected_idx_].ToggleHighlight();
+  } else if (IsKeyPressed(KEY_ENTER))
+    buttons_[selected_idx_].Activate();
+
   UpdateButtons();
 }
 
@@ -93,8 +103,14 @@ void PauseScene::CreateButtons() {
 }
 
 void PauseScene::UpdateButtons() {
-  for (size_t i = 0; i < buttons_.size(); ++i)
+  for (size_t i = 0; i < buttons_.size(); ++i) {
+    if (buttons_[i].Hovered()) {
+      if (selected_idx_ != -1)
+        buttons_[selected_idx_].ToggleHighlight();
+      selected_idx_ = -1;
+    }
     buttons_[i].Update();
+  }
 }
 
 void PauseScene::DrawButtons() {

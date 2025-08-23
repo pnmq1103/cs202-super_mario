@@ -15,7 +15,7 @@
 
 MenuScene::MenuScene() {
   menu_items_.resize(4);
-  menu_items_ = {"Play", "Continue", "Load", "Editor", "Exit"};
+  menu_items_ = {"Play", "Load", "Editor", "Exit"};
   // This is important since we don't have copy constructor for Button
   buttons_.reserve(2);
 }
@@ -41,7 +41,7 @@ void MenuScene::Update() {
     } else if (IsKeyDown(KEY_UP)) {
       last_input_   = time;
       selected_idx_ = (selected_idx_ - 1 + sz) % sz;
-    } else if (IsKeyDown(KEY_ENTER)) {
+    } else if (IsKeyPressed(KEY_ENTER)) {
       last_input_ = time;
 
       switch (selected_idx_) {
@@ -49,14 +49,12 @@ void MenuScene::Update() {
           App.AddScene(std::make_unique<CharacterSelectorScene>());
           break;
         case 1:
-          break;
-        case 2:
           App.AddScene(std::make_unique<LoadScene>());
           break;
-        case 3:
+        case 2:
           App.AddScene(std::make_unique<EditorScene>());
           break;
-        case 4:
+        case 3:
           App.Close();
           break;
 
@@ -101,7 +99,7 @@ void MenuScene::DrawOptions() {
     const char *option  = menu_items_[i].c_str();
     Vector2 option_size = MeasureTextEx(GetFontDefault(), option, font_sz, 1);
     float x             = (constants::screenWidth - option_size.x) / 2;
-    float y = (constants::screenHeight - option_size.y) * (i + 13) / 18;
+    float y = (constants::screenHeight - option_size.y) * (i + 12) / 16;
 
     double time   = GetTime();
     float wave    = static_cast<float>((sin(time * 3) + 1) * 0.5); // [0, 1]

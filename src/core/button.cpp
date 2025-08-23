@@ -20,18 +20,14 @@ Button::Button(
 }
 
 void Button::Update() {
-  if (Clicked()) {
-    if (action_ != nullptr)
-      action_();
-    else
-      throw std::invalid_argument("nullptr");
-  }
+  if (Clicked())
+    Activate();
 
   is_hovered_ = Hovered();
 }
 
 void Button::Draw() {
-  if (is_hovered_) {
+  if (is_highlighted_ || is_hovered_) {
     tint_ = WHITE;
 
     Font font         = GetFontDefault();
@@ -43,7 +39,6 @@ void Button::Draw() {
       dst_.x + (dst_.width - text_size.x) / 2,
       dst_.y + dst_.height + text_size.y * 0.75f};
 
-    // Draw background
     // Rectangle
     Vector2 padding = {10, 3};
     Rectangle rec   = {
@@ -68,6 +63,17 @@ void Button::Draw() {
     tint_ = Fade(LIGHTGRAY, 0.9f);
 
   DrawTexturePro(icon_, src_, dst_, {0, 0}, 0, tint_);
+}
+
+void Button::Activate() {
+  if (action_ != nullptr)
+    action_();
+  else
+    throw std::invalid_argument("nullptr");
+}
+
+void Button::ToggleHighlight() {
+  is_highlighted_ = !is_highlighted_;
 }
 
 bool Button::Clicked() {
