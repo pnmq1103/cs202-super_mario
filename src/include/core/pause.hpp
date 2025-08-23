@@ -17,6 +17,10 @@ private:
     (constants::screenWidth - box_width) / 2,
     (constants::screenHeight - box_height) / 2};
 
+  int selected_idx_      = {-1};
+  double last_input_     = {0};
+  const double cooldown_ = {0.2};
+
 private:
   void CreateButtons();
   void UpdateButtons();

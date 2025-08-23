@@ -4,18 +4,19 @@
 #include <string>
 
 class Button {
-public:
+private:
   std::function<void()> action_ = {nullptr};
 
-  std::string label_ = {};
-  Rectangle src_     = {};
-  Rectangle dst_     = {};
-  Texture icon_      = {};
-  Color tint_        = {Fade(LIGHTGRAY, 0.9f)};
-  bool is_hovered_   = {false};
+  std::string label_   = {};
+  Rectangle src_       = {};
+  Rectangle dst_       = {};
+  Texture icon_        = {};
+  Color tint_          = {Fade(LIGHTGRAY, 0.9f)};
+  bool is_hovered_     = {false};
+  bool is_highlighted_ = {false};
 
 public:
-  ~Button();
+  virtual ~Button();
   Button() = default;
   Button(
     std::string label, std::function<void()> action, Rectangle src,
@@ -24,6 +25,8 @@ public:
   virtual void Update();
   virtual void Draw();
 
+  void Activate();
+  void ToggleHighlight();
   bool Clicked();
   bool Hovered();
 };

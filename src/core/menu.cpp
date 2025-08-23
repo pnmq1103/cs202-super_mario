@@ -41,7 +41,7 @@ void MenuScene::Update() {
     } else if (IsKeyDown(KEY_UP)) {
       last_input_   = time;
       selected_idx_ = (selected_idx_ - 1 + sz) % sz;
-    } else if (IsKeyDown(KEY_ENTER)) {
+    } else if (IsKeyPressed(KEY_ENTER)) {
       last_input_ = time;
 
       switch (selected_idx_) {
