@@ -111,12 +111,9 @@ void GameScene::Update() {
       > constants::mapHeight * constants::blockSize) {
       // Only decrease life if the character wasn't already dead
       // This prevents double-counting deaths when killed by enemies
-      if (player_character_->IsDead()) {
-        // Decrement life in GameInfo
 
-        if (!is_level_loaded_) {
-          game_manager_.DecreaseLife();
-        }
+      if (!is_level_loaded_) {
+        game_manager_.DecreaseLife();
       }
 
       int currentLevel = game_manager_.GetCurrentLevel();

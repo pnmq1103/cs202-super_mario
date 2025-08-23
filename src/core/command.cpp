@@ -95,7 +95,7 @@ void Command::HandleInput() {
     MoveCharacter(false);
   }
 
-  if (IsKeyDown(KEY_UP)) {
+  if (IsKeyPressed(KEY_UP)) {
     JumpCharacter();
   }
 

@@ -529,6 +529,13 @@ void CollisionHandler::CheckCollisionProjectile() {
             continue;
           }
 
+          if (
+            object_list_[index]->GetType() != ObjectType::Block
+            && object_list_[index]->GetType() != ObjectType::BrickBlock) {
+            ++it;
+            continue;
+          }
+
           Rectangle rectangle = object_list_[index]->GetRectangle();
           Vector2 speed       = projectile_list_[i]->GetSpeed();
 
@@ -555,6 +562,12 @@ void CollisionHandler::CheckCollisionProjectile() {
             continue;
           }
           if (object_list_[index]->IsDestroyed()) {
+            ++it;
+            continue;
+          }
+          if (
+            object_list_[index]->GetType() != ObjectType::Block
+            && object_list_[index]->GetType() != ObjectType::BrickBlock) {
             ++it;
             continue;
           }
@@ -586,7 +599,8 @@ void CollisionHandler::CheckCollisionProjectile() {
           auto it = grid_[position[0]][j].begin();
           while (it != grid_[position[0]][j].end()) {
             int type = it->first, index = it->second;
-            if (type == 2 && !object_list_[index]->IsDestroyed()) {
+            if (type == 2 && !object_list_[index]->IsDestroyed() &&  (object_list_[index]->GetType() == ObjectType::Block
+            || object_list_[index]->GetType() == ObjectType::BrickBlock)) {
               Rectangle rectangle = object_list_[index]->GetRectangle();
               Vector2 speed       = projectile_list_[i]->GetSpeed();
               if (rect.y + speed.y <= rectangle.y + rectangle.height &&
@@ -600,7 +614,8 @@ void CollisionHandler::CheckCollisionProjectile() {
           it = grid_[position[1]][j].begin();
           while (it != grid_[position[1]][j].end()) {
             int type = it->first, index = it->second;
-            if (type == 2 && !object_list_[index]->IsDestroyed()) {
+            if (type == 2 && !object_list_[index]->IsDestroyed() && (object_list_[index]->GetType() == ObjectType::Block
+            || object_list_[index]->GetType() == ObjectType::BrickBlock)) {
               Rectangle rectangle = object_list_[index]->GetRectangle();
               Vector2 speed       = projectile_list_[i]->GetSpeed();
               if (rect.y + rect.height +speed.y >= rectangle.y && (rect.x + rect.width >=rectangle.x
