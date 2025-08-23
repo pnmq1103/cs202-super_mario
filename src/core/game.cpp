@@ -21,7 +21,7 @@ CollisionHandler GameScene::collision_handler_(
 
 GameScene::GameScene(CharacterType type, int level)
     : game_manager_(), character_type_(type), current_level_(level) {
-  GameInfo::GetInstance().Reset();
+  //GameInfo::GetInstance().Reset();
   is_level_loaded_ = false;
 }
 
@@ -120,10 +120,10 @@ void GameScene::Update() {
       // Check if we still have lives left
       if (is_level_loaded_) {
         GameInfo::GetInstance().coin = 0;
+        const std::string reloadPath = levelPath; // copy before scene removal
         App.RemoveScene();
-        App.AddScene(
-          std::make_unique<GameScene>(
-            CharacterSelectorScene::GetCharacterType(), levelPath));
+        App.AddScene(std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), reloadPath));
         return;
       } else if (GameInfo::GetInstance().life <= 0) {
         // Game over - reset game completely
@@ -180,10 +180,11 @@ void GameScene::Update() {
   if (game_manager_.IsLevelComplete() && IsKeyPressed(KEY_SPACE)) {
     if (is_level_loaded_) {
       GameInfo::GetInstance().coin = 0;
+     std::string reloadPath = levelPath;
       App.RemoveScene();
       App.AddScene(
         std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), levelPath));
+          CharacterSelectorScene::GetCharacterType(), reloadPath));
     } else if (game_manager_.CanAdvanceLevel()) {
       GameInfo::GetInstance().coin = game_manager_.GetPoints();
 
