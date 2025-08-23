@@ -17,7 +17,7 @@ private:
   GameManaging game_manager_;
   static CollisionHandler collision_handler_;
   int current_level_    = 1;
-  std::string levelPath = {"res/maps/map1.json"};
+  std::string levelPath = "res/maps/map1.json";
   bool is_level_loaded_;
 
 public:
