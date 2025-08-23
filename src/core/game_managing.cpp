@@ -46,8 +46,8 @@ GameManaging::GameManaging() {
 
   // Level completion criteria
   levelEndX_ = constants::mapWidth * constants::blockSize
-               - 200.0f; // Character must reach this X
-                         // position to complete level
+               - 64.0f; // Character must reach this X
+                        // position to complete level
 }
 
 GameManaging::~GameManaging() {
@@ -334,7 +334,7 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
 
   // Handle character death
   if (activeCharacter->IsDead() && !isDeathHandled_) {
-    OnPlayerDeath(activeCharacter);
+    OnPlayerDeath(character_);
     isDeathHandled_ = true; // ensure we only handle death once
   }
 }
@@ -485,7 +485,8 @@ void GameManaging::DrawStats() const {
       camera_offset.y + GetScreenHeight() / (2.0f * sceneCamera_->zoom)};
     DrawText("GAME OVER", (int)center.x - 80, (int)center.y, 28, RED);
     DrawText(
-      "Press R to restart", (int)center.x - 100, (int)center.y + 40, 20, WHITE);
+      "Press Space to restart", (int)center.x - 100, (int)center.y + 40, 20,
+      WHITE);
   }
 
   if (levelComplete_) {
@@ -494,20 +495,19 @@ void GameManaging::DrawStats() const {
       camera_offset.y + GetScreenHeight() / (2.0f * sceneCamera_->zoom)};
     if (currentLevel_ >= maxLevels_) {
       DrawText(
-        "CONGRATULATIONS!", (int)center.x - 120, (int)center.y - 20, 28, GOLD);
+        "CONGRATULATIONS!", (int)center.x - 120, (int)center.y - 20, 40, GOLD);
       DrawText(
-        "YOU COMPLETED ALL LEVELS!", (int)center.x - 150, (int)center.y + 20,
-        20, GOLD);
+        "YOU COMPLETED ALL LEVELS!", (int)center.x - 150, (int)center.y + 40,
+        40, GOLD);
       DrawText(
-        "Press R to restart", (int)center.x - 100, (int)center.y + 60, 20,
-        WHITE);
-    } else {
+        "Press Space to restart", (int)center.x - 100, (int)center.y + 80, 40,
+        RED);
       DrawText(
         TextFormat("LEVEL %d COMPLETE!", currentLevel_), (int)center.x - 120,
-        (int)center.y, 28, GREEN);
+        (int)center.y, 40, RED);
       DrawText(
-        "Press SPACE for next level", (int)center.x - 120, (int)center.y + 40,
-        20, WHITE);
+        "Press SPACE for next level", (int)center.x - 120, (int)center.y + 50,
+        40, RED);
     }
   }
 }
@@ -635,7 +635,7 @@ void GameManaging::CreateEnemyFromType(int enemyType, Vector2 position) {
       enemyManager.SpawnEnemy(EnemyType::Koopa, position);
       break;
     case 79: // Bowser (boss enemy for level 3)
-      enemyManager.SpawnEnemy(EnemyType::Bowser, position);
+      enemyManager.SpawnBoss(position, character_);
       break;
     default:
       std::cout << "Unknown enemy type: " << enemyType << std::endl;
@@ -821,13 +821,8 @@ bool GameManaging::CanAdvanceLevel() const {
 // }
 void GameManaging::OnPlayerDeath(Character *character) {
   if (character) {
-    // Decrease life in GameInfo
-    character->Die();
     // Play death sound
     App.Media().PlaySound("life_lost");
-
-    // Mark as handled to prevent multiple deaths in one frame
-    DecreaseLife();
   }
 }
 void GameManaging::SetLives(int lives) {

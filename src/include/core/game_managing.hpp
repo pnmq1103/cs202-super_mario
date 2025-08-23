@@ -56,6 +56,8 @@ private:
   // Flag for handling death
   bool isDeathHandled_ = false;
 
+  //character pointer
+  Character *character_ = nullptr;
 
 public:
   GameManaging();
@@ -130,6 +132,9 @@ public:
   }
   bool IsPaused() const { return isPaused_; }
   bool IsInTransition() const { return false; /* Simple return false for now */ }
+  void SetCharacter(Character *character) {
+    this->character_ = character;
+  }
 
 private:
   // Helper methods

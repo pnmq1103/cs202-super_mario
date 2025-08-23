@@ -28,12 +28,19 @@ private:
 
   bool hover_left = {true};
 
+  std::string levelPath = "res/maps/map1.json";
+
+  bool is_level_loaded_;
+
 private:
   void DisplayPower();
   void StartGame();
 
 public:
-  CharacterSelectorScene() = default;
+  CharacterSelectorScene(std::string levelPath);
+  CharacterSelectorScene() {
+    is_level_loaded_ = false;
+  }
   ~CharacterSelectorScene();
 
   void Init() override;
