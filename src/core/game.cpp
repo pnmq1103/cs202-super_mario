@@ -15,12 +15,20 @@
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
 
+
 CollisionHandler GameScene::collision_handler_(
   constants::mapWidth * 16 * constants::scale,
   constants::mapHeight * 16 * constants::scale);
 
 GameScene::GameScene(CharacterType type, int level)
     : game_manager_(), character_type_(type), current_level_(level) {}
+
+GameScene::GameScene(CharacterType type, std::string level)
+    : GameScene(type) {
+  constants::is_level_loaded_ = true;
+  levelPath = level;
+  
+};
 
 GameScene::~GameScene() {
   EnemyManager::GetInstance().ClearAllEnemies();
@@ -75,8 +83,9 @@ void GameScene::Init() {
         current_level_, GameInfo::GetInstance().coin);
     }
   }
+  game_manager_.SetCharacter(player_character_);
   // if no custom level path is set, load default level based on current_level_
-  if (!is_level_loaded_) {
+  if (!constants::is_level_loaded_) {
     levelPath = "res/maps/map" + std::to_string(current_level_) + ".json";
   }
   game_manager_.LoadLevel(levelPath);
@@ -102,7 +111,7 @@ void GameScene::Update() {
       // This prevents double-counting deaths when killed by enemies
       if (!player_character_->IsDead()) {
         // Decrement life in GameInfo
-        game_manager_.OnPlayerDeath(player_character_);
+             game_manager_.OnPlayerDeath(player_character_);
       }
 
       int currentLevel = game_manager_.GetCurrentLevel();
@@ -131,18 +140,27 @@ void GameScene::Update() {
           }
         }
         App.RemoveScene();
-        App.AddScene(std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), currentLevel));
+        if (constants::is_level_loaded_) {
+          int curLevel;
+          std::cout << " meow       :" << levelPath << '\n';
+         
+          if (levelPath == "res/maps/map1.json" )
+            curLevel = 1;
+          else if (levelPath == "res/maps/map2.json" )
+            curLevel = 2;
+          else if (levelPath == "res/maps/map3.json" )
+            curLevel = 3;
+          App.AddScene(std::make_unique<GameScene>(
+            CharacterSelectorScene::GetCharacterType(), curLevel));
+        } else {
+          App.AddScene(std::make_unique<GameScene>(
+            CharacterSelectorScene::GetCharacterType(), currentLevel));
+        }
         return;
       }
     }
   }
-
-  static bool check = true;
-  if (check) {
-    check = false;
-    EnemyManager::GetInstance().SpawnBoss({500, 1500}, player_character_);
-  }
+  
   if (input_command_)
     input_command_->HandleInput();
 
@@ -304,5 +322,5 @@ SceneType GameScene::Type() {
 
 void GameScene::SetLevelPath(const std::string &path) {
   levelPath        = path;
-  is_level_loaded_ = true;
+  constants::is_level_loaded_ = true;
 }

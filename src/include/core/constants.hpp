@@ -14,4 +14,5 @@ namespace constants {
 
   inline constexpr int mapWidth  = 250; // in blocks
   inline constexpr int mapHeight = 28;
+  inline bool is_level_loaded_=false;
 } // namespace constants

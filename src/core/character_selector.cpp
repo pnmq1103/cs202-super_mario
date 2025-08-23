@@ -11,6 +11,8 @@
 CharacterType CharacterSelectorScene::selected_character_
   = CharacterType::LUIGI;
 
+CharacterSelectorScene::CharacterSelectorScene(std::string level) : levelPath(level) {}
+
 CharacterSelectorScene::~CharacterSelectorScene() {
   UnloadTexture(background_);
   UnloadTexture(mario_);
@@ -89,7 +91,8 @@ void CharacterSelectorScene::StartGame() {
   std::cout << "Starting game with "
             << (selected_character_ == CharacterType::MARIO ? "Mario" : "Luigi")
             << '\n';
-  App.AddScene(std::make_unique<GameScene>(selected_character_));
+  App.AddScene(std::make_unique<GameScene>(selected_character_, levelPath));
+  
 }
 
 CharacterType CharacterSelectorScene::GetCharacterType() {

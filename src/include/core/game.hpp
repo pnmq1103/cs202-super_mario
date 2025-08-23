@@ -6,6 +6,8 @@
 #include "include/core/game_managing.hpp"
 #include "include/core/scene.hpp"
 
+
+
 class GameScene : public Scene {
 private:
   SceneType type_ = {Game};
@@ -18,10 +20,11 @@ private:
   static CollisionHandler collision_handler_;
   int current_level_    = 1;
   std::string levelPath = {"res/maps/map1.json"};
-  bool is_level_loaded_ = false;
+  
 
 public:
   GameScene(CharacterType type, int level = 1);
+  GameScene(CharacterType type, std::string levelPath);
   ~GameScene();
   // Add to GameScene class:
   GameManaging &GetGameManager() {
@@ -39,3 +42,4 @@ public:
 private:
   void UpdateCamera(Character *character);
 };
+

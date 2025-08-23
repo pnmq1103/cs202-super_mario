@@ -82,9 +82,5 @@ SceneType LoadScene::Type() {
 void LoadScene::Pause() {}
 
 void LoadScene::LoadUsingMapPath(const std::string &mapPath) {
-  // default with luigi because game resets to luigi
-  auto game
-    = std::make_unique<GameScene>(CharacterSelectorScene::GetCharacterType());
-  game->SetLevelPath(mapPath);
-  App.AddScene(std::move(game));
+  App.AddScene(std::make_unique<CharacterSelectorScene>(mapPath));
 }
