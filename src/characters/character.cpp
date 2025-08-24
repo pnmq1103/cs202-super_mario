@@ -6,6 +6,8 @@
 #include "include/characters/character.hpp"
 #include "include/characters/luigi.hpp"
 #include "include/characters/mario.hpp"
+#include "include/characters/character_state.hpp"
+#include "include/core/application.hpp"
 
 Character::Character(float Nscale) : scale_(Nscale) {}
 
@@ -62,6 +64,9 @@ void Character::SetState(int state, bool is_evolving) {
         throw std::runtime_error("invalid state");
         break;
     }
+  }
+  if (is_evolving) {
+    App.Media().PlaySound("powerup");
   }
   if (position.x > INT_MIN && position.y > INT_MIN) {
     Rectangle rect2 = pState_->GetRectangle();

@@ -44,6 +44,9 @@ GameManaging::GameManaging() {
   // Collision system
   collisionHandler_ = nullptr;
 
+  isDeathHandled_      = false;
+  lifeLostSoundPlayed_ = false; 
+
   // Level completion criteria
   levelEndX_ = constants::mapWidth * constants::blockSize
                - 75.0f; // Character must reach this X
@@ -300,6 +303,7 @@ void GameManaging::ResetGame() {
   currentLevel_                 = 1;
   spawnPoint_                   = {100.0f, 500.0f};
   isDeathHandled_               = false;
+  lifeLostSoundPlayed_          = false;
   UnloadLevel();
 }
 
@@ -307,35 +311,25 @@ void GameManaging::Update(float deltaTime, Character *activeCharacter) {
   if (gameOver_ || levelComplete_)
     return;
 
-  // Update time
-  UpdateTime();
+  
 
-  // ObjectManager::GetInstance().SetFrameCount();
-  // ObjectManager::GetInstance().Update();
+  UpdateTime(); // may trigger timeout death (centralized sound handled inside)
 
   Enemy::SetFrameCount();
   EnemyManager &enemyManager = EnemyManager::GetInstance();
   enemyManager.UpdateAll(deltaTime);
-
-  // Update enemy kill count for level completion
-  int currentAliveEnemies = (int)enemyManager.GetEnemies().size();
-
-  // Clear dead enemies (killed by boundaries or other means)
   enemyManager.ClearDeadEnemies();
 
   CheckLevelCompletion(activeCharacter);
 
-  // Update particles
   UpdateParticles(deltaTime);
   CleanupDeadParticles();
 
-  // Update background music
   UpdateBackgroundMusic();
 
-  // Handle character death
-  if (activeCharacter->IsDead() && !isDeathHandled_) {
-    OnPlayerDeath(character_);
-    isDeathHandled_ = true; // ensure we only handle death once
+  // Enemy-triggered death (stomped from side, projectile, etc.)
+  if (activeCharacter && activeCharacter->IsDead() && !isDeathHandled_) {
+    OnPlayerDeath(activeCharacter, DeathCause::Enemy);
   }
 }
 
@@ -541,9 +535,7 @@ void GameManaging::UpdateTime() {
   }
 
   if (remainingTime <= 0) {
-    App.Media().PlaySound("life_lost");
-    DecreaseLife();
-    gameTime_ = 0;
+    OnPlayerDeath(nullptr, DeathCause::Timeout);
   }
 }
 
@@ -788,11 +780,28 @@ bool GameManaging::CanAdvanceLevel() const {
 //     gameOver_       = false;
 //   }
 // }
-void GameManaging::OnPlayerDeath(Character *character) {
-  if (character) {
-    // Play death sound
+void GameManaging::OnPlayerDeath(Character *character, DeathCause cause) {
+  if (isDeathHandled_)
+    return; // Already processed this death frame
+
+  isDeathHandled_ = true;
+
+  // Stop background music once (prevents overlap)
+  if (!lifeLostSoundPlayed_) {
+    App.Media().StopMusic();
     App.Media().PlaySound("life_lost");
+    lifeLostSoundPlayed_ = true;
   }
+
+  // Apply actual life decrement only once
+  DecreaseLife();
+
+  // If character pointer provided and still not marked dead (fall / timeout)
+  if (character && !character->IsDead()) {
+    character->Die();
+  }
+
+  // TODO: add respawn / game over transition logic here if needed
 }
 void GameManaging::SetLives(int lives) {
   lives_ = lives;

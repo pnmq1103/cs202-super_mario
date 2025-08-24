@@ -11,7 +11,7 @@
 #include "include/collision/collision_handler.hpp"
 
 class Character;
-
+enum class DeathCause { Enemy, Fall, Timeout };
 struct Particle {
   Vector2 position;
   Vector2 velocity;
@@ -55,6 +55,7 @@ private:
 
   // Flag for handling death
   bool isDeathHandled_ = false;
+  bool lifeLostSoundPlayed_ = false;
 
   //character pointer
   Character *character_ = nullptr;
@@ -85,8 +86,8 @@ public:
   void Update(float deltaTime, Character* activeCharacter);
   void UpdateCollisionSystem();
   void CheckLevelCompletion(Character* activeCharacter);
-  void RestartCurrentLevel(Character *character);
-  void OnPlayerDeath(Character *character);
+  //void RestartCurrentLevel(Character *character);
+  void OnPlayerDeath(Character *character, DeathCause cause);
 
   // Essential rendering
   void DrawLevel();
