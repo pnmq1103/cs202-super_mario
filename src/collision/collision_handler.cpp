@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include "include/collision/collision_handler.hpp"
+#include "include/core/constants.hpp"
 #include "include/managers/enemy_manager.hpp"
 
 CollisionHandler::CollisionHandler(float width, float height)
@@ -777,6 +778,13 @@ void CollisionHandler::CheckCollisionMushroom() {
     if (
       object_list_[j] && !object_list_[j]->IsDestroyed()
       && object_list_[j]->GetType() == ObjectType::SuperMushroom) {
+
+      if (
+        object_list_[j]->GetRectangle().y
+        > constants::mapHeight * constants::blockSize) {
+        object_list_[j]->OnHit();
+        continue;
+      }
       std::vector<int> position
         = SearchLocation(object_list_[j]->GetRectangle());
       for (int i = position[2]; i <= position[3]; ++i) {

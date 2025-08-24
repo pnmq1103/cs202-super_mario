@@ -21,7 +21,6 @@ void SuperMushroom::OnHit() {
 void SuperMushroom::Update() {
   GameObject::Update();
   position.x += velocity.x;
-  // std::cout << "y: " << position.y << '\n';
 }
 
 void SuperMushroom::Draw() {
