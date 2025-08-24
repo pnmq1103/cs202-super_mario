@@ -50,7 +50,7 @@ void CharacterSelectorScene::Update() {
       selected_character_ = CharacterType::MARIO;
     } else if (IsKeyPressed(KEY_ENTER)) {
       last_input_ = time;
-      std::cout << "Start game\n";
+      std::cout << "START GAME\n";
       StartGame();
     }
   }
@@ -91,8 +91,8 @@ SceneType CharacterSelectorScene::Type() {
 }
 
 void CharacterSelectorScene::StartGame() {
-  std::cout << "Starting game with "
-            << (selected_character_ == CharacterType::MARIO ? "Mario" : "Luigi")
+  std::cout << "START GAME WITH "
+            << (selected_character_ == CharacterType::MARIO ? "MARIO" : "LUIGI")
             << '\n';
   if (is_level_loaded_)
     App.AddScene(std::make_unique<GameScene>(selected_character_, levelPath));

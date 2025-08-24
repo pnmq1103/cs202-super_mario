@@ -52,10 +52,16 @@ void SettingScene::DrawButtons() {
 }
 
 void SettingScene::CreateSliders() {
+  float x = 64;
+  float y = 64 * 2;
   sliders_.emplace_back(
-    "Music", []() {}, Rectangle{0, 0, 16, 16},
-    Rectangle{50, 50, 16 * 4, 16 * 4}, "res/ui/buttons/volume_on.png",
-    App.Config().GetMusicVolume());
+    "Music", []() {}, Rectangle{0, 0, 16, 16}, Rectangle{x, y, 16 * 4, 16 * 4},
+    "res/ui/buttons/volume_on.png", App.Config().GetMusicVolume());
+
+  x = constants::screenWidth - (64 + 16 + 64 * 4 + 64);
+  sliders_.emplace_back(
+    "Sound", []() {}, Rectangle{0, 0, 16, 16}, Rectangle{x, y, 16 * 4, 16 * 4},
+    "res/ui/buttons/volume_on.png", App.Config().GetSoundVolume());
 }
 
 void SettingScene::UpdateSliders() {
@@ -65,6 +71,10 @@ void SettingScene::UpdateSliders() {
       float volume = sliders_[i].GetPercentage();
       App.Config().SetMusicVolume(volume);
       App.Media().SetMusicVolume(volume);
+    } else if (i == 1) {
+      float sound = sliders_[i].GetPercentage();
+      App.Config().SetSoundVolume(sound);
+      App.Media().SetSoundVolume(sound);
     }
   }
 }

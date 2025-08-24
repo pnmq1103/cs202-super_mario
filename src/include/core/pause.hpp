@@ -27,7 +27,7 @@ private:
   void DrawButtons();
 
 public:
-  ~PauseScene() = default;
+  ~PauseScene();
   PauseScene();
 
   void Init() override;

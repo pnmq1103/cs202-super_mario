@@ -9,8 +9,15 @@ PauseScene::PauseScene() {
   buttons_.reserve(5);
 }
 
+PauseScene::~PauseScene() {
+  if (App.PreviousScene() == SceneType::Game)
+    App.ToggleCustomCursor();
+}
+
 void PauseScene::Init() {
   CreateButtons();
+  if (App.PreviousScene() == SceneType::Game)
+    App.ToggleCustomCursor();
 }
 
 void PauseScene::Update() {

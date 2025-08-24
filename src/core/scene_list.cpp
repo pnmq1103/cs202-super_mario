@@ -29,6 +29,16 @@ Scene &SceneList::Top() {
   return *scenes_.back();
 }
 
+Scene &SceneList::Second() {
+  if (scenes_.empty())
+    throw std::runtime_error("access empty list");
+
+  if (scenes_.size() < 2)
+    throw std::runtime_error("invalid index");
+
+  return *scenes_[scenes_.size() - 2];
+}
+
 size_t SceneList::Size() {
   return scenes_.size();
 }

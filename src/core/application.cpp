@@ -114,11 +114,14 @@ void Application::RemoveScene(size_t count) {
 
   App.Media().StopMusic();
   for (size_t i = 0; i < count; ++i) {
-    App.previous_scene_ = App.scene_manager_.Top().Type();
     App.scene_manager_.Pop();
     if (App.scene_manager_.Size() == App.Media().MusicStateSize())
       App.Media().LoadMusicState();
   }
+  if (App.scene_manager_.Size() >= 2)
+    App.previous_scene_ = App.scene_manager_.Second().Type();
+  else
+    App.previous_scene_ = SceneType::Exit;
   App.scene_manager_.Top().SetVisible(true);
   App.scene_manager_.Top().Resume();
 }
@@ -130,11 +133,15 @@ void Application::RemoveSceneUntil(SceneType type) {
     if (App.scene_manager_.Top().Type() == type)
       break;
 
-    App.previous_scene_ = App.scene_manager_.Top().Type();
     App.scene_manager_.Pop();
     if (App.scene_manager_.Size() == App.Media().MusicStateSize())
       App.Media().LoadMusicState();
   }
+
+  if (App.scene_manager_.Size() >= 2)
+    App.previous_scene_ = App.scene_manager_.Second().Type();
+  else
+    App.previous_scene_ = SceneType::Exit;
 
   App.scene_manager_.Top().SetVisible(true);
   App.scene_manager_.Top().Resume();

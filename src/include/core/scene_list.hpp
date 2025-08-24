@@ -13,6 +13,7 @@ public:
   void Push(std::unique_ptr<Scene> scene);
   void Pop();
   Scene &Top();
+  Scene &Second();
   size_t Size();
 
   void Init();
