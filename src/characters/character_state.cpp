@@ -14,17 +14,18 @@ CharacterState::CharacterState(
   bool Nto_left)
     : runTime(NrunTime), speed(Nspeed), jumpTime(NjumpTime),
       jumpHeight(NjumpHeight), scale(Nscale) {
-  time_x         = -1;
-  time           = 0;
-  to_left        = Nto_left;
-  is_jump        = false;
-  is_fall        = false;
-  is_die         = false;
-  disabled       = false;
-  stop_direction = 0;
-  time_star      = 0;
-  x_stop         = INT_MIN;
-  velocity_x     = 0;
+  time_x           = -1;
+  time             = 0;
+  to_left          = Nto_left;
+  is_jump          = false;
+  is_fall          = false;
+  is_die           = false;
+  disabled         = false;
+  stop_direction   = 0;
+  time_star        = 0;
+  x_stop           = INT_MIN;
+  velocity_x       = 0;
+  jump_after_death = false;
 }
 CharacterState::~CharacterState() {}
 
@@ -103,9 +104,11 @@ void CharacterState::Draw() {
     DrawTexturePro(*texture, frame, MakeDestRect(frame), {0, 0}, 0.f, WHITE);
 }
 void CharacterState::Jump() {
-  if (disabled)
+  if (disabled || jump_after_death)
     return;
   if (velocity_y == 0 || is_die) {
+    if (is_die)
+      jump_after_death = true;
     y_before_jump = position.y;
     velocity_y    = -4.0 * jumpHeight / jumpTime;
     is_jump       = true;
@@ -114,7 +117,7 @@ void CharacterState::Jump() {
 }
 
 void CharacterState::Run(bool to_left) {
-  if (disabled)
+  if (disabled || is_die)
     return;
   if (time_x == -1) {
     time_x        = time;

@@ -12,7 +12,7 @@ class CharacterState {
 protected:
   float y_before_jump, velocity_y, velocity_x, x_stop;
   int time_x, time, stop_direction, time_star;
-  bool to_left, is_jump, is_fall, is_die, disabled;
+  bool to_left, is_jump, is_fall, is_die, disabled, jump_after_death;
 
   Character *context;
 
