@@ -493,18 +493,23 @@ void GameManaging::DrawStats() const {
     Vector2 center = {
       camera_offset.x + GetScreenWidth() / (2.0f * sceneCamera_->zoom),
       camera_offset.y + GetScreenHeight() / (2.0f * sceneCamera_->zoom)};
-    if (currentLevel_ >= maxLevels_) {
+    if (currentLevel_ == maxLevels_) {
       DrawText(
-        "CONGRATULATIONS!", (int)center.x - 250, (int)center.y - 80, 60, GOLD);
+        "CONGRATULATIONS!", (int)center.x - 275, (int)center.y - 80, 60,
+        RAYWHITE);
       DrawText(
         "YOU COMPLETED ALL LEVELS!", (int)center.x - 200, (int)center.y - 20,
-        30, GOLD);
+        30, RAYWHITE);
+      DrawText(
+        "Press Space to restart", (int)center.x - 175, (int)center.y + 70, 30,
+        RED);
+    } else {
       DrawText(
         TextFormat("LEVEL %d COMPLETE!", currentLevel_), (int)center.x - 150,
         (int)center.y + 40, 30, RED);
       DrawText(
-          "Press Space to restart", (int)center.x - 175, (int)center.y + 70, 30,
-          RED);
+        "Press Space to continue", (int)center.x - 175, (int)center.y + 70, 30,
+        RED);
     }
   }
 }
