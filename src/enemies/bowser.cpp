@@ -12,7 +12,7 @@ Bowser::Bowser(
   health = max_health = 5;
   shoot_timer_        = 200;
   hit_timer_          = 0;
-  position.y         -= scale * 41;
+  position.y         -= scale * 41 + 10;
   frame               = frame_list[0];
   velocity.x          = 1;
   throw_duration_ = throw_timer_ = 30;

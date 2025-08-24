@@ -348,7 +348,7 @@ void GameManaging::CheckLevelCompletion(Character *activeCharacter) {
   // Check if character reached the end of the level
   bool reachedEnd = charRect.x >= levelEndX_;
 
-  if (reachedEnd) {
+  if (reachedEnd && EnemyManager::GetInstance().IsBossClear()) {
     levelComplete_    = true;
     int timeUsed      = (int)gameTime_;
     int timeRemaining = countdownSeconds_ - timeUsed;

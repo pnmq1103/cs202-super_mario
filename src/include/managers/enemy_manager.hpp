@@ -11,6 +11,7 @@ class ProjectilePool;   // Forward declaration
 class GameManaging;     // Forward declaration
 class EnemyManager {
 private:
+  bool is_boss_clear_;
   std::vector<Enemy *> enemies;
   std::unordered_map<Enemy *, MovementStrategy *> pausedStrategies_;
   // Character references for simple player detection (Bowser fireball shooting
@@ -103,6 +104,7 @@ public:
   }
 
   void RemoveEnemy(int index);
+  bool IsBossClear();
 
 private:
   // Helper methods

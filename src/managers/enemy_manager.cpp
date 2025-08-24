@@ -18,7 +18,8 @@ EnemyManager::EnemyManager()
     : marioPosition_(nullptr), luigiPosition_(nullptr),
       activeCharacterPosition_(nullptr), collisionHandler_(nullptr),
       difficultyMultiplier_(1.0f), isPaused_(false),
-      globalSpeedMultiplier_(1.0f), currentBoss_(nullptr) {}
+      globalSpeedMultiplier_(1.0f), currentBoss_(nullptr),
+      is_boss_clear_(false) {}
 
 // Singleton implementation
 EnemyManager &EnemyManager::GetInstance() {
@@ -173,12 +174,14 @@ void EnemyManager::UpdateAll(float deltaTime) {
   //     }
   //   }
   // }
-
+  is_boss_clear_ = true;
   for (int i = 0; i < enemies.size(); ++i) {
     if (enemies[i]) {
-      if (enemies[i]->IsAlive())
+      if (enemies[i]->IsAlive()) {
         enemies[i]->Update();
-      else {
+        if (enemies[i]->GetType() == EnemyType::Bowser)
+          is_boss_clear_ = false;
+      } else {
         collisionHandler_->RemoveEnemy(i);
         if (enemies[i]->IsRunningDeathAnimation()) {
           enemies[i]->Update();
@@ -189,6 +192,10 @@ void EnemyManager::UpdateAll(float deltaTime) {
       }
     }
   }
+}
+
+bool EnemyManager::IsBossClear() {
+  return is_boss_clear_;
 }
 
 void EnemyManager::SetCharacterReferences(
