@@ -46,7 +46,7 @@ GameManaging::GameManaging() {
 
   // Level completion criteria
   levelEndX_ = constants::mapWidth * constants::blockSize
-               - 64.0f; // Character must reach this X
+               - 75.0f; // Character must reach this X
                         // position to complete level
 }
 
@@ -495,19 +495,16 @@ void GameManaging::DrawStats() const {
       camera_offset.y + GetScreenHeight() / (2.0f * sceneCamera_->zoom)};
     if (currentLevel_ >= maxLevels_) {
       DrawText(
-        "CONGRATULATIONS!", (int)center.x - 120, (int)center.y - 20, 40, GOLD);
+        "CONGRATULATIONS!", (int)center.x - 250, (int)center.y - 80, 60, GOLD);
       DrawText(
-        "YOU COMPLETED ALL LEVELS!", (int)center.x - 150, (int)center.y + 40,
-        40, GOLD);
+        "YOU COMPLETED ALL LEVELS!", (int)center.x - 200, (int)center.y - 20,
+        30, GOLD);
       DrawText(
-        "Press Space to restart", (int)center.x - 100, (int)center.y + 80, 40,
-        RED);
+        TextFormat("LEVEL %d COMPLETE!", currentLevel_), (int)center.x - 150,
+        (int)center.y + 40, 30, RED);
       DrawText(
-        TextFormat("LEVEL %d COMPLETE!", currentLevel_), (int)center.x - 120,
-        (int)center.y, 40, RED);
-      DrawText(
-        "Press SPACE for next level", (int)center.x - 120, (int)center.y + 50,
-        40, RED);
+          "Press Space to restart", (int)center.x - 175, (int)center.y + 70, 30,
+          RED);
     }
   }
 }

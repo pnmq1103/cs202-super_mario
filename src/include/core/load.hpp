@@ -8,10 +8,12 @@ class LoadScene : public Scene {
 private:
   SceneType type_           = {Load};
   Rectangle buttonRects_[4] = {
-    {412, 200, 200, 100}, // Button 1
-    {412, 400, 200, 100}, // Button 2
-    {412, 600, 200, 100}, // Button 3
-    {412, 800, 200, 100}};
+    {400, 150, 250, 141}, // Button 1
+    {400, 350, 250, 141}, // Button 2
+    {400, 550, 250, 141}, // Button 3
+    {400, 750, 250, 141}};
+  std::vector<Button> buttons_;
+
   void LoadUsingMapPath(const std::string &mapPath);
 
 public:
