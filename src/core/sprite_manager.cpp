@@ -39,8 +39,12 @@ void SpriteManager::Init() {
     = LoadTexture("res/sprites/tilesets/tileset_underground.png");
   textures_["tileset_minimal"]
     = LoadTexture("res/sprites/tilesets/tileset_minimal.png");
-  textures_["backgrounds"]
+  textures_["backgrounds_ground1"]
     = LoadTexture("res/sprites/backgrounds/background_ground.png");
+  textures_["backgrounds_ground2"]
+    = LoadTexture("res/sprites/backgrounds/background_ground_2.png");
+  textures_["backgrounds_underground"]
+    = LoadTexture("res/sprites/backgrounds/background_underground.png");
 }
 
 const Texture &SpriteManager::GetMario(char type) const {
@@ -105,6 +109,16 @@ const Texture &SpriteManager::GetElectricShot() const {
   return textures_.at("electric_shot");
 }
 
-const Texture &SpriteManager::GetBackground() const {
-  return textures_.at("backgrounds");
+const Texture &SpriteManager::GetBackground(int type) const {
+  switch (type) {
+    case 1:
+       return textures_.at("backgrounds_ground1");
+      break;
+    case 2:
+      return textures_.at("backgrounds_ground2");
+      break;
+    case 3:
+      return textures_.at("backgrounds_underground");
+      break;
+  }
 }

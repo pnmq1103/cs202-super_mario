@@ -513,20 +513,11 @@ void GameManaging::DrawStats() const {
 }
 
 void GameManaging::DrawBackground() {
-  // Draw background based on level temporary
-  Color bgColor = SKYBLUE;
-  switch (currentLevel_) {
-    case 1:
-      bgColor = SKYBLUE;
-      break;
-    case 2:
-      bgColor = {135, 206, 235, 255};
-      break;
-    case 3:
-      bgColor = {25, 25, 112, 255};
-      break;
+  float x = 0;
+  for (int i = 0; i < 10; i++) {
+    DrawTexture(App.Resource().GetBackground(currentLevel_), x, 0, RAYWHITE);
+    x += 2048.0f;
   }
-  ClearBackground(bgColor);
 }
 
 void GameManaging::UpdateTime() {

@@ -27,6 +27,11 @@ GameScene::GameScene(CharacterType type, int level)
 
 GameScene::GameScene(CharacterType type, std::string level)
     : game_manager_(), character_type_(type), current_level_(1) {
+  if (level == "res/maps/map2.json")
+    current_level_ = 2;
+  else if (level == "res/maps/map3.json")
+    current_level_ = 3;
+  GameInfo::GetInstance().Reset();
   is_level_loaded_ = true;
   levelPath        = level;
 };

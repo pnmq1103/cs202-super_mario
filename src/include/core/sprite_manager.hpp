@@ -18,5 +18,5 @@ public:
   const Texture &GetTileset(char type) const;
   const Texture &GetObject() const;
   const Texture &GetElectricShot() const;
-  const Texture &GetBackground() const;
+  const Texture &GetBackground(int type) const;
 };
