@@ -89,8 +89,10 @@ void Media::SetMusicVolume(float volume) {
 }
 
 void Media::SaveMusicState() {
-  if (musics_.find(cur_music_) == musics_.end())
+  if (musics_.find(cur_music_) == musics_.end()) {
+    music_state_.emplace("", 0);
     return;
+  }
 
   if (IsMusicStreamPlaying(musics_.at(cur_music_)))
     music_state_.emplace(
@@ -101,6 +103,8 @@ void Media::LoadMusicState() {
   if (!music_state_.empty()) {
     auto [name, time] = music_state_.top();
     music_state_.pop();
+    if (name == "")
+      return;
     SeekMusicStream(musics_.at(name), time);
     PlayMusic(name);
   }

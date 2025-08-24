@@ -1,3 +1,4 @@
+#include <iostream>
 #include <raylib.h>
 #include <stdexcept>
 
@@ -115,8 +116,7 @@ void Application::RemoveScene(size_t count) {
   App.Media().StopMusic();
   for (size_t i = 0; i < count; ++i) {
     App.scene_manager_.Pop();
-    if (App.scene_manager_.Size() == App.Media().MusicStateSize())
-      App.Media().LoadMusicState();
+    App.Media().LoadMusicState();
   }
   if (App.scene_manager_.Size() >= 2)
     App.previous_scene_ = App.scene_manager_.Second().Type();
