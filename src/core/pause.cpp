@@ -32,7 +32,7 @@ void PauseScene::Update() {
       buttons_[selected_idx_].ToggleHighlight();
     selected_idx_ = (selected_idx_ + 1) % static_cast<int>(buttons_.size());
     buttons_[selected_idx_].ToggleHighlight();
-  } else if (IsKeyPressed(KEY_ENTER))
+  } else if (IsKeyPressed(KEY_ENTER) && selected_idx_ != -1)
     buttons_[selected_idx_].Activate();
 
   UpdateButtons();
