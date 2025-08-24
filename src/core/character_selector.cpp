@@ -7,6 +7,7 @@
 #include "include/core/character_selector.hpp"
 #include "include/core/constants.hpp"
 #include "include/core/game.hpp"
+#include "include/core/game_info.hpp"
 
 CharacterType CharacterSelectorScene::selected_character_
   = CharacterType::LUIGI;
@@ -94,6 +95,7 @@ void CharacterSelectorScene::StartGame() {
   std::cout << "START GAME WITH "
             << (selected_character_ == CharacterType::MARIO ? "MARIO" : "LUIGI")
             << '\n';
+  GameInfo::GetInstance().Reset();
   if (is_level_loaded_)
     App.AddScene(std::make_unique<GameScene>(selected_character_, levelPath));
   else

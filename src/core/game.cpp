@@ -21,13 +21,12 @@ CollisionHandler GameScene::collision_handler_(
 
 GameScene::GameScene(CharacterType type, int level)
     : game_manager_(), character_type_(type), current_level_(level) {
-  // GameInfo::GetInstance().Reset();
+
   is_level_loaded_ = false;
 }
 
 GameScene::GameScene(CharacterType type, std::string level)
     : game_manager_(), character_type_(type), current_level_(1) {
-  GameInfo::GetInstance().Reset();
   is_level_loaded_ = true;
   levelPath        = level;
 };
@@ -50,7 +49,6 @@ GameScene::~GameScene() {
 
 void GameScene::Init() {
   App.ToggleCustomCursor();
-  App.Media().PlayMusic("ground_theme");
 
   camera_.target   = {0, 0};
   camera_.offset   = {constants::screenWidth / 2, constants::screenHeight / 2};
@@ -125,8 +123,9 @@ void GameScene::Update() {
         GameInfo::GetInstance().coin = 0;
         const std::string reloadPath = levelPath; // copy before scene removal
         App.RemoveScene();
-        App.AddScene(std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), reloadPath));
+        App.AddScene(
+          std::make_unique<GameScene>(
+            CharacterSelectorScene::GetCharacterType(), reloadPath));
         return;
       } else if (GameInfo::GetInstance().life <= 0) {
         // Game over - reset game completely
@@ -134,8 +133,9 @@ void GameScene::Update() {
         GameInfo::GetInstance().Reset();
         // Load first level with scene replacement
         App.RemoveScene();
-        App.AddScene(std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), 1));
+        App.AddScene(
+          std::make_unique<GameScene>(
+            CharacterSelectorScene::GetCharacterType(), 1));
         return;
       } else {
         // Still have lives - restart current level with scene replacement
@@ -152,8 +152,9 @@ void GameScene::Update() {
           }
         }
         App.RemoveScene();
-        App.AddScene(std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), currentLevel));
+        App.AddScene(
+          std::make_unique<GameScene>(
+            CharacterSelectorScene::GetCharacterType(), currentLevel));
 
         return;
       }
@@ -183,8 +184,9 @@ void GameScene::Update() {
       GameInfo::GetInstance().coin = 0;
       std::string reloadPath       = levelPath;
       App.RemoveScene();
-      App.AddScene(std::make_unique<GameScene>(
-        CharacterSelectorScene::GetCharacterType(), reloadPath));
+      App.AddScene(
+        std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), reloadPath));
     } else if (game_manager_.CanAdvanceLevel()) {
       GameInfo::GetInstance().coin = game_manager_.GetPoints();
 
@@ -194,14 +196,16 @@ void GameScene::Update() {
       int nextLevel = game_manager_.GetCurrentLevel() + 1;
 
       App.RemoveScene();
-      App.AddScene(std::make_unique<GameScene>(
-        CharacterSelectorScene::GetCharacterType(), nextLevel));
+      App.AddScene(
+        std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), nextLevel));
     } else {
       // All levels completed, restart game
       GameInfo::GetInstance().Reset(); // Reset game info
       App.RemoveScene();
-      App.AddScene(std::make_unique<GameScene>(
-        CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
+      App.AddScene(
+        std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
     }
     return;
   }

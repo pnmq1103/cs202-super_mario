@@ -705,30 +705,6 @@ void GameManaging::PlaySoundEffect(const std::string &soundName) {
 void GameManaging::UpdateBackgroundMusic() {
   App.Media().UpdateMusic();
 
-  static int lastLevel = 0;
-  if (currentLevel_ != lastLevel) {
-    lastLevel = currentLevel_;
-
-    // Select different music based on level
-    switch (currentLevel_) {
-      case 1:
-        App.Media().PlayMusic("ground_theme");
-        break;
-      case 2:
-        App.Media().PlayMusic("underground_theme");
-        break;
-      case 3:
-        App.Media().PlayMusic("castle_theme");
-        break;
-      default:
-        App.Media().PlayMusic("ground_theme");
-        break;
-    }
-
-    std::cout << "Changed background music for level " << currentLevel_
-              << std::endl;
-  }
-
   // Handle special game state music
   static bool gameOverSoundPlayed      = false;
   static bool levelCompleteSoundPlayed = false;
@@ -830,4 +806,19 @@ void GameManaging::SetLives(int lives) {
 }
 void GameManaging::SetCurrentLevel(int level) {
   currentLevel_ = level;
+  // Select different music based on level
+  switch (currentLevel_) {
+    case 1:
+      App.Media().PlayMusic("ground_theme");
+      break;
+    case 2:
+      App.Media().PlayMusic("underground_theme");
+      break;
+    case 3:
+      App.Media().PlayMusic("castle_theme");
+      break;
+    default:
+      App.Media().PlayMusic("ground_theme");
+      break;
+  }
 }
