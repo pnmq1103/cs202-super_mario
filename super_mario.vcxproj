@@ -136,6 +136,7 @@
     <ClCompile Include="src\core\credit.cpp" />
     <ClCompile Include="src\core\enemy_selector.cpp" />
     <ClCompile Include="src\core\game_info.cpp" />
+    <ClCompile Include="src\core\game_over.cpp" />
     <ClCompile Include="src\core\map.cpp" />
     <ClCompile Include="src\core\pause.cpp" />
     <ClCompile Include="src\core\scene.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="src\include\core\credit.hpp" />
     <ClInclude Include="src\include\core\enemy_selector.hpp" />
     <ClInclude Include="src\include\core\game_info.hpp" />
+    <ClInclude Include="src\include\core\game_over.hpp" />
     <ClInclude Include="src\include\core\map.hpp" />
     <ClInclude Include="src\include\core\pause.hpp" />
     <ClInclude Include="src\include\core\sprite_manager.hpp" />

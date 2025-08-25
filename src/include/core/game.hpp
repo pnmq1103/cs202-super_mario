@@ -5,6 +5,7 @@
 #include "include/core/command.hpp"
 #include "include/core/game_managing.hpp"
 #include "include/core/scene.hpp"
+#include "include/core/game_over.hpp"
 
 class GameScene : public Scene {
 private:

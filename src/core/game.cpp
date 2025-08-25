@@ -137,8 +137,8 @@ void GameScene::Update() {
         // Load first level with scene replacement
         App.RemoveScene();
         App.AddScene(
-          std::make_unique<GameScene>(
-            CharacterSelectorScene::GetCharacterType(), 1));
+          std::make_unique<GameOverScene>(
+            GameOverScene()));
         return;
       } else {
         // Still have lives - restart current level with scene replacement
