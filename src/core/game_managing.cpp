@@ -355,7 +355,8 @@ void GameManaging::CheckLevelCompletion(Character *activeCharacter) {
 
     std::cout << "Level " << currentLevel_ << " completed by reaching the end!"
               << std::endl;
-    App.Media().PlaySound("flagpole"); // Flagpole completion sound
+    if (currentLevel_ < maxLevels_)
+      App.Media().PlaySound("flagpole"); // Flagpole completion sound
   }
 }
 
@@ -487,17 +488,7 @@ void GameManaging::DrawStats() const {
     Vector2 center = {
       camera_offset.x + GetScreenWidth() / (2.0f * sceneCamera_->zoom),
       camera_offset.y + GetScreenHeight() / (2.0f * sceneCamera_->zoom)};
-    if (currentLevel_ == maxLevels_) {
-      DrawText(
-        "CONGRATULATIONS!", (int)center.x - 275, (int)center.y - 80, 60,
-        RAYWHITE);
-      DrawText(
-        "YOU COMPLETED ALL LEVELS!", (int)center.x - 200, (int)center.y - 20,
-        30, RAYWHITE);
-      DrawText(
-        "Press Space to restart", (int)center.x - 175, (int)center.y + 70, 30,
-        RED);
-    } else {
+    if (currentLevel_ < maxLevels_) {
       DrawText(
         TextFormat("LEVEL %d COMPLETE!", currentLevel_), (int)center.x - 150,
         (int)center.y + 40, 30, RED);

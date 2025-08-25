@@ -14,6 +14,7 @@
 #include "include/core/pause.hpp"
 #include "include/managers/enemy_manager.hpp"
 #include "include/objects/object_manager.hpp"
+#include "include/core/game_completed.hpp"
 
 CollisionHandler GameScene::collision_handler_(
   constants::mapWidth * 16 * constants::scale,
@@ -118,12 +119,11 @@ void GameScene::Update() {
       // Only decrease life if the character wasn't already dead
       // This prevents double-counting deaths when killed by enemies
       game_manager_.OnPlayerDeath(player_character_, DeathCause::Fall);
-      
-
       int currentLevel = game_manager_.GetCurrentLevel();
       // Check if we still have lives left
       if (is_level_loaded_) {
         GameInfo::GetInstance().coin = 0;
+        game_manager_.ResetGame();
         const std::string reloadPath = levelPath; // copy before scene removal
         App.RemoveScene();
         App.AddScene(
@@ -182,35 +182,38 @@ void GameScene::Update() {
   float dt = GetFrameTime();
   game_manager_.Update(dt, player_character_);
 
-  if (game_manager_.IsLevelComplete() && IsKeyPressed(KEY_SPACE)) {
-    if (is_level_loaded_) {
-      GameInfo::GetInstance().coin = 0;
-      std::string reloadPath       = levelPath;
+  if (game_manager_.IsLevelComplete()) {
+    if (current_level_ == game_manager_.GetMaxLevels()) {
       App.RemoveScene();
-      App.AddScene(
-        std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), reloadPath));
-    } else if (game_manager_.CanAdvanceLevel()) {
-      GameInfo::GetInstance().coin = game_manager_.GetPoints();
-
-      // Award for level completion
-      GameInfo::GetInstance().life++;
-
-      int nextLevel = game_manager_.GetCurrentLevel() + 1;
-
-      App.RemoveScene();
-      App.AddScene(
-        std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), nextLevel));
-    } else {
-      // All levels completed, restart game
-      GameInfo::GetInstance().Reset(); // Reset game info
-      App.RemoveScene();
-      App.AddScene(
-        std::make_unique<GameScene>(
-          CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
+      App.AddScene(std::make_unique<GameCompletedScene>());   
     }
-    return;
+    if (IsKeyPressed(KEY_SPACE)) {
+      if (is_level_loaded_) {
+        GameInfo::GetInstance().coin = 0;
+        std::string reloadPath       = levelPath;
+        App.RemoveScene();
+        App.AddScene(std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), reloadPath));
+      } else if (game_manager_.CanAdvanceLevel()) {
+        GameInfo::GetInstance().coin = game_manager_.GetPoints();
+
+        // Award for level completion
+        GameInfo::GetInstance().life++;
+
+        int nextLevel = game_manager_.GetCurrentLevel() + 1;
+
+        App.RemoveScene();
+        App.AddScene(std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), nextLevel));
+      } else {
+        // All levels completed, restart game
+        GameInfo::GetInstance().Reset(); // Reset game info
+        App.RemoveScene();
+        App.AddScene(std::make_unique<GameScene>(
+          CharacterSelectorScene::GetCharacterType(), 1)); // Back to level 1
+      }
+      return;
+    }
   }
 }
 

@@ -13,7 +13,8 @@ enum SceneType {
   EnemySelector,
   CharacterSelector,
   Pause,
-  GameOver
+  GameOver,
+  GameCompleted
 };
 
 class Scene {

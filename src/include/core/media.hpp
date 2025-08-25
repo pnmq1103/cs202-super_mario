@@ -10,7 +10,7 @@ class Media {
 private:
   std::string cur_music_;
   std::unordered_map<std::string, Music> musics_;
-  std::array<std::string, 13> music_names_ = {
+  std::array<std::string, 14> music_names_ = {
     "title",
     "ground_theme",
     "castle_theme",
@@ -23,7 +23,8 @@ private:
     "ending",
     "final_battle",
     "invincibility_theme",
-    "overworld"};
+    "overworld",
+    "level_end"};
   std::unordered_map<std::string, Sound> sounds_;
   std::array<std::string, 28> sound_names_ = {
     "1up",

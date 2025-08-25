@@ -135,6 +135,7 @@
     <ClCompile Include="src\core\config.cpp" />
     <ClCompile Include="src\core\credit.cpp" />
     <ClCompile Include="src\core\enemy_selector.cpp" />
+    <ClCompile Include="src\core\game_completed.cpp" />
     <ClCompile Include="src\core\game_info.cpp" />
     <ClCompile Include="src\core\game_over.cpp" />
     <ClCompile Include="src\core\map.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="src\objects\super_star.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\include\core\game_completed.hpp" />
     <ClInclude Include="src\include\characters\projectile_pool.hpp" />
     <ClInclude Include="src\include\collision\collision_handler.hpp" />
     <ClInclude Include="src\include\core\application.hpp" />
