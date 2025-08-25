@@ -29,6 +29,10 @@ void SettingScene::Update() {
 void SettingScene::Draw() {
   DrawRectangleRec(
     {0, 0, constants::screenWidth, constants::screenHeight}, WHITE);
+
+  const char *title = "Setting";
+  DrawText(title, 1024 / 2 - MeasureText(title, 80) / 2, 40, 80, BLACK);
+
   DrawButtons();
   DrawSliders();
 }
@@ -42,18 +46,18 @@ SceneType SettingScene::Type() {
 void SettingScene::CreateButtons() {}
 
 void SettingScene::UpdateButtons() {
-  for (size_t i = 0; i < buttons_.size(); ++i)
-    buttons_[i].Update();
+  for (auto &button : buttons_)
+    button.Update();
 }
 
 void SettingScene::DrawButtons() {
-  for (size_t i = 0; i < buttons_.size(); ++i)
-    buttons_[i].Draw();
+  for (auto &button : buttons_)
+    button.Draw();
 }
 
 void SettingScene::CreateSliders() {
   float x = 64;
-  float y = 64 * 2;
+  float y = 64 * 3;
   sliders_.emplace_back(
     "Music", []() {}, Rectangle{0, 0, 16, 16}, Rectangle{x, y, 16 * 4, 16 * 4},
     "res/ui/buttons/volume_on.png", App.Config().GetMusicVolume());
@@ -80,6 +84,6 @@ void SettingScene::UpdateSliders() {
 }
 
 void SettingScene::DrawSliders() {
-  for (size_t i = 0; i < sliders_.size(); ++i)
-    sliders_[i].Draw();
+  for (auto &slider : sliders_)
+    slider.Draw();
 }
