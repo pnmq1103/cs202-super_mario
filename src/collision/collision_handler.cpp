@@ -347,16 +347,24 @@ void CollisionHandler::CheckCollisionCharacter() {
                   rectangle = enemy_list_[index]->GetRectangle();
         Vector2 speed       = character_->GetSpeed();
 
-        if (rect.y + rect.height +speed.y >= rectangle.y 
-          && (rect.x + rect.width >=rectangle.x && rect.x <= rectangle.x + rectangle.width)) {
-          if (character_->IsStarman()) {
-            enemy_list_[index]->OnHitFromSide();
-          } else {
-            enemy_list_[index]->OnHitFromAbove();
-            if (enemy_list_[index]->GetType() == EnemyType::Piranha)
+        if (enemy_list_[index]->GetType() == EnemyType::Piranha) {
+          if (CheckCollisionRecs(rect, rectangle)) {
+            if (character_->IsStarman()) {
+              enemy_list_[index]->OnHitFromSide();
+            } else {
+              enemy_list_[index]->OnHitFromAbove();
               character_->Die();
-            else
+            }
+          }
+        } else {
+          if (rect.y + rect.height +speed.y >= rectangle.y 
+          && (rect.x + rect.width >=rectangle.x && rect.x <= rectangle.x + rectangle.width)) {
+            if (character_->IsStarman()) {
+              enemy_list_[index]->OnHitFromSide();
+            } else {
+              enemy_list_[index]->OnHitFromAbove();
               character_->Bounce();
+            }
           }
         }
       }
