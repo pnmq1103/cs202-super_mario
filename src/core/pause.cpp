@@ -110,13 +110,13 @@ void PauseScene::CreateButtons() {
 }
 
 void PauseScene::UpdateButtons() {
-  for (auto &button : buttons_) {
-    if (button.Hovered()) {
+  for (size_t i = 0; i < buttons_.size();++i) {
+    if (buttons_[i].Hovered()) {
       if (selected_idx_ != -1)
         buttons_[selected_idx_].ToggleHighlight();
       selected_idx_ = -1;
     }
-    button.Update();
+    buttons_[i].Update();
   }
 }
 
