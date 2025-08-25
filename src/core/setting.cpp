@@ -43,7 +43,16 @@ SceneType SettingScene::Type() {
   return type_;
 }
 
-void SettingScene::CreateButtons() {}
+void SettingScene::CreateButtons() {
+  Rectangle src = {0, 0, 16, 16};
+  Rectangle dst = {32, 32, 64, 64};
+  buttons_.emplace_back(
+    "Return",
+    []() {
+      App.RemoveScene();
+    },
+    src, dst, "res/ui/buttons/return.png");
+}
 
 void SettingScene::UpdateButtons() {
   for (auto &button : buttons_)

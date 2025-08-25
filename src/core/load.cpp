@@ -10,7 +10,7 @@
 
 void LoadScene::Init() {
   buttons_.clear();
-  buttons_.reserve(4);
+  buttons_.reserve(5);
   Rectangle src = {0, 0, 250, 141};
   buttons_.emplace_back(
     "Map 1",
@@ -38,6 +38,16 @@ void LoadScene::Init() {
         LoadUsingMapPath(path);
     },
     src, buttonRects_[3], "res/ui/load_lvl4.png");
+
+  src = {0, 0, 16, 16};
+
+  Rectangle dst = {32, 32, 64, 64};
+  buttons_.emplace_back(
+    "Return",
+    []() {
+      App.RemoveScene();
+    },
+    src, dst, "res/ui/buttons/return.png");
 }
 
 void LoadScene::Update() {
