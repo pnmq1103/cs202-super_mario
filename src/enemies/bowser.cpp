@@ -62,7 +62,7 @@ void Bowser::Update() {
     shoot_time_  = time;
   }
 
-  if (health <= 2) {
+  if (health <= 1) {
     --throw_timer_;
     if (throw_timer_ == 0) {
       throw_timer_ = throw_duration_;
@@ -126,7 +126,7 @@ void Bowser::Draw() {
     return;
 
   Color tint = WHITE;
-  if (health <= 2)
+  if (health <= 1)
     tint = RED;
 
   // Handle sprite flipping for direction - FIXED LOGIC
@@ -163,7 +163,7 @@ bool Bowser::IsRunningDeathAnimation() const {
 }
 
 bool Bowser::IsCrazy() {
-  if (health <= 2)
+  if (health <= 1)
     return true;
   else
     return false;
