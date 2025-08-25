@@ -20,6 +20,9 @@ private:
   std::vector<Button> buttons_;
   bool button_clicked_ = {false};
 
+  bool show_saved_text_ = false;
+  float saved_timer_    = {0};
+
 private:
   void LoadMap();
   void SaveMap();

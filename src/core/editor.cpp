@@ -201,9 +201,21 @@ void EditorScene::UpdateMouse() {
 
 void EditorScene::UpdateButtons() {
   for (size_t i = 0; i < buttons_.size(); ++i) {
-    if (buttons_[i].Clicked())
+    if (buttons_[i].Clicked()) {
       button_clicked_ = true;
+      if (i == 2) {
+        show_saved_text_ = true;
+        saved_timer_     = 2.0f;
+      }
+    }
     buttons_[i].Update();
+  }
+
+  if (saved_timer_ > 0) {
+    saved_timer_ -= GetFrameTime();
+    if (saved_timer_ <= 0) {
+      show_saved_text_ = false;
+    }
   }
 }
 
@@ -327,6 +339,12 @@ void EditorScene::DrawPipe() {
 void EditorScene::DrawButtons() {
   for (size_t i = 0; i < buttons_.size(); ++i)
     buttons_[i].Draw();
+
+  if (show_saved_text_) {
+    Vector2 dst      = {485, 64};
+    const char *text = "Saved!";
+    DrawTextEx(GetFontDefault(), text, dst, 20, 1, RED);
+  }
 }
 
 void EditorScene::DrawCursor() {
