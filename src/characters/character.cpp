@@ -168,6 +168,8 @@ void Character::ToStarman() {
   if (!pState_)
     throw std::runtime_error("not yet set character");
   pState_->ToStarman();
+  App.Media().PlaySound("powerup");
+
 }
 
 bool Character::IsStarman() {
