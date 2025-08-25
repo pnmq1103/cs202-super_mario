@@ -4,8 +4,8 @@
 #include "include/collision/collision_handler.hpp"
 #include "include/core/command.hpp"
 #include "include/core/game_managing.hpp"
-#include "include/core/scene.hpp"
 #include "include/core/game_over.hpp"
+#include "include/core/scene.hpp"
 
 class GameScene : public Scene {
 private:
@@ -24,7 +24,7 @@ private:
 public:
   GameScene(CharacterType type, int level = 1);
   GameScene(CharacterType type, std::string levelPath);
-  ~GameScene();
+  ~GameScene() override;
   // Add to GameScene class:
   GameManaging &GetGameManager() {
     return game_manager_;

@@ -8,10 +8,6 @@
 #include "include/core/game.hpp"
 #include "include/core/load.hpp"
 
-LoadScene::LoadScene() {}
-
-LoadScene::~LoadScene() = default;
-
 void LoadScene::Init() {
   buttons_.clear();
   buttons_.reserve(4);
@@ -21,19 +17,19 @@ void LoadScene::Init() {
     [this]() {
       LoadUsingMapPath("res/maps/map1.json");
     },
-    src, buttonRects_[0], "res/load_lvl1.png");
+    src, buttonRects_[0], "res/ui/load_lvl1.png");
   buttons_.emplace_back(
     "Map 2",
     [this]() {
       LoadUsingMapPath("res/maps/map2.json");
     },
-    src, buttonRects_[1], "res/load_lvl2.png");
+    src, buttonRects_[1], "res/ui/load_lvl2.png");
   buttons_.emplace_back(
     "Map 3",
     [this]() {
       LoadUsingMapPath("res/maps/map3.json");
     },
-    src, buttonRects_[2], "res/load_lvl3.png");
+    src, buttonRects_[2], "res/ui/load_lvl3.png");
   buttons_.emplace_back(
     "Other",
     [this]() {
@@ -41,7 +37,7 @@ void LoadScene::Init() {
       if (path.empty() != true)
         LoadUsingMapPath(path);
     },
-    src, buttonRects_[3], "res/load_lvl4.png");
+    src, buttonRects_[3], "res/ui/load_lvl4.png");
 }
 
 void LoadScene::Update() {
@@ -49,40 +45,25 @@ void LoadScene::Update() {
     App.RemoveScene();
     return;
   }
-  UpdateButtons();
-  /*if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    const Vector2 m = GetMousePosition();
 
-    if (CheckCollisionPointRec(m, buttonRects_[0]))
-      LoadUsingMapPath("res/maps/map1.json");
-    else if (CheckCollisionPointRec(m, buttonRects_[1]))
-      LoadUsingMapPath("res/maps/map2.json");
-    else if (CheckCollisionPointRec(m, buttonRects_[2]))
-      LoadUsingMapPath("res/maps/map3.json");
-    else if (CheckCollisionPointRec(m, buttonRects_[3])) {
-      std::string path = FileHandler::OpenFile();
-      if (path.empty() != true)
-        LoadUsingMapPath(path);
-    }
-  }*/
+  double time = GetTime();
+  if (IsKeyPressed(KEY_TAB) && (time - last_input_ >= cooldown_)) {
+    if (selected_idx_ != -1)
+      buttons_[selected_idx_].ToggleHighlight();
+    selected_idx_ = (selected_idx_ + 1) % static_cast<int>(buttons_.size());
+    buttons_[selected_idx_].ToggleHighlight();
+  } else if (IsKeyPressed(KEY_ENTER) && selected_idx_ != -1)
+    buttons_[selected_idx_].Activate();
+
+  UpdateButtons();
 }
 
 void LoadScene::Draw() {
   const char *title = "Choose map";
-  DrawText(title, 1024 / 2 - MeasureText(title, 40) / 2, 20, 40, BLACK);
+  DrawText(title, 1024 / 2 - MeasureText(title, 80) / 2, 40, 80, BLACK);
 
   Font font = GetFontDefault();
   DrawButtons();
-  /*for (int i = 0; i < 4; i++) {
-    DrawRectangleRec(buttonRects_[i], LIGHTGRAY);
-    std::string text = (i != 3) ? "Map " + std::to_string(i + 1) : "Others";
-    Vector2 sz       = MeasureTextEx(font, text.c_str(), 40, 1);
-
-    float x = buttonRects_[i].x + (buttonRects_[i].width - sz.x) / 2;
-    float y = buttonRects_[i].y + (buttonRects_[i].height - sz.y) / 2;
-
-    DrawText(text.c_str(), static_cast<int>(x), static_cast<int>(y), 40, BLACK);
-  }*/
 }
 
 void LoadScene::Resume() {}
@@ -98,13 +79,17 @@ void LoadScene::LoadUsingMapPath(const std::string &mapPath) {
 }
 
 void LoadScene::DrawButtons() {
-  for (auto &button : buttons_) {
+  for (auto &button : buttons_)
     button.Draw();
-  }
 }
 
 void LoadScene::UpdateButtons() {
   for (auto &button : buttons_) {
+    if (button.Hovered()) {
+      if (selected_idx_ != -1)
+        buttons_[selected_idx_].ToggleHighlight();
+      selected_idx_ = -1;
+    }
     button.Update();
   }
 }

@@ -22,7 +22,7 @@ private:
 
 public:
   MenuScene();
-  ~MenuScene();
+  ~MenuScene() override;
 
   void Init() override;
   void Update() override;
